@@ -1,0 +1,30 @@
+# Obsidian cache and workspace settings (user-specific)
+.obsidian/workspace.json
+.obsidian/workspaces/
+.obsidian/publish.json
+.obsidian/graph.json
+
+# Opcional: Versionar ou não depende se quer sincronizar a lista exata de plugins
+# .obsidian/community-plugins.json
+
+# Versione para manter a configuração do seu Obsidian sincronizada entre dispositivos:
+# .obsidian/app.json
+# .obsidian/core-plugins.json
+# .obsidian/appearance.json
+# .obsidian/hotkeys.json
+# .obsidian/plugins/ # Se não estiver usando `community-plugins.json` para reinstalar.
+# .obsidian/snippets/
+
+
+# macOS system files
+.DS_Store
+._*
+
+# Windows system files
+Thumbs.db
+
+# Log files (alguns plugins podem gerar)
+*.log
+
+# Arquivos temporários
+*~
