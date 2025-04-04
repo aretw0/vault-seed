@@ -17,25 +17,14 @@ A força do Obsidian (e de um Second Brain eficaz) reside nas conexões (`[[wiki
 1. Crie um repositório a partir deste template: <a id="copy" href="https://github.com/new?template_name=obsidian-vault-template&template_owner=aretw0">
    <img src="https://img.shields.io/badge/📠_Criar-008000" height="25pt"/>
    </a>
-2. Crie um [PAT (Personal Acess Token)](https://docs.github.com/pt/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
-3. [Instale o plugin Obsidian Git](https://github.com/denolehov/obsidian-git/wiki/Installation)
-   - No Obsidian: `Settings > Community Plugins > Browse`.
-   - Procure por `Obsidian Git` e clique em `Install`, depois `Enable`.
-   - Vá para as opções do plugin `Obsidian Git` (`Settings > Community Plugins > Obsidian Git`).
-4. Crie uma pasta para guardar o repositório. Ex.: `remote-vault/`. Defina os escopos como "repo" e a expiração como "sem expiração".
-5. Execute o comando (CMD/Ctrl + P): Clonar um repositório remoto existente.
-6. Cole a URL do repositório no seguinte formato:
+2. Clone o repositório na sua máquina
+3. No Obsidian abra a pasta do repositório como um cofre.
+4. [Instale o plugin Obsidian Git](https://publish.obsidian.md/git-doc/Installation)
+5. Faça edições nas suas notas
+6. Publique suas notas executando o comando “Obsidian Git: Create backup” abrindo a paleta de comandos (CMD/Ctrl + P)
 
-   ```link
-   https://<PERSONAL_ACCESS_TOKEN>@github.com/<USERNAME>/<REPO>.git
-   ```
+> Veja [https://publish.obsidian.md/git-doc/Authentication](https://publish.obsidian.md/git-doc/Authentication) caso tenha problemas de autenticação. 
 
-7. Em seguida, digite na pasta que você criou no passo 5 (ex.: remote-blog/)
-8. Reinicie o Obsidian
-9. Faça edições nas suas notas
-10. Publique suas notas executando o comando “Obsidian Git: Create backup” abrindo a paleta de comandos (CMD/Ctrl + P)
-
-> Dúvidas? Veja: https://forum.obsidian.md/t/the-easiest-way-to-setup-obsidian-git-to-backup-notes/51429
 
 ## Usando o `Obsidian Git`:
 
@@ -63,7 +52,7 @@ A ideia é começar com poucas pastas de alto nível, numeradas para manter a or
 ├── 00 - Inbox/             # Captura rápida, notas não processadas
 ├── 10 - Fleeting & Daily/  # Notas diárias, ideias rápidas, journaling
 ├── 20 - Projects/          # Esforços com começo e fim definidos
-│   └── Exemplo Projeto Alpha/
+│   └── Exemplo Projeto Alpha/ # Exemplo
 ├── 30 - Areas/             # Áreas de responsabilidade contínua (Saúde, Finanças, Carreira)
 │   └── Saúde e Bem-estar/  # Exemplo
 │   └── Aprendizado Contínuo/ # Exemplo
@@ -72,6 +61,7 @@ A ideia é começar com poucas pastas de alto nível, numeradas para manter a or
 │   └── Receitas Culinárias/ # Exemplo
 ├── 50 - Archives/          # Projetos concluídos, Recursos inativos
 ├── 90 - Templates/         # Modelos para notas (plugin Templater/Core Templates)
+│   └── Template - Documentação de Promot.md   # Exemplo de template
 ├── 99 - Meta & Attachments/ # Notas sobre o vault, CSS snippets, e arquivos anexados (opcional)
 │   └── Attachments/        # Configurar Obsidian para usar esta pasta para anexos
 │   └── README_Vault.md   # Nota explicando a estrutura e convenções do vault
