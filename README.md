@@ -49,6 +49,8 @@ A força do Obsidian (e de um Second Brain eficaz) reside nas conexões (`[[wiki
 A ideia é começar com poucas pastas de alto nível, numeradas para manter a ordem visual no explorador de arquivos. A maior parte da organização virá de [[Links]], #tags e Mapas de Conteúdo (MOCs).
 
 ```
+├── .githubx/workflows/     # Pasta para automações com GitHub Actions
+│   └── ci.yml              # Um workflow inicial
 ├── 00 - Inbox/             # Captura rápida, notas não processadas
 │   └── Prompt - Usando o plugin templates no Obsidian.md   # Exemplo de uso do template
 ├── 10 - Fleeting & Daily/  # Notas diárias, ideias rápidas, journaling
@@ -66,26 +68,22 @@ A ideia é começar com poucas pastas de alto nível, numeradas para manter a or
 ├── 99 - Meta & Attachments/ # Notas sobre o vault, CSS snippets, e arquivos anexados (opcional)
 │   └── Attachments/        # Configurar Obsidian para usar esta pasta para anexos
 │   └── README_Vault.md   # Nota explicando a estrutura e convenções do vault
-├── .gitignore              # Arquivo para instruir o Git sobre o que ignorar
-└── README.md               # Descrição do vault (opcional)
 ```
 
 **Explicação dos Componentes:**
 
 1.  **`.github/workflows/`**: Pasta para automações com GitHub Actions.
     - `ci.yml`: Um workflow inicial pode simplesmente garantir que o push funcione ou, futuramente, rodar um linter de Markdown, ou até publicar o vault (veremos adiante).
-2.  **`.obsidian/`**: Contém todas as configurações do seu vault: temas, snippets CSS, plugins instalados e suas configurações. **É crucial versionar esta pasta** (com exceções, veja `.gitignore`) para manter a consistência entre dispositivos.
-3.  **`00 - Inbox/`**: Essencial para capturar ideias rapidamente sem se preocupar onde colocá-las. Processe regularmente.
-4.  **`10 - Fleeting & Daily/`**: Ideal para o [[Daily Note]] e pensamentos passageiros. Ótimo lugar para usar templates com o [[Templater]].
-5.  **`20 - Projects/`**: Foco em coisas acionáveis. Cada projeto pode ter sua própria subpasta se necessário, mas muitas vezes apenas uma nota principal (`[[Projeto Alpha MOC]]`) linkando para outras notas relacionadas é suficiente.
-6.  **`30 - Areas/`**: Mantém o controle de padrões e responsabilidades contínuas. Menos volátil que projetos.
-7.  **`40 - Resources/`**: O coração do seu Second Brain. Aqui as notas devem ser atômicas e densamente interligadas (`[[Links]]`). A organização pode começar plana e evoluir com subpastas ou [[Mapa de Conteúdo (MOC)]].
-8.  **`50 - Archives/`**: Mantém o vault principal focado no que é ativo ou relevante, sem perder o histórico.
-9.  **`90 - Templates/`**: Centraliza os modelos de notas.
-10. **`99 - Meta & Attachments/`**: Separa arquivos de configuração/suporte e anexos das notas de conteúdo.
+2.  **`00 - Inbox/`**: Essencial para capturar ideias rapidamente sem se preocupar onde colocá-las. Processe regularmente.
+3.  **`10 - Fleeting & Daily/`**: Ideal para o [[Daily Note]] e pensamentos passageiros. Ótimo lugar para usar templates com o [[Templater]].
+4.  **`20 - Projects/`**: Foco em coisas acionáveis. Cada projeto pode ter sua própria subpasta se necessário, mas muitas vezes apenas uma nota principal (`[[Projeto Alpha MOC]]`) linkando para outras notas relacionadas é suficiente.
+5.  **`30 - Areas/`**: Mantém o controle de padrões e responsabilidades contínuas. Menos volátil que projetos.
+6.  **`40 - Resources/`**: O coração do seu Second Brain. Aqui as notas devem ser atômicas e densamente interligadas (`[[Links]]`). A organização pode começar plana e evoluir com subpastas ou [[Mapa de Conteúdo (MOC)]].
+7.  **`50 - Archives/`**: Mantém o vault principal focado no que é ativo ou relevante, sem perder o histórico.
+8.  **`90 - Templates/`**: Centraliza os modelos de notas.
+9. **`99 - Meta & Attachments/`**: Separa arquivos de configuração/suporte e anexos das notas de conteúdo.
     - `README_Vault.md`: Uma nota interna explicando suas próprias convenções, estrutura, como usar tags, etc. É o seu manual pessoal do vault.
     - Configure o Obsidian em `Settings > Files & Links > Default location for new attachments` para usar `99 - Meta & Attachments/Attachments/`.
-11. **`.gitignore`**: Fundamental para manter o repositório limpo.
 
 ## Evolução Orgânica do Vault
 
@@ -154,37 +152,6 @@ Os plugins do Obsidian expandem significativamente suas funcionalidades, permiti
 - **`Calendar`**: Interface de calendário para navegar pelas Daily Notes.
 - **`Kanban`**: Criar quadros Kanban dentro do Obsidian (útil para `20 - Projects`).
 - **`Excalidraw`:** Para desenhos e diagramas baseados em vetor dentro do Obsidian.
-
-## Configurando Obsidian com Git e GitHub
-
-> Dúvidas de como configurar o git no Obsidian? Veja https://forum.obsidian.md/t/the-easiest-way-to-setup-obsidian-git-to-backup-notes/51429
-
-**Pré-requisitos:**
-
-- Git instalado no seu sistema ([https://git-scm.com/downloads](https://git-scm.com/downloads)).
-- Conta no GitHub ([https://github.com/](https://github.com/)).
-- Obsidian instalado ([https://obsidian.md/](https://obsidian.md/)).
-
-**Passos:**
-
-1.  **Instalar e Configurar o Plugin `Obsidian Git`:**
-    - No Obsidian: `Settings > Community Plugins > Browse`.
-    - Procure por `Obsidian Git` e clique em `Install`, depois `Enable`.
-    - Vá para as opções do plugin `Obsidian Git` (`Settings > Community Plugins > Obsidian Git`).
-    - **Configurações Chave:**
-      - **Vault backup interval (minutes):** Defina um valor (e.g., `15` ou `30`) para backups automáticos (commit + push). `0` desativa o backup automático por tempo.
-      - **Auto push on backup:** **Ative** esta opção se você definiu um intervalo de backup.
-      - **Commit message:** Use um template como `chore: backup vault - {{date}} {{time}}` ou `feat: update notes - {{numFiles}} files changed`. O `{{date}}`, `{{time}}` e `{{numFiles}}` são placeholders do plugin.
-      - **Push after commit:** Ative se quiser que cada commit manual (via paleta de comandos) seja seguido por um push.
-      - **Pull updates on startup:** **Ative** para garantir que você puxe as últimas alterações ao abrir o Obsidian (essencial se usar em múltiplos dispositivos).
-2.  **Usando o `Obsidian Git`:**
-    - Abra a paleta de comandos (Ctrl+P ou Cmd+P).
-    - Digite "Git" para ver os comandos disponíveis:
-      - `Obsidian Git: Commit all changes`
-      - `Obsidian Git: Push`
-      - `Obsidian Git: Pull`
-      - `Obsidian Git: Commit and push all changes` (Útil para sync manual rápido)
-    - O plugin também adiciona um ícone na barra lateral esquerda que indica se há alterações não commitadas.
 
 ## Ideias para CI/CD
 
