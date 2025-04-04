@@ -50,6 +50,7 @@ A ideia é começar com poucas pastas de alto nível, numeradas para manter a or
 
 ```
 ├── 00 - Inbox/             # Captura rápida, notas não processadas
+│   └── Prompt - Usando o plugin templates no Obsidian.md   # Exemplo de uso do template
 ├── 10 - Fleeting & Daily/  # Notas diárias, ideias rápidas, journaling
 ├── 20 - Projects/          # Esforços com começo e fim definidos
 │   └── Exemplo Projeto Alpha/ # Exemplo
