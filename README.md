@@ -21,7 +21,7 @@ A força do Obsidian (e de um Second Brain eficaz) reside nas conexões (`[[wiki
 3. No Obsidian abra a pasta do repositório como um cofre.
 4. [Instale o plugin Obsidian Git](https://publish.obsidian.md/git-doc/Installation)
 5. Faça edições nas suas notas
-6. Publique suas notas executando o comando “Git: Commit-and-Sync” abrindo a paleta de comandos (CMD/Ctrl + P)
+6. Publique suas notas executando o comando “Git: Commit-and-sync” abrindo a paleta de comandos (CMD/Ctrl + P)
 
 > Veja [https://publish.obsidian.md/git-doc/Authentication](https://publish.obsidian.md/git-doc/Authentication) caso tenha problemas de autenticação. 
 
@@ -30,10 +30,10 @@ A força do Obsidian (e de um Second Brain eficaz) reside nas conexões (`[[wiki
 
 - Abra a paleta de comandos (Ctrl+P ou Cmd+P).
 - Digite "Git" para ver os comandos disponíveis:
-  - `Obsidian Git: Commit all changes`
-  - `Obsidian Git: Push`
-  - `Obsidian Git: Pull`
-  - `Obsidian Git: Commit and push all changes` (Útil para sync manual rápido)
+  - `Git: Commit all changes`
+  - `Git: Push`
+  - `Git: Pull`
+  - `Git: Commit-and-sync` (Útil para sync manual rápido)
 - O plugin também adiciona um ícone na barra lateral esquerda que indica se há alterações não commitadas.
 
 ### Configurações Chave
