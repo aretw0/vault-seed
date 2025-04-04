@@ -1,0 +1,59 @@
+name: Vault CI
+
+on:
+  push:
+    branches: [main] # Ou a branch que você usa como principal
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Simple Check (Placeholder)
+        run: echo "Vault content pushed successfully."
+
+    # --- Adicionar passos mais úteis aqui no futuro ---
+    # Exemplo: Linting de Markdown (requer setup adicional)
+    # - name: Setup Node.js
+    #   uses: actions/setup-node@v3
+    #   with:
+    #     node-version: '18'
+    # - name: Install Markdownlint CLI
+    #   run: npm install -g markdownlint-cli
+    # - name: Run Markdownlint
+    #   run: markdownlint '**/*.md' --ignore '.obsidian/**/*.md' --fix # '--fix' tentará corrigir erros
+    #
+    # Exemplo: Publicar com Quartz (requer setup do Quartz)
+    # - name: Build and Deploy with Quartz (Exemplo)
+    #   if: github.ref == 'refs/heads/main' # Só roda no push para main
+    #   uses: jackyzha0/quartz-action@v2
+    #   with:
+    #     # Configurações do Quartz
+    #     folder: ./ # Diretório do vault
+    #     # ... outras configurações ...
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #     QUARTZ_TOKEN: ${{ secrets.QUARTZ_TOKEN }} # Se necessário para deploy privado
+    #
+
+    # Explicação:
+    #
+    # on:: Define quando o workflow roda (push ou pull request na branch main).
+    #
+    # jobs:: Define as tarefas a serem executadas.
+    #
+    # build:: Nome do job.
+    #
+    # runs-on:: O tipo de máquina virtual (Ubuntu é comum).
+    #
+    # steps:: Sequência de ações.
+    #
+    #     actions/checkout@v3: Baixa o código do seu repositório para a máquina virtual do Actions.
+    #
+    #     Simple Check: Apenas um placeholder para confirmar que o workflow rodou.
+    #
+    #     Comentários: Mostram exemplos de como adicionar linting de Markdown ou um passo de build/deploy usando ferramentas como Quartz para publicar seu vault como um site estático.
