@@ -61,7 +61,7 @@ A ideia é começar com poucas pastas de alto nível, numeradas para manter a or
 │   └── Receitas Culinárias/ # Exemplo
 ├── 50 - Archives/          # Projetos concluídos, Recursos inativos
 ├── 90 - Templates/         # Modelos para notas (plugin Templater/Core Templates)
-│   └── Template - Documentação de Promot.md   # Exemplo de template
+│   └── Template - Documentação de Prompt.md   # Exemplo de template
 ├── 99 - Meta & Attachments/ # Notas sobre o vault, CSS snippets, e arquivos anexados (opcional)
 │   └── Attachments/        # Configurar Obsidian para usar esta pasta para anexos
 │   └── README_Vault.md   # Nota explicando a estrutura e convenções do vault
