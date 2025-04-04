@@ -21,7 +21,7 @@ A força do Obsidian (e de um Second Brain eficaz) reside nas conexões (`[[wiki
 3. No Obsidian abra a pasta do repositório como um cofre.
 4. [Instale o plugin Obsidian Git](https://publish.obsidian.md/git-doc/Installation)
 5. Faça edições nas suas notas
-6. Publique suas notas executando o comando “Obsidian Git: Create backup” abrindo a paleta de comandos (CMD/Ctrl + P)
+6. Publique suas notas executando o comando “Git: Commit-and-Sync” abrindo a paleta de comandos (CMD/Ctrl + P)
 
 > Veja [https://publish.obsidian.md/git-doc/Authentication](https://publish.obsidian.md/git-doc/Authentication) caso tenha problemas de autenticação. 
 
