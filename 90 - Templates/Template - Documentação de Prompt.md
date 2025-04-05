@@ -1,6 +1,6 @@
 ---
 creation date:
-  "{ date }": 
+  "{{ date }}": 
 tags:
   - ai
   - prompts
