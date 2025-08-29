@@ -27,7 +27,7 @@ como criar templates no obsidian usando o core plugin templates? Me dê um templ
 
 ## ✅ Resultado da Execução
 
-```
+```text
 Okay, vamos criar um guia sobre como usar o plugin core de Templates no Obsidian e, em seguida, fornecer o template específico que você solicitou para documentar prompts.
 
       `--- tags: #obsidian #templates #core-plugins #workflows #prompts #ai date: {{date}} ---`
@@ -94,26 +94,9 @@ Aqui está um template que você pode salvar na sua pasta de templates (e.g., 90
       `--- tags: #prompt #ai #documentacao #{{date}}  date: {{date}} model: # Adicione o modelo de IA usado (ex: #gpt4, #claude3, #gemini) ---  # Prompt: {{title}}  **Data de Execução:** {{date}} às {{time}}  ## 🎯 Objetivo do Prompt    ## ⚙️ System Instructions / Configuração Inicial  ```text <!-- Cole aqui as instruções de sistema ou configurações prévias usadas, se houver. -->`
     
 
-IGNORE_WHEN_COPYING_START
-
-content_copy download
-
-Use code [with caution](https://support.google.com/legal/answer/13505487).Markdown
-
-IGNORE_WHEN_COPYING_END
-
 ## 💬 Conteúdo do Prompt Enviado
 
       `<!-- Cole aqui o texto exato do prompt que você enviou para a IA. -->`
-    
-
-IGNORE_WHEN_COPYING_START
-
-content_copy download
-
-Use code [with caution](https://support.google.com/legal/answer/13505487).Text
-
-IGNORE_WHEN_COPYING_END
 
 ## ✅ Resultado da Execução
 
@@ -133,13 +116,4 @@ IGNORE_WHEN_COPYING_END
 ---
 
       ``**Como usar este template específico:**  1.  Salve o código acima como um arquivo `.md` na sua pasta de templates configurada (e.g., `90 - Templates/Template - Documentação de Prompt.md`). 2.  Quando quiser documentar um novo prompt, crie uma nova nota (e.g., `Prompt - Resumo de Artigo Científico.md`). 3.  Use a Paleta de Comandos (`Ctrl+P` ou `Cmd+P`) -> `Templates: Insert template` -> Selecione `Template - Documentação de Prompt`. 4.  O template será inserido na nota. O título da nota (`Prompt - Resumo de Artigo Científico`) substituirá `{{title}}`. A data e hora atuais substituirão `{{date}}` e `{{time}}`. 5.  Preencha as seções: Objetivo, System Instructions (se houver), o Prompt exato, o Resultado obtido e suas observações. Adicione a tag do modelo de IA usado no frontmatter YAML (onde tem `model:`).  Este template fornece uma estrutura clara para registrar e analisar seus experimentos com prompts de IA dentro do seu Second Brain no Obsidian.``
-    
-
-IGNORE_WHEN_COPYING_START
-
-content_copy download
-
-Use code [with caution](https://support.google.com/legal/answer/13505487).
-
-IGNORE_WHEN_COPYING_END
 ```
