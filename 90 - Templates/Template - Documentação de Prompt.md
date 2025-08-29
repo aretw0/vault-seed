@@ -1,10 +1,9 @@
 ---
-creation date:
-  "{{ date }}": 
+date: {{date}}
 tags:
-  - ai
-  - prompts
-ai model:
+  - prompt
+  - ia
+ai_model: 
 ---
 
 # Prompt: {{title}}

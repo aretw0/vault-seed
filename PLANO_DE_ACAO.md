@@ -49,11 +49,13 @@
       - [x] **Passo 2: Criar a nota `[[Visualização do Fluxo do Vault]]`** em `99 - Meta & Attachments` e mover o diagrama Mermaid para ela.
       - [x] **Passo 3: Atualizar o `[[Guia do Jardineiro Digital]]`** com links para as duas novas notas.
       - [x] **Passo 4: Deletar o arquivo `Manual do Vault.md`**.
-    - [ ] **Arquivo: `00 - Inbox/Prompt - Usando o plugin templates no Obsidian.md`**
-      - [ ] Revisar Coesão de Idioma.
-      - [ ] Revisar Coesão de Comunicação.
-      - [ ] Revisar Aderência ao Dogfooding.
-    - [ ] **Arquivo: `90 - Templates/Template - Documentação de Prompt.md`**
-      - [ ] Revisar Coesão de Idioma.
-      - [ ] Revisar Coesão de Comunicação.
-      - [ ] Revisar Aderência ao Dogfooding.
+    - [x] **Arquivo: `00 - Inbox/Prompt - Usando o plugin templates no Obsidian.md`**
+      - [x] **Decisão:** O arquivo era um guia e foi movido para `99 - Meta & Attachments/Usando o Plugin Templates.md`.
+      - [x] Revisar Coesão de Idioma.
+      - [x] Revisar Coesão de Comunicação.
+      - [x] Revisar Aderência ao Dogfooding.
+    - [x] **Arquivo: `90 - Templates/Template - Documentação de Prompt.md`**
+      - [x] **Decisão:** A composição de templates é um recurso de plugins avançados (como o Templater) e não é suportada pelo plugin nativo. Para manter a simplicidade, o template foi mantido como um arquivo único.
+      - [x] Revisar Coesão de Idioma (frontmatter corrigido).
+      - [x] Revisar Coesão de Comunicação (template claro e funcional).
+      - [x] Revisar Aderência ao Dogfooding (consistente com o vault).
