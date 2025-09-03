@@ -1,30 +1,39 @@
-# Obsidian cache and workspace settings (user-specific)
-.obsidian/workspace.json
-.obsidian/workspaces/
-.obsidian/publish.json
-.obsidian/graph.json
+# ===================================================================
+# .gitignore para Vaults de Obsidian & Foam
+# Foco: Ser um ponto de partida limpo e simples.
+# ===================================================================
 
-# Opcional: Versionar ou não depende se quer sincronizar a lista exata de plugins
-# .obsidian/community-plugins.json
-
-# Versione para manter a configuração do seu Obsidian sincronizada entre dispositivos:
-# .obsidian/app.json
-# .obsidian/core-plugins.json
-# .obsidian/appearance.json
-# .obsidian/hotkeys.json
-# .obsidian/plugins/ # Se não estiver usando `community-plugins.json` para reinstalar.
-# .obsidian/snippets/
-
-
-# macOS system files
+# Arquivos de Sistema e temporários
+*~
 .DS_Store
-._*
-
-# Windows system files
 Thumbs.db
-
-# Log files (alguns plugins podem gerar)
 *.log
 
-# Arquivos temporários
-*~
+# Pasta de lixo do Obsidian
+.trash/
+
+# ===================================================================
+# Arquivos específicos do usuário - NUNCA rastrear
+# ===================================================================
+# Cache, estado do workspace, histórico, etc.
+.obsidian/cache
+.obsidian/workspace.json
+.obsidian/workspaces.json
+.obsidian/workspace-mobile.json
+.obsidian/daily-notes.json
+.obsidian/user.json
+
+# ===================================================================
+# Arquivos de configuração do Vault - Rastrear por padrão
+# ===================================================================
+# As linhas abaixo estão comentadas porque os arquivos não existem
+# ainda. Descomente se você criar e quiser ignorá-los.
+#
+# .obsidian/hotkeys.json
+# .obsidian/community-plugins.json
+# .obsidian/publish.json
+
+# ===================================================================
+# Específico do Foam (para VS Code)
+# ===================================================================
+.foam/
