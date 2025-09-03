@@ -1,6 +1,6 @@
 # Como Contribuir
 
-Fico feliz com seu interesse em contribuir! Este projeto é um template de vault para Obsidian com o objetivo de ser simples, flexível e pronto para uso.
+Fico feliz com seu interesse em contribuir! Este projeto é um template de vault para Obsidian ou Visual Studio Code (Foam) com o objetivo de ser simples, flexível e pronto para uso.
 
 ## Filosofia
 
