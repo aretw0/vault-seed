@@ -37,8 +37,12 @@ Thumbs.db
 # Ignora index do Plugin Smart Composer
 .smtcmp_json_db/.initial_migration_completed
 .smtcmp_vector_db.tar.gz
-# TODO: Remover depois de verificado como fazer smudge e clean na chave aqui também
+
+# TODO: Verificar como fazer smudge e clean nas chave de API dos abaixo para poder versionar sua configuração também
+# Plugin Smart Composer pode conter chaves de API
 .obsidian/plugins/smart-composer
+# Arquivo de configuração do Web Clipper que pode conter chaves de API
+obsidian-web-clipper-settings.json
 
 # ===================================================================
 # Arquivos de configuração do Vault - Rastrear por padrão
