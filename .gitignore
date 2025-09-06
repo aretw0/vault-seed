@@ -22,6 +22,14 @@ Thumbs.db
 .obsidian/workspace-mobile.json
 .obsidian/daily-notes.json
 .obsidian/user.json
+# Ignora index do Plugin Copilot
+.obsidian/copilot-index-*.json
+.copilot-index/
+# Ignora index do Plugin Smart Composer
+.smtcmp_json_db/.initial_migration_completed
+.smtcmp_vector_db.tar.gz
+# TODO: Remover depois de verificado como fazer smudge e clean na chave aqui também
+.obsidian/plugins/smart-composer
 
 # ===================================================================
 # Arquivos de configuração do Vault - Rastrear por padrão
