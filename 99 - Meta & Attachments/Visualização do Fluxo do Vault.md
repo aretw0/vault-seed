@@ -96,7 +96,7 @@ flowchart TD
         direction LR
         TemplatesDir("90 - Templates"):::meta
         MetaDir("99 - Meta & Attachments"):::meta
-        Guia(["Guia do Mochileiro do Vault.md"]):::meta
+        Guia(["Guia do Jardineiro Digital.md"]):::meta
         Diagrama(["Visualização do Fluxo do Vault.md"]):::meta
         MetaDir --> Guia & Diagrama
         KW4 -. "Fonte da Verdade" .-> Guia
