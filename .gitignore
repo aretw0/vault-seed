@@ -1,7 +1,16 @@
 # ===================================================================
 # .gitignore para Vaults de Obsidian & Foam
-# Foco: Ser um ponto de partida limpo e simples.
 # ===================================================================
+
+# Arquivos de ambiente
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Dependências
+node_modules/
 
 # Arquivos de Sistema e temporários
 *~
