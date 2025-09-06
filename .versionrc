@@ -1,0 +1,35 @@
+{
+  "types": [
+    {
+      "type": "feat",
+      "section": "✨ Novos Recursos"
+    },
+    {
+      "type": "fix",
+      "section": "🐛 Correções"
+    },
+    {
+      "type": "docs",
+      "section": "📚 Documentação"
+    },
+    {
+      "type": "style",
+      "section": "💎 Estilo"
+    },
+    {
+      "type": "refactor",
+      "section": "♻️ Refatoração"
+    },
+    {
+      "type": "test",
+      "section": "🧪 Testes"
+    },
+    {
+      "type": "chore",
+      "section": "🔧 Manutenção"
+    }
+  ],
+  "commitUrlFormat": "{{host}}/{{owner}}/{{repository}}/commit/{{hash}}",
+  "compareUrlFormat": "{{host}}/{{owner}}/{{repository}}/compare/{{previousTag}}...{{currentTag}}",
+  "issueUrlFormat": "{{host}}/{{owner}}/{{repository}}/issues/{{id}}"
+}

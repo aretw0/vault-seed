@@ -1,0 +1,33 @@
+# <tipo>(<escopo>): <descrição curta>
+# |<---- Usar no máximo 50 caracteres ---->|
+
+# Descrição mais detalhada, se necessário:
+# |<---- Tente limitar cada linha em 72 caracteres ---->|
+#
+# * Liste as mudanças principais
+# * Uma por linha
+# * Comece com um marcador
+
+# --- TIPOS DE COMMIT ---
+# feat     ✨ (novo recurso)
+# fix      🐛 (correção de bug)
+# docs     📚 (documentação)
+# style    💎 (formatação, ponto e vírgula, etc.)
+# refactor ♻️  (refatoração de código)
+# test     🧪 (adição ou modificação de testes)
+# chore    🔧 (tarefas de manutenção)
+
+# --- DICAS ---
+# - Use o imperativo: "adiciona" não "adicionado" ou "adicionando"
+# - Primeira linha é o título, deve ser clara e concisa
+# - Adicione "!" após o tipo/escopo para indicar breaking changes
+# - Referencie issues relacionadas no rodapé: "Fixes #123"
+
+# --- EXEMPLO ---
+# feat(notas): adiciona suporte a tags personalizadas
+#
+# * Implementa sistema de tags customizáveis
+# * Adiciona interface para gerenciamento de tags
+# * Integra com o sistema de busca existente
+#
+# Fixes #123
