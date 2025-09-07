@@ -15,15 +15,15 @@ while [[ "$#" -gt 0 ]]; do
             shift
             ;;
         *)
-            FILE_TO_REMOVE="$1"
+            PATH_TO_REMOVE="$1"
             shift
             ;;
     esac
 done
 
-# Verifica se o caminho do arquivo foi fornecido como argumento
-if [ -z "$FILE_TO_REMOVE" ]; then
-    echo "Uso: $0 <caminho_do_arquivo_a_remover> [--auto-delete-backup]"
+# Verifica se o caminho foi fornecido como argumento
+if [ -z "$PATH_TO_REMOVE" ]; then
+    echo "Uso: $0 <caminho_a_remover> [--auto-delete-backup]"
     echo "Exemplo: $0 "10 - Fleeting & Daily/Meu Arquivo Secreto.md" --auto-delete-backup"
     exit 1
 fi
@@ -31,8 +31,8 @@ REPO_PATH="$(pwd)" # Caminho absoluto do repositório atual
 REPO_NAME="$(basename "$REPO_PATH")" # Nome do diretório do repositório
 PARENT_PATH="$(dirname "$REPO_PATH")" # Caminho do diretório pai do repositório
 
-echo "--- Iniciando o processo de remoção de arquivo do histórico do Git ---"
-echo "Arquivo a ser removido: $FILE_TO_REMOVE"
+echo "--- Iniciando o processo de remoção do histórico do Git ---"
+echo "Caminho a ser removido: $PATH_TO_REMOVE"
 echo "Caminho do repositório: $REPO_PATH"
 
 # Verifica se git-filter-repo está instalado
@@ -51,6 +51,14 @@ if ! git rev-parse --is-inside-work-tree &> /dev/null; then
     exit 1
 fi
 echo "Diretório atual é um repositório Git válido."
+
+# Captura o URL remoto original antes que o git-filter-repo modifique o repositório
+ORIGINAL_REMOTE_URL=$(git remote get-url origin 2>/dev/null)
+if [ -z "$ORIGINAL_REMOTE_URL" ]; then
+    echo "Erro: Não foi possível obter o URL do remote 'origin' do repositório atual. Por favor, verifique a configuração do seu remote."
+    exit 1
+fi
+echo "URL do remote 'origin' original capturado: $ORIGINAL_REMOTE_URL"
 
 # --- Fim da Configuração Inicial e Verificação de Pré-requisitos ---
 
@@ -83,10 +91,10 @@ echo "Backup espelho criado em: ${BACKUP_DIR}"
 # --- Fim do Backup Espelho ---
 
 # --- Execução do git-filter-repo ---
-echo "--- Executando git-filter-repo para remover o arquivo do histórico ---"
+echo "--- Executando git-filter-repo para remover o caminho do histórico ---"
 # O --force é necessário para sobrescrever o histórico no repositório atual
 # O --preserve-refs default é 'all', o que inclui branches e tags
-git filter-repo --path "$FILE_TO_REMOVE" --invert-paths --force
+git filter-repo --path "$PATH_TO_REMOVE" --invert-paths --force
 
 if [ $? -ne 0 ]; then
     echo "Erro: Falha na execução do git-filter-repo. Abortando."
@@ -94,44 +102,65 @@ if [ $? -ne 0 ]; then
 fi
 echo "git-filter-repo executado com sucesso. Histórico reescrito localmente."
 
+# --- Finalização do Ambiente Local ---
+echo "--- Finalizando o ambiente local ---"
+# git reset --hard HEAD # Removido: git-filter-repo já atualiza o working directory
+echo "Ambiente local atualizado pelo git-filter-repo."
+
+# --- Fim da Sincronização e Finalização ---
+
 # --- Verificação Pós-Limpeza ---
-echo "--- Verificando se o arquivo foi removido do histórico ---"
+echo "--- Verificando se o caminho foi removido do histórico ---"
 # Verifica em todas as branches locais
 BRANCHES=$(git branch --format="%(refname:short)")
 FILE_FOUND=0
 for branch in $BRANCHES; do
-    if git log "$branch" -- "$FILE_TO_REMOVE" &> /dev/null;
+    if [ -n "$(git log "$branch" -- "$PATH_TO_REMOVE")" ];
     then
-        echo "Erro: O arquivo '$FILE_TO_REMOVE' ainda foi encontrado no histórico da branch '$branch'."
+        echo "Erro: O caminho '$PATH_TO_REMOVE' ainda foi encontrado no histórico da branch '$branch'."
         FILE_FOUND=1
     fi
 done
 
 if [ $FILE_FOUND -eq 1 ]; then
-    echo "Erro: O arquivo não foi completamente removido do histórico. Por favor, verifique manualmente."
+    echo "Erro: O caminho não foi completamente removido do histórico. Por favor, verifique manualmente."
     exit 1
 else
-    echo "Verificação concluída: O arquivo '$FILE_TO_REMOVE' foi removido do histórico de todas as branches locais."
+    echo "Verificação concluída: O arquivo '$PATH_TO_REMOVE' foi removido do histórico de todas as branches locais."
 fi
 # --- Fim da Execução e Verificação ---
 
 # --- Sincronização com o Remoto ---
 echo "--- Sincronizando com o repositório remoto ---"
 
+# Remove o remote 'origin' se ele existir para garantir uma adição limpa
+git remote remove origin 2>/dev/null
+
 # Adiciona o remote 'origin' novamente (git-filter-repo o remove)
 echo "Adicionando o remote 'origin' novamente..."
-# Tenta obter o URL do remote original do backup, se existir
-ORIGIN_URL=$(git -C "$BACKUP_DIR" remote get-url origin 2>/dev/null)
-if [ -z "$ORIGIN_URL" ]; then
-    echo "Aviso: Não foi possível obter o URL do remote 'origin' do backup."
-    echo "Por favor, insira o URL do seu repositório remoto (ex: https://github.com/seu_usuario/seu_repo.git):"
-    read -r ORIGIN_URL
-    if [ -z "$ORIGIN_URL" ]; then
-        echo "Erro: URL do repositório remoto não fornecido. Abortando."
+echo "Debug (antes de adicionar): ORIGINAL_REMOTE_URL é: $ORIGINAL_REMOTE_URL"
+
+# Tenta adicionar o remote. Se falhar, tenta setar a URL.
+git remote add origin "$ORIGINAL_REMOTE_URL"
+if [ $? -ne 0 ]; then
+    echo "Aviso: 'git remote add' falhou. Tentando 'git remote set-url'..."
+    git remote set-url origin "$ORIGINAL_REMOTE_URL"
+    if [ $? -ne 0 ]; then
+        echo "Erro: Falha ao adicionar/setar o remote 'origin' com 'git remote set-url'. Abortando."
         exit 1
     fi
 fi
-git remote add origin "$ORIGIN_URL"
+
+# Verifica se o remote foi adicionado corretamente
+VERIFIED_REMOTE_URL=$(git remote get-url origin 2>/dev/null)
+echo "Debug (depois de adicionar): Remote 'origin' verificado: $VERIFIED_REMOTE_URL"
+
+if [ "$VERIFIED_REMOTE_URL" != "$ORIGINAL_REMOTE_URL" ]; then
+    echo "Erro: O URL do remote 'origin' não corresponde ao URL original. Abortando."
+    exit 1
+fi
+
+echo "Remote 'origin' adicionado e verificado: $VERIFIED_REMOTE_URL"
 
 if [ $? -ne 0 ]; then
     echo "Erro: Falha ao adicionar o remote 'origin'. Abortando."
@@ -159,21 +188,20 @@ if [ $? -ne 0 ]; then
 fi
 echo "Push forçado das tags concluído."
 
-# --- Finalização do Ambiente Local ---
-echo "--- Finalizando o ambiente local ---"
-git reset --hard HEAD
-
-if [ $? -ne 0 ]; then
-    echo "Erro: Falha ao resetar o HEAD. Por favor, verifique manualmente."
-    exit 1
-fi
-echo "Ambiente local resetado para o novo histórico."
-
-# --- Fim da Sincronização e Finalização ---
+# Configura o upstream para todas as branches locais
+echo "Configurando o upstream para as branches locais..."
+for branch in $(git branch --format="%(refname:short)"); do
+    git branch --set-upstream-to=origin/"$branch" "$branch"
+    if [ $? -ne 0 ]; then
+        echo "Aviso: Falha ao configurar o upstream para a branch '$branch'. Pode ser necessário configurá-lo manualmente."
+    else
+        echo "Upstream configurado para a branch '$branch'."
+    fi
+done
 
 # --- Limpeza (Opcional) ---
 echo "--- Processo concluído ---"
-echo "O arquivo '$FILE_TO_REMOVE' foi removido do histórico do Git (local e remoto)."
+echo "O caminho '$PATH_TO_REMOVE' foi removido do histórico do Git (local e remoto)."
 echo "Um backup espelho do seu repositório foi criado em: $BACKUP_DIR"
 
 if [ "$AUTO_DELETE_BACKUP" -eq 1 ]; then
