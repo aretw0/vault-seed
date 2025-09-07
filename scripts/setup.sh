@@ -17,7 +17,7 @@ else
 fi
 
 # Configura o ambiente Node.js (incluindo nvm, instalação e npm install)
-if bash scripts/setup_node.sh; then
+if . scripts/setup_node.sh; then
   bash scripts/setup_copilot.sh
 else
   echo "[AVISO] Ambiente Node.js não está pronto. Scripts que dependem de Node não foram executados."
