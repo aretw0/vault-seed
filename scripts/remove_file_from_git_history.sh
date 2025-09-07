@@ -133,6 +133,14 @@ fi
 # --- Sincronização com o Remoto ---
 echo "--- Sincronizando com o repositório remoto ---"
 
+# Nota sobre Autenticação:
+# Para uma execução suave, especialmente no WSL, é altamente recomendável configurar
+# o Git Credential Manager (GCM) para evitar prompts de usuário e senha.
+# Se você estiver no WSL, configure o Git para usar o GCM do Windows com o comando:
+# git config --global credential.helper "/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe"
+# Isso garante que a autenticação com o GitHub ocorra de forma transparente.
+
+
 # Remove o remote 'origin' se ele existir para garantir uma adição limpa
 git remote remove origin 2>/dev/null
 

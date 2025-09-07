@@ -53,6 +53,26 @@ bash scripts/setup.sh
 
 O script irá guiá-lo através do processo, instalando dependências e configurando o ambiente automaticamente.
 
+## Configuração do Git Credential Manager (GCM) no WSL
+
+Para garantir uma experiência de uso mais fluida com o Git, especialmente ao interagir com repositórios remotos (como o GitHub) e evitar prompts repetitivos de usuário e senha, é altamente recomendável configurar o Git Credential Manager (GCM).
+
+Se você é um usuário de Windows e utiliza o WSL para executar operações Git, é ideal que o Git configurado dentro do seu ambiente WSL utilize o GCM instalado no Windows. Isso permite que as credenciais sejam gerenciadas de forma centralizada e segura pelo GCM do Windows, sem a necessidade de reconfigurar ou armazenar credenciais separadamente no WSL.
+
+Para configurar o Git no seu ambiente WSL para usar o GCM do Windows, execute o seguinte comando no terminal do seu WSL:
+
+```bash
+git config --global credential.helper "/mnt/c/Program\\ Files/Git/mingw64/bin/git-credential-manager.exe"
+```
+
+**Explicação do Comando:**
+
+*   `git config --global`: Configura o Git globalmente para o seu usuário no WSL.
+*   `credential.helper`: Define o programa auxiliar que o Git deve usar para armazenar e recuperar credenciais.
+*   `"/mnt/c/Program\\ Files/Git/mingw64/bin/git-credential-manager.exe"`: Este é o caminho absoluto para o executável do Git Credential Manager no seu sistema Windows, acessado a partir do WSL. Note o uso de `\` para escapar o espaço em `Program Files` e `\` para escapar o próprio `\` já que temos essas nuances no do Windows, isso garante que o WSL interprete corretamente o caminho.
+
+Após executar este comando, o Git no seu WSL estará configurado para usar o GCM do Windows, proporcionando uma autenticação transparente e segura para suas operações Git.
+
 ---
 
 **Próximos Passos:**

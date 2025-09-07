@@ -93,6 +93,9 @@ git reset --hard HEAD
 
 ### 5. Force o Push para o Repositório Remoto
 
+**Nota sobre Autenticação (WSL/Windows):**
+Para evitar prompts de usuário e senha durante o `git push --force`, especialmente se você estiver usando o WSL no Windows, certifique-se de que o Git no seu ambiente WSL esteja configurado para usar o Git Credential Manager (GCM) do Windows. Para instruções detalhadas, consulte a seção "Configuração do Git Credential Manager (GCM) no WSL" em [Compatibilidade de Ambiente e Setup](./compatibilidade-de-ambiente-e-setup.md).
+
 Como o histórico local foi reescrito, ele divergiu do histórico no GitHub. Você precisará forçar o push.
 
 **AVISO:** Forçar o push é perigoso se outras pessoas colaboram no mesmo repositório. Certifique-se de que todos os colaboradores saibam o que você está fazendo. Eles precisarão fazer um `fetch` e `reset` em seus clones locais para alinhar com o novo histórico.
