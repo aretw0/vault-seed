@@ -17,6 +17,8 @@ node_modules/
 .DS_Store
 Thumbs.db
 *.log
+.gemini/
+.vscode/
 
 # Pasta de lixo do Obsidian
 .trash/
