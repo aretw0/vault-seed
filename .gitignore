@@ -18,7 +18,10 @@ node_modules/
 Thumbs.db
 *.log
 .gemini/
-.vscode/
+# Ignorar o restante do diretório .vscode/, por isso o *
+.vscode/*
+# Exceção para .vscode/extensions.json
+!.vscode/extensions.json
 
 # Pasta de lixo do Obsidian
 .trash/
