@@ -34,9 +34,21 @@ jobs:
           echo "🔥 Resetando VERSION para 0.0.1"
           echo "0.0.1" > VERSION
 
+      - name: ✨ Prepara Documentação Inicial
+        run: |
+          echo "🔥 Copiando e personalizando README.md"
+          cp README.template.md README.md
+          sed -i "s/{{REPO_NAME}}/${{ github.event.repository.name }}/g" README.md
+
+          echo "🔥 Copiando CONTRIBUTING.md"
+          cp CONTRIBUTING.template.md CONTRIBUTING.md
+
+          echo "🗑️ Removendo arquivos de template"
+          rm README.template.md CONTRIBUTING.template.md
+
       - name: 🗑️ Auto-destrói e Commita
         run: |
-          git add CHANGELOG.md VERSION
+          git add CHANGELOG.md VERSION README.md CONTRIBUTING.md # Add README.md and CONTRIBUTING.md to staged files
           
           echo "💥 Apagando o arquivo de workflow para garantir que ele rode apenas uma vez."
           git rm --ignore-unmatch .github/workflows/initialize.yml
