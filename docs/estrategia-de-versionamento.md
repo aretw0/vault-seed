@@ -21,17 +21,17 @@ As mensagens de commit devem seguir o formato: `<tipo>(escopo opcional): <descri
 Os tipos de commit mais comuns e seu impacto no versionamento são:
 
 -   **`fix`:** Um commit do tipo `fix` (correção de bug) resulta em um **bump de versão PATCH**.
-    *   Exemplo: `fix(auth): corrige falha de login`
+    *   Exemplo: `fix(dataview): corrige erro na query de notas órfãs`
 
 -   **`feat`:** Um commit do tipo `feat` (nova funcionalidade) resulta em um **bump de versão MENOR**.
-    *   Exemplo: `feat(dashboard): adiciona widget de estatísticas`
+    *   Exemplo: `feat(template): adiciona novo template para notas de projeto`
 
--   **`BREAKING CHANGE`:** Qualquer tipo de commit que inclua `BREAKING CHANGE:` no rodapé da mensagem ou um `!` após o tipo/escopo (ex: `feat(api)!: remove endpoint legado`) resulta em um **bump de versão MAIOR**.
+-   **`BREAKING CHANGE`:** Qualquer tipo de commit que inclua `BREAKING CHANGE:` no rodapé da mensagem ou um `!` após o tipo/escopo (ex: `refactor(estrutura)!: altera hierarquia de pastas PARA`) resulta em um **bump de versão MAIOR**.
     *   Exemplo:
         ```
-        feat(api): refatora autenticação
+        refactor(estrutura): altera hierarquia de pastas PARA
 
-        BREAKING CHANGE: O método de autenticação foi alterado e requer atualização na integração.
+        BREAKING CHANGE: A estrutura de pastas principal foi alterada, exigindo migração manual de notas existentes.
         ```
 
 ### Outros Tipos de Commit (Sem Impacto Direto no Versionamento)
@@ -40,13 +40,17 @@ Outros tipos de commit são importantes para o histórico do projeto, mas não r
 
 -   **`build`:** Mudanças que afetam o sistema de build ou dependências externas (escopos).
 -   **`ci`:** Mudanças nos arquivos e scripts de CI (Continuous Integration).
+    *   Exemplo: `ci: adiciona verificação de links quebrados no workflow`
 -   **`docs`:** Mudanças apenas na documentação.
+    *   Exemplo: `docs: atualiza guia de uso do Templater`
 -   **`perf`:** Mudanças de código que melhoram a performance.
 -   **`refactor`:** Uma mudança de código que não corrige um bug nem adiciona uma funcionalidade.
+    *   Exemplo: `refactor(templates): otimiza lógica de criação de notas`
 -   **`revert`:** Reverte um commit anterior.
 -   **`style`:** Mudanças que não afetam o significado do código (espaços em branco, formatação, ponto e vírgula ausente, etc.).
 -   **`test`:** Adição de testes ausentes ou correção de testes existentes.
 -   **`chore`:** Outras mudanças que não modificam o código fonte ou arquivos de teste.
+    *   Exemplo: `chore: atualiza dependências do Node.js`
 
 ## Automação com `standard-version`
 
