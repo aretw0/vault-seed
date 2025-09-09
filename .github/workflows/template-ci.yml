@@ -35,16 +35,16 @@ jobs:
             echo "No unwanted plugin folders found in .obsidian/plugins/."
           fi
 
-    # --- Adicionar passos mais úteis aqui no futuro ---
-    # Exemplo: Linting de Markdown (requer setup adicional)
-    # - name: Setup Node.js
-    #   uses: actions/setup-node@v3
-    #   with:
-    #     node-version: '18'
-    # - name: Install Markdownlint CLI
-    #   run: npm install -g markdownlint-cli
-    # - name: Run Markdownlint
-    #   run: markdownlint '**/*.md' --ignore '.obsidian/**/*.md' --fix # '--fix' tentará corrigir erros
+      # --- Adicionar passos mais úteis aqui no futuro ---
+      # Exemplo: Linting de Markdown (requer setup adicional)
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - name: Install Markdownlint CLI
+        run: npm install -g markdownlint-cli
+      - name: Run Markdownlint
+        run: markdownlint '**/*.md' --ignore '.obsidian/**/*.md' --config .markdownlint.json # Usar o arquivo de configuração existente
     #
     # Exemplo: Publicar com Quartz (requer setup do Quartz)
     # - name: Build and Deploy with Quartz (Exemplo)
