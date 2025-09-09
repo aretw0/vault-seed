@@ -74,3 +74,64 @@ Nosso arquivo `.versionrc` diz à ferramenta *como* agrupar e apresentar esses c
 3.  O **`.versionrc`** ensina ferramentas de automação a lerem esses dados para gerar changelogs, determinar a próxima versão e criar tags de release.
 
 Juntos, eles transformam o ato de commitar em um passo que alimenta diretamente a documentação e o processo de release do projeto.
+
+## 3. O Fluxo de Release: Gerando o Changelog na Prática
+
+A teoria acima se materializa através de um único comando no `package.json`:
+
+```json
+"scripts": {
+  "release": "standard-version"
+}
+```
+
+Executar `npm run release` orquestra todo o processo de versionamento. Aqui está o passo a passo ideal:
+
+### Passo 1: Pré-requisito - Um Rascunho Seguro e Limpo
+
+Antes de publicar uma nova versão, você precisa garantir que todo o seu trabalho está salvo e seu ambiente está limpo. Use o comando:
+
+```bash
+git status
+```
+
+O resultado deve ser `nothing to commit, working tree clean`. Isso evita que mudanças não finalizadas entrem acidentalmente na nova versão.
+
+### Passo 2: Simulação (Dry Run) - A Medida de Segurança
+
+Para evitar surpresas, sempre faça uma simulação antes. Pense nisso como um "ensaio geral". O comando a seguir mostra tudo o que será feito, mas sem de fato alterar nenhum arquivo.
+
+```bash
+npm run release -- --dry-run
+```
+
+O ` -- ` é importante para passar o argumento `--dry-run` diretamente para o `standard-version`.
+
+Você verá no terminal a nova versão que será criada e um preview do `CHANGELOG.md`. Se tudo estiver como esperado, você pode prosseguir.
+
+### Passo 3: Execução - Criando a Nova Versão
+
+Agora, o comando real:
+
+```bash
+npm run release
+```
+
+Ele irá:
+1.  **Analisar** os commits desde a última versão.
+2.  **Atualizar** o arquivo `VERSION` com o novo número de versão (ex: de `0.0.1` para `0.0.2`).
+3.  **Criar ou atualizar** o arquivo `CHANGELOG.md` com as seções de "Novos Recursos", "Correções", etc.
+4.  **Criar um commit** do tipo `chore(release)` contendo as mudanças nos arquivos `VERSION` e `CHANGELOG.md`.
+5.  **Criar uma tag Git** (ex: `v0.0.2`) apontando para este novo commit.
+
+### Passo 4: Publicando as Mudanças
+
+Até agora, todas as mudanças (o novo commit e a tag) estão apenas no seu computador local. Para que outros colaboradores e o GitHub saibam da nova versão, você precisa publicá-la:
+
+```bash
+git push --follow-tags origin main
+```
+
+**Analogia:** Pense neste comando como "enviar a versão final de um documento revisado, junto com seu diário de alterações, para a nuvem, garantindo que a etiqueta da nova versão vá junto".
+
+Este fluxo garante que nosso changelog e nossas versões sejam sempre um reflexo fiel e automatizado do trabalho realizado.
