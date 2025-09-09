@@ -14,19 +14,23 @@
     },
     {
       "type": "style",
-      "section": "💎 Estilo"
+      "section": "💎 Estilo",
+      "hidden": true
     },
     {
       "type": "refactor",
-      "section": "♻️ Refatoração"
+      "section": "♻️ Refatoração",
+      "hidden": true
     },
     {
       "type": "test",
-      "section": "🧪 Testes"
+      "section": "🧪 Testes",
+      "hidden": true
     },
     {
       "type": "chore",
-      "section": "🔧 Manutenção"
+      "section": "🔧 Manutenção",
+      "hidden": true
     }
   ],
   "commitUrlFormat": "{{host}}/{{owner}}/{{repository}}/commit/{{hash}}",
