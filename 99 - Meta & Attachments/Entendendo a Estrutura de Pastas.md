@@ -35,5 +35,19 @@ A ideia é começar com poucas pastas de alto nível, numeradas para manter a or
     - `Manual do Vault.md`: Uma nota interna explicando suas próprias convenções, estrutura, como usar tags, etc. É o seu manual pessoal do vault.
     - Configure o Obsidian em `Settings > Files & Links > Default location for new attachments` para usar `99 - Meta & Attachments/Attachments/`.
 
+## Distinção entre `docs/` e `99 - Meta & Attachments/`
+
+Para manter a clareza na organização da documentação, é importante entender a diferença entre as pastas `docs/` e `99 - Meta & Attachments/`.
+
+*   **`docs/` (Documentação Técnica/Operacional do Projeto)**:
+    *   **Propósito**: Contém a documentação mais formal, técnica ou operacional sobre o *funcionamento do repositório/projeto em si*. São guias sobre como as ferramentas subjacentes funcionam (Git, GitHub Actions, etc.), como configurar o ambiente, ou detalhes sobre processos técnicos específicos.
+    *   **Analogia**: Pense nisso como o **manual de instruções do carro**. Ele explica como o motor funciona, como trocar um pneu, ou como usar o sistema de navegação. É sobre as *partes técnicas e operacionais* do carro.
+
+*   **`99 - Meta & Attachments/` (Meta-Documentação e Boas Práticas do Vault)**:
+    *   **Propósito**: Contém a documentação sobre a *filosofia, as convenções, as boas práticas e o "como usar" o vault como um sistema de gestão de conhecimento pessoal*. É sobre a experiência de uso do vault, suas regras internas, e anexos relacionados a essa meta-discussão.
+    *   **Analogia**: Pense nisso como o **guia de direção defensiva e dicas de viagem**. Ele explica a *filosofia* de como dirigir com segurança, as *melhores rotas* para diferentes tipos de viagem, ou *como manter o carro limpo* para uma melhor experiência. É sobre a *experiência e as melhores práticas* de usar o carro, não sobre o funcionamento interno.
+
+Essa distinção ajuda a manter a documentação organizada e fácil de navegar, direcionando o leitor para o tipo de informação que ele procura.
+
 ---
 Voltar para o [[Guia do Jardineiro Digital]]
