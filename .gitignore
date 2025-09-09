@@ -43,9 +43,16 @@ Thumbs.db
 .smtcmp_json_db/.initial_migration_completed
 .smtcmp_vector_db.tar.gz
 
-# TODO: Verificar como fazer smudge e clean nas chave de API dos abaixo para poder versionar sua configuração também
+# ATENÇÃO: Plugins como Smart Composer e Copilot podem armazenar chaves de API ou dados sensíveis em seus arquivos de configuração (ex: data.json).
+# Versionar esses arquivos diretamente pode expor informações confidenciais.
+# Se você precisar versionar a configuração de um plugin que contém dados sensíveis, considere implementar técnicas de 'smudge' e 'clean' do Git.
+# Isso permite que você armazene uma versão "limpa" (sem segredos) no repositório e injete os segredos localmente.
+# Consulte a documentação em 'docs/gerenciando-segredos-com-git.md' para mais detalhes.
+
 # Plugin Smart Composer pode conter chaves de API
 .obsidian/plugins/smart-composer
+# Plugin Copilot pode conter chaves de API
+.obsidian/plugins/copilot
 # Arquivo de configuração do Web Clipper que pode conter chaves de API
 obsidian-web-clipper-settings.json
 

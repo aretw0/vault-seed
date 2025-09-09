@@ -18,7 +18,14 @@ fi
 
 # Configura o ambiente Node.js (incluindo nvm, instalação e npm install)
 if . scripts/setup_node.sh; then
-  bash scripts/setup_copilot.sh
+  # Configuração do Plugin Copilot (opcional)
+  # Para ativar, defina a variável de ambiente ENABLE_COPILOT_SETUP como 'true' antes de executar o setup.sh
+  if [ "$ENABLE_COPILOT_SETUP" = "true" ]; then
+    echo "[INFO] Ativando a configuração do Copilot..."
+    bash scripts/setup_copilot.sh
+  else
+    echo "[INFO] Configuração do Copilot desativada por padrão. Para ativar, defina ENABLE_COPILOT_SETUP=true."
+  fi
 else
   echo "[AVISO] Ambiente Node.js não está pronto. Scripts que dependem de Node não foram executados."
   exit 1
