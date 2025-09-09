@@ -1,0 +1,49 @@
+# .github/workflows/initialize.yml
+name: 🎉 Inicializa o Vault no Primeiro Push
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  initialize-and-self-destruct:
+    runs-on: ubuntu-latest
+    # Apenas executa se for um push para a branch 'main' E
+    # se o repositório NÃO for o repositório de template original 'aretw0/vault-seed'.
+    if: github.ref == 'refs/heads/main' && github.repository != 'aretw0/vault-seed'
+
+    steps:
+      - name: 🛎️ Clona o Repositório
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: ⚙️ Configura o Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: 🧹 Reseta os Arquivos do Projeto
+        run: |
+          echo "🔥 Resetando CHANGELOG.md"
+          echo "# Changelog" > CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "Todas as mudanças notáveis neste projeto serão documentadas neste arquivo." >> CHANGELOG.md
+          
+          echo "🔥 Resetando VERSION para 0.0.1"
+          echo "0.0.1" > VERSION
+
+      - name: 🗑️ Auto-destrói e Commita
+        run: |
+          git add CHANGELOG.md VERSION
+          
+          echo "💥 Apagando o arquivo de workflow para garantir que ele rode apenas uma vez."
+          git rm --ignore-unmatch .github/workflows/initialize.yml
+          
+          if ! git diff-index --quiet --cached HEAD; then
+            git commit -m "chore(project): 🎉 inicializa o vault a partir do template"
+            git push
+          else
+            echo "✅ Vault já inicializado. Nenhum novo commit necessário."
+          fi
