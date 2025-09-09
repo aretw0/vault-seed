@@ -1,16 +1,14 @@
 # .github/workflows/release.yml
 name: Publicar Release
 
-# Este workflow está configurado para ser executado manualmente ou por um push de tag.
-# Ele não será executado automaticamente em cada push para a branch principal.
-# Para ativá-lo, você pode:
-# 1. Descomentar a seção 'on: push: tags:' abaixo.
-# 2. Executá-lo manualmente através da aba 'Actions' no GitHub.
+# Este workflow é executado automaticamente quando uma nova tag (ex: v1.0.0) é criada e enviada para o repositório.
+# Ele automatiza a criação de releases no GitHub, extraindo as notas do CHANGELOG.md.
+# Você também pode executá-lo manualmente através da aba 'Actions' no GitHub.
 
 on:
-  # push:
-  #   tags:
-  #     - 'v*' # Executa quando uma nova tag (ex: v1.0.0) é criada e enviada.
+  push:
+    tags:
+      - 'v*' # Executa quando uma nova tag (ex: v1.0.0) é criada e enviada.
   workflow_dispatch: # Permite execução manual através da interface do GitHub Actions
 
 jobs:
