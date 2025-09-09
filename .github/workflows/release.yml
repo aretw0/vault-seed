@@ -1,0 +1,63 @@
+# .github/workflows/release.yml
+name: Publicar Release
+
+# Este workflow está configurado para ser executado manualmente ou por um push de tag.
+# Ele não será executado automaticamente em cada push para a branch principal.
+# Para ativá-lo, você pode:
+# 1. Descomentar a seção 'on: push: tags:' abaixo.
+# 2. Executá-lo manualmente através da aba 'Actions' no GitHub.
+
+on:
+  # push:
+  #   tags:
+  #     - 'v*' # Executa quando uma nova tag (ex: v1.0.0) é criada e enviada.
+  workflow_dispatch: # Permite execução manual através da interface do GitHub Actions
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛎️ Checkout do Código
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Necessário para que standard-version possa analisar o histórico completo
+
+      - name: ⚙️ Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Use a versão do Node.js que seu projeto utiliza
+
+      - name: 📦 Instalar Dependências
+        run: npm install # Instala as dependências do package.json, incluindo standard-version
+
+      - name: 📝 Obter Notas de Release
+        id: get_release_notes
+        run: |
+          # Extrai as notas de release do CHANGELOG.md para a tag atual
+          # Isso assume que o CHANGELOG.md é gerado por standard-version
+          RELEASE_VERSION=$(echo ${{ github.ref }} | sed 's/refs\/tags\///g')
+          RELEASE_NOTES=$(npx conventional-changelog --tag-prefix v --release-count 1 --output-unreleased=false --lerna-package=false --commit-path=. | sed -n "/^### ${RELEASE_VERSION}/,/^### /p" | sed '$d' | sed '1d')
+          
+          # Se as notas estiverem vazias, tenta extrair de outra forma (para o primeiro release, por exemplo)
+          if [ -z "$RELEASE_NOTES" ]; then
+            RELEASE_NOTES=$(npx conventional-changelog --tag-prefix v --release-count 1 --output-unreleased=false --lerna-package=false --commit-path=. | sed -n "/^### ${RELEASE_VERSION}/,/^## /p" | sed '$d' | sed '1d')
+          fi
+
+          # Garante que as notas não estejam vazias
+          if [ -z "$RELEASE_NOTES" ]; then
+            echo "::error::Não foi possível extrair as notas de release para a versão ${RELEASE_VERSION}."
+            exit 1
+          fi
+
+          echo "release_notes<<EOF" >> $GITHUB_OUTPUT
+          echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: 🚀 Criar GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref }}
+          name: Release ${{ github.ref }}
+          body: ${{ steps.get_release_notes.outputs.release_notes }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GITHUB_TOKEN é fornecido automaticamente pelo GitHub
