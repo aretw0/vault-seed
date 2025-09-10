@@ -44,14 +44,14 @@ pipx run git-filter-repo --path .obsidian/plugins/copilot/data.json --invert-pat
 ```
 
 > ### 💡 Solução de Problemas Durante a Execução
-> 
+>
 > Durante esta etapa, encontramos alguns erros esperados que servem como aprendizado.
-> 
+>
 > -   **Erro 1: Prompt Interativo (`EOFError`)**
 >     -   **Sintoma:** O script parou com um `EOFError: EOF when reading a line`.
 >     -   **Causa:** `git-filter-repo` detectou uma execução anterior e pediu uma confirmação interativa (Y/N), que falha em ambientes não interativos.
 >     -   **Solução:** Remover o diretório de estado do `filter-repo` para que ele acredite que é uma nova execução. O comando `rmdir /s /q .git\filter-repo` (Windows) ou `rm -rf .git/filter-repo` (Linux/macOS) resolve isso.
-> 
+>
 > -   **Erro 2: Repositório "Não Limpo"**
 >     -   **Sintoma:** O script abortou com a mensagem `Aborting: Refusing to destructively overwrite repo history...`.
 >     -   **Causa:** Por segurança, a ferramenta se recusa a rodar em um repositório que não seja um clone "fresco".
@@ -72,7 +72,7 @@ git log dev -- .obsidian/plugins/copilot/data.json
 O histórico local foi reescrito. Agora, precisamos espelhar essa mudança no repositório remoto (GitHub).
 
 > ### ⚠️ Ponto de Atenção: O Remote 'origin' foi Removido
-> 
+>
 > -   **O quê?** Ao rodar, o `git-filter-repo` remove a configuração do seu `remote` (apelidado de `origin`).
 > -   **Por quê?** É uma medida de segurança inteligente para impedir que você faça um `push` acidental para o lugar errado antes de estar pronto.
 > -   **Solução:** Adicionar o remote de volta manualmente antes de tentar o push.

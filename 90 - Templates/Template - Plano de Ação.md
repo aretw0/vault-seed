@@ -16,7 +16,7 @@ prazo:
 
 ## ✅ Resultados Esperados
 - *Liste os entregáveis concretos. O que define o sucesso deste plano?*
-- 
+-
 
 ## 📝 Passos da Ação
 - [ ] Passo 1
@@ -24,7 +24,7 @@ prazo:
 - [ ] Passo 3
 
 ## 🔗 Recursos e Notas Relacionadas
-- 
+-
 
 ## 🤔 Anotações e Decisões
-- 
+-

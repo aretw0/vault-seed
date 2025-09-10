@@ -84,5 +84,3 @@ aliases:
 - Autor: {{author}}
 - Criado em: {{date}}
 - MOC Principal: [[MOC relevante]]
-
-#tag1 #tag2 #tag3
