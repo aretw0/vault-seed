@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.0](https://github.com/aretw0/vault-seed/compare/v0.0.2...v0.1.0) (2025-09-10)
+
+
+### 📚 Documentação
+
+* Add digital gardener's perspective on versioning ([63071ea](https://github.com/aretw0/vault-seed/commit/63071eaf9bea646862029d582c2c48904d8730d4))
+* Document release automation strategy and workflow ([0b67184](https://github.com/aretw0/vault-seed/commit/0b67184aa655976dc90dadb107af6544dd2dc293))
+* Document versioning and release strategy ([fa56f4b](https://github.com/aretw0/vault-seed/commit/fa56f4b4ce978ee57ab22b9f5b89bb3d82b5c48b))
+* Refine versioning strategy examples for template context ([6a5737d](https://github.com/aretw0/vault-seed/commit/6a5737d26d6579b2806397a5eadb8ebb2383f5d6))
+
+
+### ✨ Novos Recursos
+
+* Add minor and major release scripts to package.json ([12dc089](https://github.com/aretw0/vault-seed/commit/12dc08994aae1343c40a299f48e39a426b1db86a))
+* Enable Markdown linting in CI workflow ([bf645d0](https://github.com/aretw0/vault-seed/commit/bf645d033de493105eebc1674bfcbbd5b4dfb439))
+* Flexibiliza regras de lint e documenta o processo ([0fdb69a](https://github.com/aretw0/vault-seed/commit/0fdb69ac54b09616a66aa356af2be8845b2d46eb))
+* **lint:** implementa lint gradual e documenta o processo ([e036183](https://github.com/aretw0/vault-seed/commit/e03618361cffa844cde52dc81a1cd4302912f90c))
+* **workflow:** Add dormant GitHub Release automation workflow ([a8bb01d](https://github.com/aretw0/vault-seed/commit/a8bb01d02b396517b7b3a4c83976702976d57d48))
+* **workflow:** Implement dynamic release workflow activation/deactivation ([696e50b](https://github.com/aretw0/vault-seed/commit/696e50baa206c2cbfba5f37ae6898df47e48800c))
+
 ### 0.0.2 (2025-09-09)
 
 
