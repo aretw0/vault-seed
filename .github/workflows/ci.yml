@@ -16,10 +16,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
 
       - name: Install Markdownlint CLI
         run: npm install -g markdownlint-cli
 
-      - name: Run Markdownlint
-        run: markdownlint '**/*.md' --ignore '.obsidian/**/*.md' --fix=false # --fix=false to avoid modifying files in CI
+      - name: Run Markdownlint (Main Vault)
+        run: markdownlint '**/*.md' --ignore '00 - Inbox/**/*.md' --config .markdownlint.json --fix=false
+
+      - name: Run Markdownlint (Docs)
+        run: markdownlint 'docs/**/*.md' --config docs/.markdownlint.json --fix=false
+
+      - name: Run Markdownlint (Templates)
+        run: markdownlint '90 - Templates/**/*.md' --config '90 - Templates/.markdownlint.json' --fix=false
