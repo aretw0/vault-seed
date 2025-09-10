@@ -65,8 +65,9 @@ A ferramenta `standard-version` automatiza o processo de release com base nas Co
 
 ## Considerações Importantes
 
--   **Controle Manual:** Embora o processo seja automatizado, o desenvolvedor ainda tem controle sobre quando executar o `npm run release`.
--   **Forçar Bump:** Em casos específicos, é possível forçar um bump de versão maior usando opções do `standard-version` (ex: `standard-version -- --release-as major`).
+-   **Controle Manual:** Embora o processo seja automatizado, o desenvolvedor ainda tem controle sobre quando executar o `npm run release`. Para forçar um tipo específico de release, ignorando a análise dos commits, você pode usar os scripts auxiliares:
+    *   `npm run release:minor`: Força uma release `minor`.
+    *   `npm run release:major`: Força uma release `major`.
 -   **Releases Iniciais (0.y.z):** Durante a fase de desenvolvimento inicial (versões `0.y.z`), mesmo mudanças menores podem ser consideradas "breaking changes" na prática, pois a API ainda não é estável. A decisão de fazer um bump `minor` ou `major` nessa fase pode ser mais flexível.
 
 ---

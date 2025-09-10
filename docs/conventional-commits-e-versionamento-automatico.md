@@ -117,6 +117,8 @@ Agora, o comando real:
 npm run release
 ```
 
+> **Nota Importante:** Nossos scripts de release no `package.json` foram customizados com a flag `--infile CHANGELOG.md`. Isso instrui o `standard-version` a determinar a versão atual lendo o `CHANGELOG.md`, em vez de depender do `package.json`. Essa configuração torna nosso processo de versionamento do vault independente do versionamento das ferramentas de desenvolvimento.
+
 Ele irá:
 1.  **Analisar** os commits desde a última versão.
 2.  **Atualizar** o arquivo `VERSION` com o novo número de versão (ex: de `0.0.1` para `0.0.2`).
