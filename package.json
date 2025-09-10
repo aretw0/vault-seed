@@ -5,9 +5,9 @@
   "scripts": {
     "test": "jest",
     "format": "prettier --write \"**/*.md\"",
-    "lint:main": "markdownlint \"*.md\" \"40 - Resources/**/*.md\" \"50 - Archives/**/*.md\" \"99 - Meta & Attachments/**/*.md\" --ignore \"00 - Inbox/**/*.md\" --config .markdownlint.json",
-    "lint:docs": "cd docs && markdownlint \"**/*.md\"",
-    "lint:templates": "cd \"90 - Templates\" && markdownlint \"**/*.md\"",
+    "lint:main": "markdownlint --config .markdownlint.json '10 - Fleeting & Daily/**/*.md' '20 - Projects/**/*.md' '30 - Areas/**/*.md' '40 - Resources/**/*.md' '50 - Archives/**/*.md' '99 - Meta & Attachments/**/*.md'",
+    "lint:docs": "markdownlint --config docs/.markdownlint.json 'docs/**/*.md'",
+    "lint:templates": "markdownlint --config '90 - Templates/.markdownlint.json' '90 - Templates/**/*.md'",
     "lint": "npm run lint:main && npm run lint:docs && npm run lint:templates",
     "release": "standard-version",
     "release:minor": "standard-version -- --release-as minor",

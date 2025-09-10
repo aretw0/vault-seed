@@ -21,11 +21,18 @@ jobs:
       - name: Install Markdownlint CLI
         run: npm install -g markdownlint-cli
 
-      - name: Run Markdownlint (Main Vault)
-        run: markdownlint '**/*.md' --ignore '00 - Inbox/**/*.md' --config .markdownlint.json
+      - name: Lint Main Vault
+        run: |
+          markdownlint --config .markdownlint.json \
+            '10 - Fleeting & Daily/**/*.md' \
+            '20 - Projects/**/*.md' \
+            '30 - Areas/**/*.md' \
+            '40 - Resources/**/*.md' \
+            '50 - Archives/**/*.md' \
+            '99 - Meta & Attachments/**/*.md'
 
-      - name: Run Markdownlint (Docs)
-        run: cd docs && markdownlint '**/*.md'
+      - name: Lint Docs
+        run: markdownlint --config docs/.markdownlint.json 'docs/**/*.md'
 
-      - name: Run Markdownlint (Templates)
-        run: cd "90 - Templates" && markdownlint '**/*.md'
+      - name: Lint Templates
+        run: markdownlint --config '90 - Templates/.markdownlint.json' '90 - Templates/**/*.md'

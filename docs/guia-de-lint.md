@@ -1,93 +1,63 @@
-# Guia de Lint de Markdown
+# Guia de Lint: Mantendo a Qualidade do seu Jardim Digital
 
-Este documento explica como o lint de Markdown está configurado neste projeto, como ele é aplicado em diferentes contextos e como você pode gerenciar suas regras.
+Este guia explica como funciona o processo de *linting* no seu vault, garantindo que suas notas mantenham um padrão de qualidade consistente sem impedir seu fluxo de trabalho criativo.
 
-## O que é Lint de Markdown?
+## O que é Lint?
 
-Linting é o processo de analisar o código (neste caso, arquivos Markdown) para sinalizar erros de programação, bugs, erros estilísticos e construções suspeitas. Ele ajuda a manter a consistência, legibilidade e qualidade dos seus documentos.
+*Linting* é o processo de análise de código (ou, no nosso caso, de texto em Markdown) para encontrar erros de formatação, inconsistências e desvios de estilo. Pense nele como um revisor automático que ajuda a manter a organização e a legibilidade do seu conhecimento.
 
-## Configuração de Lint no Projeto
+**Analogia:** Imagine que cada nota é um livro em uma biblioteca. O linter é o bibliotecário que verifica se a capa, a lombada e a formatação interna de cada livro seguem o padrão da biblioteca, facilitando a vida de quem for consultá-lo no futuro.
 
-Utilizamos a ferramenta `markdownlint` para aplicar as regras de lint. A configuração é feita através de arquivos `.markdownlint.json`.
+## A Filosofia do Lint Gradual
 
-### Regras Globais (Vault Principal)
+Adotamos uma abordagem de "lint gradual", que aplica diferentes níveis de rigor dependendo de onde a nota se encontra no seu vault. A ideia é dar liberdade total na captura de ideias e aumentar a exigência de organização à medida que o conhecimento é refinado.
 
-O arquivo `.markdownlint.json` na raiz do projeto define as regras padrão para a maioria dos arquivos Markdown no seu vault. Ele desativa algumas regras que podem ser muito restritivas para notas pessoais.
+1.  **`00 - Inbox` (Caixa de Entrada):** Nenhuma regra de lint é aplicada aqui. Este é seu espaço para capturar ideias livremente, sem se preocupar com formatação.
+2.  **Pastas de Conteúdo (`10` a `50`, `99`):** Ao mover uma nota do Inbox para uma das pastas do método PARA, regras de lint mais estritas são aplicadas. Isso garante que o conhecimento consolidado seja bem estruturado.
+3.  **`docs/` e `90 - Templates/`:** Essas pastas possuem um conjunto de regras mais flexível, pois servem a propósitos diferentes (documentação e modelos), onde certas regras de formatação de notas não se aplicam.
 
-### Regras Específicas por Diretório
+## Como Funciona na Prática (CI/CD)
 
-Para oferecer maior flexibilidade, algumas pastas possuem configurações de lint personalizadas:
+O processo de lint é automatizado através de um workflow de Integração Contínua (CI) no GitHub Actions (`.github/workflows/ci.yml`). Toda vez que você envia uma alteração (`push`) ou abre uma Proposta de Melhoria (`pull request`), o workflow executa os seguintes passos:
 
-*   **`docs/` (Documentação):**
-    *   Local: `docs/.markdownlint.json`
-    *   Este diretório contém a documentação do projeto. As regras de lint aqui são mais flexíveis do que as regras globais para permitir maior liberdade na escrita de documentação, que pode ter estruturas e estilos variados. Regras relacionadas a cabeçalhos e listas, por exemplo, são mais permissivas.
+1.  **Lint do Vault Principal:** Verifica todas as notas nas pastas de conteúdo (`10` a `99`) usando as regras principais definidas em `.markdownlint.json`.
+2.  **Lint da Documentação:** Analisa os arquivos na pasta `docs/` com as regras mais flexíveis de `docs/.markdownlint.json`.
+3.  **Lint dos Templates:** Verifica os modelos na pasta `90 - Templates/` com as regras de `90 - Templates/.markdownlint.json`.
 
-*   **`90 - Templates/` (Templates):**
-    *   Local: `90 - Templates/.markdownlint.json`
-    *   Esta pasta contém os templates que você usa para criar novas notas. As regras de lint aqui são extremamente permissivas, pois os templates podem conter placeholders, estruturas incompletas ou exemplos que não seguiriam as regras de lint de um documento final.
+Se qualquer um desses passos encontrar um erro, o workflow falhará, impedindo que alterações fora do padrão sejam integradas. Isso serve como um "Rascunho Seguro" (Branch) que protege a qualidade do seu repositório principal.
 
-*   **`00 - Inbox/` (Caixa de Entrada):
-    *   Esta pasta é destinada a rascunhos rápidos e notas temporárias. Por isso, **nenhuma regra de lint é aplicada** a arquivos dentro de `00 - Inbox/`. Isso permite que você capture ideias rapidamente sem se preocupar com a formatação.
+## Como Lidar com Erros de Lint
 
-## Como o Lint é Executado
+Se o workflow apontar um erro, você pode:
 
-O lint é executado em dois principais contextos:
+1.  **Corrigir o Erro:** A melhor abordagem é ajustar a formatação da sua nota para seguir a regra.
+2.  **Desabilitar uma Regra Temporariamente:** Se uma regra específica não faz sentido para uma linha ou um arquivo inteiro, você pode desabilitá-la localmente.
 
-1.  **Localmente (via `npm run lint`):**
-    *   Você pode executar o lint manualmente em seu ambiente de desenvolvimento. O comando `npm run lint` (definido no `package.json`) irá executar o `markdownlint` em todos os arquivos Markdown, respeitando as configurações específicas de cada diretório.
+    *   **Para uma única linha:**
 
-2.  **No Pipeline de Integração Contínua (CI):**
-    *   O workflow `.github/workflows/ci.yml` no GitHub Actions executa o lint automaticamente em cada `push` e `pull request` para a branch `main`. Isso garante que todas as alterações que chegam à branch principal estejam em conformidade com as regras de lint definidas.
-    *   O pipeline executa o `markdownlint` separadamente para o vault principal (excluindo `00 - Inbox/`), para a pasta `docs/` e para a pasta `90 - Templates/`, cada um com sua respectiva configuração.
+        ```markdown
+        <!-- markdownlint-disable-next-line MD013 -->
+        Esta linha é muito, muito, muito, muito, muito, muito, muito, muito longa.
+        ```
 
-## Desativando Regras de Lint
+    *   **Para um arquivo inteiro:** Adicione no topo do arquivo.
 
-Você pode desativar regras de lint de várias maneiras:
+        ```markdown
+        <!-- markdownlint-disable MD013 -->
+        ```
 
-### Desativar uma Regra para um Arquivo Específico
+    *   **Para múltiplas regras:**
 
-Para desativar uma ou mais regras para um arquivo Markdown específico, adicione um comentário HTML no início do arquivo:
+        ```markdown
+        <!-- markdownlint-disable-file MD013 MD041 -->
+        ```
 
-```markdown
-<!-- markdownlint-disable MD001 MD003 -->
+## Configuração Avançada
 
-# Meu Título
-```
+Você pode personalizar o comportamento do lint editando os arquivos de configuração:
 
-Substitua `MD001 MD003` pelos códigos das regras que você deseja desativar.
+*   **`.markdownlint.json`:** Contém as regras principais para as notas do dia a dia.
+*   **`docs/.markdownlint.json`:** Regras para a documentação. Ele herda as regras do arquivo principal através da chave `"extends": "../.markdownlint.json"` e apenas modifica o que for necessário.
+*   **`90 - Templates/.markdownlint.json`:** Mesma lógica, para os templates.
 
-### Desativar uma Regra para uma Linha Específica
-
-Para desativar uma regra para uma linha específica, adicione um comentário HTML na linha anterior:
-
-```markdown
-<!-- markdownlint-disable-next-line MD001 -->
-# Meu Título
-```
-
-### Desativar Todas as Regras para um Arquivo Específico
-
-Para desativar todas as regras para um arquivo específico:
-
-```markdown
-<!-- markdownlint-disable-all -->
-
-# Meu Título
-```
-
-### Configurando Pastas para Serem Ignoradas ou com Comportamento Diferente
-
-Conforme explicado na seção "Regras Específicas por Diretório", a maneira mais eficaz de configurar pastas para terem comportamentos de lint diferentes é através de arquivos `.markdownlint.json` aninhados.
-
-*   **Para ignorar completamente uma pasta:** A pasta `00 - Inbox/` é ignorada diretamente no script de CI e no comando `npm run lint`. Você pode adicionar outras pastas a essa lista de ignorados se necessário.
-*   **Para aplicar regras diferentes:** Crie um arquivo `.markdownlint.json` dentro da pasta com as regras desejadas. O `markdownlint` automaticamente usará a configuração mais próxima do arquivo que está sendo lintado.
-
-## Solução de Problemas
-
-Se o lint estiver falhando no seu ambiente local ou no CI, verifique os seguintes pontos:
-
-*   **Mensagens de Erro:** O `markdownlint` fornece mensagens de erro claras indicando qual regra foi violada e em qual linha.
-*   **Configuração:** Verifique se o arquivo `.markdownlint.json` relevante está configurado corretamente.
-*   **Caminhos:** Certifique-se de que os caminhos nos comandos de lint (no `package.json` ou `ci.yml`) estão corretos e apontam para os arquivos e pastas desejados.
-
-Este guia deve ajudá-lo a entender e gerenciar o lint de Markdown em seu projeto.
+Para ignorar uma pasta inteira, você pode ajustar os comandos nos scripts `lint:*` dentro do `package.json` ou no workflow `ci.yml`.
