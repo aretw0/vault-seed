@@ -22,10 +22,10 @@ jobs:
         run: npm install -g markdownlint-cli
 
       - name: Run Markdownlint (Main Vault)
-        run: markdownlint '**/*.md' --ignore '00 - Inbox/**/*.md' --config .markdownlint.json --fix=false
+        run: markdownlint '**/*.md' --ignore '00 - Inbox/**/*.md' --config .markdownlint.json
 
       - name: Run Markdownlint (Docs)
-        run: markdownlint 'docs/**/*.md' --config docs/.markdownlint.json --fix=false
+        run: cd docs && markdownlint '**/*.md'
 
       - name: Run Markdownlint (Templates)
-        run: markdownlint '90 - Templates/**/*.md' --config '90 - Templates/.markdownlint.json' --fix=false
+        run: cd "90 - Templates" && markdownlint '**/*.md'

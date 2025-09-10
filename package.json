@@ -5,7 +5,10 @@
   "scripts": {
     "test": "jest",
     "format": "prettier --write \"**/*.md\"",
-    "lint": "markdownlint \"**/*.md\"",
+    "lint:main": "markdownlint \"*.md\" \"40 - Resources/**/*.md\" \"50 - Archives/**/*.md\" \"99 - Meta & Attachments/**/*.md\" --ignore \"00 - Inbox/**/*.md\" --config .markdownlint.json",
+    "lint:docs": "cd docs && markdownlint \"**/*.md\"",
+    "lint:templates": "cd \"90 - Templates\" && markdownlint \"**/*.md\"",
+    "lint": "npm run lint:main && npm run lint:docs && npm run lint:templates",
     "release": "standard-version",
     "release:minor": "standard-version -- --release-as minor",
     "release:major": "standard-version -- --release-as major"
