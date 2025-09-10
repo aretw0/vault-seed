@@ -33,7 +33,7 @@ jobs:
         run: |
           # Extrai as notas de release do CHANGELOG.md para a tag atual
           VERSION_TAG=$(echo ${{ github.ref_name }} | sed 's/v//')
-          RELEASE_NOTES=$(awk -v version="$VERSION_TAG" '$0 ~ ("^## \[" version) {p=1; next} /^## \[/ {p=0} p' CHANGELOG.md)
+          RELEASE_NOTES=$(node scripts/get_release_notes.js "$VERSION_TAG")
 
           # Garante que as notas não estejam vazias
           if [ -z "$RELEASE_NOTES" ]; then
