@@ -6,6 +6,7 @@ Pense nesta nota como o canteiro principal do seu jardim. A partir daqui, você 
 
 ## Primeiros Passos no Jardim
 
+- [[Seus Primeiros Passos|Comece aqui! Um guia prático para o ciclo de vida de uma nota]]
 - [[Filosofia e Conceitos Fundamentais|Explore a filosofia por trás do cofre e os conceitos que o sustentam]]
 - [[Entendendo a Estrutura de Pastas|Entenda como o cofre é organizado e como encontrar o que você precisa]]
 - [[Evoluindo seu Vault com Links, Tags e MOCs|Aprenda a conectar suas ideias e criar um mapa do seu conhecimento]]
