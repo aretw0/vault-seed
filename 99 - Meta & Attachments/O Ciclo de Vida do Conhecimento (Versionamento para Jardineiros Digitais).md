@@ -45,6 +45,10 @@ Quando decidimos que uma "colheita" de conhecimento está pronta para ser compar
 3.  **Marcando a Colheita:** Uma "etiqueta" (`tag` Git) é colocada na colheita para identificá-la unicamente (ex: `v1.0.0`).
 4.  **Compartilhando no Pomar Global (GitHub):** Quando enviamos essa etiqueta para o GitHub, um "assistente" automatizado (GitHub Actions) cria um registro oficial da nossa colheita, tornando-a visível para outros jardineiros (se o cofre for público ou compartilhado).
 
+## O Canteiro de Integração: O Branch `develop`
+
+Para gerenciar o fluxo de novas "plantas" (funcionalidades e correções) antes que elas cheguem ao jardim principal (`main`), utilizamos um "canteiro de integração" especial: o branch `develop`. Todas as novas ideias e desenvolvimentos são primeiro cultivados e testados neste canteiro, garantindo que estejam maduros antes de serem transplantados para o `main`.
+
 ## Cultivando com Propósito
 
 Entender o versionamento é mais do que apenas números; é sobre cultivar seu conhecimento com propósito, registrando sua evolução e facilitando a navegação por seu jardim digital.
@@ -53,4 +57,4 @@ Entender o versionamento é mais do que apenas números; é sobre cultivar seu c
 
 **Próximos Passos:**
 
-Compreendendo o ciclo de vida do conhecimento, o próximo passo é ver como essa automação se traduz em um "assistente" (workflow de GitHub Actions) que nos ajuda a publicar nossas colheitas no GitHub. Para detalhes técnicos sobre como o processo de release funciona, incluindo a automação e o "guarda", consulte o documento [Processo de Release e Versionamento](docs/processo-de-release.md).
+Compreendendo o ciclo de vida do conhecimento, o próximo passo é ver como essa automação se traduz em um "assistente" (workflow de GitHub Actions) que nos ajuda a publicar nossas colheitas no GitHub. Para detalhes técnicos sobre como o processo de release funciona, incluindo a automação e o "guarda", consulte o documento [Processo de Release e Versionamento](docs/processo-de-release.md). Para uma visão completa da nossa estratégia de branches e merges, incluindo o papel do branch `develop`, consulte o [Fluxo de Trabalho Git: Estratégia de Branches e Merges](docs/git-workflow.md).
