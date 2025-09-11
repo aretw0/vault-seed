@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Use the Node.js version your project uses
+          node-version: "20" # Use the Node.js version your project uses
 
       - name: Install dependencies
         run: npm install
@@ -36,3 +36,6 @@ jobs:
       - name: Push changes and tag
         run: |
           git push --follow-tags origin main # Push to main
+        env:
+          # Garante que o git push use o token correto
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN_AUTOMATE_VERSIONING }}
