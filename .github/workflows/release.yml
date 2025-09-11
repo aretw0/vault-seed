@@ -1,114 +1,38 @@
-# .github/workflows/release.yml
-name: Publicar Release
-
-# Este workflow é executado automaticamente quando uma nova tag (ex: v1.0.0) é criada e enviada para o repositório.
-# Ele automatiza a criação de releases no GitHub, extraindo as notas do CHANGELOG.md.
-# Você também pode executá-lo manualmente através da aba 'Actions' no GitHub.
+name: 🚀 Automação de Release e Versionamento
 
 on:
   push:
     branches:
-      - main # Executa quando mudanças são enviadas para a branch main
-  workflow_dispatch: # Permite execução manual através da interface do GitHub Actions
-
-permissions:
-  contents: write # Permite que o GITHUB_TOKEN crie e edite releases e outros conteúdos do repositório.
+      - main # Este workflow é acionado quando algo é mesclado na branch 'main'
 
 jobs:
-  create-release:
+  release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Permissão para criar tags e releases
+      issues: write # Permissão para criar GitHub releases
+      pull-requests: write # Permissão para atualizar pull requests (se necessário pelos plugins)
+
     steps:
       - name: 🛎️ Checkout do Código
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Necessário para que standard-version possa analisar o histórico completo
+          fetch-depth: 0 # Necessário para analisar o histórico completo de commits
 
-      - name: 🏷️ Verificar Tag no Commit
-        id: check_tag
-        run: |
-          TAG=$(git describe --tags --exact-match ${{ github.sha }} 2>/dev/null || echo "")
-          if [ -z "$TAG" ]; then
-            echo "::notice::Nenhuma tag encontrada no commit atual. Pulando a criação da release."
-            echo "skip_release=true" >> $GITHUB_OUTPUT
-          else
-            echo "::notice::Tag '${TAG}' encontrada no commit atual. Prosseguindo com a release."
-            echo "skip_release=false" >> $GITHUB_OUTPUT
-          fi
-
-      # Os passos seguintes só serão executados se uma tag for encontrada no commit atual.
-      # Isso garante que releases só sejam criadas para commits tagueados na branch main.
       - name: ⚙️ Configurar Node.js
-        if: steps.check_tag.outputs.skip_release == 'false'
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Use a versão do Node.js que seu projeto utiliza
+          node-version: "20" # Use a versão do Node.js que seu projeto utiliza
 
       - name: 📦 Instalar Dependências
-        if: steps.check_tag.outputs.skip_release == 'false' # Só executa se uma tag for encontrada
-        run: npm install # Instala as dependências do package.json, incluindo standard-version
+        run: npm install # Instala as dependências do projeto, incluindo o semantic-release
 
-      - name: 🛡️ Verificar Commits para Changelog
-        if: steps.check_tag.outputs.skip_release == 'false' # Só executa se uma tag for encontrada
+      - name: 👤 Configurar Usuário Git
         run: |
-          CURRENT_TAG_REF=${{ github.ref }} # e.g., refs/tags/v0.2.0
-          CURRENT_TAG_NAME=${{ github.ref_name }} # e.g., v0.2.0
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Get the commit hash of the current tag
-          CURRENT_TAG_COMMIT=$(git rev-list -n 1 $CURRENT_TAG_REF)
-
-          # Find the previous *clean* tag name
-          # This gets all tags, sorts them by version, and picks the second one (the one before CURRENT_TAG_NAME)
-          # Find the previous *actual* tag name
-          # This gets the commit hash of the tag immediately preceding the current tag
-          PREVIOUS_TAG_COMMIT_HASH=$(git rev-list --tags --max-count=1 --skip=1 ${{ github.sha }})
-          PREVIOUS_TAG_NAME=$(git describe --tags --abbrev=0 $PREVIOUS_TAG_COMMIT_HASH 2>/dev/null || echo "")
-
-          echo "::debug::CURRENT_TAG_REF: $CURRENT_TAG_REF"
-
-          if [ -z "$PREVIOUS_TAG_NAME" ]; then
-            echo "::warning::Nenhuma tag anterior encontrada. Verificando commits desde o início do histórico até a tag atual."
-            COMMITS_FOR_CHANGELOG=$(git log $CURRENT_TAG_COMMIT --pretty=format:"%s")
-          else
-            echo "::debug::Última tag anterior encontrada: $PREVIOUS_TAG_NAME"
-            COMMITS_FOR_CHANGELOG=$(git log $PREVIOUS_TAG_NAME..$CURRENT_TAG_COMMIT --pretty=format:"%s")
-          fi
-
-          echo "::debug::Commits que justificam esta release ($PREVIOUS_TAG_NAME..$CURRENT_TAG_NAME):"
-          echo "$COMMITS_FOR_CHANGELOG"
-
-          if echo "$COMMITS_FOR_CHANGELOG" | grep -Eq "^(feat|fix|refactor):|BREAKING CHANGE:"; then
-            echo "::notice::Commits relevantes para o changelog encontrados. Prosseguindo com a release."
-          else
-            echo "::error::Nenhum commit do tipo 'feat', 'fix', 'refactor' ou 'BREAKING CHANGE' encontrado para justificar esta release."
-            echo "::error::Não será possível gerar uma release com conteúdo vazio no changelog."
-            echo "::error::Por favor, adicione um commit relevante e tente novamente."
-            exit 1
-          fi
-
-      - name: 📝 Obter Notas de Release
-        if: steps.check_tag.outputs.skip_release == 'false' # Só executa se uma tag for encontrada
-        id: get_release_notes
-        run: |
-          # Extrai as notas de release do CHANGELOG.md para a tag atual
-          VERSION_TAG=$(echo ${{ github.ref_name }} | sed 's/v//')
-          RELEASE_NOTES=$(node scripts/get_release_notes.js "$VERSION_TAG")
-
-          # Garante que as notas não estejam vazias
-          if [ -z "$RELEASE_NOTES" ]; then
-            echo "::error::Não foi possível extrair as notas de release para a versão ${VERSION_TAG} do CHANGELOG.md."
-            exit 1
-          fi
-
-          echo "release_notes<<EOF" >> $GITHUB_OUTPUT
-          echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-      - name: 🚀 Criar GitHub Release
-        if: steps.check_tag.outputs.skip_release == 'false' # Só executa se uma tag for encontrada
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.ref }}
-          name: ${{ github.ref_name }}
-          body: ${{ steps.get_release_notes.outputs.release_notes }}
+      - name: 🚀 Executar Semantic Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GITHUB_TOKEN é fornecido automaticamente pelo GitHub
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Token fornecido pelo GitHub Actions
+        run: npx semantic-release

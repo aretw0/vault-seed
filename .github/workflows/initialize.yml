@@ -49,29 +49,15 @@ jobs:
       - name: 🗑️ Auto-destrói e Commita
         run: |
           git rm --ignore-unmatch .github/workflows/initialize.yml
-          echo "🗑️ Removendo o workflow de CI template para simplificar o setup inicial."
-          rm -f .github/workflows/template-ci.yml
-          echo "🗑️ Removendo templates de Pull Request técnicos para simplificar o setup inicial."
-          rm -f .github/PULL_REQUEST_TEMPLATE/chore-maintenance.md
-          rm -f .github/PULL_REQUEST_TEMPLATE/feat-technical-enhancement.md
-          rm -f .github/PULL_REQUEST_TEMPLATE/fix-technical.md
-          rm -f .github/PULL_REQUEST_TEMPLATE/refactor-knowledge-note.md
-          echo "🗑️ Removendo o workflow de automação de versionamento para simplificar o setup inicial."
-          rm -f .github/workflows/automate-versioning.yml
-          echo "🗑️ Removendo o workflow de sincronização de branches para simplificar o setup inicial."
-          rm -f .github/workflows/sync-develop-with-main.yml
-
           # Adiciona todos os arquivos que foram removidos ou modificados para o stage
           git add CHANGELOG.md VERSION README.md CONTRIBUTING.md \
               .github/workflows/template-ci.yml \
-              .github/workflows/automate-versioning.yml \
-              .github/workflows/sync-develop-with-main.yml \
               .github/PULL_REQUEST_TEMPLATE/chore-maintenance.md \
               .github/PULL_REQUEST_TEMPLATE/feat-technical-enhancement.md \
               .github/PULL_REQUEST_TEMPLATE/fix-technical.md \
               .github/PULL_REQUEST_TEMPLATE/refactor-knowledge-note.md
 
-          if ! git diff-index --quiet --cached HEAD; then
+          if ! git diff-index --quiet --cached HEAD;
             git commit -m "chore(project): 🎉 inicializa o vault a partir do template"
             git push
           else
