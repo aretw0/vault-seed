@@ -79,20 +79,31 @@ Para aplicar estas estratégias, o administrador do repositório deve:
 
 ## 5. Proteção de Branches
 
-Para garantir a adesão a este fluxo de trabalho, as seguintes regras de proteção de branch serão aplicadas em `main` e `develop`:
+Para garantir a adesão a este fluxo de trabalho, as regras de proteção de branch são aplicadas em `main` e `develop`. Elas funcionam como uma "cerca de segurança" para as branches mais importantes. Abaixo estão as regras recomendadas e como configurá-las no GitHub.
 
-*   **`main`:**
-    *   Exigir Pull Request para mesclagem.
-    *   Exigir aprovações (1 ou mais).
-    *   Exigir que as verificações de status passem.
-    *   Incluir administradores nas regras.
-    *   Não permitir ignorar as configurações acima.
-*   **`develop`:**
-    *   Exigir Pull Request para mesclagem.
-    *   Exigir aprovações (1 ou mais, pode ser menos rigoroso que `main`).
-    *   Exigir que as verificações de status passem.
-    *   Incluir administradores nas regras.
-    *   Não permitir ignorar as configurações acima.
+### Configurando as Regras
+
+1.  Acesse a página de configuração de branches: `Settings` > `Branches`.
+2.  Clique em **"Add branch protection rule"**.
+
+#### Regra para `main`
+
+*   **Branch name pattern:** Digite `main`.
+*   Marque **"Require a pull request before merging"**.
+    *   Dentro dela, marque **"Require approvals"** e deixe o número como `1`.
+*   Marque **"Require status checks to pass before merging"**.
+    *   Dentro dela, marque **"Require branches to be up to date before merging"**.
+*   Marque **"Do not allow bypassing the above settings"**.
+*   Clique em **"Create"**.
+
+#### Regra para `develop`
+
+*   Clique em **"Add branch protection rule"** novamente.
+*   **Branch name pattern:** Digite `develop`.
+*   Marque **"Require a pull request before merging"**.
+    *   Opcional: Marque **"Require approvals"** com `1` se desejar o mesmo rigor da `main`.
+*   Marque **"Require status checks to pass before merging"**.
+*   Clique em **"Create"**.
 
 ---
 
