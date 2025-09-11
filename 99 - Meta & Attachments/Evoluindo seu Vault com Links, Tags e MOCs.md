@@ -1,3 +1,24 @@
+---
+title: Evoluindo seu Vault com Links, Tags e MOCs
+aliases:
+  - Links, Tags e MOCs
+  - Organização Avançada
+tags:
+  - meta/organizacao
+  - meta/workflow
+  - obsidian/dataview
+  - obsidian/moc
+status: published
+created: 2023-10-27
+updated: 2023-10-27
+category: guia
+audience: intermediario
+related:
+  - "[[Guia do Jardineiro Digital]]"
+  - "[[O que são MOCs (Mapas de Conteúdo)]]"
+  - "[[Templater]]"
+  - "[[Links]]" # Referência a um conceito, não a um arquivo específico no vault
+---
 # Evoluindo seu Vault com Links, Tags e MOCs
 
 A estrutura inicial é só um ponto de partida. A verdadeira organização emerge com o uso. Uma coisa é certa: seu vault crescerá! Veja como gerenciar isso sem **complicações excessivas** (over-engineering):

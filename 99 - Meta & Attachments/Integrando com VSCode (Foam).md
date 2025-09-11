@@ -1,3 +1,21 @@
+---
+title: Integrando com VSCode (Foam)
+aliases:
+  - VSCode Foam
+  - Foam VSCode
+tags:
+  - meta/ferramentas
+  - meta/vscode
+  - meta/foam
+status: published
+created: 2023-10-27
+updated: 2023-10-27
+category: guia
+audience: iniciante
+related:
+  - "[[Guia do Jardineiro Digital]]"
+  - "[[Plugins Essenciais e Recomendados]]"
+---
 # Integrando com VSCode (Foam)
 
 Embora este vault seja otimizado para o Obsidian, sua estrutura baseada em Markdown e pastas o torna 100% compatível com o [Foam](https://foambubble.github.io/), uma coleção de extensões para o Visual Studio Code que o transforma em uma poderosa ferramenta de gestão de conhecimento.

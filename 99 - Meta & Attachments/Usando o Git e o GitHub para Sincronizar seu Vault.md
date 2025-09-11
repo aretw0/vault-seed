@@ -1,3 +1,24 @@
+---
+title: Usando o Git e o GitHub para Sincronizar seu Vault
+aliases:
+  - Sincronização Git
+  - GitHub para Vault
+tags:
+  - meta/git
+  - meta/github
+  - meta/workflow
+status: published
+created: 2023-10-27
+updated: 2023-10-27
+category: guia
+audience: iniciante
+related:
+  - "[[Guia do Jardineiro Digital]]"
+  - "[[O Ciclo de Vida do Conhecimento (Versionamento para Jardineiros Digitais)]]"
+  - "[[Conventional Commits e Versionamento Automático]]"
+  - "[[Estratégia de Versionamento]]"
+  - "[[Processo de Release]]"
+---
 # Usando o Git e o GitHub para Sincronizar seu Vault
 
 Este vault é configurado para ser sincronizado usando o Git e o GitHub, permitindo um controle de versão robusto e um backup seguro na nuvem.

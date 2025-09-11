@@ -1,3 +1,23 @@
+---
+title: O Ciclo de Vida do Conhecimento (Versionamento para Jardineiros Digitais)
+alias:
+  - Versionamento do Conhecimento
+  - Ciclo de Vida do Conhecimento
+tags:
+  - meta/versionamento
+  - meta/git
+  - meta/workflow
+status: published
+created: 2023-10-27
+updated: 2023-10-27
+category: conceito
+audience: todos
+related:
+  - "[[Guia do Jardineiro Digital]]"
+  - "[[Usando o Git e o GitHub para Sincronizar seu Vault]]"
+  - "[[Processo de Release]]"
+  - "[[git-workflow]]"
+---
 # O Ciclo de Vida do Conhecimento: Versionamento para Jardineiros Digitais
 
 No nosso jardim digital, o conhecimento não é estático; ele cresce, evolui e se transforma. Assim como um jardineiro cuida de suas plantas, nós cuidamos das nossas notas, e esse cuidado inclui registrar suas fases de desenvolvimento. É aqui que entra o "versionamento", uma forma de mapear a jornada do nosso conhecimento.

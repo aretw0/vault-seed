@@ -1,3 +1,29 @@
+---
+title: Guia do Jardineiro Digital
+aliases:
+  - Guia do Vault
+  - Jardineiro Digital
+tags:
+  - meta/guia
+  - meta/documentacao
+  - vault/setup
+status: published
+created: 2023-10-27
+updated: 2023-10-27
+category: guia
+audience: iniciante
+related:
+  - "[[Seus Primeiros Passos]]"
+  - "[[Filosofia e Conceitos Fundamentais]]"
+  - "[[Entendendo a Estrutura de Pastas]]"
+  - "[[Evoluindo seu Vault com Links, Tags e MOCs]]"
+  - "[[Convenções e Boas Práticas]]"
+  - "[[Visualização do Fluxo do Vault]]"
+  - "[[Usando o Git e o GitHub para Sincronizar seu Vault]]"
+  - "[[Plugins Essenciais e Recomendados]]"
+  - "[[Usando o Vault no Celular vs. Desktop]]"
+  - "[[Integrando com VSCode (Foam)]]"
+---
 # 🌱 Guia do Jardineiro Digital
 
 Bem-vindo(a) à sua sementeira de ideias! Esta nota é o ponto de partida para entender como cultivar seu conhecimento neste vault: a filosofia por trás dele, as ferramentas de jardinagem e como adaptá-lo para que seu jardim floresça.

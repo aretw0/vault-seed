@@ -1,3 +1,21 @@
+---
+title: Usando o Vault no Celular vs. Desktop
+aliases:
+  - Sincronização Mobile
+  - Vault Multiplataforma
+tags:
+  - meta/sincronizacao
+  - meta/mobile
+  - meta/desktop
+status: published
+created: 2023-10-27
+updated: 2023-10-27
+category: guia
+audience: iniciante
+related:
+  - "[[Guia do Jardineiro Digital]]"
+  - "[[Usando o Git e o GitHub para Sincronizar seu Vault]]"
+---
 # Usando o Vault no Celular vs. Desktop
 
 Utilizar seu vault em múltiplos dispositivos é um dos grandes benefícios desta abordagem. Para garantir a melhor performance e controle, recomendamos separar a edição das notas da sincronização. A filosofia é: use o Obsidian para o que ele faz de melhor (escrever e conectar ideias) e use uma ferramenta dedicada para sincronização com Git.

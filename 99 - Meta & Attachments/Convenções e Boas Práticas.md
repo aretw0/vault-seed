@@ -1,3 +1,24 @@
+---
+title: Convenções e Boas Práticas
+aliases:
+  - Boas Práticas do Vault
+  - Convenções do Vault
+tags:
+  - meta/organizacao
+  - meta/workflow
+  - iniciante
+status: published
+created: 2023-10-27
+updated: 2023-10-27
+category: guia
+audience: iniciante
+related:
+  - "[[Guia do Jardineiro Digital]]"
+  - "[[Links]]"
+  - "[[O que são MOCs (Mapas de Conteúdo)]]"
+  - "[[Templater]]"
+  - "[[Dataview]]"
+---
 # Convenções e Boas Práticas
 
 Para manter a consistência e a eficiência do seu jardim digital, estas são as convenções e boas práticas recomendadas. Elas servem como um guia para garantir que seu conhecimento permaneça organizado e fácil de navegar à medida que cresce.

@@ -1,3 +1,22 @@
+---
+title: Plugins Essenciais e Recomendados
+aliases:
+  - Plugins Obsidian
+  - Recomendações de Plugins
+tags:
+  - obsidian/plugin
+  - obsidian/produtividade
+status: published
+created: 2023-10-27
+updated: 2023-10-27
+category: guia
+audience: iniciante
+related:
+  - "[[Guia do Jardineiro Digital]]"
+  - "[[Usando o Git e o GitHub para Sincronizar seu Vault]]"
+  - "[[Evoluindo seu Vault com Links, Tags e MOCs]]"
+  - "[[Usando o Plugin Templates]]"
+---
 # Plugins Essenciais e Recomendados
 
 Os plugins do Obsidian expandem significativamente suas funcionalidades, permitindo personalizar o fluxo de trabalho, automatizar tarefas e criar visualizações dinâmicas. Eles transformam o Obsidian em uma ferramenta poderosa e adaptável às suas necessidades específicas, seja para organização pessoal, estudos ou projetos complexos. Explore os plugins para desbloquear todo o potencial do seu vault!
