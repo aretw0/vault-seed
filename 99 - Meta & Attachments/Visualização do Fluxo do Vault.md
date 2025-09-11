@@ -1,3 +1,23 @@
+---
+title: Visualização do Fluxo do Vault
+aliases:
+  - Fluxo do Vault
+  - Mapa Mental do Vault
+tags:
+  - meta/diagrama
+  - meta/workflow
+  - iniciante
+status: published
+created: 2023-10-27
+updated: 2023-10-27
+category: guia
+audience: iniciante
+related:
+  - "[[Guia do Jardineiro Digital]]"
+  - "[[Links]]"
+  - "[[O que são MOCs (Mapas de Conteúdo)]]"
+  - "[[O que é o método PARA]]"
+---
 # Visualização do Fluxo do Vault
 
 Para uma representação visual da estrutura de pastas e das conexões entre as notas, você pode visualizar o mapa mental do vault.

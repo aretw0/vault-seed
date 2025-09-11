@@ -1,3 +1,21 @@
+---
+title: Automatizando a Inicialização do Vault
+aliases:
+  - Inicialização Automática
+  - Setup Automático
+tags:
+  - meta/automacao
+  - meta/github-actions
+  - meta/devops
+status: published
+created: 2023-10-27
+updated: 2023-10-27
+category: conceito
+audience: todos
+related:
+  - "[[Guia do Jardineiro Digital]]"
+  - "[[Usando o Git e o GitHub para Sincronizar seu Vault]]"
+---
 # Automatizando a Inicialização do Vault
 
 ## O Desafio: Simplificando o Início para Todos
