@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.1](https://github.com/aretw0/vault-seed/compare/v0.2.0...v0.2.1) (2025-09-11)
+
+
+### ✨ Novos Recursos
+
+* adiciona feature flag para controlar workflows do Gemini ([#6](https://github.com/aretw0/vault-seed/issues/6)) ([2c776cf](https://github.com/aretw0/vault-seed/commit/2c776cf277c313c93c2e0df27d3701ff936ea9cb))
+* **setup:** Feature/initial setup ([#4](https://github.com/aretw0/vault-seed/issues/4)) ([#5](https://github.com/aretw0/vault-seed/issues/5)) ([8baeb95](https://github.com/aretw0/vault-seed/commit/8baeb952082cf732632903cd33bb0e03a4afff07))
+
 ## [0.2.0](https://github.com/aretw0/vault-seed/compare/v0.1.4...v0.2.0) (2025-09-11)
 
 
