@@ -41,7 +41,12 @@ jobs:
 
           # Find the previous *clean* tag name
           # This gets all tags, sorts them by version, and picks the second one (the one before CURRENT_TAG_NAME)
-          PREVIOUS_TAG_NAME=$(git tag --sort=-v:refname | grep -B 1 "^$CURRENT_TAG_NAME$" | head -n 1)
+          # Find the previous *actual* tag name
+          # This gets the commit hash of the tag immediately preceding the current tag
+          PREVIOUS_TAG_COMMIT_HASH=$(git rev-list --tags --max-count=1 --skip=1 ${{ github.sha }})
+          PREVIOUS_TAG_NAME=$(git describe --tags --abbrev=0 $PREVIOUS_TAG_COMMIT_HASH 2>/dev/null || echo "")
+
+          echo "::debug::CURRENT_TAG_REF: $CURRENT_TAG_REF"
 
           if [ -z "$PREVIOUS_TAG_NAME" ]; then
             echo "::warning::Nenhuma tag anterior encontrada. Verificando commits desde o início do histórico até a tag atual."
