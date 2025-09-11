@@ -2,9 +2,13 @@ name: Vault CI
 
 on:
   push:
-    branches: [main] # Ou a branch que você usa como principal
+    branches:
+      - main
+      - develop
   pull_request:
-    branches: [main]
+    branches:
+      - main
+      - develop
 
 jobs:
   build:

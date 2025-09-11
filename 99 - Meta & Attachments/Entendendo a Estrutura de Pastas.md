@@ -1,3 +1,25 @@
+---
+title: Entendendo a Estrutura de Pastas
+aliases:
+  - Estrutura de Pastas
+  - Organização do Vault
+tags:
+  - meta/estrutura
+  - meta/organizacao
+  - iniciante
+status: published
+created: 2023-10-27
+updated: 2023-10-27
+category: guia
+audience: iniciante
+related:
+  - "[[Guia do Jardineiro Digital]]"
+  - "[[Seus Primeiros Passos]]"
+  - "[[Links]]"
+  - "[[O que são MOCs (Mapas de Conteúdo)]]"
+  - "[[Daily Note]]"
+  - "[[Templater]]"
+---
 # Entendendo a Estrutura de Pastas
 
 A ideia é começar com poucas pastas de alto nível, numeradas para manter a ordem visual no explorador de arquivos. A maior parte da organização virá de [[Links]], #tags e [[O que são MOCs (Mapas de Conteúdo)]].

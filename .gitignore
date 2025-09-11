@@ -70,3 +70,5 @@ obsidian-web-clipper-settings.json
 # Específico do Foam (para VS Code)
 # ===================================================================
 .foam/
+
+gha-creds-*.json

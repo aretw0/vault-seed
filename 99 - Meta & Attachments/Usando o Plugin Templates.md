@@ -1,9 +1,20 @@
 ---
+title: Usando o Plugin Templates
+aliases:
+  - Plugin Templates
+  - Templates Obsidian
 tags:
-  - obsidian
-  - templates
-  - plugins
-  - workflows
+  - obsidian/plugin
+  - obsidian/templates
+  - meta/guia
+status: published
+created: 2023-10-27
+updated: 2023-10-27
+category: guia
+audience: iniciante
+related:
+  - "[[Guia do Jardineiro Digital]]"
+  - "[[Plugins Essenciais e Recomendados]]"
 ---
 # Guia: Usando o Plugin Templates
 
