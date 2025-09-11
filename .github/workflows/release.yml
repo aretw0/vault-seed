@@ -55,8 +55,6 @@ jobs:
           echo "::debug::Commits que justificam esta release ($PREVIOUS_TAG_NAME..$CURRENT_TAG_NAME):"
           echo "$COMMITS_FOR_CHANGELOG"
 
-          echo "$COMMITS_FOR_CHANGELOG"
-
           if echo "$COMMITS_FOR_CHANGELOG" | grep -Eq "^(feat|fix|refactor):|BREAKING CHANGE:"; then
             echo "::notice::Commits relevantes para o changelog encontrados. Prosseguindo com a release."
           else
