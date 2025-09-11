@@ -31,6 +31,31 @@ jobs:
       - name: 📦 Instalar Dependências
         run: npm install # Instala as dependências do package.json, incluindo standard-version
 
+      - name: 🛡️ Verificar Commits para Changelog
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$LAST_TAG" ]; then
+            echo "::warning::Nenhuma tag anterior encontrada. Verificando todos os commits."
+            COMMITS_SINCE_LAST_TAG=$(git log --pretty=format:"%s")
+          else
+            echo "::debug::Última tag encontrada: $LAST_TAG"
+            COMMITS_SINCE_LAST_TAG=$(git log $LAST_TAG..HEAD --pretty=format:"%s")
+          fi
+
+          echo "::debug::Commits desde a última tag ou início do histórico:"
+          echo "$COMMITS_SINCE_LAST_TAG"
+
+          # Verifica se há commits que geram changelog (feat, fix, refactor, ou BREAKING CHANGE)
+          # Usamos grep -E para regex estendida e -q para modo silencioso (apenas status de saída)
+          if echo "$COMMITS_SINCE_LAST_TAG" | grep -Eq "^(feat|fix|refactor):|BREAKING CHANGE:"; then
+            echo "::notice::Commits relevantes para o changelog encontrados. Prosseguindo com a release."
+          else
+            echo "::error::Nenhum commit do tipo 'feat', 'fix', 'refactor' ou 'BREAKING CHANGE' encontrado desde a última release."
+            echo "::error::Não será possível gerar uma release com conteúdo vazio no changelog."
+            echo "::error::Por favor, adicione um commit relevante e tente novamente."
+            exit 1
+          fi
+
       - name: 📝 Obter Notas de Release
         id: get_release_notes
         run: |
