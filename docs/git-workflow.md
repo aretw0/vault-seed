@@ -95,3 +95,34 @@ Para garantir a adesão a este fluxo de trabalho, as seguintes regras de proteç
     *   Não permitir ignorar as configurações acima.
 
 ---
+
+### 7. Limpeza de Branches
+
+Após uma Pull Request ser mesclada (seja de `feature` para `develop`, ou de `develop` para `main`), a branch de origem (a `feature` ou `develop` que foi mesclada) geralmente não é mais necessária. Mantê-las pode poluir o histórico de branches e o ambiente de desenvolvimento.
+
+**Processo de Limpeza:**
+
+1.  **Excluir a Branch Remota:**
+    *   Após a mesclagem de uma Pull Request no GitHub (ou plataforma similar), a interface geralmente oferece uma opção para "Delete branch" (Excluir branch). É recomendado fazer isso para manter o repositório remoto limpo.
+    *   Alternativamente, via linha de comando:
+        ```bash
+        git push origin --delete <nome-da-branch>
+        ```
+2.  **Excluir a Branch Local:**
+    *   Certifique-se de que você não está na branch que deseja excluir. Mude para `develop` ou `main`.
+    *   Exclua a branch localmente:
+        ```bash
+        git branch -d <nome-da-branch>
+        ```
+        *   O comando `-d` (ou `--delete`) só funciona se a branch já foi totalmente mesclada.
+        *   Se houver commits não mesclados e você quiser forçar a exclusão (com perda de dados), use `-D` (ou `--delete --force`):
+            ```bash
+            git branch -D <nome-da-branch>
+            ```
+3.  **Limpar Referências Remotas Obsoletas (Pruning):**
+    *   Às vezes, mesmo após a exclusão de uma branch remota, sua referência local (`origin/<nome-da-branch>`) pode persistir. Para limpar essas referências obsoletas:
+        ```bash
+        git fetch --prune
+        # Ou, para uma limpeza mais específica:
+        git remote prune origin
+        ```
