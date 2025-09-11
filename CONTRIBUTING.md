@@ -25,14 +25,15 @@ Independentemente da forma, o processo sempre passará por um fluxo de revisão 
 
 ### 1. O Fluxo de Trabalho Padrão (Git)
 
-Para garantir controle e qualidade, todas as alterações seguem um processo simples:
+Para garantir controle e qualidade, todas as alterações seguem um processo simples. **Isso inclui o próprio proprietário do projeto, que se submete ao mesmo fluxo de revisão para garantir a integridade e a qualidade do branch principal (`main`).**
 
 1.  **Crie um "Rascunho Seguro" (Branch):** Isole seu trabalho para não impactar a versão principal.
 2.  **Faça seus Commits:** Salve seu progresso com mensagens claras, seguindo o padrão de [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
-3.  **Abra uma "Proposta de Melhoria" (Pull Request):** Submeta suas alterações para revisão. É aqui que a colaboração acontece e garantimos que o humano está no controle.
+3.  **Abra uma "Proposta de Melhoria" (Pull Request):** Submeta suas alterações para revisão. É aqui que a colaboração acontece e garantimos que o humano está no controle, com o auxílio de verificações automatizadas (CI/CD).
 
-> Para um guia detalhado sobre nosso fluxo de Git, consulte o documento:
-> **[Usando o Git e o GitHub para Sincronizar seu Vault](./99%20-%20Meta%20&%20Attachments/Usando%20o%20Git%20e%20o%20GitHub%20para%20Sincronizar%20seu%20Vault.md)**
+> Para um guia detalhado sobre nosso fluxo de Git e como ele se integra ao processo de versionamento e release, consulte os documentos:
+> *   **[Usando o Git e o GitHub para Sincronizar seu Vault](./99%20-%20Meta%20&%20Attachments/Usando%20o%20Git%20e%20o%20GitHub%20para%20Sincronizar%20seu%20Vault.md)**
+> *   **[Processo de Release e Versionamento](./docs/processo-de-release.md)**
 
 ### 2. Princípios e Convenções
 
