@@ -27,11 +27,14 @@ Independentemente da forma, o processo sempre passará por um fluxo de revisão 
 
 Para garantir controle e qualidade, todas as alterações seguem um processo simples. **Isso inclui o próprio proprietário do projeto, que se submete ao mesmo fluxo de revisão para garantir a integridade e a qualidade do branch principal (`main`).**
 
-1.  **Crie um "Rascunho Seguro" (Branch):** Isole seu trabalho para não impactar a versão principal.
-2.  **Faça seus Commits:** Salve seu progresso com mensagens claras, seguindo o padrão de [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
-3.  **Abra uma "Proposta de Melhoria" (Pull Request):** Submeta suas alterações para revisão. É aqui que a colaboração acontece e garantimos que o humano está no controle, com o auxílio de verificações automatizadas (CI/CD).
+1.  **Crie um "Rascunho Seguro" (Branch):** Antes de escrever, crie uma cópia segura do trabalho principal. Use o branch `develop` como base para novas ideias ou melhorias. Para correções urgentes, use o branch `main`. Isso garante que a versão principal esteja sempre estável.
+2.  **Faça seus Commits (Salve seu Progresso):** Ao salvar seu trabalho, escreva uma mensagem clara sobre o que você fez. Usamos um padrão chamado [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/), que nos ajuda a entender o histórico e a gerar notas de versão automaticamente. Pense nisso como um diário de bordo organizado.
+3.  **Abra uma "Proposta de Melhoria" (Pull Request):** Quando seu rascunho estiver pronto, proponha integrá-lo ao trabalho principal. Sua proposta será revisada por outros colaboradores (e por robôs que verificam a qualidade) antes de ser aprovada. É um processo colaborativo que garante que o humano está sempre no controle.
 
-> Para um guia detalhado sobre nosso fluxo de Git e como ele se integra ao processo de versionamento e release, consulte os documentos:
+> Para um guia detalhado sobre nosso fluxo de Git, incluindo o uso do branch `develop` e as estratégias de merge, consulte o documento:
+> *   **[Fluxo de Trabalho Git: Estratégia de Branches e Merges](./docs/git-workflow.md)**
+>
+> Para entender como o fluxo de Git se integra ao processo de versionamento e release, consulte os documentos:
 > *   **[Usando o Git e o GitHub para Sincronizar seu Vault](./99%20-%20Meta%20&%20Attachments/Usando%20o%20Git%20e%20o%20GitHub%20para%20Sincronizar%20seu%20Vault.md)**
 > *   **[Processo de Release e Versionamento](./docs/processo-de-release.md)**
 
