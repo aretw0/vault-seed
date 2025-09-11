@@ -30,7 +30,7 @@ jobs:
           echo "# Changelog" > CHANGELOG.md
           echo "" >> CHANGELOG.md
           echo "Todas as mudanças notáveis neste projeto serão documentadas neste arquivo." >> CHANGELOG.md
-          
+
           echo "🔥 Resetando VERSION para 0.0.1"
           echo "0.0.1" > VERSION
 
@@ -60,7 +60,7 @@ jobs:
           rm -f .github/workflows/automate-versioning.yml
           echo "🗑️ Removendo o workflow de sincronização de branches para simplificar o setup inicial."
           rm -f .github/workflows/sync-develop-with-main.yml
-          
+
           # Adiciona todos os arquivos que foram removidos ou modificados para o stage
           git add CHANGELOG.md VERSION README.md CONTRIBUTING.md \
               .github/workflows/template-ci.yml \
@@ -70,7 +70,7 @@ jobs:
               .github/PULL_REQUEST_TEMPLATE/feat-technical-enhancement.md \
               .github/PULL_REQUEST_TEMPLATE/fix-technical.md \
               .github/PULL_REQUEST_TEMPLATE/refactor-knowledge-note.md
-          
+
           if ! git diff-index --quiet --cached HEAD; then
             git commit -m "chore(project): 🎉 inicializa o vault a partir do template"
             git push
