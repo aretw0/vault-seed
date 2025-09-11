@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.3](https://github.com/aretw0/vault-seed/compare/v0.1.2...v0.1.3) (2025-09-11)
+
+
+### ✨ Novos Recursos
+
+* Adiciona permissão \`contents: write\` ao workflow de release ([f5f589e](https://github.com/aretw0/vault-seed/commit/f5f589e2aefbf35f7731b707f793a339e65a75bb))
+
 ### [0.1.2](https://github.com/aretw0/vault-seed/compare/v0.1.1...v0.1.2) (2025-09-10)
 
 
