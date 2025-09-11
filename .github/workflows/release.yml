@@ -11,6 +11,9 @@ on:
       - 'v*' # Executa quando uma nova tag (ex: v1.0.0) é criada e enviada.
   workflow_dispatch: # Permite execução manual através da interface do GitHub Actions
 
+permissions:
+  contents: write # Permite que o GITHUB_TOKEN crie e edite releases e outros conteúdos do repositório.
+
 jobs:
   create-release:
     runs-on: ubuntu-latest
