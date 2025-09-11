@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.0](https://github.com/aretw0/vault-seed/compare/v0.1.4...v0.2.0) (2025-09-11)
+
+
+### ✨ Novos Recursos
+
+* Implementa guarda de release e inclui refactor no changelog ([24b02a8](https://github.com/aretw0/vault-seed/commit/24b02a8ceac458e2f00b01e99d65e1de13057370))
+
+
+### 📚 Documentação
+
+* Adiciona documentação sobre limpeza de histórico Git ([0492c9a](https://github.com/aretw0/vault-seed/commit/0492c9a7dc7e334c317f62aae1b1ffeb0b2d3f3c))
+* Adiciona documentação sobre o processo de release ([040d982](https://github.com/aretw0/vault-seed/commit/040d982cebde3b9583ab0ab953190c6408ea6c0c))
+
+
+### ♻️ Refatoração
+
+* Remove debug output from release workflow ([48ea20c](https://github.com/aretw0/vault-seed/commit/48ea20ccab519d8b8dacf14fc2c74f2e28679a4d))
+* Remove prefix 'Release' from release name ([67948df](https://github.com/aretw0/vault-seed/commit/67948df2141b0b92c62ab321651d124a2b1c43c7))
+
+
+### 🐛 Correções
+
+* Ajusta lógica do guarda de release para verificar commits entre tags ([d3966e9](https://github.com/aretw0/vault-seed/commit/d3966e93e38f5e2b08228d9ca6870fbdf4fc4b4e))
+* Corrige a lógica para obter a tag anterior limpa no guarda de release ([9267207](https://github.com/aretw0/vault-seed/commit/926720731f2d1e0e243dd562d08262f9de5ee672))
+* Refina a lógica do guarda de release para obter a tag anterior corretamente ([7c9318a](https://github.com/aretw0/vault-seed/commit/7c9318a473322ceac3c3badda0aca5d3e8f6e5ee))
+
 ### [0.1.4](https://github.com/aretw0/vault-seed/compare/v0.1.3...v0.1.4) (2025-09-11)
 
 
