@@ -7,8 +7,8 @@ name: Publicar Release
 
 on:
   push:
-    tags:
-      - 'v*' # Executa quando uma nova tag (ex: v1.0.0) é criada e enviada.
+    branches:
+      - main # Executa quando mudanças são enviadas para a branch main
   workflow_dispatch: # Permite execução manual através da interface do GitHub Actions
 
 permissions:
@@ -23,15 +23,32 @@ jobs:
         with:
           fetch-depth: 0 # Necessário para que standard-version possa analisar o histórico completo
 
+      - name: 🏷️ Verificar Tag no Commit
+        id: check_tag
+        run: |
+          TAG=$(git describe --tags --exact-match ${{ github.sha }} 2>/dev/null || echo "")
+          if [ -z "$TAG" ]; then
+            echo "::notice::Nenhuma tag encontrada no commit atual. Pulando a criação da release."
+            echo "skip_release=true" >> $GITHUB_OUTPUT
+          else
+            echo "::notice::Tag '${TAG}' encontrada no commit atual. Prosseguindo com a release."
+            echo "skip_release=false" >> $GITHUB_OUTPUT
+          fi
+
+      # Os passos seguintes só serão executados se uma tag for encontrada no commit atual.
+      # Isso garante que releases só sejam criadas para commits tagueados na branch main.
       - name: ⚙️ Configurar Node.js
+        if: steps.check_tag.outputs.skip_release == 'false'
         uses: actions/setup-node@v4
         with:
           node-version: '20' # Use a versão do Node.js que seu projeto utiliza
 
       - name: 📦 Instalar Dependências
+        if: steps.check_tag.outputs.skip_release == 'false' # Só executa se uma tag for encontrada
         run: npm install # Instala as dependências do package.json, incluindo standard-version
 
       - name: 🛡️ Verificar Commits para Changelog
+        if: steps.check_tag.outputs.skip_release == 'false' # Só executa se uma tag for encontrada
         run: |
           CURRENT_TAG_REF=${{ github.ref }} # e.g., refs/tags/v0.2.0
           CURRENT_TAG_NAME=${{ github.ref_name }} # e.g., v0.2.0
@@ -69,6 +86,7 @@ jobs:
           fi
 
       - name: 📝 Obter Notas de Release
+        if: steps.check_tag.outputs.skip_release == 'false' # Só executa se uma tag for encontrada
         id: get_release_notes
         run: |
           # Extrai as notas de release do CHANGELOG.md para a tag atual
@@ -86,6 +104,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: 🚀 Criar GitHub Release
+        if: steps.check_tag.outputs.skip_release == 'false' # Só executa se uma tag for encontrada
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref }}
