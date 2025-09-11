@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.0](https://github.com/aretw0/vault-seed/compare/v0.1.4...v0.2.0) (2025-09-11)
+
+
+### ♻️ Refatoração
+
+* Remove prefix 'Release' from release name ([67948df](https://github.com/aretw0/vault-seed/commit/67948df2141b0b92c62ab321651d124a2b1c43c7))
+
+
+### ✨ Novos Recursos
+
+* Implementa guarda de release e inclui refactor no changelog ([24b02a8](https://github.com/aretw0/vault-seed/commit/24b02a8ceac458e2f00b01e99d65e1de13057370))
+
+
+### 📚 Documentação
+
+* Adiciona documentação sobre limpeza de histórico Git ([0492c9a](https://github.com/aretw0/vault-seed/commit/0492c9a7dc7e334c317f62aae1b1ffeb0b2d3f3c))
+* Adiciona documentação sobre o processo de release ([040d982](https://github.com/aretw0/vault-seed/commit/040d982cebde3b9583ab0ab953190c6408ea6c0c))
+
 ### [0.1.4](https://github.com/aretw0/vault-seed/compare/v0.1.3...v0.1.4) (2025-09-11)
 
 
