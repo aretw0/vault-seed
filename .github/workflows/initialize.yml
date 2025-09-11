@@ -46,22 +46,27 @@ jobs:
           echo "🗑️ Removendo arquivos de template"
           rm README.template.md CONTRIBUTING.template.md
 
-      - name: ✨ Configura Workflow de Release para Novo Cofre
-        run: |
-          echo "🔥 Configurando o workflow de release para o novo cofre."
-          # Substitui os comentários iniciais para refletir que o workflow está adormecido
-          sed -i '1,8c\# .github/workflows/release.yml\nname: Publicar Release\n\n\# Este workflow está configurado para ser executado manualmente ou por um push de tag.\n\# Ele não será executado automaticamente em cada push para a branch principal.\n\# Para ativá-lo, você pode:\n\# 1. Descomentar a seção 'on: push: tags:' abaixo.\n\# 2. Executá-lo manualmente através da aba 'Actions' no GitHub.' .github/workflows/release.yml
-
-          # Comenta as linhas que ativam o workflow de release por push de tag
-          sed -i '/^on:/a\  # push:\n  #   tags:\n  #     - \'v*\' \# Executa quando uma nova tag (ex: v1.0.0) é criada e enviada.\n' .github/workflows/release.yml
-          sed -i '/^on:/d' .github/workflows/release.yml \# Remove the original 'on:' line
-
       - name: 🗑️ Auto-destrói e Commita
         run: |
-          git add CHANGELOG.md VERSION README.md CONTRIBUTING.md .github/workflows/release.yml \# Add release.yml to staged files
-          
-          echo "💥 Apagando o arquivo de workflow para garantir que ele rode apenas uma vez."
           git rm --ignore-unmatch .github/workflows/initialize.yml
+          echo "🗑️ Removendo o workflow de CI template para simplificar o setup inicial."
+          rm -f .github/workflows/template-ci.yml
+          echo "🗑️ Removendo templates de Pull Request técnicos para simplificar o setup inicial."
+          rm -f .github/PULL_REQUEST_TEMPLATE/chore-maintenance.md
+          rm -f .github/PULL_REQUEST_TEMPLATE/feat-technical-enhancement.md
+          rm -f .github/PULL_REQUEST_TEMPLATE/fix-technical.md
+          rm -f .github/PULL_REQUEST_TEMPLATE/refactor-knowledge-note.md
+          echo "🗑️ Removendo o workflow de automação de versionamento para simplificar o setup inicial."
+          rm -f .github/workflows/automate-versioning.yml
+          
+          # Adiciona todos os arquivos que foram removidos ou modificados para o stage
+          git add CHANGELOG.md VERSION README.md CONTRIBUTING.md \
+              .github/workflows/template-ci.yml \
+              .github/workflows/automate-versioning.yml \
+              .github/PULL_REQUEST_TEMPLATE/chore-maintenance.md \
+              .github/PULL_REQUEST_TEMPLATE/feat-technical-enhancement.md \
+              .github/PULL_REQUEST_TEMPLATE/fix-technical.md \
+              .github/PULL_REQUEST_TEMPLATE/refactor-knowledge-note.md
           
           if ! git diff-index --quiet --cached HEAD; then
             git commit -m "chore(project): 🎉 inicializa o vault a partir do template"
