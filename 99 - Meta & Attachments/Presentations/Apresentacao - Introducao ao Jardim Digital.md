@@ -12,11 +12,13 @@ updated: 2025-10-11
 category: apresentação
 audience: iniciante
 ---
+
 # 🌱 Bem-vindo ao Jardim Digital
 
 ## Seu Espaço para Cultivar Conhecimento
 
 ---
+
 ### O que é este "Jardim Digital"?
 
 *   Não é apenas um repositório de notas.
@@ -27,11 +29,13 @@ audience: iniciante
     *   Colhe frutos (conhecimento consolidado).
 
 ---
+
 ### As Ferramentas do Jardineiro
 
 #### Obsidian & VS Code
 
 ---
+
 ##### Obsidian
 
 *   Sua "estufa" principal.
@@ -40,6 +44,7 @@ audience: iniciante
     *   Ideal para escrita e leitura diária.
 
 ---
+
 ##### VS Code (com Foam)
 
 *   Sua "oficina" de jardinagem.
@@ -48,6 +53,7 @@ audience: iniciante
     *   Complementa o Obsidian para tarefas mais técnicas.
 
 ---
+
 ### O Layout do Jardim
 
 #### Método PARA
@@ -60,30 +66,35 @@ Organizando seu Conhecimento:
 * **A**rchives (Arquivos)
 
 ---
+
 ##### Projects (Projetos)
 
 *   Esforços com começo, meio e fim definidos.
 *   Ex: "Planejar Viagem de Férias".
 
 ---
+
 ##### Areas (Áreas)
 
 *   Responsabilidades contínuas, sem prazo final.
 *   Ex: "Saúde e Bem-Estar", "Finanças".
 
 ---
+
 #### Resources (Recursos)
 
 *   Tópicos de interesse, base de conhecimento.
 *   Ex: "O que é o método PARA".
 
 ---
+
 #### Archives (Arquivos)
 
 *   Projetos concluídos ou recursos inativos.
 *   Ex: "Projeto Viagem 2024".
 
 ---
+
 ### Seus Primeiros Passos no Jardim
 
 #### O Ciclo de Vida de uma Nota
@@ -93,24 +104,28 @@ Organizando seu Conhecimento:
 3.  **Integrando ao Canteiro Principal (Organização)**
 
 ---
+
 ##### 1. Plantando a Semente (Captura Rápida)
 
 *   Ideias fugazes, insights.
 *   Onde: `10 - Fleeting & Daily`
 
 ---
+
 ##### 2. Nutrindo a Muda (Processamento)
 
 *   Expandir ideias, adicionar contexto.
 *   Onde: `00 - Inbox` (para processar)
 
 ---
+
  ##### 3. Integrando ao Canteiro Principal (Organização)
  
 *   Conectar notas, usar tags, criar MOCs.
 *   Onde: `20 - Projects`, `30 - Areas`, `40 - Resources`, `50 - Archives`
 
 ---
+
 ### A Estrutura de Pastas
 #### Um Jardim Organizado
 

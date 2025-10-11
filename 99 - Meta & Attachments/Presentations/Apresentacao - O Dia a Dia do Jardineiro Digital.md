@@ -12,9 +12,10 @@ updated: 2025-09-11
 category: apresentação
 audience: intermediario
 ---
-## ☀️ O Dia a Dia do Jardineiro Digital
 
-### Cultivando seu Conhecimento Manualmente
+# ☀️ O Dia a Dia do Jardineiro Digital
+
+## Cultivando seu Conhecimento Manualmente
 
 ---
 
@@ -22,11 +23,15 @@ audience: intermediario
 
 #### Do Pensamento Rápido à Nota Estruturada
 
-1.  **Plantio Rápido:** Use `10 - Fleeting & Daily` para ideias fugazes.
-    *   Ex: `- Lembrete: Pesquisar sobre o método PARA.`
-2.  **Nutrição na Inbox:** Mova para `00 - Inbox` para processar.
-    *   Expanda a ideia, adicione contexto.
-3.  **Transplante Final:** Mova para `20 - Projects`, `30 - Areas`, `40 - Resources` ou `50 - Archives`.
+---
+
+1.  Plantio Rápido
+	*   Use `00 - Inbox` para ideias fugazes.
+	*   Ex: `- Lembrete: Pesquisar sobre o método PARA.`
+2.  Nutrição
+	*   Expanda a ideia, adicione contexto.
+3.  Transplante Final
+	*   Mova para `20 - Projects`, `30 - Areas`, `40 - Resources` ou `50 - Archives`.
 
 ---
 
@@ -34,21 +39,37 @@ audience: intermediario
 
 #### Links, Tags e MOCs
 
-*   **Links (`[[Wikilinks]]`):** As raízes que conectam suas notas.
-    *   Use abundantemente para criar uma teia de conhecimento.
-    *   Ex: `[[O que é o método PARA]]`
-*   **Tags (`#tag`):** Etiquetas para categorização rápida.
-    *   Use para `status`, `tipos` ou `contextos`.
-    *   Ex: `#status/ideia`, `#tipo/livro`, `#contexto/trabalho`
-*   **MOCs (Maps of Content):** Mapas do seu jardim.
-    *   Notas-índice que agrupam e curam tópicos relacionados.
-    *   Ex: `[[MOC Produtividade]]`
+---
+
+##### Links (`[[Wikilinks]]`)
+
+*   As raízes que conectam suas notas.
+*   Use abundantemente para criar uma teia de conhecimento.
+*   Ex: `[[O que é o método PARA]]`
+
+---
+
+##### Tags (`#tag`)
+
+*   Etiquetas para categorização rápida.
+*   Use para `status`, `tipos` ou `contextos`.
+*   Ex: `#status/ideia`, `#tipo/livro`, `#contexto/trabalho`
+
+---
+
+##### MOCs (Maps of Content)
+
+*   Mapas do seu jardim.
+*   Notas-índice que agrupam e curam tópicos relacionados.
+*   Ex: `[[MOC Produtividade]]`
 
 ---
 
 ### Convenções de Jardinagem
 
 #### Mantendo a Ordem e a Consistência
+
+---
 
 *   **Nomes de Notas:** Descritivos e atômicos.
     *   Ex: `Princípios do Atomic Design`
@@ -63,12 +84,29 @@ audience: intermediario
 
 #### Versionamento com Git
 
-*   **PATCH:** Pequenas podas e cuidados diários (correções, ajustes).
-    *   Ex: `fix(nota): corrige erro de digitação`
-*   **MENOR:** Novas sementes e pequenos crescimentos (novas notas, expansão de ideias).
-    *   Ex: `feat(conceito): adiciona nota sobre 'Zettelkasten'`
-*   **MAIOR:** Replanejamento e grandes transformações (reestruturação completa).
-    *   Ex: `refactor(estrutura)!: reorganiza pastas`
+PATCH, MINOR e MAJOR. 
+
+Ex.: v1.26.3 significa que é a 1º versão major na 26º versão minor no 3º patch.
+
+---
+
+###### PATCH (X.X.1)
+
+*   Pequenas podas e cuidados diários (correções, ajustes).
+*   Ex: `fix(nota): corrige erro de digitação`
+
+---
+##### MINOR (X.1.X)
+
+*   Novas sementes e pequenos crescimentos (novas notas, expansão de ideias).
+*   Ex: `feat(conceito): adiciona nota sobre 'Zettelkasten'`
+
+---
+
+##### MAJOR (1.X.X)
+
+*   Replanejamento e grandes transformações (reestruturação completa).
+*   Ex: `refactor(estrutura)!: reorganiza pastas`
 
 ---
 
@@ -76,13 +114,27 @@ audience: intermediario
 
 #### Git e GitHub
 
-*   **"Rascunho Seguro" (Branch):** Seu canteiro de testes separado.
-    *   Trabalhe em novas ideias sem afetar o jardim principal (`main`).
-*   **"Proposta de Melhoria" (Pull Request):** Apresentando sua nova planta.
-    *   Revisão e aprovação antes de integrar ao `main`.
-*   **Ferramentas:**
-    *   **Desktop:** GitHub Desktop (visual e intuitivo).
-    *   **Mobile:** GitSync (Android), Working Copy (iOS - pago).
+Branch, pull request e ferramentas.
+
+---
+
+##### "Rascunho Seguro" (Branch)
+
+*   Seu canteiro de testes separado.
+*   Trabalhe em novas ideias sem afetar o jardim principal (`main`).
+
+---
+
+##### "Proposta de Melhoria" (Pull Request)
+
+*   Apresentando sua nova planta.
+*   Revisão e aprovação antes de integrar ao `main`.
+
+---
+##### Ferramentas
+
+*   **Desktop:** GitHub Desktop (visual e intuitivo).
+*   **Mobile:** GitSync (Android)
 
 ---
 

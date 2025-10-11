@@ -14,47 +14,74 @@ updated: 2025-09-11
 category: apresentação
 audience: avancado
 ---
+
 # 🤖 O Jardim Autônomo
 
 ## Colaborando com Agentes de IA
 
 ---
 
-# O Desafio do Jardineiro Moderno
+### O Desafio do Jardineiro Moderno
 
-## Excesso de Informação e Manutenção
-
+Excesso de Informação e Manutenção:
 *   Como lidar com o volume crescente de informações?
 *   Como garantir que o conhecimento esteja sempre atualizado e bem organizado?
 *   A manutenção manual pode ser exaustiva.
 
 ---
 
-# A Solução: Robôs Jardineiros (Agentes de IA)
+### A Solução
 
-## Seus Assistentes Inteligentes
-
-*   **Automação de Tarefas:** Agentes de IA podem realizar tarefas repetitivas e de baixo nível.
-    *   Ex: Formatar notas, extrair informações, sugerir links.
-*   **Expansão do Conhecimento:** Ajudam a sintetizar, resumir e até gerar novos conteúdos com base no seu vault.
-*   **Manutenção Proativa:** Podem identificar lacunas, inconsistências ou áreas que precisam de atenção.
+Robôs Jardineiros (Agentes de IA), seus Assistentes Inteligentes.
 
 ---
 
-# Como Funciona? RAG (Retrieval-Augmented Generation)
+#### Automação de Tarefas
 
-## A IA que Lê seu Jardim
-
-*   **Retrieval (Recuperação):** A IA busca informações relevantes *dentro do seu próprio vault*.
-    *   Ela "lê" suas notas, entendendo o contexto e o conhecimento que você já possui.
-*   **Augmented Generation (Geração Aumentada):** Com base no que encontrou no seu vault, a IA gera novas respostas ou conteúdos.
-    *   Isso garante que a IA esteja sempre alinhada com *seu* conhecimento e estilo.
+*   Agentes de IA podem realizar tarefas repetitivas e de baixo nível.
+*   Ex: Formatar notas, extrair informações, sugerir links.
 
 ---
 
-# Exemplo 1: Ingestão Autônoma de Conteúdo
+#### Expansão do Conhecimento
 
-## O Robô que Planta Sementes por Você
+Ajudam a sintetizar, resumir e até gerar novos conteúdos com base no seu vault.
+
+---
+
+#### Manutenção Proativa
+
+Podem identificar lacunas, inconsistências ou áreas que precisam de atenção.
+
+---
+
+### Como Funciona?
+
+RAG (Retrieval-Augmented Generation), a IA lendo seu Jardim
+
+---
+
+#### Retrieval (Recuperação)
+
+*   A IA busca informações relevantes *dentro do seu próprio vault*.
+*   Ela "lê" suas notas, entendendo o contexto e o conhecimento que você já possui.
+
+---
+
+#### Augmented Generation (Geração Aumentada)
+
+*   Com base no que encontrou no seu vault, a IA gera novas respostas ou conteúdos.
+*   Isso garante que a IA esteja sempre alinhada com *seu* conhecimento e estilo.
+
+---
+
+### Exemplo 1
+
+#### Ingestão Autônoma de Conteúdo
+
+O Robô que Planta Sementes por Você.
+
+---
 
 *   **Cenário:** Você encontra um artigo interessante na web.
 *   **Workflow:**
@@ -65,9 +92,13 @@ audience: avancado
 
 ---
 
-# Exemplo 2: Assistência na Curadoria
+### Exemplo 2
 
-## O Robô que Ajuda a Podar e Organizar
+#### Assistência na Curadoria
+
+O Robô que Ajuda a Podar e Organizar
+
+---
 
 *   **Cenário:** Você tem uma nota longa e desorganizada.
 *   **Workflow:**
@@ -78,9 +109,13 @@ audience: avancado
 
 ---
 
-# O Humano no Controle: O Jardineiro-Chefe
+### O Humano no Controle
 
-## Fluxo de Revisão (Pull Requests)
+O Jardineiro-Chefe
+
+---
+
+#### Fluxo de Revisão (Pull Requests)
 
 *   **A IA propõe, você decide:** As mudanças sugeridas pelos agentes de IA são como "Propostas de Melhoria" (Pull Requests).
 *   **Revisão:** Você revisa as sugestões, aceita, ajusta ou rejeita.
@@ -89,9 +124,9 @@ audience: avancado
 
 ---
 
-# O Futuro do seu Jardim Digital
+#### O Futuro do seu Jardim Digital
 
-## Crescimento Inteligente e Colaborativo
+##### Crescimento Inteligente e Colaborativo
 
 *   Menos esforço manual, mais foco na criação e conexão.
 *   Um vault que se adapta e cresce com você, de forma autônoma.
@@ -99,6 +134,6 @@ audience: avancado
 
 ---
 
-# Cultive seu Conhecimento com IA!
+### Cultive seu Conhecimento com IA!
 
-## Perguntas?
+#### Perguntas?
