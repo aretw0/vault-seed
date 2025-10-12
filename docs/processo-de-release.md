@@ -1,61 +1,28 @@
 # Processo de Release e Versionamento
 
-Este documento detalha como as releases são geradas e versionadas neste repositório, garantindo clareza e previsibilidade para todos os colaboradores.
+Este documento detalha como as releases são geradas e versionadas, garantindo clareza e previsibilidade. O processo difere entre o uso do vault como um cofre pessoal e a manutenção do template original.
 
 ## 1. Versionamento Semântico (SemVer)
 
-Adotamos o Versionamento Semântico (SemVer) no formato `MAJOR.MINOR.PATCH`. Isso significa:
+Adotamos o Versionamento Semântico (SemVer) no formato `MAJOR.MINOR.PATCH`:
 
-*   **MAJOR (X.0.0):** Incrementado para mudanças que quebram a compatibilidade (breaking changes).
-*   **MINOR (0.Y.0):** Incrementado para novas funcionalidades adicionadas de forma retrocompatível.
-*   **PATCH (0.0.Z):** Incrementado para correções de bugs retrocompatíveis.
+*   **MAJOR (X.0.0):** Para mudanças que quebram a compatibilidade (breaking changes).
+*   **MINOR (0.Y.0):** Para novas funcionalidades adicionadas de forma retrocompatível.
+*   **PATCH (0.0.Z):** Para correções de bugs retrocompatíveis.
 
 ## 2. Conventional Commits e o Changelog
 
-Utilizamos Conventional Commits para padronizar as mensagens de commit. Isso nos permite gerar automaticamente o `CHANGELOG.md` e determinar o tipo de incremento da versão.
+Utilizamos [Conventional Commits](https://www.conventionalcommits.org/) para padronizar as mensagens de commit. Isso nos permite gerar automaticamente o `CHANGELOG.md` e determinar o tipo de incremento da versão. Os tipos que geram entradas no changelog são `feat`, `fix`, e `refactor`. Commits marcados com `BREAKING CHANGE` indicarão um incremento `MAJOR`.
 
-**Tipos de Commit que Geram Entradas no Changelog ("Changelog-Worthy"):
+## 3. Como Gerar uma Nova Release
 
-Para que uma alteração apareça no `CHANGELOG.md` e seja considerada para uma nova release, o commit deve iniciar com um dos seguintes tipos:
+Existem dois processos distintos para gerar uma release, dependendo do seu contexto.
 
-*   `feat:` **(Feature)**: Para novas funcionalidades.
-*   `fix:` **(Bug Fix)**: Para correção de bugs.
-*   `refactor:` **(Code Refactoring)**: Para refatorações de código que não adicionam funcionalidades nem corrigem bugs, mas melhoram a estrutura ou legibilidade.
-*   `BREAKING CHANGE:`: Uma linha separada no corpo do commit que indica uma mudança que quebra a compatibilidade.
+### 3.1. Para Usuários do Vault (Processo Padrão e Local)
 
-**Exemplos de Commits que NÃO Geram Entradas no Changelog (Internos/Não-Usuário):
+Se você usou este repositório como um template para seu próprio cofre de conhecimento, este é o processo recomendado para você. Ele é simples e executado localmente.
 
-Commits com os seguintes tipos são importantes para o histórico do projeto, mas não aparecerão no `CHANGELOG.md` por padrão, pois não representam mudanças diretas para o usuário final:
-
-*   `chore:` (Tarefas de manutenção, como atualizações de dependências)
-*   `docs:` (Alterações na documentação)
-*   `style:` (Formatação de código, sem mudança de lógica)
-*   `perf:` (Melhorias de performance)
-*   `test:` (Adição ou correção de testes)
-*   `build:` (Alterações no sistema de build ou dependências externas)
-*   `ci:` (Alterações nos arquivos e scripts de CI/CD)
-
-## 3. O "Guarda" da Release: Evitando Releases Vazias
-
-Para garantir que cada release tenha um `CHANGELOG.md` significativo, implementamos um "guarda" no workflow de CI/CD.
-
-**Regra:** Uma release **só será gerada** se houver pelo menos um commit do tipo `feat`, `fix`, `refactor` ou `BREAKING CHANGE` desde a última release.
-
-**O que acontece se não houver commits relevantes:**
-
-Se você tentar gerar uma release e não houver commits "changelog-worthy" desde a última versão, o workflow de release no GitHub Actions irá **falhar** na etapa "Verificar Commits para Changelog". Isso é intencional e serve para:
-
-*   **Prevenir Releases Vazias:** Evita que versões sejam publicadas sem conteúdo novo ou relevante no changelog.
-*   **Manter a Qualidade:** Garante que cada incremento de versão corresponda a uma mudança significativa para o usuário.
-*   **Orientar o Colaborador:** Sinaliza que o tipo de commit utilizado não é suficiente para justificar uma nova release.
-
-**Mensagem de Erro:** Você verá uma mensagem de erro no log do GitHub Actions indicando que "Nenhum commit do tipo 'feat', 'fix', 'refactor' ou 'BREAKING CHANGE' encontrado desde a última release."
-
-## 4. Como Gerar uma Nova Release
-
-Siga estes passos para criar e publicar uma nova release:
-
-1.  **Faça Commits Relevantes:** Certifique-se de que suas alterações incluam pelo menos um commit do tipo `feat`, `fix`, `refactor` ou `BREAKING CHANGE`.
+1.  **Faça Commits Relevantes:** Certifique-se de que suas alterações incluam pelo menos um commit do tipo `feat`, `fix`, ou `refactor`.
 2.  **Gere a Nova Versão e Tag Localmente:**
     ```bash
     npm run release
@@ -69,12 +36,29 @@ Siga estes passos para criar e publicar uma nova release:
     ```bash
     git push --follow-tags origin main
     ```
-    Este comando enviará o novo commit e a tag para o repositório remoto, o que irá disparar o workflow de release no GitHub Actions.
+    Este comando enviará o novo commit e a tag para seu repositório, mantendo seu histórico de versões organizado.
 
-4.  **Verifique o Status da Release:**
-    Acompanhe o progresso do workflow na aba "Actions" do seu repositório no GitHub. Se tudo estiver correto, uma nova release será criada automaticamente.
+### 3.2. Para Mantenedores do Template (Processo Automatizado via GitHub)
 
-## 5. Dicas e Boas Práticas
+Este processo é exclusivo para a manutenção do repositório `aretw0/vault-seed` e utiliza automações (GitHub Actions) para garantir a integridade do template.
+
+1.  **Certifique-se que `develop` está pronto:** Verifique se todas as funcionalidades e correções desejadas foram mescladas no branch `develop`.
+2.  **Inicie a Preparação da Release:**
+    *   Navegue até a aba **Actions** do repositório `aretw0/vault-seed`.
+    *   Na lista de workflows à esquerda, selecione **"Prepare Release PR"**.
+    *   Clique no botão **"Run workflow"**, garantindo que o branch `main` esteja selecionado, e execute o workflow.
+3.  **Aguarde o Pull Request:** O workflow irá automaticamente:
+    *   Criar um branch de release temporário a partir da `main` e mesclar a `develop` nele.
+    *   Executar o `standard-version` para gerar o `CHANGELOG.md` e a nova versão.
+    *   Abrir um Pull Request (PR) no repositório com o título `chore(release): vX.X.X`.
+4.  **Revise e Mescle o PR:**
+    *   Revise as alterações no Pull Request, especialmente o `CHANGELOG.md`, para garantir que tudo está correto.
+    *   Após a aprovação, mescle o PR no branch `main`.
+5.  **Publicação Automática:**
+    *   O merge na `main` acionará o workflow **"Publish Release"**.
+    *   Este workflow irá automaticamente criar a tag Git e publicar uma nova Release no GitHub, contendo as notas extraídas do `CHANGELOG.md`.
+
+## 4. Dicas e Boas Práticas
 
 *   **Commits Atômicos:** Faça commits pequenos e focados em uma única mudança.
 *   **Mensagens Claras:** Escreva mensagens de commit descritivas e que sigam a convenção.

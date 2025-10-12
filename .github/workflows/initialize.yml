@@ -13,6 +13,9 @@ jobs:
     # se o repositório NÃO for o repositório de template original 'aretw0/vault-seed'.
     if: github.ref == 'refs/heads/main' && github.repository != 'aretw0/vault-seed'
 
+    permissions:
+      contents: write
+
     steps:
       - name: 🛎️ Clona o Repositório
         uses: actions/checkout@v4
@@ -49,7 +52,8 @@ jobs:
           git rm --ignore-unmatch README.template.md CONTRIBUTING.template.md
           git rm --ignore-unmatch .github/workflows/initialize.yml
           git rm --ignore-unmatch .github/workflows/template-ci.yml
-          git rm --ignore-unmatch .github/workflows/automate-versioning.yml
+          git rm --ignore-unmatch .github/workflows/prepare-release-pr.yml
+          git rm --ignore-unmatch .github/workflows/release.yml
           git rm --ignore-unmatch .github/workflows/sync-develop-with-main.yml
 
           echo "📦 Adicionando arquivos modificados ao stage..."
