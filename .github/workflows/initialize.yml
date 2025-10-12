@@ -43,34 +43,19 @@ jobs:
           echo "🔥 Copiando CONTRIBUTING.md"
           cp CONTRIBUTING.template.md CONTRIBUTING.md
 
-          echo "🗑️ Removendo arquivos de template"
-          rm README.template.md CONTRIBUTING.template.md
-
-      - name: 🗑️ Auto-destrói e Commita
+      - name: 🗑️ Remove Arquivos do Template e Commita
         run: |
+          echo "🗑️ Removendo arquivos e diretórios do template..."
+          git rm --ignore-unmatch README.template.md CONTRIBUTING.template.md
           git rm --ignore-unmatch .github/workflows/initialize.yml
-          echo "🗑️ Removendo o workflow de CI template para simplificar o setup inicial."
-          rm -f .github/workflows/template-ci.yml
-          echo "🗑️ Removendo templates de Pull Request técnicos para simplificar o setup inicial."
-          rm -f .github/PULL_REQUEST_TEMPLATE/chore-maintenance.md
-          rm -f .github/PULL_REQUEST_TEMPLATE/feat-technical-enhancement.md
-          rm -f .github/PULL_REQUEST_TEMPLATE/fix-technical.md
-          rm -f .github/PULL_REQUEST_TEMPLATE/refactor-knowledge-note.md
-          echo "🗑️ Removendo o workflow de automação de versionamento para simplificar o setup inicial."
-          rm -f .github/workflows/automate-versioning.yml
-          echo "🗑️ Removendo o workflow de sincronização de branches para simplificar o setup inicial."
-          rm -f .github/workflows/sync-develop-with-main.yml
+          git rm --ignore-unmatch .github/workflows/template-ci.yml
+          git rm --ignore-unmatch .github/workflows/automate-versioning.yml
+          git rm --ignore-unmatch .github/workflows/sync-develop-with-main.yml
 
-          # Adiciona todos os arquivos que foram removidos ou modificados para o stage
-          git add CHANGELOG.md VERSION README.md CONTRIBUTING.md \
-              .github/workflows/template-ci.yml \
-              .github/workflows/automate-versioning.yml \
-              .github/workflows/sync-develop-with-main.yml \
-              .github/PULL_REQUEST_TEMPLATE/chore-maintenance.md \
-              .github/PULL_REQUEST_TEMPLATE/feat-technical-enhancement.md \
-              .github/PULL_REQUEST_TEMPLATE/fix-technical.md \
-              .github/PULL_REQUEST_TEMPLATE/refactor-knowledge-note.md
+          echo "📦 Adicionando arquivos modificados ao stage..."
+          git add CHANGELOG.md VERSION README.md CONTRIBUTING.md
 
+          echo "📝 Verificando e commitando mudanças..."
           if ! git diff-index --quiet --cached HEAD; then
             git commit -m "chore(project): 🎉 inicializa o vault a partir do template"
             git push
