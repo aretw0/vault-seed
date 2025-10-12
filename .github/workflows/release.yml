@@ -43,6 +43,16 @@ jobs:
         with:
           node-version: '20' # Use a versão do Node.js que seu projeto utiliza
 
+      - name: Cache Node.js modules
+        id: cache-npm
+        if: steps.check_tag.outputs.skip_release == 'false'
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: 📦 Instalar Dependências
         if: steps.check_tag.outputs.skip_release == 'false' # Só executa se uma tag for encontrada
         run: npm install # Instala as dependências do package.json, incluindo standard-version
