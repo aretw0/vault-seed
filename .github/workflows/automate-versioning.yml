@@ -6,7 +6,7 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/develop' # Ensure this workflow only runs on the develop branch
+    if: github.ref == 'refs/heads/main' # Ensure this workflow only runs on the main branch
     permissions:
       contents: write # Required to push commits and tags
 
