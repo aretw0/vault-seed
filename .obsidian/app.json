@@ -1,4 +1,9 @@
 {
   "readableLineLength": true,
-  "alwaysUpdateLinks": true
+  "alwaysUpdateLinks": true,
+  "trashOption": "local",
+  "newFileLocation": "folder",
+  "newFileFolderPath": "00 - Inbox",
+  "showUnsupportedFiles": true,
+  "attachmentFolderPath": "99 - Meta & Attachments/Attachments"
 }

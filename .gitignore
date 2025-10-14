@@ -34,7 +34,6 @@ Thumbs.db
 .obsidian/workspace.json
 .obsidian/workspaces.json
 .obsidian/workspace-mobile.json
-.obsidian/daily-notes.json
 .obsidian/user.json
 # Ignora index do Plugin Copilot
 .obsidian/copilot-index-*.json
