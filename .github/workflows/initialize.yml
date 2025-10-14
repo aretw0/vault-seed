@@ -50,6 +50,7 @@ jobs:
         run: |
           echo "🗑️ Removendo arquivos e diretórios do template..."
           git rm --ignore-unmatch README.template.md CONTRIBUTING.template.md
+          git rm -r --ignore-unmatch docs
           git rm --ignore-unmatch .github/workflows/initialize.yml
           git rm --ignore-unmatch .github/workflows/template-ci.yml
           git rm --ignore-unmatch .github/workflows/prepare-release-pr.yml

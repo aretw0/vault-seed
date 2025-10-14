@@ -18,6 +18,18 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Lint Docs
+        run: npx markdownlint --config docs/.markdownlint.json 'docs/**/*.md'
+
       - name: Simple Check (Placeholder)
         run: echo "Vault content pushed successfully."
 
@@ -38,55 +50,3 @@ jobs:
           else
             echo "No unwanted plugin folders found in .obsidian/plugins/."
           fi
-
-      # --- Adicionar passos mais úteis aqui no futuro ---
-      # Exemplo: Linting de Markdown (requer setup adicional)
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18"
-
-      - name: Cache Node.js modules
-        id: cache-npm
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Install Markdownlint CLI
-        run: npm install -g markdownlint-cli
-      - name: Run Markdownlint
-        run: markdownlint '**/*.md' --ignore '.obsidian/**/*.md' --config .markdownlint.json # Usar o arquivo de configuração existente
-    #
-    # Exemplo: Publicar com Quartz (requer setup do Quartz)
-    # - name: Build and Deploy with Quartz (Exemplo)
-    #   if: github.ref == 'refs/heads/main' # Só roda no push para main
-    #   uses: jackyzha0/quartz-action@v2
-    #   with:
-    #     # Configurações do Quartz
-    #     folder: ./ # Diretório do vault
-    #     # ... outras configurações ...
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #     QUARTZ_TOKEN: ${{ secrets.QUARTZ_TOKEN }} # Se necessário para deploy privado
-    #
-
-    # Explicação:
-    #
-    # on:: Define quando o workflow roda (push ou pull request na branch main).
-    #
-    # jobs:: Define as tarefas a serem executadas.
-    #
-    # build:: Nome do job.
-    #
-    # runs-on:: O tipo de máquina virtual (Ubuntu é comum).
-    #
-    # steps:: Sequência de ações.
-    #
-    #     actions/checkout@v3: Baixa o código do seu repositório para a máquina virtual do Actions.
-    #
-    #     Simple Check: Apenas um placeholder para confirmar que o workflow rodou.
-    #
-    #     Comentários: Mostram exemplos de como adicionar linting de Markdown ou um passo de build/deploy usando ferramentas como Quartz para publicar seu vault como um site estático.
