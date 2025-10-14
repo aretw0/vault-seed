@@ -58,6 +58,85 @@ Este processo é exclusivo para a manutenção do repositório `aretw0/vault-see
     *   O merge na `main` acionará o workflow **"Publish Release"**.
     *   Este workflow irá automaticamente criar a tag Git e publicar uma nova Release no GitHub, contendo as notas extraídas do `CHANGELOG.md`.
 
+### 3.3. Processos de Release Manual (Fallback)
+
+Existem duas situações principais onde um processo manual pode ser necessário. Escolha a que se aplica ao seu caso.
+
+#### Cenário 1: O workflow `Publish Release` falhou
+
+Use este guia se o Pull Request do `prepare-release-pr` foi mesclado, mas a criação da release final falhou. Nesse ponto, a versão e o `CHANGELOG.md` já foram atualizados, então precisamos apenas criar a tag e a release.
+
+1.  **Sincronize a `main` e extraia as informações:**
+
+    ```bash
+    git checkout main
+    git pull origin main
+
+    # Extrai a versão do package.json
+    VERSION=$(node -p "require('./package.json').version")
+    echo "Versão a ser lançada: v$VERSION"
+
+    # Extrai as notas de release do CHANGELOG.md (requer awk)
+    NOTES=$(awk '/^## / && c++>0 {exit} c>0 {print}' CHANGELOG.md)
+    echo "Notas da release extraídas."
+    ```
+
+2.  **Crie a Tag e a Release com o GitHub CLI:**
+    Você precisa ter o [GitHub CLI (`gh`)](https://cli.github.com/) instalado e autenticado (`gh auth login`).
+
+    ```bash
+    # Cria a tag localmente
+    git tag -a "v$VERSION" -m "chore(release): v$VERSION"
+
+    # Empurra a tag para o repositório remoto
+    git push origin "v$VERSION"
+
+    # Cria a release no GitHub usando as notas extraídas
+    gh release create "v$VERSION" --title "v$VERSION" --notes "$NOTES"
+    
+    echo "Release v$VERSION criada com sucesso no GitHub!"
+    ```
+
+#### Cenário 2: Nenhum workflow de release pode ser executado
+
+Use este guia se você precisa fazer uma release completa localmente, sem a ajuda dos workflows `prepare-release-pr` ou `Publish Release`.
+
+1.  **Sincronize e mescle `develop` na `main`:**
+    Certifique-se de que `main` e `develop` estão atualizadas e então mescle as últimas alterações na `main`.
+    ```bash
+    git checkout develop
+    git pull origin develop
+    git checkout main
+    git pull origin main
+    git merge develop
+    ```
+
+2.  **Execute o `standard-version` para criar a release:**
+    Este comando irá ler os novos commits, determinar a versão, gerar o `CHANGELOG.md`, commitar as mudanças e criar a tag.
+    ```bash
+    npm run release
+    ```
+
+3.  **Empurre as mudanças e a tag para o repositório:**
+    ```bash
+    # Empurra o commit da release e a nova tag
+    git push --follow-tags origin main
+    ```
+
+4.  **Crie a Release no GitHub:**
+    O passo final é criar a release na interface do GitHub para que as notas fiquem visíveis. Você pode usar o GitHub CLI (`gh`) para isso.
+    
+    ```bash
+    # Extraia a versão e as notas
+    VERSION=$(node -p "require('./package.json').version")
+    NOTES=$(awk '/^## / && c++>0 {exit} c>0 {print}' CHANGELOG.md)
+
+    # Crie a release no GitHub
+    gh release create "v$VERSION" --title "v$VERSION" --notes "$NOTES"
+    
+    echo "Release v$VERSION criada com sucesso no GitHub!"
+    ```
+
 ## 4. Dicas e Boas Práticas
 
 *   **Commits Atômicos:** Faça commits pequenos e focados em uma única mudança.
