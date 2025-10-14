@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.1](https://github.com/aretw0/vault-seed/compare/v0.2.0...v0.2.1) (2025-10-14)
+
+
+### 🐛 Correções
+
+* Removes redundant push step in versioning workflow. ([8e9bc70](https://github.com/aretw0/vault-seed/commit/8e9bc70017f5f8809b947f3870377c1eebe088d8))
+* Updates branch condition for versioning workflow. ([7c256c0](https://github.com/aretw0/vault-seed/commit/7c256c007c2d916286b577896d75095bf7dc4dbc))
+
+
+### ♻️ Refatoração
+
+* **release:** Alinha e automatiza o processo de release ([4f51f57](https://github.com/aretw0/vault-seed/commit/4f51f5728ea53aef84e63e435c807700f60d43d9))
+
+
+### ✨ Novos Recursos
+
+* Adds manual release process documentation. ([dc8aabc](https://github.com/aretw0/vault-seed/commit/dc8aabc6b4abe1e6ca4fd76905ed2e41588d14b8))
+* adiciona feature flag para controlar workflows do Gemini ([#6](https://github.com/aretw0/vault-seed/issues/6)) ([9682f6b](https://github.com/aretw0/vault-seed/commit/9682f6b20c45a17e9e17141664a86e969c30cef0))
+* **setup:** Feature/initial setup ([#4](https://github.com/aretw0/vault-seed/issues/4)) ([#5](https://github.com/aretw0/vault-seed/issues/5)) ([8baeb95](https://github.com/aretw0/vault-seed/commit/8baeb952082cf732632903cd33bb0e03a4afff07))
+* Updates Obsidian configuration and restores daily notes. ([fa2c863](https://github.com/aretw0/vault-seed/commit/fa2c863e9693a65c777d15de66f9e41c147cd2d7))
+
 ## [0.2.0](https://github.com/aretw0/vault-seed/compare/v0.1.4...v0.2.0) (2025-09-11)
 
 
