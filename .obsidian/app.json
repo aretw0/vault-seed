@@ -5,5 +5,10 @@
   "newFileLocation": "folder",
   "newFileFolderPath": "00 - Inbox",
   "showUnsupportedFiles": true,
-  "attachmentFolderPath": "99 - Meta & Attachments/Attachments"
+  "attachmentFolderPath": "99 - Meta & Attachments/Attachments",
+  "userIgnoreFilters": [
+    "node_modules/",
+    "scripts/",
+    "tests/"
+  ]
 }
