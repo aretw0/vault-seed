@@ -41,7 +41,7 @@ jobs:
       - name: 'Create and Push Git Tag'
         id: create_tag
         run: |
-          # Get version from package.json, which was bumped by the prepare-release-pr workflow
+          # Get version, which was bumped by the prepare-release-pr workflow
           VERSION="v$(cat VERSION)"
           echo "version_tag=$VERSION" >> $GITHUB_OUTPUT
           
