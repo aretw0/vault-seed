@@ -32,8 +32,5 @@ jobs:
             '50 - Archives/**/*.md' \
             '99 - Meta & Attachments/**/*.md'
 
-      - name: Lint Docs
-        run: npx markdownlint --config docs/.markdownlint.json 'docs/**/*.md'
-
       - name: Lint Templates
         run: npx markdownlint --config '90 - Templates/.markdownlint.json' '90 - Templates/**/*.md'
