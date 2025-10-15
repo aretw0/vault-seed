@@ -9,9 +9,9 @@
     "lint:docs": "markdownlint --config docs/.markdownlint.json \"docs/**/*.md\"",
     "lint:templates": "markdownlint --config \"90 - Templates/.markdownlint.json\" \"90 - Templates/**/*.md\"",
     "lint": "npm run lint:main && npm run lint:docs && npm run lint:templates",
-    "release": "standard-version --infile CHANGELOG.md",
-    "release:minor": "standard-version --release-as minor --infile CHANGELOG.md",
-    "release:major": "standard-version --release-as major --infile CHANGELOG.md"
+    "release": "standard-version --skip.tag --infile CHANGELOG.md",
+    "release:minor": "standard-version --skip.tag --release-as minor --infile CHANGELOG.md",
+    "release:major": "standard-version --skip.tag --release-as major --infile CHANGELOG.md"
   },
   "keywords": [],
   "author": "",
