@@ -51,7 +51,7 @@ jobs:
         # We skip tagging because the release workflow will handle it after merge
         run: |
           npx standard-version --skip.tag
-          echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+          echo "version=$(cat VERSION)" >> $GITHUB_ENV
 
       - name: 'Create Pull Request'
         uses: peter-evans/create-pull-request@v6
