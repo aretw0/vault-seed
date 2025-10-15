@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.4](https://github.com/aretw0/vault-seed/compare/v0.2.3...v0.2.4) (2025-10-15)
+
+
+### 🐛 Correções
+
+* **workflows:** Updates release workflow to fetch version from VERSION file. ([218c59a](https://github.com/aretw0/vault-seed/commit/218c59ab4ebd04bae4295500f4b1775cdb6e07d9))
+
 ### [0.2.3](https://github.com/aretw0/vault-seed/compare/v0.2.2...v0.2.3) (2025-10-15)
 
 
