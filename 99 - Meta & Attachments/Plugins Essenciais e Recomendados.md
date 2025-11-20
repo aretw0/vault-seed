@@ -21,6 +21,12 @@ related:
 
 Os plugins do Obsidian expandem significativamente suas funcionalidades, permitindo personalizar o fluxo de trabalho, automatizar tarefas e criar visualizações dinâmicas. Eles transformam o Obsidian em uma ferramenta poderosa e adaptável às suas necessidades específicas, seja para organização pessoal, estudos ou projetos complexos. Explore os plugins para desbloquear todo o potencial do seu vault!
 
+## Como os Plugins são Gerenciados?
+
+Para garantir a estabilidade e evitar conflitos ao sincronizar seu vault entre diferentes dispositivos, o ideal é que os arquivos dos plugins não sejam rastreados pelo Git. Apenas a lista de plugins ativados é mantida.
+
+Isso significa que você precisará instalar os plugins da comunidade em cada dispositivo que usar.
+
 ## Core (Ativar nas Configurações)
 
 - `Daily Notes`: Essencial para o fluxo de trabalho diário. Configure para usar a pasta `10 - Fleeting & Daily` e um template.
