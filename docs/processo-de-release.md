@@ -125,7 +125,7 @@ Use este guia se você precisa fazer uma release completa localmente, sem a ajud
 
 4.  **Crie a Release no GitHub:**
     O passo final é criar a release na interface do GitHub para que as notas fiquem visíveis. Você pode usar o GitHub CLI (`gh`) para isso.
-    
+
     ```bash
     # Extraia a versão e as notas
     VERSION=$(node -p "require('./package.json').version")
