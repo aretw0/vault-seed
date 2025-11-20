@@ -45,7 +45,7 @@ A estrutura inicial é só um ponto de partida. A verdadeira organização emerg
 
 7.  **Crie Vistas Dinâmicas com `Bases` e `Dataview`**:
     - **Comece com `Bases` (Plugin Nativo):** Esta é a ferramenta recomendada para começar. `Bases` permite que você crie visualizações de banco de dados (tabelas, cartões) de suas notas de forma visual e intuitiva, sem precisar de código. É perfeito para criar dashboards de projetos, listas de leitura, etc.
-    - **Use `Dataview` para Consultas Avançadas:** Se você precisar de uma lógica de consulta que `Bases` não suporta (como extrair informações do *corpo* da nota ou lógicas muito complexas), o `Dataview` é a ferramenta. Ele usa uma linguagem de consulta própria.
+    - **Use `Dataview` para Consultas Avançadas:** Se você precisar de uma lógica de consulta que `Bases` não suporta (como extrair informações do _corpo_ da nota ou lógicas muito complexas), o `Dataview` é a ferramenta. Ele usa uma linguagem de consulta própria.
     - Exemplo de Bloco Dataview (em uma nota `[[Dashboard Projetos]]`):
       ````markdown
       ```dataview
@@ -55,7 +55,7 @@ A estrutura inicial é só um ponto de partida. A verdadeira organização emerg
       SORT deadline ASC
       ```
       ````
-      *Com o plugin `Bases`, você alcançaria um resultado similar criando uma nova "Base", adicionando a pasta "20 - Projects" como fonte de dados e aplicando um filtro visual pela tag `#status/em-progresso`.*
+      _Com o plugin `Bases`, você alcançaria um resultado similar criando uma nova "Base", adicionando a pasta "20 - Projects" como fonte de dados e aplicando um filtro visual pela tag `#status/em-progresso`._
 
 ---
 Voltar para o [[Guia do Jardineiro Digital]]
