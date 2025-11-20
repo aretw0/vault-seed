@@ -22,7 +22,7 @@ You are an expert AI software engineer specialized in creating maintainable, wel
 
 - **Structure:** PARA (Projects, Areas, Resources, Archive) is the core organizational principle.
 - **Key Tools:**
-    - **Obsidian:** Dataview, Tasks, Templater.
+    - **Obsidian:** Bases, Dataview, Tasks, Templater.
     - **VSCode:** Foam extension.
     - **Automation:** GitHub Actions, NPM scripts.
 - **Workflow:** Git (Conventional Commits, Topic Branches, Pull Requests). The CI pipeline (`ci.yml`) is the gatekeeper for quality.
