@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.5](https://github.com/aretw0/vault-seed/compare/v0.2.4...v0.2.5) (2025-11-20)
+
+
+### 📚 Documentação
+
+* **ai:** documenta o propósito do GEMINI.md para o usuário final ([3256864](https://github.com/aretw0/vault-seed/commit/32568641f506d1e945c192053088373373c4d6d1))
+* **obsidian:** documenta a nova estratégia de gerenciamento de plugins ([4cc399d](https://github.com/aretw0/vault-seed/commit/4cc399d94c010068d8d23ef9cb7cef68a089972a))
+
+
+### ✨ Novos Recursos
+
+* **docs:** prioriza o plugin nativo 'Bases' sobre o 'Dataview' ([d1d018d](https://github.com/aretw0/vault-seed/commit/d1d018d3436dc8c51b19a024fcad29fcb5058178))
+* **obsidian:** ignora o diretório de plugins da comunidade ([da61eeb](https://github.com/aretw0/vault-seed/commit/da61eebaed0a044315d27ed653048c6ffd1729f3))
+* **project:** refatora o GEMINI.md para desenvolvimento do template ([625981e](https://github.com/aretw0/vault-seed/commit/625981eb2da147ccdbc8d9fdabdc20f63af352af))
+* push release branch before creating PR ([2509d5d](https://github.com/aretw0/vault-seed/commit/2509d5d236ce24c5432cf173854e4a5f86763f8d))
+
 ### [0.2.4](https://github.com/aretw0/vault-seed/compare/v0.2.3...v0.2.4) (2025-10-15)
 
 
