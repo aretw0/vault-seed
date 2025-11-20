@@ -46,10 +46,13 @@ jobs:
           echo "🔥 Copiando CONTRIBUTING.md"
           cp CONTRIBUTING.template.md CONTRIBUTING.md
 
+          echo "🔥 Copiando GEMINI.md"
+          cp GEMINI.template.md GEMINI.md
+
       - name: 🗑️ Remove Arquivos do Template e Commita
         run: |
           echo "🗑️ Removendo arquivos e diretórios do template..."
-          git rm --ignore-unmatch README.template.md CONTRIBUTING.template.md
+          git rm --ignore-unmatch GEMINI.template.md README.template.md CONTRIBUTING.template.md
           git rm -r --ignore-unmatch docs
           git rm --ignore-unmatch .github/workflows/initialize.yml
           git rm --ignore-unmatch .github/workflows/template-ci.yml
@@ -58,7 +61,7 @@ jobs:
           git rm --ignore-unmatch .github/workflows/sync-develop-with-main.yml
 
           echo "📦 Adicionando arquivos modificados ao stage..."
-          git add CHANGELOG.md VERSION README.md CONTRIBUTING.md
+          git add CHANGELOG.md VERSION README.md CONTRIBUTING.md GEMINI.md
 
           echo "📝 Verificando e commitando mudanças..."
           if ! git diff-index --quiet --cached HEAD; then
