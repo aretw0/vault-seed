@@ -53,6 +53,9 @@ jobs:
           npx standard-version --skip.tag
           echo "version=$(cat VERSION)" >> $GITHUB_ENV
 
+      - name: 'Push release branch to origin'
+        run: git push origin ${{ steps.create_branch.outputs.branch_name }}
+
       - name: 'Create Pull Request'
         uses: peter-evans/create-pull-request@v6
         with:
