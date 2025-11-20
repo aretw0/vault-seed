@@ -73,3 +73,21 @@ A implementação dos filtros `clean` e `smudge` no ambiente Windows apresentou 
 *   **Aprendizado:** Os filtros Git esperam que o `stdout` do script seja *apenas* o conteúdo final do arquivo. Qualquer `console.log` extra polui essa saída, tornando-a um JSON inválido. É crucial remover todos os `console.log`s de scripts que atuam como filtros.
 
 Esses pontos destacam a importância de testar em ambientes variados e a necessidade de uma compreensão profunda das nuances de cada sistema operacional ao trabalhar com automação e scripts de shell. Para mim, como assistente, cada um desses erros foi uma oportunidade de refinar minha compreensão e adaptabilidade.
+
+## Arquivamento: Uma Abordagem Obsoleta para Configurações de Plugins
+
+Apesar da elegância técnica da abordagem de filtros `clean`/`smudge`, para o contexto deste *vault-seed*, ela foi **descontinuada** como método principal para gerenciar configurações de plugins do Obsidian.
+
+### Por que foi descontinuada?
+
+1.  **Complexidade de Manutenção:** A configuração dos filtros, a criação de scripts e a necessidade de cada colaborador configurar seu ambiente local corretamente adicionam uma camada de complexidade que vai contra o princípio de "facilidade de adoção" do projeto.
+2.  **Problemas de Sincronização:** Como detalhado em `[[../docs/estrategia-plugins-obsidian.md|Estratégia de Gerenciamento de Plugins do Obsidian]]`, a sincronização da pasta de plugins inteira é inerentemente frágil. Mesmo com os segredos filtrados, as mudanças nos arquivos de configuração dos plugins ainda podem causar conflitos.
+3.  **Foco na Simplicidade:** A nova estratégia de ignorar completamente a pasta `.obsidian/plugins/` e rastrear apenas a lista de plugins (`community-plugins.json`) provou ser muito mais robusta, simples e segura para a grande maioria dos usuários.
+
+### Menção Honrosa
+
+A experiência de implementar os filtros `clean` e `smudge` foi extremamente valiosa. Ela demonstrou a flexibilidade do Git e continua sendo uma técnica poderosa e recomendada para cenários onde se precisa versionar um arquivo de configuração enquanto se protege um segredo específico dentro dele.
+
+No entanto, para a gestão de ecossistemas de plugins voláteis como o do Obsidian, uma abordagem mais simples e declarativa (`community-plugins.json`) é superior.
+
+Esta seção permanece como um registro do aprendizado e como referência para casos de uso mais avançados de gerenciamento de segredos no Git.
