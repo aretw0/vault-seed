@@ -44,6 +44,12 @@ Pense nesta nota como o canteiro principal do seu jardim. A partir daqui, você 
 - [[Usando o Git e o GitHub para Sincronizar seu Vault|Aprenda a usar o Git e o GitHub para manter seu cofre seguro e sincronizado]]
 - [[Plugins Essenciais e Recomendados|Descubra os plugins que podem aprimorar sua experiência no Obsidian]]
 
+## Trabalhando com Inteligência Artificial
+
+Este vault é projetado para ser "inteligente", permitindo que você colabore com assistentes de IA (como o Gemini) para organizar, refinar e expandir seu conhecimento.
+
+- **[[../40 - Resources/O que é o arquivo GEMINI.md.md|Entenda o `GEMINI.md`: O Cérebro do seu Assistente de IA]]**: Descubra como o arquivo `GEMINI.md` na raiz do seu vault instrui a IA sobre como se comportar e interagir com suas notas, garantindo que ela siga as convenções e a filosofia do seu jardim digital.
+
 ## Dicas de Cultivo
 
 - [[Usando o Vault no Celular vs. Desktop|Dicas para usar o cofre em diferentes dispositivos]]
