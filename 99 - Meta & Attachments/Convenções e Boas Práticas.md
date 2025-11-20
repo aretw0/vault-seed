@@ -17,7 +17,6 @@ related:
   - "[[Links]]"
   - "[[O que são MOCs (Mapas de Conteúdo)]]"
   - "[[Templater]]"
-  - "[[Dataview]]"
 ---
 # Convenções e Boas Práticas
 
@@ -74,7 +73,7 @@ Tags são como etiquetas coloridas que você coloca em suas plantas para uma cat
 O Frontmatter é um pequeno bloco de texto no topo de suas notas que contém metadados estruturados. É como a "ficha técnica" da sua planta.
 
 -   **O que é?** Um bloco de texto entre `---` no início do arquivo.
--   **Por que usar?** Permite adicionar informações como aliases, tags de forma estruturada, datas, etc. É extremamente útil para plugins como o `Dataview`.
+-   **Por que usar?** Permite adicionar informações como aliases, tags de forma estruturada, datas, etc. É extremamente útil para plugins de consulta como o `Bases` (nativo) e o `Dataview` (comunidade).
 
 -   **Exemplo de Frontmatter:**
     ```yaml

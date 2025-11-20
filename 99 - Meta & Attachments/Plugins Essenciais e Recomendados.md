@@ -29,6 +29,7 @@ Isso significa que você precisará instalar os plugins da comunidade em cada di
 
 ## Core (Ativar nas Configurações)
 
+- **`Bases`**: **A nova forma de organizar seu vault.** Permite criar visualizações de banco de dados (tabelas, cartões) a partir de suas notas e metadados. É a evolução do Dataview, com uma interface gráfica intuitiva e sem a necessidade de escrever código para a maioria das tarefas. **Comece por aqui.**
 - `Daily Notes`: Essencial para o fluxo de trabalho diário. Configure para usar a pasta `10 - Fleeting & Daily` e um template.
 - `Templates`: Para criar modelos de notas.
 - `Backlinks` & `Outgoing Links`: Visualizar conexões.
@@ -40,8 +41,8 @@ Isso significa que você precisará instalar os plugins da comunidade em cada di
 ### Essenciais
 
 - **`Obsidian Git`**: **Fundamental** para automatizar `git push/pull`. Configure para fazer commits e pushes automáticos em intervalos regulares ou ao fechar o Obsidian. Não substitui, o uso do Git no terminal ou cliente Git dedicado para operações mais complexas.
-- **`Dataview`**: _Fundamental_ para criar visões dinâmicas do seu vault (listas, tabelas) baseadas em metadados (tags, links, campos YAML). **Indispensável** para escalar.
-  - _Exemplo em um MOC:_
+- **`Dataview`**: Para usuários avançados que precisam de consultas complexas que o plugin `Bases` não consegue realizar através da sua interface. Permite criar visões dinâmicas usando uma linguagem de consulta (DQL).
+  - _Exemplo em um MOC (hoje, isso pode ser feito de forma mais simples com o plugin `Bases`):_
   ````markdown
   ```dataview
   LIST

@@ -10,7 +10,7 @@ Princípios Inegociáveis:
 Conhecimento Fundamental (Sempre em Mente):
 
 * Estrutura: PARA (Projects, Areas, Resources, Archive).
-* Ferramentas Chave: Obsidian (Dataview, Tasks, Templater), VS Code (Foam).
+* Ferramentas Chave: Obsidian (Bases, Dataview, Tasks, Templater), VS Code (Foam).
 * Workflow: Git (Conventional Commits, Topic Branches, Pull Requests).
 * IA: RAG, Servidores MCP, Prompts Reutilizáveis, GitHub Actions.
 
