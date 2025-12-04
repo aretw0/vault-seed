@@ -1,4 +1,4 @@
-name: 'Publish Release'
+name: "Publish Release"
 
 on:
   push:
@@ -9,47 +9,45 @@ jobs:
   create-release:
     runs-on: ubuntu-latest
     # Condition: Only run on the main repo and if the commit message indicates a release from standard-version.
-    if: |
-      github.repository == 'aretw0/vault-seed' &&
-      contains(github.event.head_commit.message, 'chore(release):')
+    if: contains(github.event.head_commit.message, 'chore(release):')
 
     permissions:
       contents: write # To create tags and releases
 
     steps:
-      - name: 'Checkout code'
+      - name: "Checkout code"
         uses: actions/checkout@v4
         # The token is needed to push the tag back to the repo
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0 # Needed to extract release notes
 
-      - name: 'Setup Node.js'
+      - name: "Setup Node.js"
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
-      - name: 'Cache & Install Dependencies'
+      - name: "Cache & Install Dependencies"
         run: npm ci
 
-      - name: 'Configure Git User'
+      - name: "Configure Git User"
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: 'Create and Push Git Tag'
+      - name: "Create and Push Git Tag"
         id: create_tag
         run: |
           # Get version, which was bumped by the prepare-release-pr workflow
           VERSION="v$(cat VERSION)"
           echo "version_tag=$VERSION" >> $GITHUB_OUTPUT
-          
+
           echo "Creating and pushing tag ${VERSION}..."
           git tag $VERSION -m "Release ${VERSION}"
           git push origin $VERSION
 
-      - name: 'Get Release Notes from CHANGELOG'
+      - name: "Get Release Notes from CHANGELOG"
         id: get_release_notes
         run: |
           # The get_release_notes.js script extracts the notes for a specific version
@@ -66,7 +64,7 @@ jobs:
           echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: 'Create GitHub Release'
+      - name: "Create GitHub Release"
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.create_tag.outputs.version_tag }}
