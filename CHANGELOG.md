@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.6](https://github.com/aretw0/vault-seed/compare/v0.2.5...v0.2.6) (2025-12-05)
+
+
+### ✨ Novos Recursos
+
+* adds license ([1d9d1b0](https://github.com/aretw0/vault-seed/commit/1d9d1b0f2d10a79c12b27a77924a7bb7100eb189))
+
+
+### 🐛 Correções
+
+* adjust condition on release workflow ([b22eee2](https://github.com/aretw0/vault-seed/commit/b22eee25c4c6e868aae459866ad6b96a645c3959))
+* remove failing workflow ([f5e7f78](https://github.com/aretw0/vault-seed/commit/f5e7f78ef5b10721e3eb292379ee25fbcedd0823))
+* **workflow:** adjust prepare release pr workflow ([e5532f2](https://github.com/aretw0/vault-seed/commit/e5532f2deff36468f72395e0e8fa24933ae15dd4))
+
 ### [0.2.5](https://github.com/aretw0/vault-seed/compare/v0.2.4...v0.2.5) (2025-11-20)
 
 
