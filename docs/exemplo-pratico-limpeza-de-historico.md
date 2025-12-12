@@ -1,6 +1,6 @@
-# Exemplo Prático: Limpando um Segredo do Histórico do Git
+# Exemplo Prático: Por Dentro da Limpeza de Histórico do Git
 
-Este documento é um guia de ponta a ponta baseado em uma execução real de limpeza de histórico no nosso próprio repositório. Ele serve como um caso de uso prático do guia [Removendo Segredos do Histórico do Git com `git filter-repo`](./removendo-segredos-com-git-filter-repo.md).
+Este documento é um guia de ponta a ponta baseado em uma execução real de limpeza de histórico. Ele serve para ilustrar em detalhes os passos que o script `scripts/remove_file_from_git_history.sh` automatiza. Para o guia prático de como usar o script, consulte [Removendo Arquivos do Histórico do Git com o Script de Automação](./removendo-arquivos-do-historico-git.md).
 
 ## Contexto Inicial
 
@@ -91,13 +91,4 @@ O histórico local foi reescrito. Agora, precisamos espelhar essa mudança no re
     git push origin --force --tags
     ```
 
-### Passo 4: Finalização do Ambiente Local
-
-O passo final é restaurar o arquivo `data.json` em sua versão "limpa", usando o sistema `smudge/clean` que já configuramos.
-
-```bash
-# O reset aciona o script smudge para recriar o arquivo a partir do .env
-git reset --hard HEAD
-```
-
-Com isso, o processo está completo. O segredo foi removido do histórico local e remoto, e o ambiente de trabalho está consistente.
+Com isso, o processo está completo. O segredo foi removido do histórico local e remoto.
