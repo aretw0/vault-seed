@@ -28,7 +28,6 @@ Este documento descreve a estrutura de pastas e arquivos do repositório sob uma
 ├── 90 - Templates/           # Modelos de notas para o Obsidian/Foam
 ├── 99 - Meta & Attachments/  # Meta-documentação do vault e anexos
 │   └── Attachments/          # Pasta padrão para anexos de notas
-├── .env.example              # Exemplo de arquivo de variáveis de ambiente
 ├── .gitignore                # Arquivos e pastas a serem ignorados pelo Git
 ├── package.json              # Metadados do projeto e dependências Node.js
 ├── package-lock.json         # Bloqueio de versões de dependências Node.js
@@ -48,7 +47,6 @@ Este documento descreve a estrutura de pastas e arquivos do repositório sob uma
 *   **`90 - Templates/`**: Contém arquivos Markdown que servem como modelos para a criação de novas notas, utilizados por plugins como o Templater no Obsidian.
 *   **`99 - Meta & Attachments/`**: Além de meta-documentação sobre o vault, a subpasta `Attachments/` é o local padrão para anexos de mídia (imagens, PDFs) referenciados nas notas.
 *   **Arquivos na Raiz**:
-    *   `.env.example`: Modelo para variáveis de ambiente sensíveis.
     *   `.gitignore`: Define arquivos e diretórios a serem ignorados pelo controle de versão Git.
     *   `package.json` / `package-lock.json`: Gerenciamento de dependências e scripts do projeto Node.js.
     *   `README.md`: Ponto de entrada principal para o repositório.
