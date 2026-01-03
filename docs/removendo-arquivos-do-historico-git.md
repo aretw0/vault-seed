@@ -6,9 +6,9 @@ Este documento descreve o processo para remover completamente arquivos ou pastas
 
 Quando um arquivo ou pasta é commitado, não basta apenas apagá-lo e fazer um novo commit. O conteúdo ainda existirá no histórico do Git, acessível a qualquer pessoa que tenha um clone do repositório. Isso pode ser um problema por várias razões, como a presença de arquivos grandes, dados temporários ou informações que simplesmente não deveriam estar no controle de versão.
 
-## A Ferramenta: `scripts/remove_file_from_git_history.sh`
+## A Ferramenta: `scripts/remove_from_git_history.sh`
 
-Para resolver isso de forma segura e automatizada, o projeto fornece o script `remove_file_from_git_history.sh`. Ele utiliza a ferramenta `git-filter-repo` (a abordagem moderna e recomendada pelo Git para reescrever o histórico) e encapsula todo o processo, incluindo:
+Para resolver isso de forma segura e automatizada, o projeto fornece o script `remove_from_git_history.sh`. Ele utiliza a ferramenta `git-filter-repo` (a abordagem moderna e recomendada pelo Git para reescrever o histórico) e encapsula todo o processo, incluindo:
 
 1.  **Criação de um backup espelho** antes de qualquer modificação.
 2.  **Execução do `git-filter-repo`** para remover o caminho especificado de todo o histórico.
@@ -34,10 +34,10 @@ Abra o terminal na raiz do seu repositório e execute o script, passando o camin
 
 ```bash
 # Exemplo para remover um arquivo específico
-bash scripts/remove_file_from_git_history.sh "caminho/para/meu-arquivo-indesejado.ext"
+bash scripts/remove_from_git_history.sh "caminho/para/meu-arquivo-indesejado.ext"
 
 # Exemplo para remover uma pasta inteira
-bash scripts/remove_file_from_git_history.sh "caminho/para/minha-pasta-indesejada/"
+bash scripts/remove_from_git_history.sh "caminho/para/minha-pasta-indesejada/"
 ```
 
 O script é interativo e irá guiá-lo pelo processo, pedindo confirmações em etapas críticas, como a exclusão do diretório de backup.
