@@ -33,4 +33,10 @@ Este processo só precisa ser feito uma vez por dispositivo.
 -   **Histórico Limpo:** Seu histórico Git reflete apenas as mudanças no seu conhecimento (suas notas), e não o código de terceiros.
 -   **Segurança:** Evita o risco de sincronizar acidentalmente plugins com problemas de segurança ou configurações que contenham dados sensíveis.
 
+## Filosofia "Zero Bloat" (Opt-In)
+
+Este template (`vault-seed`) vem **sem nenhum plugin instalado por padrão**. Embora recomendemos plugins poderosos (como *Templater*, *Dataview*, *Meta Bind*) em nossa documentação para habilitar funcionalidades avançadas (como Dashboards), acreditamos que a escolha final deve ser **sua**.
+
+Nós fornecemos os "trilhos" (templates e guias), mas você escolhe o "motor" (plugins) que deseja usar. Se um template requerer um plugin específico, ele avisará através de comentários no topo do arquivo.
+
 Ao separar a *lista* de plugins dos seus *arquivos*, ganhamos o melhor dos dois mundos: a conveniência de saber quais plugins usamos em nosso vault e a robustez de permitir que cada ambiente gerencie suas próprias instalações.

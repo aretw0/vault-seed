@@ -30,7 +30,8 @@ Isso significa que você precisará instalar os plugins da comunidade em cada di
 ## Core (Ativar nas Configurações)
 
 - **`Bases`**: **A nova forma de organizar seu vault.** Permite criar visualizações de banco de dados (tabelas, cartões) a partir de suas notas e metadados. É a evolução do Dataview, com uma interface gráfica intuitiva e sem a necessidade de escrever código para a maioria das tarefas. **Comece por aqui.**
-- `Daily Notes`: Essencial para o fluxo de trabalho diário. Configure para usar a pasta `10 - Fleeting & Daily` e um template.
+- **`Canvas`**: **Essencial para Dashboards Visuais.** Uma superfície infinita para organizar suas notas, imagens e ideias espacialmente.
+- `Daily Notes`: Essencial para o fluxo de trabalho diário. Pode funcionar como seu **Dashboard (Daily Driver)** se configurado para abrir ao iniciar. Configure para usar a pasta `10 - Fleeting & Daily` e o template `Template - Nova Nota Diaria`.
 - `Templates`: Para criar modelos de notas.
 - `Backlinks` & `Outgoing Links`: Visualizar conexões.
 - `Graph View`: Visualizar a rede de notas.
@@ -41,6 +42,7 @@ Isso significa que você precisará instalar os plugins da comunidade em cada di
 ### Essenciais
 
 - **`Obsidian Git`**: **Fundamental** para automatizar `git push/pull`. Configure para fazer commits e pushes automáticos em intervalos regulares ou ao fechar o Obsidian. Não substitui, o uso do Git no terminal ou cliente Git dedicado para operações mais complexas.
+- **`Homepage`**: Transforma qualquer nota ou Canvas no ponto de entrada do seu cofre. Permite configurar o que abre ao iniciar o Obsidian. Fundamental para **Dashboards**.
 - **`Dataview`**: Para usuários avançados que precisam de consultas complexas que o plugin `Bases` não consegue realizar através da sua interface. Permite criar visões dinâmicas usando uma linguagem de consulta (DQL).
   - _Exemplo em um MOC (hoje, isso pode ser feito de forma mais simples com o plugin `Bases`):_
   ````markdown
@@ -59,10 +61,15 @@ Isso significa que você precisará instalar os plugins da comunidade em cada di
 
 ### Opcionais (depende do uso)
 
-- **`Templater`**: Versão mais poderosa do plugin de Templates, com funções dinâmicas. Essencial para automatizar a criação de notas.
+- **`Templater`**: Versão mais poderosa do plugin de Templates. **Obrigatório** para os templates de Dashboard e Nota Diária incluídos neste seed funcionarem com datas dinâmicas.
 - **`Calendar`**: Interface de calendário para navegar pelas Daily Notes.
 - **`Kanban`**: Criar quadros Kanban dentro do Obsidian (útil para `20 - Projects`).
 - **`Excalidraw`:** Para desenhos e diagramas baseados em vetor dentro do Obsidian.
+
+### Automação e Fluxo (Avançado)
+
+- **`QuickAdd`**: O "motor" de automação do seu vault. Permite criar macros, capturar informações rapidamente para notas específicas e automatizar fluxos de trabalho complexos.
+- **`Meta Bind`**: A "interface" para suas automações. Permite criar botões, caixas de seleção e campos de texto diretamente em suas notas. Substitui o antigo plugin "Buttons". **Use em conjunto com o QuickAdd para criar Dashboards Acionáveis.**
 
 ---
 Voltar para o [[Guia do Jardineiro Digital]]
