@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.8](https://github.com/aretw0/vault-seed/compare/v0.2.7...v0.2.8) (2026-01-05)
+
+
+### 📚 Documentação
+
+* **plugins:** update strategy with automation stack and opt-in philosophy ([678e03a](https://github.com/aretw0/vault-seed/commit/678e03a30cff82f2539a773d9c876d921107657e))
+
+
+### ✨ Novos Recursos
+
+* **docs:** add comprehensive dashboard guide ([e12c051](https://github.com/aretw0/vault-seed/commit/e12c0518f99993c8f9abd04d7763c173f89bae19))
+* **templates:** add GTD daily note and refine dashboard template ([d922d23](https://github.com/aretw0/vault-seed/commit/d922d232e3516597068f250b297bfa55b60fc5d5))
+
 ### [0.2.7](https://github.com/aretw0/vault-seed/compare/v0.2.6...v0.2.7) (2025-12-12)
 
 
