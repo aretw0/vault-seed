@@ -9,18 +9,12 @@ on:
 jobs:
   initialize-and-self-destruct:
     runs-on: ubuntu-latest
-    # Apenas executa se for um push para a branch 'main' E
-    # se o repositório NÃO for o repositório de template original 'aretw0/vault-seed'.
-    if: github.ref == 'refs/heads/main' && github.repository != 'aretw0/vault-seed'
-
     permissions:
       contents: write
-
     steps:
       - name: 🏗️ Initialize Project from Template
-        uses: aretw0/template-initializer@v0
+        uses: aretw0/template-initializer@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           template_repository: "aretw0/vault-seed"
           workflow_filename: ".github/workflows/initialize.yml"
           reset_changelog: "true"
