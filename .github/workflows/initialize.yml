@@ -17,56 +17,13 @@ jobs:
       contents: write
 
     steps:
-      - name: 🛎️ Clona o Repositório
-        uses: actions/checkout@v4
+      - name: 🏗️ Initialize Project from Template
+        uses: aretw0/template-initializer@v0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: ⚙️ Configura o Git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: 🧹 Reseta os Arquivos do Projeto
-        run: |
-          echo "🔥 Resetando CHANGELOG.md"
-          echo "# Changelog" > CHANGELOG.md
-          echo "" >> CHANGELOG.md
-          echo "Todas as mudanças notáveis neste projeto serão documentadas neste arquivo." >> CHANGELOG.md
-
-          echo "🔥 Resetando VERSION para 0.0.1"
-          echo "0.0.1" > VERSION
-
-      - name: ✨ Prepara Documentação Inicial
-        run: |
-          echo "🔥 Copiando e personalizando README.md"
-          cp README.template.md README.md
-          sed -i "s/{{REPO_NAME}}/${{ github.event.repository.name }}/g" README.md
-
-          echo "🔥 Copiando CONTRIBUTING.md"
-          cp CONTRIBUTING.template.md CONTRIBUTING.md
-
-          echo "🔥 Copiando GEMINI.md"
-          cp GEMINI.template.md GEMINI.md
-
-      - name: 🗑️ Remove Arquivos do Template e Commita
-        run: |
-          echo "🗑️ Removendo arquivos e diretórios do template..."
-          git rm --ignore-unmatch GEMINI.template.md README.template.md CONTRIBUTING.template.md
-          git rm -r --ignore-unmatch docs
-          git rm --ignore-unmatch .github/workflows/initialize.yml
-          git rm --ignore-unmatch .github/workflows/template-ci.yml
-          git rm --ignore-unmatch .github/workflows/prepare-release-pr.yml
-          git rm --ignore-unmatch .github/workflows/release.yml
-          git rm --ignore-unmatch .github/workflows/sync-develop-with-main.yml
-
-          echo "📦 Adicionando arquivos modificados ao stage..."
-          git add CHANGELOG.md VERSION README.md CONTRIBUTING.md GEMINI.md
-
-          echo "📝 Verificando e commitando mudanças..."
-          if ! git diff-index --quiet --cached HEAD; then
-            git commit -m "chore(project): 🎉 inicializa o vault a partir do template"
-            git push
-          else
-            echo "✅ Vault já inicializado. Nenhum novo commit necessário."
-          fi
+          template_repository: "aretw0/vault-seed"
+          workflow_filename: ".github/workflows/initialize.yml"
+          reset_changelog: "true"
+          reset_version: "true"
+          files_to_rename: "README.template.md:README.md CONTRIBUTING.template.md:CONTRIBUTING.md GEMINI.template.md:GEMINI.md"
+          files_to_remove: "docs GEMINI.template.md README.template.md CONTRIBUTING.template.md .github/workflows/template-ci.yml .github/workflows/prepare-release-pr.yml .github/workflows/release.yml .github/workflows/sync-develop-with-main.yml .github/workflows/gemini*.yml"
