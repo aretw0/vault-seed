@@ -20,4 +20,4 @@ jobs:
           reset_changelog: "true"
           reset_version: "true"
           files_to_rename: "README.template.md:README.md CONTRIBUTING.template.md:CONTRIBUTING.md GEMINI.template.md:GEMINI.md"
-          files_to_remove: "docs GEMINI.template.md README.template.md CONTRIBUTING.template.md .github/workflows/template-ci.yml .github/workflows/prepare-release-pr.yml .github/workflows/release.yml .github/workflows/sync-develop-with-main.yml .github/workflows/gemini*.yml"
+          files_to_remove: "docs GEMINI.template.md README.template.md CONTRIBUTING.template.md .github/workflows/template-ci.yml .github/workflows/prepare-release-pr.yml .github/workflows/release.yml .github/workflows/sync-develop-with-main.yml .github/workflows/gemini*.yml .github/commands"
