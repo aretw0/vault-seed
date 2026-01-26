@@ -1,5 +1,8 @@
 # vault-seed
 
+[![License](https://img.shields.io/github/license/aretw0/vault-seed.svg?color=red)](LICENSE.md)
+[![Release](https://img.shields.io/github/release/aretw0/vault-seed.svg?branch=main)](https://github.com/aretw0/vault-seed/releases)
+
 Esta "semente" (seed) de cofre (vault) com foco no Obsidian e Visual Studio Code (Foam), visa equilibrar estrutura e flexibilidade, permitindo que seu cofre de conhecimento cresça organicamente.
 
 > Template original: [https://github.com/aretw0/vault-seed](https://github.com/aretw0/vault-seed)
