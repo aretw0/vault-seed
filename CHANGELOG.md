@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.9](https://github.com/aretw0/vault-seed/compare/v0.2.8...v0.2.9) (2026-01-27)
+
+
+### 📚 Documentação
+
+* add status badges to README ([35dcb30](https://github.com/aretw0/vault-seed/commit/35dcb30d1cea4e99474c9acccc3153424a98b9af))
+
+
+### ✨ Novos Recursos
+
+* Add Gemini AI commands and workflows for GitHub Actions. ([732f48d](https://github.com/aretw0/vault-seed/commit/732f48dbf0cdfdc3523eb6b1ee5e24f3a3e9f061))
+
 ### [0.2.8](https://github.com/aretw0/vault-seed/compare/v0.2.7...v0.2.8) (2026-01-05)
 
 
