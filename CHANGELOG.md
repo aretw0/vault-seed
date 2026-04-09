@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.10](https://github.com/aretw0/vault-seed/compare/v0.2.9...v0.2.10) (2026-04-09)
+
+
+### 🐛 Correções
+
+* adjust .gitignore ([a7a9e05](https://github.com/aretw0/vault-seed/commit/a7a9e0597bf5ff7c4e10c8b1e8bdeddc756deccb))
+
 ### [0.2.9](https://github.com/aretw0/vault-seed/compare/v0.2.8...v0.2.9) (2026-01-27)
 
 
