@@ -1,0 +1,52 @@
+{
+  "name": "digital-gardening-kit",
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": false
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "22",
+      "nodeGypDependencies": false
+    },
+    "ghcr.io/jsburckhardt/devcontainer-features/uv:1": {}
+  },
+  "containerEnv": {
+    "LANG": "pt_BR.UTF-8",
+    "LC_ALL": "pt_BR.UTF-8",
+    "LANGUAGE": "pt_BR:pt:en",
+    "TERM": "xterm-256color",
+    "UV_SYSTEM_PYTHON": "true",
+    "UV_LINK_MODE": "copy"
+  },
+  "remoteEnv": {
+    "LANG": "pt_BR.UTF-8",
+    "LC_ALL": "pt_BR.UTF-8",
+    "LANGUAGE": "pt_BR:pt:en",
+    "TERM": "xterm-256color",
+    "PNPM_HOME": "/home/vscode/.local/share/pnpm",
+    "PATH": "/home/vscode/.local/share/pnpm:${containerEnv:PATH}"
+  },
+  "mounts": [
+    "source=dgk-pnpm-store,target=/home/vscode/.local/share/pnpm/store,type=volume"
+  ],
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "DavidAnson.vscode-markdownlint",
+        "esbenp.prettier-vscode",
+        "foam.foam-vscode"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "terminal.integrated.env.linux": {
+          "LANG": "pt_BR.UTF-8",
+          "LC_ALL": "pt_BR.UTF-8"
+        },
+        "editor.unicodeHighlight.ambiguousCharacters": false,
+        "files.encoding": "utf8",
+        "files.autoGuessEncoding": false
+      }
+    }
+  }
+}
