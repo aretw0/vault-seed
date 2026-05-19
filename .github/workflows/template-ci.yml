@@ -1,55 +1,57 @@
-name: Vault CI
+name: Template CI
 
 on:
   push:
-    branches:
-      - main
-      - develop
+    branches: [main, develop]
   pull_request:
-    branches:
-      - main
-      - develop
+    branches: [main, develop]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
-    if: github.repository == 'aretw0/vault-seed' # Only run this job in the template repository
+  validate-template:
+    name: Validate template
+    if: github.repository == 'aretw0/vault-seed'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "18"
-          cache: 'npm'
+          node-version-file: ".nvmrc"
+          cache: "npm"
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: npm ci
 
-      - name: Lint Docs
-        run: npx markdownlint --config docs/.markdownlint.json 'docs/**/*.md'
-
-      - name: Validate Onboarding
-        run: npm run validate:onboarding
-
-      - name: Simple Check (Placeholder)
-        run: echo "Vault content pushed successfully."
+      - name: Validate markdown and onboarding
+        run: npm run validate
 
       - name: Check for unwanted Copilot .gitattributes entry
         run: |
+          set -euo pipefail
           if grep -qF ".obsidian/plugins/copilot/data.json filter=copilot-secrets diff=copilot-secrets" .gitattributes; then
-            echo "::error file=.gitattributes::Found unwanted Copilot configuration in .gitattributes. This entry should not be committed to the main branch of the template repository."
+            echo "::error file=.gitattributes::Found unwanted Copilot configuration in .gitattributes. This entry should not be committed to the template repository."
             exit 1
-          else
-            echo "No unwanted Copilot configuration found in .gitattributes."
           fi
+
+          echo "No unwanted Copilot configuration found in .gitattributes."
 
       - name: Check for unwanted plugin folders
         run: |
-          if find .obsidian/plugins/ -mindepth 1 -maxdepth 1 -type d | grep -q .; then
-            echo "::error file=.obsidian/plugins/::Found unwanted plugin folders in .obsidian/plugins/. Plugin folders should not be committed to the main branch of the template repository."
+          set -euo pipefail
+          if [ -d ".obsidian/plugins" ] && find .obsidian/plugins/ -mindepth 1 -maxdepth 1 -type d | grep -q .; then
+            echo "::error file=.obsidian/plugins/::Found unwanted plugin folders in .obsidian/plugins/. Plugin folders should not be committed to the template repository."
             exit 1
-          else
-            echo "No unwanted plugin folders found in .obsidian/plugins/."
           fi
+
+          echo "No unwanted plugin folders found in .obsidian/plugins/."
