@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.10](https://github.com/aretw0/vault-seed/compare/v0.2.9...v0.2.10) (2026-05-19)
+
+
+### ✨ Novos Recursos
+
+* **ai:** centralize assistant instructions ([a705b8c](https://github.com/aretw0/vault-seed/commit/a705b8cf77b49df9d9587e3dcda52d63d16d1bd5))
+* **onboarding:** enrich vault exploration examples ([52fd221](https://github.com/aretw0/vault-seed/commit/52fd221421feccb14bb15dedcf65e1ff4b7b7583))
+* **onboarding:** improve vault setup journey ([4bd8ac8](https://github.com/aretw0/vault-seed/commit/4bd8ac8610ea2a6902a0aba5ad7d7ffffc0bdd91))
+
+
+### 📚 Documentação
+
+* **release:** align versioning playbook with automation ([d44b291](https://github.com/aretw0/vault-seed/commit/d44b291a79238080defbd41c0a3d77696ccbc150))
+
+
+### 🐛 Correções
+
+* adjust .gitignore ([a7a9e05](https://github.com/aretw0/vault-seed/commit/a7a9e0597bf5ff7c4e10c8b1e8bdeddc756deccb))
+* **ci:** configure release git identity before rebase ([89e6186](https://github.com/aretw0/vault-seed/commit/89e6186913a2606a5143cae3a11be0923350ef3e))
+* **ci:** create release PRs from develop ([3525739](https://github.com/aretw0/vault-seed/commit/3525739f3eedd97ababed0a1162c1494896c87d9))
+* **ci:** harden vault validation and release workflows ([122a15f](https://github.com/aretw0/vault-seed/commit/122a15fd0d64648268f8ec8e201bf8a4fdcd619c))
+* **ci:** keep audit report informational ([28c9d6b](https://github.com/aretw0/vault-seed/commit/28c9d6b9a8be1b8b37a092c2a5d89a1f72e69453))
+* **ci:** modernize template validation with pnpm ([78b1f98](https://github.com/aretw0/vault-seed/commit/78b1f98b0c0de8e3becfd65848d22eebdad90c91))
+* **ci:** push full release branch history ([6239fa4](https://github.com/aretw0/vault-seed/commit/6239fa48bd97a3cfdcd3b4b8ffa2f51fb5d764b2))
+
 ### [0.2.9](https://github.com/aretw0/vault-seed/compare/v0.2.8...v0.2.9) (2026-01-27)
 
 
