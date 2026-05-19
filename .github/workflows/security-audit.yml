@@ -37,7 +37,7 @@ jobs:
 
       - name: Full audit report
         if: always()
-        run: pnpm audit --json > audit-full.json
+        run: pnpm audit --json > audit-full.json || true
 
       - name: Upload audit report
         if: always()
