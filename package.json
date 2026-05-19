@@ -9,6 +9,8 @@
     "lint:docs": "markdownlint --config docs/.markdownlint.json \"docs/**/*.md\"",
     "lint:templates": "markdownlint --config \"90 - Templates/.markdownlint.json\" \"90 - Templates/**/*.md\"",
     "lint": "npm run lint:main && npm run lint:docs && npm run lint:templates",
+    "validate:onboarding": "node scripts/validate_onboarding.js",
+    "validate": "npm run lint && npm run validate:onboarding",
     "release": "standard-version --skip.tag --infile CHANGELOG.md",
     "release:minor": "standard-version --skip.tag --release-as minor --infile CHANGELOG.md",
     "release:major": "standard-version --skip.tag --release-as major --infile CHANGELOG.md"

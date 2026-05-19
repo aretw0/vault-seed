@@ -1,0 +1,83 @@
+---
+title: Exploracao Guiada do Vault
+aliases:
+  - Checklist de Onboarding
+  - Roteiro de Exploracao
+tags:
+  - meta/guia
+  - meta/onboarding
+  - iniciante
+status: published
+created: 2026-05-18
+updated: 2026-05-18
+category: guia
+audience: iniciante
+related:
+  - "[[Guia do Jardineiro Digital]]"
+  - "[[Seus Primeiros Passos]]"
+  - "[[Entendendo a Estrutura de Pastas]]"
+  - "[[O que sao system prompts de IA]]"
+---
+# Exploracao Guiada do Vault
+
+Use esta nota como um roteiro de primeira visita. A ideia e sair de "abri uma
+pasta cheia de Markdown" para "sei onde capturar, organizar, revisar e pedir
+ajuda a uma IA sem perder controle".
+
+## Roteiro de 30 minutos
+
+1. Abra [[Guia do Jardineiro Digital]] para entender a visao geral.
+2. Se ainda nao configurou o computador, siga [[Preparando seu Computador para o Vault]].
+3. Leia [[Filosofia e Conceitos Fundamentais]] para entender por que links
+   importam mais que pastas perfeitas.
+4. Passe por [[Entendendo a Estrutura de Pastas]] e identifique onde uma nota
+   nova entraria hoje.
+5. Leia [[Seus Primeiros Passos]] e crie uma nota simples em `00 - Inbox`.
+6. Abra [[Convenções e Boas Práticas]] antes de criar muitas tags novas.
+7. Leia [[O que sao system prompts de IA]] se for usar assistentes de IA no
+   Obsidian, VS Code ou terminal.
+
+## Primeira nota recomendada
+
+Crie uma nota em `00 - Inbox` chamada `Minha primeira nota.md`:
+
+```markdown
+# Minha primeira nota
+
+Esta nota registra por que comecei este vault e que tipo de conhecimento quero
+cultivar aqui.
+
+## Ideias soltas
+
+- 
+
+## Proximas conexoes
+
+- [[Guia do Jardineiro Digital]]
+- [[Seus Primeiros Passos]]
+```
+
+Depois de alguns dias, mova essa nota para `20 - Projects`, `30 - Areas` ou
+`40 - Resources`, conforme ela amadurecer.
+
+## Como saber se estou fazendo certo?
+
+Voce esta no caminho certo quando:
+
+- consegue capturar uma ideia sem decidir a organizacao perfeita na hora;
+- revisa o `00 - Inbox` com alguma frequencia;
+- usa links para conectar notas relacionadas;
+- cria MOCs quando um assunto comeca a ter muitas notas;
+- usa IA como apoio, mantendo revisao humana sobre mudancas importantes.
+
+## Quando pedir ajuda para uma IA
+
+Use `AGENTS.md` como contexto para qualquer assistente. Bons pedidos iniciais:
+
+- "Revise esta nota e sugira links internos que combinam com ela."
+- "Transforme estes bullets em uma nota conceitual seguindo as convencoes do
+  vault."
+- "Sugira em qual pasta PARA esta nota deveria entrar e explique o motivo."
+
+Evite pedir para a IA reorganizar muitas notas de uma vez. Comece com uma nota,
+revise o resultado e so depois amplie o escopo.

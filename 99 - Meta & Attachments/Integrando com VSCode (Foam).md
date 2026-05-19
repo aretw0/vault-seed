@@ -48,7 +48,7 @@ A boa notícia é que este vault já está pré-configurado para o Foam.
 
 ## E o Ecossistema de IA?
 
-O Obsidian possui um ecossistema de IA em crescimento. Plugins como o `Copilot` para Obsidian integram assistentes de IA diretamente no seu fluxo de trabalho. É importante notar que, no momento, funcionalidades mais avançadas como os Servidores MCP (Prompts reutilizáveis) no plugin do Copilot podem exigir uma assinatura paga (`Copilot Plus`).
+O Obsidian possui um ecossistema de IA em crescimento. Plugins como o `Copilot` para Obsidian integram assistentes de IA diretamente no seu fluxo de trabalho. Quando o plugin aceitar instruções de projeto, use `AGENTS.md` como fonte principal: aponte o plugin para o arquivo, se houver suporte, ou cole o conteúdo no campo de system prompt. Veja [[../40 - Resources/O que sao system prompts de IA|O que sao system prompts de IA]] para detalhes.
 
 Este template não força o uso de nenhum plugin de IA específico, mas inclui uma configuração inicial (`.github/copilot-instructions.md`) que pode ser usada pelo plugin do Copilot no Obsidian para entender o contexto do seu vault. A decisão de usar e como usar a IA no seu jardim digital é uma avaliação pessoal.
 

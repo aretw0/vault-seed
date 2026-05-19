@@ -48,7 +48,7 @@ A ideia é começar com poucas pastas de alto nível, numeradas para manter a or
     - `ci.yml`: Um workflow inicial pode simplesmente garantir que o push funcione ou, futuramente, rodar um linter de Markdown, ou até publicar o vault.
 2.  **`00 - Inbox/`**: Essencial para capturar ideias rapidamente sem se preocupar onde colocá-las. Processe regularmente.
 3.  **`10 - Fleeting & Daily/`**: Ideal para o [[Daily Note]] e pensamentos passageiros. Ótimo lugar para usar templates com o [[Templater]].
-4.  **`20 - Projects/`**: Foco em coisas acionáveis. Cada projeto pode ter sua própria subpasta se necessário, mas muitas vezes apenas uma nota principal (`[[Projeto Alpha MOC]]`) linkando para outras notas relacionadas é suficiente.
+4.  **`20 - Projects/`**: Foco em coisas acionáveis. Cada projeto pode ter sua própria subpasta se necessário, mas muitas vezes apenas uma nota principal, como `Projeto Alpha MOC.md`, linkando para outras notas relacionadas é suficiente.
 5.  **`30 - Areas/`**: Mantém o controle de padrões e responsabilidades contínuas. Menos volátil que projetos.
 6.  **`40 - Resources/`**: O coração do seu Second Brain. Aqui as notas devem ser atômicas e densamente interligadas (`[[Links]]`). A organização pode começar plana e evoluir com subpastas ou [[O que são MOCs (Mapas de Conteúdo)]].
 7.  **`50 - Archives/`**: Mantém o vault principal focado no que é ativo ou relevante, sem perder o histórico.

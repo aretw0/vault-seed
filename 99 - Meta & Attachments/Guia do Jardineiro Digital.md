@@ -14,6 +14,8 @@ category: guia
 audience: iniciante
 related:
   - "[[Seus Primeiros Passos]]"
+  - "[[Exploracao Guiada do Vault]]"
+  - "[[Preparando seu Computador para o Vault]]"
   - "[[Filosofia e Conceitos Fundamentais]]"
   - "[[Entendendo a Estrutura de Pastas]]"
   - "[[Evoluindo seu Vault com Links, Tags e MOCs]]"
@@ -23,6 +25,7 @@ related:
   - "[[Plugins Essenciais e Recomendados]]"
   - "[[Usando o Vault no Celular vs. Desktop]]"
   - "[[Integrando com VSCode (Foam)]]"
+  - "[[O que sao system prompts de IA]]"
 ---
 # 🌱 Guia do Jardineiro Digital
 
@@ -33,6 +36,8 @@ Pense nesta nota como o canteiro principal do seu jardim. A partir daqui, você 
 ## Primeiros Passos no Jardim
 
 - [[Seus Primeiros Passos|Comece aqui! Um guia prático para o ciclo de vida de uma nota]]
+- [[Exploracao Guiada do Vault|Siga uma exploração guiada de 30 minutos]]
+- [[Preparando seu Computador para o Vault|Prepare Obsidian, VS Code, Git e sincronização]]
 - [[Filosofia e Conceitos Fundamentais|Explore a filosofia por trás do cofre e os conceitos que o sustentam]]
 - [[Entendendo a Estrutura de Pastas|Entenda como o cofre é organizado e como encontrar o que você precisa]]
 - [[Evoluindo seu Vault com Links, Tags e MOCs|Aprenda a conectar suas ideias e criar um mapa do seu conhecimento]]
@@ -46,9 +51,9 @@ Pense nesta nota como o canteiro principal do seu jardim. A partir daqui, você 
 
 ## Trabalhando com Inteligência Artificial
 
-Este vault é projetado para ser "inteligente", permitindo que você colabore com assistentes de IA (como o Gemini) para organizar, refinar e expandir seu conhecimento.
+Este vault é projetado para ser "inteligente", permitindo que você colabore com assistentes de IA para organizar, refinar e expandir seu conhecimento.
 
-- **[[../40 - Resources/O que é o arquivo GEMINI.md.md|Entenda o `GEMINI.md`: O Cérebro do seu Assistente de IA]]**: Descubra como o arquivo `GEMINI.md` na raiz do seu vault instrui a IA sobre como se comportar e interagir com suas notas, garantindo que ela siga as convenções e a filosofia do seu jardim digital.
+- **[[../40 - Resources/O que sao system prompts de IA|Entenda system prompts de IA]]**: Descubra como o arquivo `AGENTS.md` na raiz do seu vault instrui assistentes de IA sobre como se comportar e interagir com suas notas, garantindo que eles sigam as convenções e a filosofia do seu jardim digital.
 
 ## Dicas de Cultivo
 

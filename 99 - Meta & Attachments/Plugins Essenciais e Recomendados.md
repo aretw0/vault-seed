@@ -14,6 +14,7 @@ audience: iniciante
 related:
   - "[[Guia do Jardineiro Digital]]"
   - "[[Usando o Git e o GitHub para Sincronizar seu Vault]]"
+  - "[[Configurando o Obsidian Git]]"
   - "[[Evoluindo seu Vault com Links, Tags e MOCs]]"
   - "[[Usando o Plugin Templates]]"
 ---
@@ -41,7 +42,7 @@ Isso significa que você precisará instalar os plugins da comunidade em cada di
 
 ### Essenciais
 
-- **`Obsidian Git`**: **Fundamental** para automatizar `git push/pull`. Configure para fazer commits e pushes automáticos em intervalos regulares ou ao fechar o Obsidian. Não substitui, o uso do Git no terminal ou cliente Git dedicado para operações mais complexas.
+- **`Obsidian Git`**: **Fundamental** para automatizar `git push/pull`. Comece com sincronização manual e siga [[Configurando o Obsidian Git]]. Não substitui o uso do GitHub Desktop, VS Code ou terminal para resolver conflitos e revisar mudanças grandes.
 - **`Homepage`**: Transforma qualquer nota ou Canvas no ponto de entrada do seu cofre. Permite configurar o que abre ao iniciar o Obsidian. Fundamental para **Dashboards**.
 - **`Dataview`**: Para usuários avançados que precisam de consultas complexas que o plugin `Bases` não consegue realizar através da sua interface. Permite criar visões dinâmicas usando uma linguagem de consulta (DQL).
   - _Exemplo em um MOC (hoje, isso pode ser feito de forma mais simples com o plugin `Bases`):_

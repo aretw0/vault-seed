@@ -30,6 +30,9 @@ jobs:
       - name: Lint Docs
         run: npx markdownlint --config docs/.markdownlint.json 'docs/**/*.md'
 
+      - name: Validate Onboarding
+        run: npm run validate:onboarding
+
       - name: Simple Check (Placeholder)
         run: echo "Vault content pushed successfully."
 

@@ -2,6 +2,11 @@
 
 Este documento explica as considerações de compatibilidade de ambiente ao configurar seu repositório, especialmente para usuários de Windows que utilizam o Windows Subsystem for Linux (WSL).
 
+Se você está configurando um computador para usar o vault no dia a dia, comece
+pelo guia de usuário em `99 - Meta & Attachments/Preparando seu Computador para
+o Vault.md`. Este documento aqui é a camada técnica para casos com WSL, scripts
+e setup de desenvolvimento.
+
 ## Introdução
 
 Ao trabalhar com projetos que envolvem scripts Bash e ferramentas de desenvolvimento (como Node.js e Python), é comum encontrar desafios de compatibilidade entre diferentes sistemas operacionais. No contexto deste repositório, o principal ponto de atenção é a interação entre o ambiente Windows e o ambiente Linux fornecido pelo WSL.

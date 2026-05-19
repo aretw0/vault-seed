@@ -34,3 +34,6 @@ jobs:
 
       - name: Lint Templates
         run: npx markdownlint --config '90 - Templates/.markdownlint.json' '90 - Templates/**/*.md'
+
+      - name: Validate Onboarding
+        run: npm run validate:onboarding
