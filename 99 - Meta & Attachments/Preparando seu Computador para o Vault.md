@@ -24,22 +24,20 @@ related:
 ---
 # Preparando seu Computador para o Vault
 
-Este guia prepara um computador para operar um vault versionado com Git sem
-transformar o primeiro dia em uma aula de infraestrutura. A ordem importa:
-primeiro instale as ferramentas de escrita, depois as ferramentas de
-sincronizacao.
+Este guia ajuda você a escolher o caminho de setup certo e a configurar
+seu computador para operar o vault com Git.
 
-## Ordem recomendada
+## Qual caminho é pra mim?
 
-1. Instale o [[Obsidian]].
-2. Instale o [[VS Code]].
-3. Instale o Git.
-4. Instale o GitHub Desktop.
-5. Abra o vault no Obsidian.
-6. Configure sincronizacao com GitHub Desktop ou com o plugin Obsidian Git.
+| Quero... | Caminho recomendado |
+|---|---|
+| Usar só o Obsidian, sem terminal | Instale o Obsidian e abra esta pasta |
+| VS Code + scripts (fnm, uv) | [[Configurando Localmente]] |
+| Devcontainer (VS Code + Docker) | [[Configurando com Devcontainer]] |
+| Usar com agentes de IA | [[Usando com Agentes de IA]] |
 
-Essa ordem reduz atrito: primeiro voce garante que consegue ler e escrever
-notas; depois adiciona versionamento, backup e sincronizacao.
+Qualquer caminho exige Git e uma conta no GitHub, GitLab ou serviço similar.
+Continue lendo para instalar o Git e configurar autenticação.
 
 ## Instalando o Git no Windows
 
