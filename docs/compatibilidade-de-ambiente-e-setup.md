@@ -1,61 +1,67 @@
 # Compatibilidade de Ambiente e Setup
 
-Este documento explica as considerações de compatibilidade de ambiente ao configurar seu repositório, especialmente para usuários de Windows que utilizam o Windows Subsystem for Linux (WSL).
+Este documento descreve as ferramentas necessárias para configurar o ambiente de desenvolvimento local e como rodar o setup do repositório.
 
 Se você está configurando um computador para usar o vault no dia a dia, comece
 pelo guia de usuário em `99 - Meta & Attachments/Preparando seu Computador para
-o Vault.md`. Este documento aqui é a camada técnica para casos com WSL, scripts
-e setup de desenvolvimento.
+o Vault.md`. Este documento aqui é a camada técnica para scripts e setup de desenvolvimento.
 
-## Introdução
+## Ferramentas Requeridas
 
-Ao trabalhar com projetos que envolvem scripts Bash e ferramentas de desenvolvimento (como Node.js e Python), é comum encontrar desafios de compatibilidade entre diferentes sistemas operacionais. No contexto deste repositório, o principal ponto de atenção é a interação entre o ambiente Windows e o ambiente Linux fornecido pelo WSL.
+O script `scripts/setup.sh` detecta automaticamente as ferramentas disponíveis. As ferramentas recomendadas são:
 
-## O Problema: Windows, WSL e PATH
+| Camada | Ferramenta recomendada | Fallback aceito |
+|---|---|---|
+| Node.js (versão) | `fnm` — cross-platform | `nvm` (Linux/macOS) |
+| Node.js (pacotes) | `pnpm` via Corepack | — |
+| Python (ferramentas) | `uv` — cross-platform | `pipx` |
 
-Quando você executa um script Bash no Windows (por exemplo, usando `bash scripts/setup.sh` a partir do PowerShell ou CMD), o executável `bash.exe` do Windows é invocado. Este `bash.exe` é, na maioria dos casos, a interface para a sua distribuição Linux instalada no WSL.
-
-O desafio surge porque o ambiente Linux dentro do WSL tem seu próprio sistema de arquivos e variáveis de ambiente (`PATH`). Executáveis instalados diretamente no Windows (como um Node.js instalado via MSI no Windows) não são automaticamente visíveis ou acessíveis no `PATH` do ambiente Linux do WSL. Isso pode levar a erros como "Node.js não encontrado" ou "comando não reconhecido", mesmo que a ferramenta esteja instalada no seu sistema Windows.
-
-## A Solução: Setup Robusto com `setup.sh`
-
-Nosso script principal de setup, `scripts/setup.sh`, foi projetado para ser robusto e lidar com essas particularidades. Ele agora garante que as ferramentas necessárias (Node.js e Python, com suas respectivas dependências) sejam configuradas corretamente *dentro do ambiente WSL* onde os scripts Bash serão executados.
+## O que o `setup.sh` Faz
 
 O `setup.sh` orquestra as seguintes verificações e configurações:
 
-1.  **Configuração do Git**: Garante que os filtros do Git e hooks de pre-commit estejam configurados.
-2.  **Ambiente Python**: (Gerenciado por `scripts/setup_python.sh`)
+1.  **Configuração do Git**: Garante que os filtros do Git, template de commit e configurações de encoding UTF-8 estejam ativas (`setup_git.sh`).
+2.  **Ambiente Python** (`setup_python.sh`):
     *   Verifica a presença do Python 3.
-    *   Instala `pipx` (um instalador de pacotes Python isolado) se não estiver presente.
-    *   Instala `git-filter-repo` via `pipx`, uma ferramenta essencial para manipulação avançada do histórico do Git.
-3.  **Ambiente Node.js**: (Gerenciado por `scripts/setup_node.sh`)
-    *   Carrega o `nvm` (Node Version Manager).
-    *   Lê o arquivo `.nvmrc` na raiz do projeto para identificar a versão do Node.js desejada.
-    *   Se a versão especificada não estiver instalada no WSL, o `nvm` a instala automaticamente.
-    *   Ativa a versão correta do Node.js para o ambiente do script.
-    *   Habilita o `pnpm` via Corepack, seguindo a versão fixada em `package.json`.
-    *   Instala as dependências do projeto (`pnpm install`) se o diretório `node_modules` não existir.
-4.  **Dependências Node.js**: Instala as dependências usadas por lint, testes e validações locais do template.
+    *   Instala `git-filter-repo` via `uv tool install` (preferido) ou `pipx` (fallback).
+3.  **Ambiente Node.js** (`setup_node.sh`):
+    *   Ativa a versão correta do Node.js via `fnm` (preferido) ou `nvm` (fallback).
+    *   Habilita o `pnpm` via Corepack.
+    *   Instala as dependências do projeto (`pnpm install --frozen-lockfile`) se `node_modules` não existir.
 
 ## Instruções para o Usuário
 
-Para garantir um setup suave e sem problemas, siga estas instruções antes de executar o `setup.sh`:
+Instale as ferramentas necessárias antes de rodar o setup:
 
-1.  **Instale o Windows Subsystem for Linux (WSL)**: Certifique-se de ter o WSL habilitado e uma distribuição Linux (como Ubuntu) instalada. Siga a documentação oficial da Microsoft para instalação do WSL.
-2.  **Instale o `nvm` (Node Version Manager) DENTRO do seu WSL**: É crucial que o `nvm` seja instalado dentro do ambiente Linux do WSL, e não apenas no Windows. Siga as instruções de instalação do `nvm` para Linux (geralmente via `curl` ou `wget`).
-3.  **Instale o Python 3 DENTRO do seu WSL**: Embora o `setup.sh` verifique o Python, é uma boa prática tê-lo instalado previamente no seu ambiente WSL. Você pode usar o gerenciador de pacotes da sua distribuição Linux (ex: `sudo apt install python3` no Ubuntu).
-4.  **Verifique o arquivo `.nvmrc`**: Certifique-se de que o arquivo `.nvmrc` (localizado na raiz do seu repositório) contenha a versão correta do Node.js que você deseja usar (ex: `v22.19.0`).
+1.  **Instale o `fnm` (Fast Node Manager)**: O `fnm` é cross-platform e funciona nativamente no Windows, macOS e Linux sem precisar do WSL.
+    - Windows: `winget install Schniz.fnm`
+    - macOS: `brew install fnm`
+    - Linux/WSL: `curl -fsSL https://fnm.vercel.app/install | bash`
+    - Documentação: https://github.com/Schniz/fnm
+
+    > Usuários com `nvm` existente: o `setup.sh` detecta e usa o `nvm` automaticamente como fallback, mas recomendamos migrar para `fnm` para suporte nativo no Windows.
+
+2.  **Instale o `uv` (gerenciador Python)**: O `uv` é cross-platform e necessário para instalar `git-filter-repo`.
+    - Windows/macOS/Linux: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+    - Documentação: https://docs.astral.sh/uv/getting-started/installation/
+
+    > Usuários com `pipx` existente: o `setup.sh` usa `pipx` como fallback automaticamente.
+
+3.  **Instale o Python 3**: Necessário como base para o `uv`.
+    - Windows: `winget install Python.Python.3`
+    - macOS: `brew install python`
+    - Linux/WSL: `sudo apt install python3`
 
 
 ## Como Rodar o Setup
 
-Após seguir as instruções acima, você pode executar o script de setup a partir do PowerShell ou CMD do Windows (o que invocará o `bash.exe` do WSL) ou diretamente do terminal do seu WSL:
+Com as ferramentas instaladas (fnm, uv, Python 3), execute o script de setup:
 
 ```bash
 bash scripts/setup.sh
 ```
 
-O script irá guiá-lo através do processo, instalando dependências e configurando o ambiente automaticamente.
+O script detecta automaticamente as ferramentas disponíveis e configura o ambiente.
 
 ## Configuração do Git Credential Manager (GCM) no WSL
 
