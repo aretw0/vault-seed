@@ -7,6 +7,15 @@ Esta "semente" (seed) de cofre (vault) com foco no Obsidian e Visual Studio Code
 
 > Template original: [https://github.com/aretw0/vault-seed](https://github.com/aretw0/vault-seed)
 
+## Para Contribuidores
+
+| Tarefa | Recurso |
+|---|---|
+| Setup local (fnm, uv, pnpm) | `docs/compatibilidade-de-ambiente-e-setup.md` |
+| Devcontainer do template | `.devcontainer/` |
+| Guia de contribuição | `CONTRIBUTING.md` |
+| Arquitetura e decisões | `docs/INDEX.md` |
+
 ## Pré-requisitos
 
 Para utilizar este template e criar seu próprio cofre de conhecimento, você precisará ter:

@@ -4,6 +4,17 @@ Esta é uma "semente" (seed) de cofre (vault) com foco no Obsidian e Visual Stud
 
 > Template original: [https://github.com/aretw0/vault-seed](https://github.com/aretw0/vault-seed)
 
+## Como Começar
+
+| Quero... | Caminho |
+|---|---|
+| Usar só o Obsidian, sem terminal | Instale o Obsidian e abra esta pasta |
+| VS Code + scripts locais | [[Configurando Localmente]] |
+| Devcontainer (VS Code + Docker) | [[Configurando com Devcontainer]] |
+| Usar com agentes de IA | [[Usando com Agentes de IA]] |
+
+Os guias detalhados estão em `99 - Meta & Attachments/`.
+
 ## Pré-requisitos
 
 Para utilizar este cofre de conhecimento, você precisará ter instalado:
