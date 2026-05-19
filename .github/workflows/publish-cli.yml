@@ -7,7 +7,10 @@ on:
 
 permissions:
   contents: read
-  id-token: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   publish:
