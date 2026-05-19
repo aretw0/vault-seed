@@ -20,4 +20,19 @@ Para começar a explorar e organizar suas notas, abra esta pasta no Obsidian ou 
 
 ➡️ Para uma introdução completa e um guia sobre como usar este cofre, abra a nota **`[[Guia do Jardineiro Digital]]`**.
 
-<!-- Adicione outras seções relevantes aqui, como estrutura, ferramentas, etc. -->
+Depois, siga **`[[Exploracao Guiada do Vault]]`** para uma primeira visita de
+30 minutos sem precisar entender Git, plugins ou automações de uma vez.
+
+Se este for seu primeiro vault versionado, abra também
+**`[[Preparando seu Computador para o Vault]]`** para configurar Obsidian,
+VS Code, Git, GitHub Desktop e sincronização sem conflitos entre dispositivos.
+
+## Assistentes de IA
+
+O vault inclui um prompt de projeto em `AGENTS.md` para orientar assistentes de
+IA sobre a estrutura PARA, o fluxo com Git e as convenções de escrita.
+
+No Obsidian, plugins de IA da comunidade podem usar esse prompt de duas formas:
+aponte o plugin para `AGENTS.md` quando ele aceitar arquivo de contexto, ou cole
+o conteúdo de `AGENTS.md` no campo de system prompt/instruções quando ele aceitar
+apenas texto.

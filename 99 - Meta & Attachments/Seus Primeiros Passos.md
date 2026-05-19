@@ -60,7 +60,7 @@ Bem-vindo(a) ao seu novo cofre de conhecimento! Esta nota é o seu ponto de part
 *   **Onde:** `20 - Projects`, `30 - Areas`, `40 - Resources`, `50 - Archives`
 *   **O quê:** Integre suas **plantas maduras** (notas permanentes) ao seu **canteiro principal de conhecimento**. É a **colheita** do seu esforço, onde tudo se conecta.
 *   **Como:**
-    1.  Crie links entre suas notas (`[[Nome da Nota]]`) – tecendo as raízes do seu jardim.
+    1.  Crie links entre suas notas, como `[[O que é o método PARA]]` – tecendo as raízes do seu jardim.
     2.  Use tags (`#tag`) para categorizar e encontrar informações – como etiquetas nas suas plantas.
     3.  Crie Mapas de Conteúdo (MOCs) para agrupar notas relacionadas e criar uma visão geral de um tópico – seus mapas do tesouro do jardim.
 *   **Exemplo Prático:**
@@ -90,7 +90,7 @@ Bem-vindo(a) ao seu novo cofre de conhecimento! Esta nota é o seu ponto de part
         Este Mapa de Conteúdo reúne notas relacionadas à organização do conhecimento.
 
         ## Métodos
-        - [[Pesquisa sobre Método PARA]]
+        - [[O que é o método PARA]]
         - [[O que é o método Zettelkasten]]
 
         ## Ferramentas

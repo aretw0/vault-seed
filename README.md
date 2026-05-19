@@ -47,6 +47,36 @@ git clone https://github.com/SEU-USUARIO/NOME-DO-SEU-REPOSITORIO.git
 Agora seu cofre está pronto! Abra a pasta no Obsidian ou Visual Studio Code.
 
 ➡️ Para começar sua jornada, abra a nota **`[[Guia do Jardineiro Digital]]`**.
+Depois, siga **`[[Exploracao Guiada do Vault]]`** para uma primeira visita de
+30 minutos sem precisar entender Git, plugins ou automações de uma vez.
+
+Se este for seu primeiro vault versionado, abra também
+**`[[Preparando seu Computador para o Vault]]`** para configurar Obsidian,
+VS Code, Git, GitHub Desktop e sincronização sem conflitos entre dispositivos.
+
+## Assistentes de IA
+
+O vault inclui um prompt de projeto em `AGENTS.md` para orientar assistentes de
+IA sobre a estrutura PARA, o fluxo com Git e as convenções de escrita. Arquivos
+de compatibilidade apontam para essa mesma fonte: `GEMINI.md` é um link
+simbólico para `AGENTS.md`, e `CLAUDE.md` importa `AGENTS.md` com a sintaxe
+suportada pelo Claude Code.
+
+No Obsidian, plugins de IA da comunidade podem usar esse prompt de duas formas:
+aponte o plugin para `AGENTS.md` quando ele aceitar arquivo de contexto, ou cole
+o conteúdo de `AGENTS.md` no campo de system prompt/instruções quando ele aceitar
+apenas texto.
+
+## Qualidade do Onboarding
+
+Este template valida automaticamente o material de entrada para evitar drift:
+
+```bash
+npm run validate
+```
+
+Esse comando roda o lint Markdown e verifica se os arquivos essenciais de
+onboarding existem e se os wikilinks do vault apontam para notas reais.
 
 ---
 ## Contribuições e Traduções

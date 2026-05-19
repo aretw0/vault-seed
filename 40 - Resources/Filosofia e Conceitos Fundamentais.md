@@ -1,6 +1,6 @@
 # Filosofia e Conceitos Fundamentais
 
-A força do Obsidian (e de um Second Brain eficaz) reside nas conexões (`[[wikilinks]]`).
+A força do Obsidian (e de um Second Brain eficaz) reside nas conexões ([[Links|wikilinks]]).
 
 Não foque muito na estrutura de pastas no começo, pois isso pode limitar o pensamento associativo. A verdadeira organização emerge das conexões que você cria.
 

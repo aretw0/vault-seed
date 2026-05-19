@@ -40,3 +40,15 @@ Este template (`vault-seed`) vem **sem nenhum plugin instalado por padrão**. Em
 Nós fornecemos os "trilhos" (templates e guias), mas você escolhe o "motor" (plugins) que deseja usar. Se um template requerer um plugin específico, ele avisará através de comentários no topo do arquivo.
 
 Ao separar a *lista* de plugins dos seus *arquivos*, ganhamos o melhor dos dois mundos: a conveniência de saber quais plugins usamos em nosso vault e a robustez de permitir que cada ambiente gerencie suas próprias instalações.
+
+## Plugins de IA e System Prompts
+
+Plugins de IA da comunidade do Obsidian podem aceitar instruções de projeto de formas diferentes. Alguns permitem apontar um arquivo do vault como contexto fixo; outros oferecem apenas um campo de texto para colar um system prompt.
+
+Neste vault, use `AGENTS.md` como fonte principal:
+
+- Se o plugin aceitar arquivo de contexto, aponte para `AGENTS.md`.
+- Se o plugin aceitar apenas texto, cole o conteúdo de `AGENTS.md`.
+- Se o plugin tiver biblioteca de prompts, registre a adaptação em uma nota criada com `90 - Templates/Template - Prompt.md`.
+
+Evite manter várias cópias sem rastreio. Quando um prompt for colado dentro da configuração de um plugin, documente onde ele foi usado para facilitar atualizações futuras.

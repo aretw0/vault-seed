@@ -10,11 +10,16 @@ Este documento descreve a estrutura de pastas e arquivos do repositório sob uma
 │   ├── workflows/            # Definições de GitHub Actions (CI/CD, automações)
 │   │   └── initialize.yml    # Workflow para inicialização automática de novos vaults
 │   └── prompts/              # Prompts para ferramentas de IA (ex: GitHub Copilot)
+├── AGENTS.md                 # Instruções canônicas para assistentes de IA
+├── CLAUDE.md                 # Ponte do Claude Code para AGENTS.md
+├── GEMINI.md                 # Link simbólico de compatibilidade para AGENTS.md
 ├── .vscode/                  # Configurações específicas para o VS Code
 │   └── extensions.json       # Extensões recomendadas para o projeto
 ├── docs/                     # Documentação técnica e operacional do projeto
+│   └── INDEX.md              # Índice da documentação técnica
 │   └── organizacao-do-projeto.md # Este documento
 ├── scripts/                  # Scripts utilitários para automação local
+│   └── validate_onboarding.js # Valida arquivos essenciais e wikilinks do vault
 │   └── setup.sh              # Script de configuração inicial do ambiente
 │   └── check_secrets_staged.sh # Exemplo de hook de pre-commit
 ├── node_modules/             # Dependências de pacotes Node.js (gerado pelo npm)
@@ -38,9 +43,10 @@ Este documento descreve a estrutura de pastas e arquivos do repositório sob uma
 ## Componentes Chave e Propósito Técnico
 
 *   **`.github/`**: Contém todas as configurações relacionadas ao GitHub, incluindo os workflows de automação (`.github/workflows/`) que rodam no ambiente de CI/CD do GitHub Actions. A pasta `prompts/` pode conter prompts específicos para ferramentas de IA integradas.
+*   **`AGENTS.md` / `CLAUDE.md` / `GEMINI.md`**: Centralizam as instruções de projeto para assistentes de IA. `AGENTS.md` é o arquivo canônico; `CLAUDE.md` importa esse conteúdo para o Claude Code; `GEMINI.md` existe como link simbólico de compatibilidade.
 *   **`.vscode/`**: Armazena configurações que otimizam a experiência de desenvolvimento no VS Code, como extensões recomendadas (`extensions.json`) e configurações de workspace.
 *   **`docs/`**: Destinado a documentação técnica e operacional do projeto, como este guia de organização, instruções de setup de ambiente, ou detalhes sobre ferramentas específicas.
-*   **`scripts/`**: Contém scripts shell ou Node.js que auxiliam no desenvolvimento local, automação de tarefas ou hooks do Git.
+*   **`scripts/`**: Contém scripts shell ou Node.js que auxiliam no desenvolvimento local, automação de tarefas, hooks do Git e validações de onboarding.
 *   **`node_modules/`**: Diretório gerado pelo `npm` que armazena todas as dependências de pacotes JavaScript/Node.js do projeto. Geralmente ignorado pelo Git.
 *   **`tests/`**: Contém os arquivos de teste para garantir a funcionalidade e a integridade do código ou scripts do projeto.
 *   **Pastas Numeradas (`00 - Inbox/` a `50 - Archives/`)**: Embora seu propósito principal seja a organização do conhecimento pessoal, tecnicamente são diretórios que contêm arquivos Markdown (`.md`) e outros formatos de mídia (via `Attachments/`).

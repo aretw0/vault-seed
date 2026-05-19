@@ -15,6 +15,7 @@ audience: iniciante
 related:
   - "[[Guia do Jardineiro Digital]]"
   - "[[Usando o Git e o GitHub para Sincronizar seu Vault]]"
+  - "[[Configurando o Obsidian Git]]"
 ---
 # Usando o Vault no Celular vs. Desktop
 
@@ -48,8 +49,8 @@ A recomendação principal para o desktop é o **[GitHub Desktop](https://deskto
 No celular, a abordagem é similar, usando aplicativos que se integram ao sistema de arquivos.
 
 *   **Android:**
-    *   **Recomendado:** **[GitSync](https://github.com/GitSync-App/GitSync)**. É um aplicativo de código aberto projetado para sincronizar repositórios Git no seu dispositivo. Configure-o para apontar para a pasta do seu vault.
-    *   **Avançado:** **[Termux](https://termux.dev/)**. Oferece um ambiente de linha de comando completo no Android, permitindo usar o Git como no desktop. **Atenção:** Requer familiaridade com comandos de terminal.
+    *   **Recomendado:** Use **Termux** para clonar o repositório no armazenamento compartilhado do Android, abra a pasta pelo Obsidian e deixe o plugin **Obsidian Git** assumir a rotina de sincronização. Veja [[Preparando seu Computador para o Vault#Android com Termux]] e [[Configurando o Obsidian Git]].
+    *   **Alternativa:** **[GitSync](https://github.com/GitSync-App/GitSync)**. É um aplicativo de código aberto projetado para sincronizar repositórios Git no seu dispositivo. Configure-o para apontar para a pasta do seu vault.
 
 *   **iOS:**
     *   **TODO:** Estamos em busca de uma ferramenta para iOS que ofereça uma experiência de sincronização Git tão simples quanto o GitHub Desktop. Opções como o [Working Copy](https://workingcopy.app/) existem, mas podem ter um custo. Se você conhece uma boa alternativa, sinta-se à vontade para adicionar aqui!

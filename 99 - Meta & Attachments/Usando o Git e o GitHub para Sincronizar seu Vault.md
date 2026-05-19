@@ -3,67 +3,165 @@ title: Usando o Git e o GitHub para Sincronizar seu Vault
 aliases:
   - Sincronização Git
   - GitHub para Vault
+  - Obsidian Git
 tags:
   - meta/git
   - meta/github
   - meta/workflow
 status: published
 created: 2023-10-27
-updated: 2023-10-27
+updated: 2026-05-18
 category: guia
 audience: iniciante
 related:
   - "[[Guia do Jardineiro Digital]]"
+  - "[[Preparando seu Computador para o Vault]]"
+  - "[[Configurando o Obsidian Git]]"
+  - "[[Usando o Vault no Celular vs. Desktop]]"
+  - "[[Plugins Essenciais e Recomendados]]"
   - "[[O Ciclo de Vida do Conhecimento (Versionamento para Jardineiros Digitais)]]"
-  - "[[Conventional Commits e Versionamento Automático]]"
-  - "[[Estratégia de Versionamento]]"
-  - "[[Processo de Release]]"
 ---
 # Usando o Git e o GitHub para Sincronizar seu Vault
 
-Este vault é configurado para ser sincronizado usando o Git e o GitHub, permitindo um controle de versão robusto e um backup seguro na nuvem.
+Este vault foi pensado para usar Git como historico e backup. GitHub e o caminho
+mais simples para comecar, mas a mesma ideia funciona em GitLab, Gitea ou
+Forgejo.
 
-A principal ferramenta para isso dentro do Obsidian é o plugin `Obsidian Git`.
+Se voce esta comecando agora, use este caminho:
 
-## O Jardim Colaborativo: Como Contribuímos para o Vault
+1. Configure o computador com [[Preparando seu Computador para o Vault]].
+2. Use GitHub Desktop para clonar e sincronizar.
+3. Use Obsidian para escrever.
+4. Quando estiver confortavel, instale Obsidian Git se quiser sincronizar sem
+   sair do Obsidian. Veja [[Configurando o Obsidian Git]].
 
-Mesmo que você seja o único jardineiro deste vault, ou se ele for compartilhado com outros, a forma como as mudanças são incorporadas é crucial para a saúde e organização do nosso jardim digital. Pense no processo de contribuição como o cuidado com as plantas antes de transplantá-las para o canteiro principal.
+## O que cada ferramenta faz?
 
-### 🌿 O "Rascunho Seguro" (Branch)
+- **Git:** guarda o historico do vault.
+- **GitHub/GitLab/Gitea:** guarda uma copia remota do repositorio.
+- **GitHub Desktop:** interface visual para pull, commit e push.
+- **Obsidian Git:** plugin que faz pull, commit e push dentro do Obsidian.
+- **VS Code:** bom para revisar mudancas, resolver conflitos e editar varios
+  arquivos.
 
-Antes de fazer qualquer alteração significativa, criamos um "rascunho seguro". No Git, isso é chamado de **branch**. É como ter um canteiro de testes separado, onde você pode experimentar, podar e replantar suas ideias sem afetar o jardim principal (`main`).
+## Fluxo simples com GitHub Desktop
 
-*   **Praticidade:** Você pode trabalhar em uma nova nota, refatorar uma seção ou corrigir um erro sem se preocupar em quebrar algo no jardim principal.
-*   **Controle:** Se algo der errado no seu rascunho, é fácil descartá-lo e começar de novo, sem deixar rastros no `main`.
+Use este fluxo quando quiser maxima previsibilidade:
 
-### 📝 A "Proposta de Melhoria" (Pull Request)
+1. Abra o GitHub Desktop.
+2. Clique em **Fetch origin** ou **Pull origin** antes de escrever.
+3. Abra o vault no Obsidian e escreva normalmente.
+4. Volte ao GitHub Desktop.
+5. Revise os arquivos alterados.
+6. Escreva uma mensagem curta de commit.
+7. Clique em **Commit to main**.
+8. Clique em **Push origin**.
 
-Quando sua nova planta (ideia, nota, correção) está pronta no seu "rascunho seguro", você a apresenta para ser incorporada ao jardim principal. No GitHub, isso é uma **Pull Request (PR)**, ou como chamamos, uma "Proposta de Melhoria".
+Mensagem de commit simples:
 
-É o momento em que o jardineiro-chefe (ou outros jardineiros, em um vault colaborativo) revisa sua proposta. Eles podem:
+```text
+docs: atualiza notas de leitura
+```
 
-*   **Sugerir Ajustes:** "Que tal mover essa planta para um local com mais sol?" (Feedback para melhorias).
-*   **Validar a Saúde:** Verificar se a nova planta está saudável e não trará pragas para o jardim (verificações automatizadas de CI/CD).
-*   **Aprovar a Incorporação:** Se tudo estiver certo, sua planta é transplantada para o canteiro principal (`main`).
+Para um vault pessoal, esse fluxo ja resolve o essencial.
 
-### O Compromisso do Jardineiro-Chefe
+## Fluxo usando so Obsidian Git
 
-**Mesmo o jardineiro-chefe (o administrador deste vault) segue este processo de "Rascunho Seguro" e "Proposta de Melhoria".** Isso garante que todas as mudanças passem pelo mesmo controle de qualidade, mantendo a integridade e a beleza do jardim para todos.
+Obsidian Git e uma boa opcao quando voce quer escrever e sincronizar no mesmo
+aplicativo.
 
-## Benefícios para o Nosso Jardim Digital
+Para instalar e configurar o plugin, siga [[Configurando o Obsidian Git]].
 
-Adotar este fluxo de trabalho traz inúmeros benefícios:
+Rotina recomendada dentro do Obsidian:
 
-*   **Qualidade e Consistência:** Todas as mudanças são revisadas, garantindo que o conhecimento seja preciso e siga os padrões do vault.
-*   **Histórico Limpo:** O branch principal (`main`) permanece sempre estável e reflete apenas as "colheitas" aprovadas.
-*   **Colaboração Segura:** Permite que múltiplos jardineiros trabalhem simultaneamente sem conflitos, e que novas ideias sejam incorporadas de forma organizada.
-*   **Transparência:** O processo de revisão é visível, e todos podem entender como as decisões são tomadas.
+1. Ao abrir: rode `Obsidian Git: Pull`.
+2. Escreva suas notas.
+3. Antes de fechar: rode `Obsidian Git: Commit-and-sync`.
 
-## Próximos Passos
+Se aparecer conflito, pare de editar e resolva pelo GitHub Desktop ou VS Code.
+Conflito nao e desastre; e apenas o Git avisando que a mesma parte de um arquivo
+foi alterada em dois lugares.
 
-Para detalhes técnicos sobre como executar esses passos (criar branches, fazer commits, abrir Pull Requests), consulte o documento [Diretrizes de Contribuição](CONTRIBUTING.md).
+## Autenticacao com PAT
 
-Para entender como o versionamento e as releases funcionam para marcar as "colheitas" do nosso jardim, consulte o documento [Processo de Release e Versionamento](docs/processo-de-release.md).
+Algumas ferramentas pedem um Personal Access Token (PAT) em vez de abrir login
+no navegador. No GitHub, crie o token pela documentacao oficial:
+
+<https://docs.github.com/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token>
+
+Para um vault privado, prefira um token fine-grained limitado ao repositorio do
+vault, com permissao de leitura e escrita em Contents.
+
+Cuidados:
+
+- trate o token como senha;
+- nao cole o token em notas;
+- nao coloque token em `AGENTS.md`;
+- nao envie token para assistentes de IA;
+- revogue o token se ele aparecer em algum lugar publico.
+
+## Evitando conflitos entre dispositivos
+
+A regra principal e simples:
+
+```text
+pull antes de escrever, push quando terminar
+```
+
+Use esta rotina em todo dispositivo:
+
+1. Antes de editar: sincronize.
+2. Edite.
+3. Salve.
+4. Commit.
+5. Push.
+
+Evite estes padroes:
+
+- editar a mesma nota no desktop e no notebook antes de sincronizar;
+- deixar o Obsidian aberto em dois dispositivos alterando notas ao mesmo tempo;
+- usar Dropbox/Google Drive e Git na mesma pasta do vault sem entender os
+  conflitos entre sincronizadores;
+- versionar `.obsidian/plugins/` inteiro.
+
+O template ja ignora os arquivos mais problemáticos de plugins. A lista de
+plugins ativados pode ser versionada; os arquivos baixados dos plugins devem ser
+instalados localmente em cada dispositivo.
+
+## Branch e Pull Request
+
+Para usuario iniciante, `main` pode ser a branch principal do vault pessoal.
+Quando voce quiser testar mudancas grandes, crie um "Rascunho Seguro" (branch).
+
+- **Branch:** copia de trabalho para experimentar.
+- **Pull Request:** proposta para revisar antes de juntar ao `main`.
+
+Mesmo em um vault pessoal, Pull Requests sao uteis para mudancas grandes:
+renomear muitas notas, reorganizar pastas ou alterar templates.
+
+## Quando usar terminal?
+
+Use terminal quando precisar diagnosticar ou resolver algo fora da interface.
+
+Comandos basicos:
+
+```bash
+git status
+git pull
+git add .
+git commit -m "docs: atualiza vault"
+git push
+```
+
+Se voce usa GitHub Desktop ou Obsidian Git, esses comandos sao a camada de
+emergencia e aprendizado, nao uma obrigacao diaria.
+
+## Proximos passos
+
+- Para preparar o computador: [[Preparando seu Computador para o Vault]]
+- Para configurar o plugin: [[Configurando o Obsidian Git]]
+- Para entender desktop e celular: [[Usando o Vault no Celular vs. Desktop]]
+- Para plugins: [[Plugins Essenciais e Recomendados]]
 
 ---
 Voltar para o [[Guia do Jardineiro Digital]]
