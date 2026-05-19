@@ -85,6 +85,42 @@ git config --global credential.helper "/mnt/c/Program\\ Files/Git/mingw64/bin/gi
 
 Após executar este comando, o Git no seu WSL estará configurado para usar o GCM do Windows, proporcionando uma autenticação transparente e segura para suas operações Git.
 
+## Caminho do Devcontainer
+
+Para contribuidores do vault-seed que desenvolvem usando o devcontainer:
+
+### O que `post-create.sh` instala
+
+Executado uma única vez na criação do container:
+1. Locale `pt_BR.UTF-8` (suporte a caracteres brasileiros no terminal)
+2. `pnpm install --frozen-lockfile` (dependências do workspace)
+3. `bash scripts/setup_git.sh` (Git: encoding UTF-8, template de commit)
+4. Pi coding agent (`@earendil-works/pi-coding-agent` + `@aretw0/pi-stack`)
+5. Readiness gate (imprime versões de Node.js, pnpm, uv e Pi)
+
+### O que `post-start.sh` verifica
+
+Executado toda vez que o container é iniciado:
+- Presença de `node_modules` — avisa se ausente
+- Configuração do Git commit template — reconfigura se ausente
+- Imprime `[devcontainer] Container pronto.` ao finalizar
+
+O `post-start.sh` é **informativo** — nunca faz `exit 1`. O objetivo é
+dar visibilidade ao estado do ambiente sem travar o início do container.
+
+### Testando o container durante desenvolvimento
+
+Para reconstruir o container do zero:
+```
+Dev Containers: Rebuild Container
+```
+
+Para verificar o ambiente manualmente dentro do container:
+```bash
+node -v && pnpm --version && uv --version && pi --version
+pnpm run validate
+```
+
 ## Validação Depois do Setup
 
 Com o ambiente configurado, valide o repositório antes de abrir uma Proposta de Melhoria:
