@@ -226,6 +226,61 @@ Nenhuma mudança necessária — a fronteira do v0.3 já cobre tudo:
 
 ---
 
+## 6. Automações Onipresentes — Botões no Obsidian
+
+Automações técnicas e de PKM com representação visual dentro do Obsidian,
+para que o usuário não precise abrir o terminal para operações comuns.
+
+### Abordagem
+
+O CI do template bloqueia binários de plugins em `.obsidian/plugins/`. A entrega
+funciona em três camadas que não conflitam com esse constraint:
+
+1. **Scripts em `scripts/obsidian/`** — scripts chamados pelos plugins Shell Commands
+2. **Configurações de exemplo** em `99 - Meta & Attachments/config/` — arquivos
+   `.json` de exemplo para Commander e Shell Commands que o usuário copia para
+   `.obsidian/plugins/<plugin>/data.json` após instalar os plugins
+3. **Documentação** em `99 - Meta & Attachments/Automacoes no Obsidian.md` —
+   quais plugins instalar, como aplicar as configurações de exemplo
+
+### Plugins Necessários (instalados pelo usuário via Community Plugins)
+
+| Plugin | Função |
+|---|---|
+| Commander | Botões customizados na ribbon, toolbar e menus |
+| Shell Commands | Executa scripts shell de dentro do Obsidian |
+| Templater | Botões em notas via templates (já previsto no vault) |
+| Obsidian Git | Operações Git com interface gráfica |
+
+### Botões PKM (Commander + Templater)
+
+| Botão | Ação |
+|---|---|
+| Nova nota rápida | Cria nota em `00 - Inbox/` via template Templater |
+| Novo projeto | Cria nota em `10 - Projects/` via template |
+| Nova área | Cria nota em `20 - Areas/` via template |
+| Arquivar nota | Move nota ativa para `40 - Archive/` |
+
+### Botões Técnicos (Commander + Shell Commands)
+
+| Botão | Comando |
+|---|---|
+| Validar vault | `pnpm run validate` |
+| Lint | `pnpm run lint` |
+| Verificar saúde | `node scripts/validate_onboarding.js` |
+
+Os scripts em `scripts/obsidian/` são wrappers que garantem que o comando
+roda na raiz do vault, independente de onde o Obsidian foi aberto.
+
+### Deliverables
+
+- `scripts/obsidian/validate.sh`, `lint.sh`, `check.sh` — wrappers para Shell Commands
+- `99 - Meta & Attachments/config/commander-example.json` — configuração de exemplo
+- `99 - Meta & Attachments/config/shell-commands-example.json` — configuração de exemplo
+- `99 - Meta & Attachments/Automacoes no Obsidian.md` — guia de instalação e setup
+
+---
+
 ## Fora do Escopo — Próximos Specs
 
 ### PT-BR Completo
@@ -240,11 +295,12 @@ como site estático. Spec separado — envolve decisões sobre permalinks,
 frontmatter conventions e possível plugin de conversão de wikilinks.
 
 ### Vault Colaborativo
-Git como backbone assíncrono + plugin de sync em tempo real (LiveSync ou Obsidian
-Sync) + convenções de papéis (curador, contribuidor, revisor) + scripts de
-resolução de conflito para arquivos `.md` + templates de processo coletivo dentro
-do PARA. Spec separado — envolve seleção e configuração de ferramentas de sync,
-automação de merge hooks e design de workflows de revisão para equipes.
+Git como backbone (não Obsidian Sync — quem compartilha o vault usa Git):
+plugin Obsidian Git para sync via interface gráfica, `gh`/`glab` para operações
+GitHub/GitLab, Termux no Android para uso mobile. Convenções de papéis (curador,
+contribuidor, revisor), scripts de resolução de conflito para `.md`, templates de
+processo coletivo dentro do PARA. Spec separado — envolve configuração do plugin
+Obsidian Git, guias de setup mobile (Termux) e design de workflows de revisão.
 
 ### Assimilação de Conhecimento
 Pipeline de ingestão de dados externos para o vault: scraping web com Playwright
