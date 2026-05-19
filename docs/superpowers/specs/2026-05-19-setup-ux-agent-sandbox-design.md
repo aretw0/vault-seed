@@ -238,3 +238,25 @@ requer plano de migração e atualização de `validate_onboarding.js` e smoke t
 Compatibilidade de links wikilink com Jekyll, pipeline de publicação do vault
 como site estático. Spec separado — envolve decisões sobre permalinks,
 frontmatter conventions e possível plugin de conversão de wikilinks.
+
+### Vault Colaborativo
+Git como backbone assíncrono + plugin de sync em tempo real (LiveSync ou Obsidian
+Sync) + convenções de papéis (curador, contribuidor, revisor) + scripts de
+resolução de conflito para arquivos `.md` + templates de processo coletivo dentro
+do PARA. Spec separado — envolve seleção e configuração de ferramentas de sync,
+automação de merge hooks e design de workflows de revisão para equipes.
+
+### Assimilação de Conhecimento
+Pipeline de ingestão de dados externos para o vault: scraping web com Playwright
+(padrão estabelecido em `rcdc5` — `@rcdcp/scraper-playwright`, conversão
+HTML→Markdown via TurnDown, normalização de frontmatter, ingestão no PARA via
+inbox), suporte a múltiplos canais (Markdown import, scraping interativo, MCP
+enrichment). Spec separado — envolve decisões sobre arquitetura do motor de
+ingestão, autenticação em fontes protegidas e validação antes de publicar notas.
+
+### Marimo Notebooks
+Estruturas básicas de notebooks reativos Python (Marimo) prontos para uso,
+curados junto com o vault — para análise de dados, visualizações e processamentos
+que complementam o fluxo de conhecimento do jardim digital. Spec separado —
+envolve definição de quais notebooks fazem sentido como ponto de partida e
+integração com o ambiente Python já configurado pelo `setup_python.sh`.
