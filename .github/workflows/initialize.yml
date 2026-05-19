@@ -19,5 +19,5 @@ jobs:
           workflow_filename: ".github/workflows/initialize.yml"
           reset_changelog: "true"
           reset_version: "true"
-          files_to_rename: "README.template.md:README.md CONTRIBUTING.template.md:CONTRIBUTING.md AGENTS.template.md:AGENTS.md"
-          files_to_remove: "docs AGENTS.template.md README.template.md CONTRIBUTING.template.md .github/workflows/template-ci.yml .github/workflows/prepare-release-pr.yml .github/workflows/release.yml .github/workflows/security-audit.yml .github/workflows/sync-develop-with-main.yml"
+          files_to_rename: "README.template.md:README.md CONTRIBUTING.template.md:CONTRIBUTING.md AGENTS.template.md:AGENTS.md package.template.json:package.json pnpm-lock.template.yaml:pnpm-lock.yaml"
+          files_to_remove: "docs AGENTS.template.md README.template.md CONTRIBUTING.template.md packages .changeset pnpm-workspace.yaml .github/workflows/template-ci.yml .github/workflows/prepare-release-pr.yml .github/workflows/release.yml .github/workflows/security-audit.yml .github/workflows/sync-develop-with-main.yml"
