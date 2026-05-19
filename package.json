@@ -2,6 +2,7 @@
   "name": "digital-gardening-kit",
   "version": "0.0.1",
   "description": "Kit de ferramentas para a jardinagem digital",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/aretw0/vault-seed.git"
@@ -20,13 +21,17 @@
     "release:dry": "standard-version --dry-run --skip.tag --infile CHANGELOG.md",
     "release": "standard-version --skip.tag --infile CHANGELOG.md",
     "release:minor": "standard-version --skip.tag --release-as minor --infile CHANGELOG.md",
-    "release:major": "standard-version --skip.tag --release-as major --infile CHANGELOG.md"
+    "release:major": "standard-version --skip.tag --release-as major --infile CHANGELOG.md",
+    "changeset": "changeset",
+    "changeset:version": "changeset version",
+    "changeset:publish": "changeset publish"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "@changesets/cli": "^2.0.0",
     "markdownlint-cli": "^0.45.0",
     "prettier": "^3.6.2",
     "standard-version": "^9.5.0"
