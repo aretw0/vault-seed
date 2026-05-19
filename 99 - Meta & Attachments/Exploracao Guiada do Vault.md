@@ -17,6 +17,8 @@ related:
   - "[[Seus Primeiros Passos]]"
   - "[[Entendendo a Estrutura de Pastas]]"
   - "[[O que sao system prompts de IA]]"
+  - "[[Depois da Recepcao do Template]]"
+  - "[[MOC Vault Seed]]"
 ---
 # Exploracao Guiada do Vault
 
@@ -28,13 +30,15 @@ ajuda a uma IA sem perder controle".
 
 1. Abra [[Guia do Jardineiro Digital]] para entender a visao geral.
 2. Se ainda nao configurou o computador, siga [[Preparando seu Computador para o Vault]].
-3. Leia [[Filosofia e Conceitos Fundamentais]] para entender por que links
+3. Se este vault veio do GitHub template, abra [[Depois da Recepcao do Template]].
+4. Leia [[Filosofia e Conceitos Fundamentais]] para entender por que links
    importam mais que pastas perfeitas.
-4. Passe por [[Entendendo a Estrutura de Pastas]] e identifique onde uma nota
+5. Passe por [[Entendendo a Estrutura de Pastas]] e identifique onde uma nota
    nova entraria hoje.
-5. Leia [[Seus Primeiros Passos]] e crie uma nota simples em `00 - Inbox`.
-6. Abra [[Convenções e Boas Práticas]] antes de criar muitas tags novas.
-7. Leia [[O que sao system prompts de IA]] se for usar assistentes de IA no
+6. Leia [[Seus Primeiros Passos]] e crie uma nota simples em `00 - Inbox`.
+7. Abra [[MOC Vault Seed]] para ver o proprio template como mapa navegavel.
+8. Abra [[Convenções e Boas Práticas]] antes de criar muitas tags novas.
+9. Leia [[O que sao system prompts de IA]] se for usar assistentes de IA no
    Obsidian, VS Code ou terminal.
 
 ## Primeira nota recomendada

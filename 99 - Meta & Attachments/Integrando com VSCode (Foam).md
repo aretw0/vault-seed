@@ -37,7 +37,7 @@ Ambas as ferramentas são poderosas e a escolha depende da tarefa que você est�
 | **Integração com Git** | **VSCode** | A integração nativa com Git no VSCode é mais poderosa que a dos plugins do Obsidian. |
 | **Ambiente de Desenvolvimento**| **VSCode** | Se você já é um desenvolvedor, pode preferir ficar no seu ambiente familiar. |
 
-**TODO:** Confirmar o comportamento do Obsidian ao renomear `#tags` em múltiplos arquivos.
+Ao renomear arquivos no Obsidian, mantenha a opção de atualizar links internos ativa para preservar os `[[wikilinks]]`. Para tags, prefira revisar com busca global antes de mudanças em massa, porque `#tags` não têm o mesmo fluxo guiado de renomeação que notas.
 
 ## Configuração Inicial
 

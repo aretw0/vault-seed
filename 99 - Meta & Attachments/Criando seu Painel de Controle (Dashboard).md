@@ -17,7 +17,10 @@ audience: intermediario
 related:
   - "[[Guia do Jardineiro Digital]]"
   - "[[Plugins Essenciais e Recomendados]]"
-  - "[[Templates]]"
+  - "[[Templater]]"
+  - "[[Bases]]"
+  - "[[Dataview]]"
+  - "[[MOC Vault Seed]]"
 ---
 
 # Criando seu Painel de Controle (Dashboard)
@@ -52,7 +55,7 @@ Uma nota padrão do Obsidian, formatada com cuidado. É mais leve e carrega inst
 *   **Ferramentas:**
     *   **Callouts:** Use callouts (`> [!info]`) para criar caixas visuais e separar seções.
     *   **Links:** Crie uma barra de navegação no topo com links para seus MOCs principais.
-    *   **Bases/Dataview:** Use blocos de código para listar dinamicamente suas notas recentes ou tarefas pendentes.
+    *   **[[Bases]]/[[Dataview]]:** Use blocos de código para listar dinamicamente suas notas recentes ou tarefas pendentes.
 
 ## O "Pulo do Gato": Plugin Homepage 🏠
 
@@ -79,7 +82,7 @@ Para muitos, o verdadeiro dashboard é o **Hoje**. Se você usa o Obsidian para 
 ## Elementos Sugeridos para seu Dashboard
 
 *   **Barra de Navegação:** Links para `Inbox`, `Projetos`, `Áreas`, `Recursos`.
-*   **Caixa de Entrada:** Um link direto ou transclusão (`![[00 - Inbox]]`) para ver o que precisa ser processado.
+*   **Caixa de Entrada:** Um link direto para a pasta `00 - Inbox/` ou uma nota manual de processamento.
 *   **Foco Atual:** Uma lista simples (pode ser manual) das 3 prioridades da semana.
 *   **Jardim Recente:** Uma query do Dataview listando as últimas notas modificadas.
 
