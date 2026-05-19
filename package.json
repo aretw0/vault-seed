@@ -2,6 +2,10 @@
   "name": "digital-gardening-kit",
   "version": "0.0.1",
   "description": "Kit de ferramentas para a jardinagem digital",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aretw0/vault-seed.git"
+  },
   "scripts": {
     "test": "jest",
     "format": "prettier --write \"**/*.md\"",
