@@ -56,7 +56,8 @@ fazer com segurança.
 O `AGENTS.md` funciona como contexto para qualquer agente:
 
 - **Claude Code / Codex CLI:** lê `AGENTS.md` automaticamente
-- **Gemini CLI:** lê `GEMINI.md` (aponta para `AGENTS.md`)
+- **Gemini CLI:** crie `GEMINI.md` na raiz apontando para `AGENTS.md`
+  com o conteúdo `@AGENTS.md`
 - **Obsidian plugins de IA:** cole o conteúdo de `AGENTS.md` no campo
   de system prompt do plugin
 
