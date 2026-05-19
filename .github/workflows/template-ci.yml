@@ -30,6 +30,9 @@ jobs:
       - name: Validate markdown and onboarding
         run: pnpm run validate
 
+      - name: Test CLI package
+        run: pnpm --filter @dgk/cli test
+
       - name: Check for unwanted Copilot .gitattributes entry
         run: |
           set -euo pipefail
