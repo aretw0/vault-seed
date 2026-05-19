@@ -18,13 +18,13 @@ jobs:
           ref: main
           fetch-depth: 0 # Needed for standard-version and git history
 
-      - name: "Rebase"
-        run: git rebase origin/develop
-
       - name: "Configure Git User"
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: "Rebase"
+        run: git rebase origin/develop
 
       - name: "Setup Node.js"
         uses: actions/setup-node@v4
