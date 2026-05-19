@@ -6,6 +6,17 @@ sudo apt-get install -y --no-install-recommends locales
 sudo locale-gen pt_BR.UTF-8
 sudo update-locale LANG=pt_BR.UTF-8
 
+# Diretórios de memória para agentes de IA (Claude Code, Codex, Pi)
+# Criados aqui para garantir ownership correto quando os volumes estiverem vazios
+for dir in \
+  /home/vscode/.local/share/pnpm \
+  /home/vscode/.claude \
+  /home/vscode/.codex \
+  /home/vscode/.pi; do
+  mkdir -p "$dir"
+  sudo chown -R vscode:vscode "$dir"
+done
+
 # Node — ativa pnpm via corepack (já disponível no Node 22)
 corepack enable
 corepack prepare --activate

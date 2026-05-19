@@ -27,7 +27,10 @@
     "PATH": "/home/vscode/.local/share/pnpm:${containerEnv:PATH}"
   },
   "mounts": [
-    "source=dgk-pnpm-store,target=/home/vscode/.local/share/pnpm/store,type=volume"
+    "source=dgk-pnpm-store,target=/home/vscode/.local/share/pnpm/store,type=volume",
+    "source=dgk-claude-home,target=/home/vscode/.claude,type=volume",
+    "source=dgk-codex-home,target=/home/vscode/.codex,type=volume",
+    "source=dgk-pi-home,target=/home/vscode/.pi,type=volume"
   ],
   "postCreateCommand": "bash .devcontainer/post-create.sh",
   "postStartCommand": "bash .devcontainer/post-start.sh",
