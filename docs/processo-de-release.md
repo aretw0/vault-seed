@@ -48,7 +48,7 @@ Este processo é exclusivo para a manutenção do repositório `aretw0/vault-see
     *   Na lista de workflows à esquerda, selecione **"Prepare Release PR"**.
     *   Clique no botão **"Run workflow"**, garantindo que o branch `develop` esteja selecionado, e execute o workflow. Isso garante que a versão mais recente do próprio workflow de release seja usada.
 3.  **Aguarde o Pull Request:** O workflow irá automaticamente:
-    *   Criar um branch de release temporário a partir da `main`, rebasear sobre `develop` e fazer o push para o remoto.
+    *   Criar um branch de release temporário a partir da `develop`, gerar a versão nele e abrir um PR para `main`.
     *   Executar o `standard-version` para gerar o `CHANGELOG.md` e a nova versão.
     *   Abrir um Pull Request (PR) no repositório com o título `chore(release): vX.X.X`. Este PR é configurado para excluir o branch de release automaticamente após o merge.
 4.  **Revise e Mescle o PR:**
