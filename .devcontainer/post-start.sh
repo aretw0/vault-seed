@@ -7,7 +7,7 @@ fi
 
 if ! git config commit.template &>/dev/null; then
   echo "[aviso] Git hooks ausentes. Executando setup_git.sh..."
-  bash scripts/setup_git.sh
+  bash scripts/setup_git.sh || echo "[aviso] setup_git.sh falhou. Verifique manualmente."
 fi
 
 echo "[devcontainer] Container pronto."
