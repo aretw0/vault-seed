@@ -2,12 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [0.2.10](https://github.com/aretw0/vault-seed/compare/v0.2.9...v0.2.10) (2026-04-09)
+### [0.2.10](https://github.com/aretw0/vault-seed/compare/v0.2.9...v0.2.10) (2026-05-19)
+
+
+### ✨ Novos Recursos
+
+* **ai:** centralize assistant instructions ([a705b8c](https://github.com/aretw0/vault-seed/commit/a705b8cf77b49df9d9587e3dcda52d63d16d1bd5))
+* **onboarding:** improve vault setup journey ([4bd8ac8](https://github.com/aretw0/vault-seed/commit/4bd8ac8610ea2a6902a0aba5ad7d7ffffc0bdd91))
 
 
 ### 🐛 Correções
 
 * adjust .gitignore ([a7a9e05](https://github.com/aretw0/vault-seed/commit/a7a9e0597bf5ff7c4e10c8b1e8bdeddc756deccb))
+* **ci:** configure release git identity before rebase ([89e6186](https://github.com/aretw0/vault-seed/commit/89e6186913a2606a5143cae3a11be0923350ef3e))
+* **ci:** create release PRs from develop ([3525739](https://github.com/aretw0/vault-seed/commit/3525739f3eedd97ababed0a1162c1494896c87d9))
+* **ci:** harden vault validation and release workflows ([122a15f](https://github.com/aretw0/vault-seed/commit/122a15fd0d64648268f8ec8e201bf8a4fdcd619c))
 
 ### [0.2.9](https://github.com/aretw0/vault-seed/compare/v0.2.8...v0.2.9) (2026-01-27)
 
