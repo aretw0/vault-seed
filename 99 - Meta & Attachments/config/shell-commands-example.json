@@ -1,0 +1,44 @@
+{
+  "_comment": "Configuração de exemplo para o plugin Shell Commands (obsidian-shellcommands).",
+  "_instrucoes": "Instale Shell Commands via Community Plugins. Copie para .obsidian/plugins/obsidian-shellcommands/data.json e ajuste {{vault_path}} se necessário.",
+  "_versao_testada": "Shell Commands 0.21.x",
+  "settings_version": "0.21.0",
+  "shell_commands": {
+    "0": {
+      "id": "0",
+      "platform_specific_commands": {
+        "default": "bash '{{vault_path}}/scripts/obsidian/validate.sh'"
+      },
+      "alias": "Validar vault",
+      "confirmed_execution": false,
+      "output_channels": {
+        "stdout": "notification",
+        "stderr": "notification"
+      }
+    },
+    "1": {
+      "id": "1",
+      "platform_specific_commands": {
+        "default": "bash '{{vault_path}}/scripts/obsidian/lint.sh'"
+      },
+      "alias": "Lint",
+      "confirmed_execution": false,
+      "output_channels": {
+        "stdout": "notification",
+        "stderr": "notification"
+      }
+    },
+    "2": {
+      "id": "2",
+      "platform_specific_commands": {
+        "default": "bash '{{vault_path}}/scripts/obsidian/check.sh'"
+      },
+      "alias": "Verificar saúde",
+      "confirmed_execution": false,
+      "output_channels": {
+        "stdout": "notification",
+        "stderr": "notification"
+      }
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "_comment": "Configuração de exemplo para o plugin Commander (obsidian-commander).",
+  "_instrucoes": "Instale Commander via Community Plugins. Copie os comandos desejados para .obsidian/plugins/cmdr/data.json após configurar os IDs dos Shell Commands.",
+  "_versao_testada": "Commander 0.8.x",
+  "hiderightItems": false,
+  "commands": {
+    "ribbon": [
+      {
+        "id": "shell-commands:shell-command-0",
+        "icon": "checkmark",
+        "name": "Validar vault",
+        "mode": "any"
+      },
+      {
+        "id": "shell-commands:shell-command-1",
+        "icon": "search",
+        "name": "Lint",
+        "mode": "any"
+      },
+      {
+        "id": "shell-commands:shell-command-2",
+        "icon": "heart",
+        "name": "Verificar saúde",
+        "mode": "any"
+      }
+    ]
+  }
+}
