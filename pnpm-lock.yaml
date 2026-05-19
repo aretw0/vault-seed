@@ -21,6 +21,8 @@ importers:
         specifier: ^9.5.0
         version: 9.5.0
 
+  packages/cli: {}
+
 packages:
 
   '@babel/code-frame@7.27.1':

@@ -1,0 +1,29 @@
+#!/usr/bin/env node
+import { fileURLToPath } from 'node:url';
+import { validate } from './commands/validate.js';
+import { lint } from './commands/lint.js';
+import { setup } from './commands/setup.js';
+import { release } from './commands/release.js';
+import { check } from './commands/check.js';
+
+const COMMANDS = { validate, lint, setup, release, check };
+
+export function resolveCommand(name) {
+  return name in COMMANDS ? name : null;
+}
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const [,, command, ...rest] = process.argv;
+
+  if (!resolveCommand(command)) {
+    console.error(`dgk: comando desconhecido '${command ?? ''}'`);
+    console.error(`Uso: dgk <comando>`);
+    console.error(`Comandos: ${Object.keys(COMMANDS).join(', ')}`);
+    process.exit(1);
+  }
+
+  COMMANDS[command](rest).catch(err => {
+    console.error(`dgk: ${err.message}`);
+    process.exit(1);
+  });
+}

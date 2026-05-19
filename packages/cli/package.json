@@ -1,0 +1,23 @@
+{
+  "name": "@dgk/cli",
+  "version": "0.1.0",
+  "description": "Digital Gardening Kit — CLI para operação do vault",
+  "type": "module",
+  "bin": {
+    "dgk": "./src/index.js"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aretw0/vault-seed.git",
+    "directory": "packages/cli"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
