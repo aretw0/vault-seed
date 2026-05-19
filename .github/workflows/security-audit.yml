@@ -1,0 +1,48 @@
+name: Security Audit
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/security-audit.yml"
+      - ".github/actions/setup/action.yml"
+  workflow_dispatch:
+  schedule:
+    - cron: "0 9 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    name: Audit production dependencies
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Security gate
+        run: pnpm audit --audit-level=high --prod
+
+      - name: Full audit report
+        if: always()
+        run: pnpm audit --json > audit-full.json
+
+      - name: Upload audit report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: pnpm-audit-full-report
+          path: audit-full.json
+          retention-days: 30

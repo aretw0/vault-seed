@@ -27,6 +27,11 @@ Se este for seu primeiro vault versionado, abra também
 **`[[Preparando seu Computador para o Vault]]`** para configurar Obsidian,
 VS Code, Git, GitHub Desktop e sincronização sem conflitos entre dispositivos.
 
+Quando a recepção automática do template terminar, abra
+**`[[Depois da Recepcao do Template]]`** para conferir o que ficou com você,
+o que não deve ser sincronizado manualmente e como operar o vault entre
+desktop e celular.
+
 ## Assistentes de IA
 
 O vault inclui um prompt de projeto em `AGENTS.md` para orientar assistentes de

@@ -17,7 +17,7 @@ Os principais problemas são:
 Para resolver esses problemas, adotamos a seguinte abordagem:
 
 -   **IGNORAR a pasta `.obsidian/plugins/`:** Como definido no arquivo `.gitignore`, o Git não rastreia o conteúdo desta pasta. Isso significa que o código-fonte dos plugins não é versionado.
--   **RASTREAR o arquivo `.obsidian/community-plugins.json`:** Este arquivo é apenas uma lista de texto simples com os nomes dos plugins da comunidade que você ativou. Ele é pequeno, legível e seguro para ser sincronizado.
+-   **RASTREAR o arquivo `.obsidian/community-plugins.json`:** Este arquivo é apenas uma lista de texto simples com os nomes dos plugins da comunidade que você ativou. Ele começa vazio (`[]`) no template, é pequeno, legível e seguro para ser sincronizado.
 
 ### Como Funciona na Prática?
 

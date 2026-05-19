@@ -1,8 +1,6 @@
 const fs = require("fs");
 const path = require("path");
 
-const root = process.cwd();
-
 const requiredPaths = [
   "README.md",
   "AGENTS.md",
@@ -14,7 +12,12 @@ const requiredPaths = [
   "99 - Meta & Attachments/Preparando seu Computador para o Vault.md",
   "99 - Meta & Attachments/Usando o Git e o GitHub para Sincronizar seu Vault.md",
   "99 - Meta & Attachments/Configurando o Obsidian Git.md",
+  "99 - Meta & Attachments/Depois da Recepcao do Template.md",
+  "99 - Meta & Attachments/MOC Vault Seed.md",
+  "99 - Meta & Attachments/Vault Seed Kitchen Sink.base",
   "40 - Resources/O que sao system prompts de IA.md",
+  "40 - Resources/Bases.md",
+  "40 - Resources/Dataview.md",
 ];
 
 const templateOnlyRequiredPaths = [
@@ -32,10 +35,16 @@ const wikiLinkEntryPoints = [
   "99 - Meta & Attachments/Preparando seu Computador para o Vault.md",
   "99 - Meta & Attachments/Usando o Git e o GitHub para Sincronizar seu Vault.md",
   "99 - Meta & Attachments/Configurando o Obsidian Git.md",
+  "99 - Meta & Attachments/Depois da Recepcao do Template.md",
+  "99 - Meta & Attachments/MOC Vault Seed.md",
   "99 - Meta & Attachments/Seus Primeiros Passos.md",
   "99 - Meta & Attachments/Entendendo a Estrutura de Pastas.md",
+  "99 - Meta & Attachments/Evoluindo seu Vault com Links, Tags e MOCs.md",
+  "99 - Meta & Attachments/Criando seu Painel de Controle (Dashboard).md",
   "40 - Resources/Filosofia e Conceitos Fundamentais.md",
   "40 - Resources/O que sao system prompts de IA.md",
+  "40 - Resources/Bases.md",
+  "40 - Resources/Dataview.md",
 ];
 
 const templateOnlyWikiLinkEntryPoints = [
@@ -54,23 +63,26 @@ function toPosix(filePath) {
   return filePath.split(path.sep).join("/");
 }
 
-function exists(relativePath) {
+function exists(root, relativePath) {
   return fs.existsSync(path.join(root, relativePath));
 }
 
-function walk(dir, files = []) {
+function walk(root, dir = root, files = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const fullPath = path.join(dir, entry.name);
     const relative = toPosix(path.relative(root, fullPath));
 
     if (entry.isDirectory()) {
       if (!ignoredDirs.has(relative)) {
-        walk(fullPath, files);
+        walk(root, fullPath, files);
       }
       continue;
     }
 
-    if (entry.isFile() && entry.name.endsWith(".md")) {
+    if (
+      entry.isFile() &&
+      (entry.name.endsWith(".md") || entry.name.endsWith(".base"))
+    ) {
       files.push(relative);
     }
   }
@@ -79,7 +91,17 @@ function walk(dir, files = []) {
 }
 
 function noteKey(relativePath) {
-  return path.basename(relativePath, ".md").toLowerCase();
+  const extension = path.extname(relativePath);
+  return path
+    .basename(
+      relativePath,
+      extension === ".md" || extension === ".base" ? extension : "",
+    )
+    .toLowerCase();
+}
+
+function hasSupportedExtension(target) {
+  return target.endsWith(".md") || target.endsWith(".base");
 }
 
 function parseWikiTarget(rawTarget) {
@@ -93,20 +115,21 @@ function parseWikiTarget(rawTarget) {
   return withoutHeading.replace(/\\/g, "/");
 }
 
-function validateRequiredPaths(errors) {
-  const templateMode = exists("README.template.md") || exists("AGENTS.template.md");
+function validateRequiredPaths(root, errors) {
+  const templateMode =
+    exists(root, "README.template.md") || exists(root, "AGENTS.template.md");
   const pathsToCheck = templateMode
     ? requiredPaths.concat(templateOnlyRequiredPaths)
     : requiredPaths;
 
   for (const requiredPath of pathsToCheck) {
-    if (!exists(requiredPath)) {
+    if (!exists(root, requiredPath)) {
       errors.push(`Missing required onboarding file: ${requiredPath}`);
     }
   }
 }
 
-function validateWikiLinks(allFiles, filesToValidate, errors) {
+function validateWikiLinks(root, allFiles, filesToValidate, errors) {
   const byBasename = new Map();
   const byRelative = new Set(allFiles.map((file) => file.toLowerCase()));
 
@@ -121,7 +144,7 @@ function validateWikiLinks(allFiles, filesToValidate, errors) {
   const wikiLinkPattern = /\[\[([^\]]+)\]\]/g;
 
   for (const file of filesToValidate) {
-    if (!exists(file)) {
+    if (!exists(root, file)) {
       continue;
     }
 
@@ -134,14 +157,17 @@ function validateWikiLinks(allFiles, filesToValidate, errors) {
         continue;
       }
 
-      const targetWithExtension = target.endsWith(".md")
+      const targetWithExtension = hasSupportedExtension(target)
         ? target
         : `${target}.md`;
       const resolvedFromFile = toPosix(
         path.normalize(path.join(path.dirname(file), targetWithExtension)),
       ).toLowerCase();
       const directRelative = targetWithExtension.toLowerCase();
-      const basename = path.basename(target, ".md").toLowerCase();
+      const targetExtension = path.extname(target);
+      const basename = path
+        .basename(target, hasSupportedExtension(target) ? targetExtension : "")
+        .toLowerCase();
 
       const found =
         byRelative.has(resolvedFromFile) ||
@@ -155,29 +181,46 @@ function validateWikiLinks(allFiles, filesToValidate, errors) {
   }
 }
 
-function main() {
+function validateOnboarding(root = process.cwd()) {
   const errors = [];
   const allFiles = walk(root);
 
-  validateRequiredPaths(errors);
-  const templateMode = exists("README.template.md") || exists("AGENTS.template.md");
+  validateRequiredPaths(root, errors);
+  const templateMode =
+    exists(root, "README.template.md") || exists(root, "AGENTS.template.md");
   const entryPoints = templateMode
     ? wikiLinkEntryPoints.concat(templateOnlyWikiLinkEntryPoints)
     : wikiLinkEntryPoints;
 
-  validateWikiLinks(allFiles, entryPoints, errors);
+  validateWikiLinks(root, allFiles, entryPoints, errors);
 
-  if (errors.length > 0) {
+  return {
+    errors,
+    entryPointCount: entryPoints.length,
+  };
+}
+
+function main() {
+  const result = validateOnboarding();
+
+  if (result.errors.length > 0) {
     console.error("Onboarding validation failed:");
-    for (const error of errors) {
+    for (const error of result.errors) {
       console.error(`- ${error}`);
     }
     process.exit(1);
   }
 
   console.log(
-    `Onboarding validation passed: ${entryPoints.length} entrypoint files checked.`,
+    `Onboarding validation passed: ${result.entryPointCount} entrypoint files checked.`,
   );
 }
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = {
+  parseWikiTarget,
+  validateOnboarding,
+};

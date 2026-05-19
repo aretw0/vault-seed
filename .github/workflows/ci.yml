@@ -21,22 +21,22 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: ".nvmrc"
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
+      - name: Setup
+        uses: ./.github/actions/setup
 
       - name: Lint main vault
-        run: npm run lint:main
+        run: pnpm run lint:main
 
       - name: Lint templates
-        run: npm run lint:templates
+        run: pnpm run lint:templates
+
+      - name: Run script tests
+        run: pnpm run test
 
       - name: Validate onboarding
-        run: npm run validate:onboarding
+        run: pnpm run validate:onboarding
+
+      - name: Smoke template safety
+        run: pnpm run smoke:template

@@ -18,7 +18,7 @@ Adotamos uma abordagem de "lint gradual", que aplica diferentes níveis de rigor
 
 ## Como Funciona na Prática (CI/CD)
 
-O processo de lint é automatizado através de um workflow de Integração Contínua (CI) no GitHub Actions (`.github/workflows/ci.yml`). Toda vez que você envia uma alteração (`push`) ou abre uma Proposta de Melhoria (`pull request`), o workflow executa os seguintes passos:
+O processo de lint é automatizado através de um workflow de Integração Contínua (CI) no GitHub Actions (`.github/workflows/ci.yml`). Toda vez que você envia uma alteração (`push`) ou abre uma Proposta de Melhoria (`pull request`), o workflow instala as dependências com `pnpm` e executa os seguintes passos:
 
 1.  **Lint do Vault Principal:** Verifica todas as notas nas pastas de conteúdo (`10` a `99`) usando as regras principais definidas em `.markdownlint.json`.
 2.  **Lint da Documentação:** Analisa os arquivos na pasta `docs/` com as regras mais flexíveis de `docs/.markdownlint.json`.
@@ -61,3 +61,11 @@ Você pode personalizar o comportamento do lint editando os arquivos de configur
 *   **`90 - Templates/.markdownlint.json`:** Mesma lógica, para os templates.
 
 Para ignorar uma pasta inteira, você pode ajustar os comandos nos scripts `lint:*` dentro do `package.json` ou no workflow `ci.yml`.
+
+Antes de abrir uma Proposta de Melhoria, rode:
+
+```bash
+pnpm run validate
+```
+
+Esse comando combina lint, testes dos scripts e smokes de template. O objetivo é pegar problemas que afetam o usuário final, como links quebrados no onboarding, workflows chamando o gerenciador de pacotes errado ou plugins do Obsidian instalados sendo versionados por acidente.

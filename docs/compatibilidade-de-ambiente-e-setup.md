@@ -33,9 +33,9 @@ O `setup.sh` orquestra as seguintes verificações e configurações:
     *   Lê o arquivo `.nvmrc` na raiz do projeto para identificar a versão do Node.js desejada.
     *   Se a versão especificada não estiver instalada no WSL, o `nvm` a instala automaticamente.
     *   Ativa a versão correta do Node.js para o ambiente do script.
-    *   Verifica a presença do `npm` (gerenciador de pacotes do Node.js).
-    *   Instala as dependências do projeto (`npm install`) se o diretório `node_modules` não existir.
-4.  **Configuração do Copilot**: Executa scripts adicionais para configurar o Copilot, se o ambiente Node.js estiver pronto.
+    *   Habilita o `pnpm` via Corepack, seguindo a versão fixada em `package.json`.
+    *   Instala as dependências do projeto (`pnpm install`) se o diretório `node_modules` não existir.
+4.  **Dependências Node.js**: Instala as dependências usadas por lint, testes e validações locais do template.
 
 ## Instruções para o Usuário
 
@@ -77,8 +77,12 @@ git config --global credential.helper "/mnt/c/Program\\ Files/Git/mingw64/bin/gi
 
 Após executar este comando, o Git no seu WSL estará configurado para usar o GCM do Windows, proporcionando uma autenticação transparente e segura para suas operações Git.
 
----
+## Validação Depois do Setup
 
-**Próximos Passos:**
+Com o ambiente configurado, valide o repositório antes de abrir uma Proposta de Melhoria:
 
-Com o ambiente configurado, você estará pronto para explorar e colaborar no repositório, utilizando todas as ferramentas e fluxos de trabalho propostos.
+```bash
+pnpm run validate
+```
+
+Esse comando cobre lint Markdown, testes dos scripts, validação dos wikilinks de onboarding e smoke de segurança do template.
