@@ -349,7 +349,7 @@ O VS Code mostra o log do container. Você verá:
 
 Ao final, o terminal exibe:
 
-```
+```text
 === Ambiente pronto ===
 Node.js : v22.x.x
 pnpm    : x.x.x

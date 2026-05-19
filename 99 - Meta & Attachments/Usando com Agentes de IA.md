@@ -1,0 +1,75 @@
+---
+title: Usando com Agentes de IA
+aliases:
+  - Agentes de IA no Vault
+  - Vault como Sandbox para IA
+tags:
+  - meta/ia
+  - meta/agentes
+status: published
+created: 2026-05-19
+updated: 2026-05-19
+category: guia
+audience: tecnico
+related:
+  - "[[Preparando seu Computador para o Vault]]"
+  - "[[Automacoes no Obsidian]]"
+---
+# Usando com Agentes de IA
+
+Este vault é um bom ambiente para trabalhar com agentes de IA — Claude Code,
+Codex CLI, Gemini CLI, ou qualquer agente que leia e escreva arquivos Markdown.
+
+## O vault é a memória do agente
+
+Você não precisa de pastas ocultas ou arquivos de estado externos. O PARA já é
+um sistema de memória: use as próprias notas para dar contexto ao agente.
+
+**Padrão recomendado:**
+
+- `00 - Inbox/contexto-ativo.md` — estado atual do trabalho com o agente
+  (o que está sendo feito, decisões recentes, próximos passos)
+- `10 - Projects/` — projetos onde o agente pode contribuir
+- `30 - Resources/` — referências que o agente pode consultar
+
+Ao iniciar uma nova sessão, aponte o agente para `contexto-ativo.md`.
+Ao terminar, peça ao agente para atualizar esse arquivo com o que foi feito.
+
+## Configuração para Claude Code
+
+O vault já vem com `.claude/settings.json` que libera as operações mais
+comuns sem pedir confirmação:
+
+- Leitura de qualquer arquivo do vault
+- Edição de arquivos `.md`
+- Execução de `pnpm run *` e `bash scripts/*`
+
+Operações destrutivas (deletar arquivos, git push) continuam pedindo
+confirmação. Você pode ajustar as permissões em `.claude/settings.json`.
+
+O arquivo `AGENTS.md` na raiz do repositório é o system prompt do vault —
+descreve a estrutura PARA, as convenções de notas e o que o agente pode
+fazer com segurança.
+
+## Compatibilidade com outros agentes
+
+O `AGENTS.md` funciona como contexto para qualquer agente:
+
+- **Claude Code / Codex CLI:** lê `AGENTS.md` automaticamente
+- **Gemini CLI:** lê `GEMINI.md` (aponta para `AGENTS.md`)
+- **Obsidian plugins de IA:** cole o conteúdo de `AGENTS.md` no campo
+  de system prompt do plugin
+
+## Dicas de uso
+
+- **Sessões curtas funcionam melhor** — dê uma tarefa clara por sessão
+- **Revise antes de commitar** — use `git diff` ou GitHub Desktop para ver
+  o que o agente mudou antes de fazer push
+- **Use branches** — para mudanças grandes, peça ao agente para trabalhar
+  em um branch separado
+- **O agente não conhece o futuro** — mantenha o `contexto-ativo.md` atualizado
+  para que cada sessão comece com o estado correto
+
+---
+
+Voltar para [[Preparando seu Computador para o Vault]]
