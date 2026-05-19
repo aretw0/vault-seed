@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# vault — entra como dev user a partir de terminais root do Docker Desktop
+#
+# Uso: vault [usuario] [diretorio]
+#   Padrão: vscode, /workspaces/<primeiro-diretório>
+
+TARGET_USER="vscode"
+
+# Detecta o diretório do workspace se não informado
+if [ -d /workspaces ]; then
+  FIRST_WS="$(ls /workspaces/ 2>/dev/null | head -1)"
+  PROJECT_DIR="/workspaces/${FIRST_WS:-vault-seed}"
+else
+  PROJECT_DIR="/workspaces/vault-seed"
+fi
+
+if [ "$#" -gt 0 ]; then
+  TARGET_USER="$1"
+  shift
+fi
+
+if [ "$#" -gt 0 ]; then
+  PROJECT_DIR="$1"
+  shift
+fi
+
+if ! id "$TARGET_USER" >/dev/null 2>&1 && id node >/dev/null 2>&1; then
+  TARGET_USER="node"
+fi
+
+INIT_FILE="/home/${TARGET_USER}/.vault-init.sh"
+
+cat > "$INIT_FILE" <<INIT
+[ -f /home/${TARGET_USER}/.bashrc ] && . /home/${TARGET_USER}/.bashrc
+export HOME=/home/${TARGET_USER}
+export USER=${TARGET_USER}
+export LANG=pt_BR.UTF-8
+export LC_ALL=pt_BR.UTF-8
+export LANGUAGE=pt_BR:pt:en
+export TERM=\${TERM:-xterm-256color}
+export COLORTERM=\${COLORTERM:-truecolor}
+export PNPM_HOME=/home/${TARGET_USER}/.local/share/pnpm
+export PATH=/home/${TARGET_USER}/.local/share/pnpm:/home/${TARGET_USER}/.local/bin:\$PATH
+cd "${PROJECT_DIR}"
+INIT
+
+chmod 644 "$INIT_FILE"
+
+if [ "$#" -gt 0 ]; then
+  command_text=$(printf "%q " "$@")
+  exec su -s /bin/bash "$TARGET_USER" -- -lc ". '$INIT_FILE'; ${command_text}"
+fi
+
+exec su -s /bin/bash "$TARGET_USER" -- --init-file "$INIT_FILE"

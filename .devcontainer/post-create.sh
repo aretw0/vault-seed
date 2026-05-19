@@ -14,6 +14,10 @@ pnpm install --frozen-lockfile
 # Git
 bash scripts/setup_git.sh
 
+# vault: entra como dev user a partir de terminais root do Docker Desktop
+sudo cp .devcontainer/vault /usr/local/bin/vault
+sudo chmod +x /usr/local/bin/vault
+
 # Readiness gate — confirma que todas as ferramentas estão disponíveis
 echo ""
 echo "=== Ambiente pronto ==="
