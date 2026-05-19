@@ -13,3 +13,11 @@ pnpm install --frozen-lockfile
 
 # Git
 bash scripts/setup_git.sh
+
+# Readiness gate — confirma que todas as ferramentas estão disponíveis
+echo ""
+echo "=== Ambiente pronto ==="
+echo "Node.js : $(node -v)"
+echo "pnpm    : $(pnpm --version)"
+echo "uv      : $(uv --version)"
+echo "======================="

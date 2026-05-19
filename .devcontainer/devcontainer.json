@@ -30,6 +30,7 @@
     "source=dgk-pnpm-store,target=/home/vscode/.local/share/pnpm/store,type=volume"
   ],
   "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "postStartCommand": "bash .devcontainer/post-start.sh",
   "customizations": {
     "vscode": {
       "extensions": [
