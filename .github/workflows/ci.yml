@@ -6,34 +6,37 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build:
+  validate:
+    name: Validate vault
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "18"
-          cache: 'npm'
+          node-version-file: ".nvmrc"
+          cache: "npm"
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: npm ci
 
-      - name: Lint Main Vault
-        run: |
-          npx markdownlint --config .markdownlint.json \
-            '10 - Fleeting & Daily/**/*.md' \
-            '20 - Projects/**/*.md' \
-            '30 - Areas/**/*.md' \
-            '40 - Resources/**/*.md' \
-            '50 - Archives/**/*.md' \
-            '99 - Meta & Attachments/**/*.md'
+      - name: Lint main vault
+        run: npm run lint:main
 
-      - name: Lint Templates
-        run: npx markdownlint --config '90 - Templates/.markdownlint.json' '90 - Templates/**/*.md'
+      - name: Lint templates
+        run: npm run lint:templates
 
-      - name: Validate Onboarding
+      - name: Validate onboarding
         run: npm run validate:onboarding

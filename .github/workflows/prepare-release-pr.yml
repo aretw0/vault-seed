@@ -3,49 +3,62 @@ name: "Prepare Release PR"
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   prepare-release:
+    name: Prepare release pull request
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
-    permissions:
-      contents: write
-      pull-requests: write
 
     steps:
-      - name: "Checkout main"
+      - name: Checkout main
         uses: actions/checkout@v4
         with:
           ref: main
-          fetch-depth: 0 # Needed for standard-version and git history
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: "Configure Git User"
+      - name: Configure Git user
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: "Rebase"
-        run: git rebase origin/develop
+      - name: Rebase main onto develop
+        run: |
+          set -euo pipefail
+          git fetch origin main develop --prune
+          git rebase --reapply-cherry-picks origin/develop
 
-      - name: "Setup Node.js"
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version-file: ".nvmrc"
           cache: "npm"
 
-      - name: "Cache & Install Dependencies"
-        run: |
-          npm ci
+      - name: Install dependencies
+        run: npm ci
 
-      - name: "Run standard-version"
+      - name: Validate release candidate
+        run: npm run validate
+
+      - name: Run standard-version
         id: standard_version
-        # We skip tagging because the release workflow will handle it after merge
         run: |
+          set -euo pipefail
           npx standard-version --skip.tag
-          echo "version=$(cat VERSION)" >> $GITHUB_OUTPUT
-          BRANCH_NAME="chore/prepare-release-$(date +%s)"
-          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          echo "version=$(cat VERSION)" >> "$GITHUB_OUTPUT"
+          branch_name="chore/prepare-release-$(date +%s)"
+          echo "branch_name=$branch_name" >> "$GITHUB_OUTPUT"
 
-      - name: "Create Pull Request"
+      - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
           title: "chore(release): v${{ steps.standard_version.outputs.version }}"

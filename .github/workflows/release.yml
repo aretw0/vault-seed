@@ -2,69 +2,85 @@ name: "Publish Release"
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   create-release:
+    name: Create GitHub release
     runs-on: ubuntu-latest
-    # Condition: Only run on the main repo and if the commit message indicates a release from standard-version.
-    if: contains(github.event.head_commit.message, 'chore(release):')
-
-    permissions:
-      contents: write # To create tags and releases
+    timeout-minutes: 15
+    if: github.repository == 'aretw0/vault-seed' && contains(github.event.head_commit.message, 'chore(release):')
 
     steps:
-      - name: "Checkout code"
+      - name: Checkout
         uses: actions/checkout@v4
-        # The token is needed to push the tag back to the repo
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0 # Needed to extract release notes
+          fetch-depth: 0
 
-      - name: "Setup Node.js"
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version-file: ".nvmrc"
           cache: "npm"
 
-      - name: "Cache & Install Dependencies"
+      - name: Install dependencies
         run: npm ci
 
-      - name: "Configure Git User"
+      - name: Validate release tree
+        run: npm run validate
+
+      - name: Configure Git user
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: "Create and Push Git Tag"
+      - name: Create and push Git tag
         id: create_tag
         run: |
-          # Get version, which was bumped by the prepare-release-pr workflow
-          VERSION="v$(cat VERSION)"
-          echo "version_tag=$VERSION" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          version="v$(cat VERSION)"
+          echo "version_tag=$version" >> "$GITHUB_OUTPUT"
 
-          echo "Creating and pushing tag ${VERSION}..."
-          git tag $VERSION -m "Release ${VERSION}"
-          git push origin $VERSION
+          if git rev-parse "$version" >/dev/null 2>&1; then
+            echo "::notice::Tag $version already exists locally."
+          else
+            git tag -a "$version" -m "Release $version"
+          fi
 
-      - name: "Get Release Notes from CHANGELOG"
+          if git ls-remote --exit-code --tags origin "$version" >/dev/null 2>&1; then
+            echo "::notice::Tag $version already exists on origin."
+          else
+            git push origin "$version"
+          fi
+
+      - name: Get release notes from CHANGELOG
         id: get_release_notes
         run: |
-          # The get_release_notes.js script extracts the notes for a specific version
-          VERSION_NUMBER=$(echo ${{ steps.create_tag.outputs.version_tag }} | sed 's/v//')
-          RELEASE_NOTES=$(node scripts/get_release_notes.js "$VERSION_NUMBER")
+          set -euo pipefail
+          version_number="${{ steps.create_tag.outputs.version_tag }}"
+          version_number="${version_number#v}"
+          release_notes="$(node scripts/get_release_notes.js "$version_number")"
 
-          if [ -z "$RELEASE_NOTES" ]; then
-            echo "::error::Could not extract release notes for version ${VERSION_NUMBER} from CHANGELOG.md."
+          if [ -z "$release_notes" ]; then
+            echo "::error::Could not extract release notes for version ${version_number} from CHANGELOG.md."
             exit 1
           fi
 
-          # Pass the notes to the next step
-          echo "release_notes<<EOF" >> $GITHUB_OUTPUT
-          echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          {
+            echo "release_notes<<EOF"
+            echo "$release_notes"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
-      - name: "Create GitHub Release"
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.create_tag.outputs.version_tag }}
