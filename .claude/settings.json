@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(**/*)",
+      "Edit(**/*.md)",
+      "Bash(pnpm run *)",
+      "Bash(bash scripts/*)"
+    ]
+  }
+}

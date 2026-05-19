@@ -79,3 +79,6 @@ obsidian-web-clipper-settings.json
 .foam/
 
 gha-creds-*.json
+
+# Claude Code local overrides
+.claude/settings.local.json
