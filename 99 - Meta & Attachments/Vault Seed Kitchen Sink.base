@@ -1,0 +1,35 @@
+filters:
+  or:
+    - file.inFolder("99 - Meta & Attachments")
+    - file.inFolder("40 - Resources")
+properties:
+  file.name:
+    displayName: Nota
+  status:
+    displayName: Status
+  category:
+    displayName: Categoria
+  audience:
+    displayName: Publico
+  file.mtime:
+    displayName: Atualizado
+views:
+  - type: table
+    name: Guias e conceitos
+    order:
+      - file.name
+      - status
+      - category
+      - audience
+      - file.mtime
+    sort:
+      - property: file.name
+        direction: ASC
+    limit: 50
+  - type: cards
+    name: Cartoes de exploracao
+    order:
+      - file.name
+      - category
+      - audience
+    limit: 30

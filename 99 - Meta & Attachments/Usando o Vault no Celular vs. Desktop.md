@@ -53,7 +53,7 @@ No celular, a abordagem é similar, usando aplicativos que se integram ao sistem
     *   **Alternativa:** **[GitSync](https://github.com/GitSync-App/GitSync)**. É um aplicativo de código aberto projetado para sincronizar repositórios Git no seu dispositivo. Configure-o para apontar para a pasta do seu vault.
 
 *   **iOS:**
-    *   **TODO:** Estamos em busca de uma ferramenta para iOS que ofereça uma experiência de sincronização Git tão simples quanto o GitHub Desktop. Opções como o [Working Copy](https://workingcopy.app/) existem, mas podem ter um custo. Se você conhece uma boa alternativa, sinta-se à vontade para adicionar aqui!
+    *   **Opção prática:** [Working Copy](https://workingcopy.app/) é a alternativa mais conhecida para trabalhar com repositórios Git no iOS. Antes de adotar esse fluxo, confirme custo, permissões de arquivos e compatibilidade com a pasta que o Obsidian consegue abrir no seu dispositivo.
 
 ---
 Voltar para o [[Guia do Jardineiro Digital]]
