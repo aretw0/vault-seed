@@ -248,8 +248,7 @@ automação de merge hooks e design de workflows de revisão para equipes.
 
 ### Assimilação de Conhecimento
 Pipeline de ingestão de dados externos para o vault: scraping web com Playwright
-(padrão estabelecido em `rcdc5` — `@rcdcp/scraper-playwright`, conversão
-HTML→Markdown via TurnDown, normalização de frontmatter, ingestão no PARA via
+(conversão HTML→Markdown, normalização de frontmatter, ingestão no PARA via
 inbox), suporte a múltiplos canais (Markdown import, scraping interativo, MCP
 enrichment). Spec separado — envolve decisões sobre arquitetura do motor de
 ingestão, autenticação em fontes protegidas e validação antes de publicar notas.
