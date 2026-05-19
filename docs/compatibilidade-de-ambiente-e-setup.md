@@ -42,12 +42,14 @@ Instale as ferramentas necessárias antes de rodar o setup:
     > Usuários com `nvm` existente: o `setup.sh` detecta e usa o `nvm` automaticamente como fallback, mas recomendamos migrar para `fnm` para suporte nativo no Windows.
 
 2.  **Instale o `uv` (gerenciador Python)**: O `uv` é cross-platform e necessário para instalar `git-filter-repo`.
-    - Windows/macOS/Linux: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+    - Windows: `winget install --id=astral-sh.uv`
+    - macOS: `brew install uv`
+    - Linux/WSL: `curl -LsSf https://astral.sh/uv/install.sh | sh`
     - Documentação: https://docs.astral.sh/uv/getting-started/installation/
 
     > Usuários com `pipx` existente: o `setup.sh` usa `pipx` como fallback automaticamente.
 
-3.  **Instale o Python 3**: Necessário como base para o `uv`.
+3.  **Instale o Python 3**: Verificado pelo script `setup_python.sh` como pré-requisito de runtime.
     - Windows: `winget install Python.Python.3`
     - macOS: `brew install python`
     - Linux/WSL: `sudo apt install python3`
