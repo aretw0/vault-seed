@@ -23,20 +23,22 @@ Existem dois processos distintos para gerar uma release, dependendo do seu conte
 Se você usou este repositório como um template para seu próprio cofre de conhecimento, este é o processo recomendado para você. Ele é simples e executado localmente.
 
 1.  **Faça Commits Relevantes:** Certifique-se de que suas alterações incluam pelo menos um commit do tipo `feat`, `fix`, ou `refactor`.
-2.  **Gere a Nova Versão e Tag Localmente:**
+2.  **Gere a Nova Versão Localmente:**
     ```bash
-    npm run release
+    pnpm run release
     ```
     Este comando irá:
     *   Incrementar a versão (patch, minor ou major, dependendo dos seus commits).
     *   Atualizar o `CHANGELOG.md`.
     *   Criar um novo commit com as alterações do changelog e da versão.
-    *   Criar uma nova tag Git (ex: `v1.0.0`).
+    *   Não criar tag automaticamente, porque os scripts usam `--skip.tag`.
 3.  **Envie as Alterações para o GitHub:**
     ```bash
-    git push --follow-tags origin main
+    git push origin main
+    git tag -a "v$(cat VERSION)" -m "Release v$(cat VERSION)"
+    git push origin "v$(cat VERSION)"
     ```
-    Este comando enviará o novo commit e a tag para seu repositório, mantendo seu histórico de versões organizado.
+    Estes comandos enviam o novo commit e a tag para seu repositório, mantendo seu histórico de versões organizado.
 
 ### 3.2. Para Mantenedores do Template (Processo Automatizado via GitHub)
 
@@ -72,8 +74,8 @@ Use este guia se o Pull Request do `prepare-release-pr` foi mesclado, mas a cria
     git checkout main
     git pull origin main
 
-    # Extrai a versão do package.json
-    VERSION=$(node -p "require('./package.json').version")
+    # Extrai a versão do arquivo VERSION
+    VERSION=$(cat VERSION)
     echo "Versão a ser lançada: v$VERSION"
 
     # Extrai as notas de release do CHANGELOG.md (requer awk)
@@ -111,16 +113,20 @@ Use este guia se você precisa fazer uma release completa localmente, sem a ajud
     git merge develop
     ```
 
-2.  **Execute o `standard-version` para criar a release:**
-    Este comando irá ler os novos commits, determinar a versão, gerar o `CHANGELOG.md`, commitar as mudanças e criar a tag.
+2.  **Execute o `standard-version` para criar o commit de release:**
+    Este comando irá ler os novos commits, determinar a versão, gerar o `CHANGELOG.md` e commitar as mudanças.
     ```bash
-    npm run release
+    pnpm run release
     ```
 
 3.  **Empurre as mudanças e a tag para o repositório:**
     ```bash
-    # Empurra o commit da release e a nova tag
-    git push --follow-tags origin main
+    # Empurra o commit da release
+    git push origin main
+
+    # Cria e empurra a nova tag
+    git tag -a "v$(cat VERSION)" -m "Release v$(cat VERSION)"
+    git push origin "v$(cat VERSION)"
     ```
 
 4.  **Crie a Release no GitHub:**
@@ -128,7 +134,7 @@ Use este guia se você precisa fazer uma release completa localmente, sem a ajud
 
     ```bash
     # Extraia a versão e as notas
-    VERSION=$(node -p "require('./package.json').version")
+    VERSION=$(cat VERSION)
     NOTES=$(awk '/^## / && c++>0 {exit} c>0 {print}' CHANGELOG.md)
 
     # Crie a release no GitHub
@@ -141,4 +147,4 @@ Use este guia se você precisa fazer uma release completa localmente, sem a ajud
 
 *   **Commits Atômicos:** Faça commits pequenos e focados em uma única mudança.
 *   **Mensagens Claras:** Escreva mensagens de commit descritivas e que sigam a convenção.
-*   **Teste Localmente:** Antes de gerar uma release, certifique-se de que suas mudanças estão funcionando como esperado.
+*   **Teste Localmente:** Antes de gerar uma release, rode `pnpm run validate` e confira se o changelog simulado mostra o diff completo esperado.

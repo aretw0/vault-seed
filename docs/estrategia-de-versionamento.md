@@ -61,17 +61,26 @@ A ferramenta `standard-version` automatiza o processo de release com base nas Co
 3.  **Atualiza `VERSION`:** Altera o número da versão no arquivo `VERSION`.
 4.  **Gera `CHANGELOG.md`:** Adiciona as mudanças relevantes ao `CHANGELOG.md`.
 5.  **Cria Commit de Release:** Cria um novo commit contendo as atualizações do `VERSION` e `CHANGELOG.md`.
-6.  **Cria Tag Git:** Adiciona uma tag Git (ex: `v1.0.0`) ao commit de release.
+6.  **Deixa a Tag para Publicação:** No template original, a tag Git é criada pelo workflow `release.yml` depois que o commit de release chega à `main`.
 
 ## Considerações Importantes
 
--   **Controle Manual:** Embora o processo seja automatizado, o desenvolvedor ainda tem controle sobre quando executar o `npm run release`. Para forçar um tipo específico de release, ignorando a análise dos commits, você pode usar os scripts auxiliares:
-    *   `npm run release:minor`: Força uma release `minor`.
-    *   `npm run release:major`: Força uma release `major`.
+-   **Controle Manual:** Embora o processo seja automatizado, o desenvolvedor ainda tem controle sobre quando executar o `pnpm run release`. Para forçar um tipo específico de release, ignorando a análise dos commits, você pode usar os scripts auxiliares:
+    *   `pnpm run release:minor`: Força uma release `minor`.
+    *   `pnpm run release:major`: Força uma release `major`.
 -   **Releases Iniciais (0.y.z):** Durante a fase de desenvolvimento inicial (versões `0.y.z`), mesmo mudanças menores podem ser consideradas "breaking changes" na prática, pois a API ainda não é estável. A decisão de fazer um bump `minor` ou `major` nessa fase pode ser mais flexível.
 
----
+## Implementação no Repositório
 
-**Próximos Passos:**
+O repositório mantém dois fluxos complementares:
 
-Após a criação desta documentação, o próximo passo será implementar o workflow de GitHub Actions para a criação automática de releases no GitHub, acionado pela tag gerada pelo `standard-version`.
+- `prepare-release-pr.yml` prepara um Pull Request de release a partir de `develop`, gerando `VERSION` e `CHANGELOG.md` com `standard-version`.
+- `release.yml` roda quando o commit de release chega à `main`, cria a tag Git e publica a GitHub Release com as notas extraídas do changelog.
+
+Antes de acionar o fluxo automatizado, rode `pnpm run validate` localmente e confira o dry run de release com:
+
+```bash
+pnpm run release:dry
+```
+
+Para o passo a passo operacional, consulte [Processo de Release e Versionamento](processo-de-release.md).

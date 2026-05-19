@@ -60,18 +60,18 @@ Nosso arquivo `.versionrc` diz à ferramenta *como* agrupar e apresentar esses c
 
 **Vantagens:**
 
-*   **Geração Automática de Changelog:** Ao rodar `npx standard-version`, a ferramenta gera uma nova seção no `CHANGELOG.md` com títulos amigáveis.
+*   **Geração Automática de Changelog:** Ao rodar `pnpm exec standard-version`, a ferramenta gera uma nova seção no `CHANGELOG.md` com títulos amigáveis.
 *   **Versionamento Semântico (SemVer) Automático:** A ferramenta detecta o tipo de mudança para sugerir a próxima versão:
     *   `feat`: Aumenta a versão menor (ex: `1.1.0` -> `1.2.0`).
     *   `fix`: Aumenta a versão de patch (ex: `1.1.0` -> `1.1.1`).
     *   `BREAKING CHANGE:` ou `feat!`: Aumenta a versão maior (ex: `1.1.0` -> `2.0.0`).
-*   **Criação de Tags:** Após a atualização, a ferramenta cria automaticamente uma nova tag Git (ex: `v1.2.0`).
+*   **Release em duas fases:** Primeiro a ferramenta gera `VERSION`, `CHANGELOG.md` e o commit `chore(release)`. Depois o workflow de publicação cria a tag Git e a GitHub Release.
 
 ## O Ciclo Virtuoso
 
 1.  O **`.gitmessage`** facilita a criação de mensagens de commit padronizadas.
 2.  Essas mensagens se tornam "dados estruturados" no histórico do Git.
-3.  O **`.versionrc`** ensina ferramentas de automação a lerem esses dados para gerar changelogs, determinar a próxima versão e criar tags de release.
+3.  O **`.versionrc`** ensina ferramentas de automação a lerem esses dados para gerar changelogs e determinar a próxima versão.
 
 Juntos, eles transformam o ato de commitar em um passo que alimenta diretamente a documentação e o processo de release do projeto.
 
@@ -81,11 +81,11 @@ A teoria acima se materializa através de um único comando no `package.json`:
 
 ```json
 "scripts": {
-  "release": "standard-version"
+  "release": "standard-version --skip.tag --infile CHANGELOG.md"
 }
 ```
 
-Executar `npm run release` orquestra todo o processo de versionamento. Aqui está o passo a passo ideal:
+Executar `pnpm run release` orquestra todo o processo de versionamento. Aqui está o passo a passo ideal:
 
 ### Passo 1: Pré-requisito - Um Rascunho Seguro e Limpo
 
@@ -102,10 +102,8 @@ O resultado deve ser `nothing to commit, working tree clean`. Isso evita que mud
 Para evitar surpresas, sempre faça uma simulação antes. Pense nisso como um "ensaio geral". O comando a seguir mostra tudo o que será feito, mas sem de fato alterar nenhum arquivo.
 
 ```bash
-npm run release -- --dry-run
+pnpm run release:dry
 ```
-
-O ` -- ` é importante para passar o argumento `--dry-run` diretamente para o `standard-version`.
 
 Você verá no terminal a nova versão que será criada e um preview do `CHANGELOG.md`. Se tudo estiver como esperado, você pode prosseguir.
 
@@ -114,24 +112,28 @@ Você verá no terminal a nova versão que será criada e um preview do `CHANGEL
 Agora, o comando real:
 
 ```bash
-npm run release
+pnpm run release
 ```
 
 > **Nota Importante:** Nossos scripts de release no `package.json` foram customizados com a flag `--infile CHANGELOG.md`. Isso instrui o `standard-version` a determinar a versão atual lendo o `CHANGELOG.md`, em vez de depender do `package.json`. Essa configuração torna nosso processo de versionamento do vault independente do versionamento das ferramentas de desenvolvimento.
+>
+> Eles também usam `--skip.tag`, porque a tag é criada depois pelo workflow `release.yml`, somente quando o Pull Request de release chega à `main`.
 
 Ele irá:
 1.  **Analisar** os commits desde a última versão.
 2.  **Atualizar** o arquivo `VERSION` com o novo número de versão (ex: de `0.0.1` para `0.0.2`).
 3.  **Criar ou atualizar** o arquivo `CHANGELOG.md` com as seções de "Novos Recursos", "Correções", etc.
 4.  **Criar um commit** do tipo `chore(release)` contendo as mudanças nos arquivos `VERSION` e `CHANGELOG.md`.
-5.  **Criar uma tag Git** (ex: `v0.0.2`) apontando para este novo commit.
+5.  **Deixar a tag para a etapa de publicação**, quando o commit de release for integrado à `main`.
 
 ### Passo 4: Publicando as Mudanças
 
-Até agora, todas as mudanças (o novo commit e a tag) estão apenas no seu computador local. Para que outros colaboradores e o GitHub saibam da nova versão, você precisa publicá-la:
+Até agora, o novo commit está apenas no seu computador local. Para publicar manualmente sem os workflows, envie o commit e crie a tag a partir do valor em `VERSION`:
 
 ```bash
-git push --follow-tags origin main
+git push origin main
+git tag -a "v$(cat VERSION)" -m "Release v$(cat VERSION)"
+git push origin "v$(cat VERSION)"
 ```
 
 **Analogia:** Pense neste comando como "enviar a versão final de um documento revisado, junto com seu diário de alterações, para a nuvem, garantindo que a etiqueta da nova versão vá junto".
