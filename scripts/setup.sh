@@ -14,7 +14,7 @@ else
   exit 1
 fi
 
-# Configura o ambiente Node.js (incluindo nvm, instalação e npm install)
+# Configura o ambiente Node.js (incluindo nvm, Corepack e pnpm install)
 if bash scripts/setup_node.sh; then
   : # Sucesso, continua
 else

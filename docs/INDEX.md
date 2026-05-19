@@ -37,10 +37,12 @@ Para preparar um computador de usuario final, use
 Use estes comandos antes de abrir uma Proposta de Melhoria:
 
 ```bash
-npm run lint
-npm run validate:onboarding
+pnpm run lint
+pnpm run validate:onboarding
+pnpm run smoke:template
 ```
 
 O primeiro comando valida o estilo Markdown. O segundo verifica se os arquivos
 essenciais de onboarding existem e se os wikilinks do vault apontam para notas
-reais.
+reais. O smoke protege regras de template, como `pnpm`, actions pinadas por SHA
+e ausencia de plugins instalados versionados.

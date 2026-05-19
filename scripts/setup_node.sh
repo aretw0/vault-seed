@@ -51,17 +51,24 @@ setup_node_version() {
         echo "Node.js encontrado (versão padrão)."
     fi
 
-    # Verifica se o npm está disponível
-    if ! command -v npm &>/dev/null; then
-        echo "[ERRO] npm não encontrado. O npm geralmente é instalado junto com o Node.js."
+    # Habilita o pnpm via Corepack, usando a versão fixada em package.json
+    if ! command -v corepack &>/dev/null; then
+        echo "[ERRO] corepack não encontrado. O Corepack acompanha versões modernas do Node.js e é necessário para ativar o pnpm fixado no projeto."
         exit 1
     fi
-    echo "npm encontrado."
+    corepack enable
+    corepack prepare --activate
+
+    if ! command -v pnpm &>/dev/null; then
+        echo "[ERRO] pnpm não encontrado após ativar o Corepack."
+        exit 1
+    fi
+    echo "pnpm $(pnpm --version) encontrado."
 
     # Verifica se as dependências do projeto estão instaladas
     if [ ! -d "node_modules" ]; then
-        echo "Dependências do Node não instaladas. Rodando 'npm install'..."
-        npm install
+        echo "Dependências do Node não instaladas. Rodando 'pnpm install'..."
+        pnpm install --frozen-lockfile
     else
         echo "Dependências do Node já instaladas."
     fi

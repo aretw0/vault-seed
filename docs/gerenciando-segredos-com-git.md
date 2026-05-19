@@ -64,12 +64,12 @@ A implementação dos filtros `clean` e `smudge` no ambiente Windows apresentou 
 
 *   **Problema:** O script `smudge` não estava conseguindo carregar as variáveis de ambiente do arquivo `.env` no ambiente de teste.
 *   **Erro Recebido:** Teste de `smudge` falhando com `Expected: "sk-test-real-api-key" Received: "__OPENAI_KEY__"`.
-*   **Aprendizado:** A função `path.resolve(__dirname, '../.env')` em `dotenv.config()` não era adequada para o ambiente de teste simulado pelo Jest, onde o diretório de trabalho (`process.cwd()`) do processo Git era o repositório temporário. A solução foi usar `path.join(process.cwd(), '.env')` para garantir que o `.env` fosse procurado no diretório de trabalho atual do processo.
+*   **Aprendizado:** Carregar `.env` a partir do diretório do script não era adequado para o ambiente de teste, onde o diretório de trabalho (`process.cwd()`) do processo Git era o repositório temporário. A solução foi usar `path.join(process.cwd(), '.env')` para garantir que o `.env` fosse procurado no diretório de trabalho atual do processo.
 
 ### 5. Poluição do `stdout` por `console.log`
 
 *   **Problema:** Ao adicionar `console.log`s para depuração no `smudge_secrets.js`, o teste de `smudge` começou a falhar com um erro de `SyntaxError` ao tentar fazer `JSON.parse` do conteúdo.
-*   **Erro Recebido:** `SyntaxError: Unexpected token 'D', "Dotenv res"... is not valid JSON`.
+*   **Erro Recebido:** `SyntaxError: Unexpected token 'D', "env res"... is not valid JSON`.
 *   **Aprendizado:** Os filtros Git esperam que o `stdout` do script seja *apenas* o conteúdo final do arquivo. Qualquer `console.log` extra polui essa saída, tornando-a um JSON inválido. É crucial remover todos os `console.log`s de scripts que atuam como filtros.
 
 Esses pontos destacam a importância de testar em ambientes variados e a necessidade de uma compreensão profunda das nuances de cada sistema operacional ao trabalhar com automação e scripts de shell. Para mim, como assistente, cada um desses erros foi uma oportunidade de refinar minha compreensão e adaptabilidade.

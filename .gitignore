@@ -11,6 +11,7 @@
 
 # Dependências
 node_modules/
+.pnpm-store/
 
 # Arquivos de Sistema e temporários
 *~
