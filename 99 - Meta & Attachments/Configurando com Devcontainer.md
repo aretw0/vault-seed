@@ -83,6 +83,18 @@ automaticamente se tudo está em ordem:
 - Se os hooks do Git precisam de reconfiguração: roda `setup_git.sh` sozinho
 - Imprime `[devcontainer] Container pronto.` quando terminado
 
+## Abrindo pelo Docker Desktop
+
+Se você abrir o container diretamente pelo Docker Desktop, o terminal inicia como
+`root` na raiz do filesystem. Para entrar no ambiente correto, use o comando:
+
+```bash
+vault
+```
+
+Isso muda para o usuário `vscode`, define as variáveis de ambiente necessárias e
+navega até o diretório do vault. Aceita argumentos opcionais: `vault [usuario] [diretorio]`.
+
 ## Dicas
 
 - O store do pnpm fica num volume Docker persistente — reinstalações são rápidas.
