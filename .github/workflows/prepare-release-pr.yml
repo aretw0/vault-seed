@@ -19,10 +19,10 @@ jobs:
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
 
     steps:
-      - name: Checkout main
+      - name: Checkout develop
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: develop
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -31,11 +31,12 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Rebase main onto develop
+      - name: Verify branch is current
         run: |
           set -euo pipefail
           git fetch origin main develop --prune
-          git rebase --reapply-cherry-picks origin/develop
+          git status --short
+          git rev-parse HEAD
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -75,3 +76,4 @@ jobs:
           delete-branch: true
           labels: "release, automação"
           branch: ${{ steps.standard_version.outputs.branch_name }}
+          base: main
