@@ -12,7 +12,7 @@ O Versionamento Semântico (SemVer) é um sistema de versionamento de software q
 
 ## Conventional Commits
 
-Utilizamos as Conventional Commits para padronizar as mensagens de commit. Essa padronização permite que ferramentas automatizadas (como o `standard-version`) interpretem o tipo de mudança e determinem o bump de versão apropriado.
+Utilizamos as Conventional Commits para padronizar as mensagens de commit. Essa padronização permite que ferramentas automatizadas (como o `@changesets/cli`) interpretem o tipo de mudança e determinem o bump de versão apropriado.
 
 As mensagens de commit devem seguir o formato: `<tipo>(escopo opcional): <descrição>`
 
@@ -52,35 +52,27 @@ Outros tipos de commit são importantes para o histórico do projeto, mas não r
 -   **`chore`:** Outras mudanças que não modificam o código fonte ou arquivos de teste.
     *   Exemplo: `chore: atualiza dependências do Node.js`
 
-## Automação com `standard-version`
+## Automação com `@changesets/cli`
 
-A ferramenta `standard-version` automatiza o processo de release com base nas Conventional Commits:
+A ferramenta `@changesets/cli` automatiza o processo de release com base em arquivos de changeset criados por cada PR:
 
-1.  **Analisa Commits:** Percorre o histórico de commits desde a última tag.
-2.  **Determina Próxima Versão:** Com base nos tipos de commit (`fix`, `feat`, `BREAKING CHANGE`), determina o próximo número de versão (patch, minor ou major).
-3.  **Atualiza `VERSION`:** Altera o número da versão no arquivo `VERSION`.
-4.  **Gera `CHANGELOG.md`:** Adiciona as mudanças relevantes ao `CHANGELOG.md`.
-5.  **Cria Commit de Release:** Cria um novo commit contendo as atualizações do `VERSION` e `CHANGELOG.md`.
-6.  **Deixa a Tag para Publicação:** No template original, a tag Git é criada pelo workflow `release.yml` depois que o commit de release chega à `main`.
+1.  **Cria um changeset:** `pnpm changeset` — descreve o tipo de mudança (patch/minor/major) e a descrição.
+2.  **Versiona pacotes:** `pnpm changeset version` — lê os changesets pendentes, determina a próxima versão e atualiza `package.json` e `CHANGELOG.md`.
+3.  **Cria Commit de Release:** O workflow `prepare-release-pr.yml` comita automaticamente o bump de versão.
+4.  **Deixa a Tag para Publicação:** A tag Git é criada pelo workflow `release.yml` depois que o commit de release chega à `main`.
 
 ## Considerações Importantes
 
--   **Controle Manual:** Embora o processo seja automatizado, o desenvolvedor ainda tem controle sobre quando executar o `pnpm run release`. Para forçar um tipo específico de release, ignorando a análise dos commits, você pode usar os scripts auxiliares:
-    *   `pnpm run release:minor`: Força uma release `minor`.
-    *   `pnpm run release:major`: Força uma release `major`.
--   **Releases Iniciais (0.y.z):** Durante a fase de desenvolvimento inicial (versões `0.y.z`), mesmo mudanças menores podem ser consideradas "breaking changes" na prática, pois a API ainda não é estável. A decisão de fazer um bump `minor` ou `major` nessa fase pode ser mais flexível.
+-   **Controle do tipo de bump:** O tipo de bump (patch/minor/major) é definido ao criar o changeset com `pnpm changeset`. Para uma release `major`, escolha `major` no prompt interativo.
+-   **Releases Iniciais (0.y.z):** Durante a fase de desenvolvimento inicial (versões `0.y.z`), mesmo mudanças menores podem ser consideradas "breaking changes" na prática, pois a API ainda não é estável.
 
 ## Implementação no Repositório
 
 O repositório mantém dois fluxos complementares:
 
-- `prepare-release-pr.yml` prepara um Pull Request de release a partir de `develop`, gerando `VERSION` e `CHANGELOG.md` com `standard-version`.
-- `release.yml` roda quando o commit de release chega à `main`, cria a tag Git e publica a GitHub Release com as notas extraídas do changelog.
+- `prepare-release-pr.yml` — acionado manualmente a partir de `develop`. Roda `pnpm changeset version`, comita o bump de versão, abre um PR para `main`.
+- `release.yml` — roda quando o commit de release chega à `main`, cria a tag Git e publica a GitHub Release com as notas extraídas do changelog.
 
-Antes de acionar o fluxo automatizado, rode `pnpm run validate` localmente e confira o dry run de release com:
-
-```bash
-pnpm run release:dry
-```
+Antes de acionar o fluxo automatizado, rode `pnpm run validate` localmente.
 
 Para o passo a passo operacional, consulte [Processo de Release e Versionamento](processo-de-release.md).

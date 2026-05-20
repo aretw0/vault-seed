@@ -2,7 +2,7 @@
 
 Para manter nosso histórico de alterações claro, consistente e útil, adotamos a especificação [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/). Essa prática não apenas melhora a legibilidade dos commits, mas também nos permite automatizar tarefas cruciais como a geração de changelogs e o versionamento semântico.
 
-Dois arquivos na raiz do projeto são a base desse sistema: `.gitmessage` e `.versionrc`.
+O arquivo `.gitmessage` na raiz do projeto é a base desse sistema de padronização de commits. A automação de releases é gerenciada pelo `@changesets/cli`.
 
 ## 1. `.gitmessage`: O Guia do Commit Perfeito
 
@@ -37,55 +37,34 @@ Para que o Git use este template, nosso script de setup (`scripts/setup.sh`) exe
 git config commit.template .gitmessage
 ```
 
-## 2. `.versionrc`: O Cérebro da Automação
+## 2. `@changesets/cli`: O Motor da Automação
 
-Se o `.gitmessage` é o guia, o `.versionrc` é o motor que usa essa consistência para gerar valor automaticamente. Este arquivo é a configuração para a ferramenta `standard-version`, que automatiza a criação de changelogs e o versionamento.
+Se o `.gitmessage` é o guia, o `@changesets/cli` é o motor que usa essa consistência para gerar valor automaticamente. Esta ferramenta automatiza a criação de changelogs e o versionamento semântico com base em arquivos de changeset.
 
 **Como ele funciona?**
 
-A ferramenta `standard-version` lê todo o histórico de commits desde a última tag (versão). Ela procura por commits que sigam o padrão Conventional Commits e usa as informações (o `tipo` e a `descrição`) para construir um `CHANGELOG.md`.
-
-Nosso arquivo `.versionrc` diz à ferramenta *como* agrupar e apresentar esses commits:
-
-```json
-{
-  "types": [
-    { "type": "feat", "section": "✨ Novos Recursos" },
-    { "type": "fix", "section": "🐛 Correções" },
-    { "type": "docs", "section": "📚 Documentação" },
-    // ... outros tipos
-  ]
-}
-```
+Durante o desenvolvimento, cada conjunto de mudanças relevantes é descrito em um arquivo de changeset criado com `pnpm changeset`. Ao preparar uma release, o comando `pnpm changeset version` lê todos os changesets pendentes e determina a próxima versão, atualizando `package.json` e `CHANGELOG.md`.
 
 **Vantagens:**
 
-*   **Geração Automática de Changelog:** Ao rodar `pnpm exec standard-version`, a ferramenta gera uma nova seção no `CHANGELOG.md` com títulos amigáveis.
-*   **Versionamento Semântico (SemVer) Automático:** A ferramenta detecta o tipo de mudança para sugerir a próxima versão:
-    *   `feat`: Aumenta a versão menor (ex: `1.1.0` -> `1.2.0`).
-    *   `fix`: Aumenta a versão de patch (ex: `1.1.0` -> `1.1.1`).
-    *   `BREAKING CHANGE:` ou `feat!`: Aumenta a versão maior (ex: `1.1.0` -> `2.0.0`).
-*   **Release em duas fases:** Primeiro a ferramenta gera `VERSION`, `CHANGELOG.md` e o commit `chore(release)`. Depois o workflow de publicação cria a tag Git e a GitHub Release.
+*   **Geração Automática de Changelog:** Ao rodar `pnpm changeset version`, a ferramenta gera uma nova seção no `CHANGELOG.md` com as descrições dos changesets.
+*   **Versionamento Semântico (SemVer) Automático:** O tipo de bump é definido no momento da criação do changeset (`pnpm changeset`):
+    *   `patch`: Correções de bugs (ex: `1.1.0` -> `1.1.1`).
+    *   `minor`: Novas funcionalidades retrocompatíveis (ex: `1.1.0` -> `1.2.0`).
+    *   `major`: Mudanças que quebram a compatibilidade (ex: `1.1.0` -> `2.0.0`).
+*   **Release em duas fases:** Primeiro `pnpm changeset version` gera `CHANGELOG.md` e o commit `chore(release)`. Depois o workflow de publicação cria a tag Git e a GitHub Release.
 
 ## O Ciclo Virtuoso
 
 1.  O **`.gitmessage`** facilita a criação de mensagens de commit padronizadas.
 2.  Essas mensagens se tornam "dados estruturados" no histórico do Git.
-3.  O **`.versionrc`** ensina ferramentas de automação a lerem esses dados para gerar changelogs e determinar a próxima versão.
+3.  O **`@changesets/cli`** consolida as descrições de mudança em changesets que alimentam a geração automática de changelog e a determinação da próxima versão.
 
 Juntos, eles transformam o ato de commitar em um passo que alimenta diretamente a documentação e o processo de release do projeto.
 
 ## 3. O Fluxo de Release: Gerando o Changelog na Prática
 
-A teoria acima se materializa através de um único comando no `package.json`:
-
-```json
-"scripts": {
-  "release": "standard-version --skip.tag --infile CHANGELOG.md"
-}
-```
-
-Executar `pnpm run release` orquestra todo o processo de versionamento. Aqui está o passo a passo ideal:
+A teoria acima se materializa através dos comandos do `@changesets/cli`. Aqui está o passo a passo ideal:
 
 ### Passo 1: Pré-requisito - Um Rascunho Seguro e Limpo
 
@@ -97,43 +76,48 @@ git status
 
 O resultado deve ser `nothing to commit, working tree clean`. Isso evita que mudanças não finalizadas entrem acidentalmente na nova versão.
 
-### Passo 2: Simulação (Dry Run) - A Medida de Segurança
+### Passo 2: Verificação (Preview) - A Medida de Segurança
 
-Para evitar surpresas, sempre faça uma simulação antes. Pense nisso como um "ensaio geral". O comando a seguir mostra tudo o que será feito, mas sem de fato alterar nenhum arquivo.
+Para verificar quais changesets estão pendentes e qual seria o próximo bump de versão antes de commitar qualquer coisa, use:
 
 ```bash
-pnpm run release:dry
+pnpm changeset status
 ```
 
-Você verá no terminal a nova versão que será criada e um preview do `CHANGELOG.md`. Se tudo estiver como esperado, você pode prosseguir.
+Você verá no terminal os changesets pendentes e o tipo de bump que será aplicado. Se tudo estiver como esperado, você pode prosseguir.
 
 ### Passo 3: Execução - Criando a Nova Versão
 
 Agora, o comando real:
 
 ```bash
-pnpm run release
+pnpm changeset version
 ```
 
-> **Nota Importante:** Nossos scripts de release no `package.json` foram customizados com a flag `--infile CHANGELOG.md`. Isso instrui o `standard-version` a determinar a versão atual lendo o `CHANGELOG.md`, em vez de depender do `package.json`. Essa configuração torna nosso processo de versionamento do vault independente do versionamento das ferramentas de desenvolvimento.
->
-> Eles também usam `--skip.tag`, porque a tag é criada depois pelo workflow `release.yml`, somente quando o Pull Request de release chega à `main`.
-
 Ele irá:
-1.  **Analisar** os commits desde a última versão.
-2.  **Atualizar** o arquivo `VERSION` com o novo número de versão (ex: de `0.0.1` para `0.0.2`).
-3.  **Criar ou atualizar** o arquivo `CHANGELOG.md` com as seções de "Novos Recursos", "Correções", etc.
-4.  **Criar um commit** do tipo `chore(release)` contendo as mudanças nos arquivos `VERSION` e `CHANGELOG.md`.
-5.  **Deixar a tag para a etapa de publicação**, quando o commit de release for integrado à `main`.
+1.  **Ler** os arquivos de changeset pendentes em `.changeset/`.
+2.  **Determinar** a próxima versão com base nos tipos de bump declarados.
+3.  **Atualizar** o `package.json` com o novo número de versão.
+4.  **Criar ou atualizar** o arquivo `CHANGELOG.md` com as descrições dos changesets.
+5.  **Remover** os arquivos de changeset consumidos.
+
+Depois, commite as mudanças manualmente:
+
+```bash
+git add -A && git commit -m "chore(release): v$(node -p "require('./package.json').version")"
+```
+
+A tag é criada depois pelo workflow `release.yml`, somente quando o Pull Request de release chega à `main`.
 
 ### Passo 4: Publicando as Mudanças
 
-Até agora, o novo commit está apenas no seu computador local. Para publicar manualmente sem os workflows, envie o commit e crie a tag a partir do valor em `VERSION`:
+Até agora, o novo commit está apenas no seu computador local. Para publicar manualmente sem os workflows, envie o commit e crie a tag a partir da versão em `package.json`:
 
 ```bash
+VERSION=$(node -p "require('./package.json').version")
 git push origin main
-git tag -a "v$(cat VERSION)" -m "Release v$(cat VERSION)"
-git push origin "v$(cat VERSION)"
+git tag -a "v$VERSION" -m "Release v$VERSION"
+git push origin "v$VERSION"
 ```
 
 **Analogia:** Pense neste comando como "enviar a versão final de um documento revisado, junto com seu diário de alterações, para a nuvem, garantindo que a etiqueta da nova versão vá junto".

@@ -23,20 +23,28 @@ Existem dois processos distintos para gerar uma release, dependendo do seu conte
 Se você usou este repositório como um template para seu próprio cofre de conhecimento, este é o processo recomendado para você. Ele é simples e executado localmente.
 
 1.  **Faça Commits Relevantes:** Certifique-se de que suas alterações incluam pelo menos um commit do tipo `feat`, `fix`, ou `refactor`.
-2.  **Gere a Nova Versão Localmente:**
+2.  **Crie um changeset descrevendo a mudança:**
     ```bash
-    pnpm run release
+    pnpm changeset
+    ```
+    O prompt interativo pedirá o tipo de bump (patch/minor/major) e uma descrição curta.
+3.  **Gere a Nova Versão Localmente:**
+    ```bash
+    pnpm changeset version
     ```
     Este comando irá:
-    *   Incrementar a versão (patch, minor ou major, dependendo dos seus commits).
-    *   Atualizar o `CHANGELOG.md`.
-    *   Criar um novo commit com as alterações do changelog e da versão.
-    *   Não criar tag automaticamente, porque os scripts usam `--skip.tag`.
-3.  **Envie as Alterações para o GitHub:**
+    *   Ler os changesets pendentes e determinar o próximo número de versão.
+    *   Atualizar o `package.json` e o `CHANGELOG.md`.
+    Depois, commite as mudanças:
     ```bash
+    git add -A && git commit -m "chore(release): v$(node -p "require('./package.json').version")"
+    ```
+4.  **Envie as Alterações para o GitHub:**
+    ```bash
+    VERSION=$(node -p "require('./package.json').version")
     git push origin main
-    git tag -a "v$(cat VERSION)" -m "Release v$(cat VERSION)"
-    git push origin "v$(cat VERSION)"
+    git tag -a "v$VERSION" -m "Release v$VERSION"
+    git push origin "v$VERSION"
     ```
     Estes comandos enviam o novo commit e a tag para seu repositório, mantendo seu histórico de versões organizado.
 
@@ -51,7 +59,7 @@ Este processo é exclusivo para a manutenção do repositório `aretw0/vault-see
     *   Clique no botão **"Run workflow"**, garantindo que o branch `develop` esteja selecionado, e execute o workflow. Isso garante que a versão mais recente do próprio workflow de release seja usada.
 3.  **Aguarde o Pull Request:** O workflow irá automaticamente:
     *   Criar um branch de release temporário a partir da `develop`, gerar a versão nele e abrir um PR para `main`.
-    *   Executar o `standard-version` para gerar o `CHANGELOG.md` e a nova versão.
+    *   Executar `pnpm changeset version` para gerar o `CHANGELOG.md` e a nova versão.
     *   Abrir um Pull Request (PR) no repositório com o título `chore(release): vX.X.X`. Este PR é configurado para excluir o branch de release automaticamente após o merge.
 4.  **Revise e Mescle o PR:**
     *   Revise as alterações no Pull Request, especialmente o `CHANGELOG.md`, para garantir que tudo está correto.
@@ -74,8 +82,8 @@ Use este guia se o Pull Request do `prepare-release-pr` foi mesclado, mas a cria
     git checkout main
     git pull origin main
 
-    # Extrai a versão do arquivo VERSION
-    VERSION=$(cat VERSION)
+    # Extrai a versão do package.json
+    VERSION=$(node -p "require('./package.json').version")
     echo "Versão a ser lançada: v$VERSION"
 
     # Extrai as notas de release do CHANGELOG.md (requer awk)
@@ -113,20 +121,23 @@ Use este guia se você precisa fazer uma release completa localmente, sem a ajud
     git merge develop
     ```
 
-2.  **Execute o `standard-version` para criar o commit de release:**
-    Este comando irá ler os novos commits, determinar a versão, gerar o `CHANGELOG.md` e commitar as mudanças.
+2.  **Execute o `changeset version` para criar o commit de release:**
+    Este comando irá ler os changesets pendentes, determinar a versão, gerar o `CHANGELOG.md`. Depois commite manualmente as mudanças.
     ```bash
-    pnpm run release
+    pnpm changeset version
+    git add -A && git commit -m "chore(release): v$(node -p "require('./package.json').version")"
     ```
 
 3.  **Empurre as mudanças e a tag para o repositório:**
     ```bash
+    VERSION=$(node -p "require('./package.json').version")
+
     # Empurra o commit da release
     git push origin main
 
     # Cria e empurra a nova tag
-    git tag -a "v$(cat VERSION)" -m "Release v$(cat VERSION)"
-    git push origin "v$(cat VERSION)"
+    git tag -a "v$VERSION" -m "Release v$VERSION"
+    git push origin "v$VERSION"
     ```
 
 4.  **Crie a Release no GitHub:**
@@ -134,7 +145,7 @@ Use este guia se você precisa fazer uma release completa localmente, sem a ajud
 
     ```bash
     # Extraia a versão e as notas
-    VERSION=$(cat VERSION)
+    VERSION=$(node -p "require('./package.json').version")
     NOTES=$(awk '/^## / && c++>0 {exit} c>0 {print}' CHANGELOG.md)
 
     # Crie a release no GitHub

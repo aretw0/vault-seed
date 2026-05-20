@@ -6,7 +6,7 @@ Este documento detalha o procedimento para limpar o histórico do Git quando uma
 
 ## Cenário: Uma Release Indesejada Foi Criada e Enviada
 
-Imagine que uma release (ex: `v0.1.5`) foi gerada pelo `standard-version` e suas tags e commits já foram enviados para o GitHub, mas o pipeline de CI/CD falhou porque o changelog estava vazio ou por outro motivo que torna essa release inválida.
+Imagine que uma release (ex: `v0.1.5`) foi gerada pelo `changeset version` e suas tags e commits já foram enviados para o GitHub, mas o pipeline de CI/CD falhou porque o changelog estava vazio ou por outro motivo que torna essa release inválida.
 
 ## Procedimento de Limpeza
 
@@ -36,7 +36,7 @@ git push origin :v0.1.5
 O `standard-version` cria um commit que atualiza o arquivo `VERSION`, o `CHANGELOG.md` e adiciona a tag. Como esse commit já foi enviado para o remoto, a forma mais segura de "desfazê-lo" é usando `git revert`. Isso cria um *novo commit* que desfaz as alterações do commit indesejado, preservando o histórico.
 
 1.  **Identifique o Hash do Commit da Release:**
-    Use `git log --oneline` para encontrar o commit que foi gerado pelo `standard-version` para a release indesejada (geralmente a mensagem de commit será algo como `chore(release): vX.Y.Z`).
+    Use `git log --oneline` para encontrar o commit de release gerado pelo `changeset version` para a release indesejada (geralmente a mensagem de commit será algo como `chore(release): vX.Y.Z`).
 
     ```bash
     git log --oneline
