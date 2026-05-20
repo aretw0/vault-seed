@@ -294,6 +294,12 @@ As notas da pasta `99 - Meta e Anexos/` dos guias do vault já têm `status: pub
 
 ---
 
+## Decisões de implementação pendentes
+
+- **Otimização de imagens com `sharp`**: `sharp: false` em `pnpm-workspace.yaml` desabilita a compilação do módulo nativo. Astro/Starlight funciona sem ele, mas com sharp ativo as imagens seriam convertidas para WebP e redimensionadas automaticamente. Para habilitar: instalar `sharp` como devDep, remover `sharp: false` do workspace, e garantir que o devcontainer tenha as build tools nativas (`libvips-dev`). Só vale considerar quando o vault tiver volume relevante de imagens.
+
+---
+
 ## O que não está no escopo
 
 - **Marimo** — spec separado (`2026-05-20-marimo-notebooks-design.md`)
