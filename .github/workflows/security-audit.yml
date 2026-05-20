@@ -32,8 +32,13 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
-      - name: Security gate
+      - name: Security gate (high/critical, prod)
         run: pnpm audit --audit-level=high --prod
+
+      - name: Audit moderado — prod (informacional)
+        if: always()
+        run: pnpm audit --audit-level=moderate --prod
+        continue-on-error: true
 
       - name: Full audit report
         if: always()
