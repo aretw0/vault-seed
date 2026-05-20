@@ -48,19 +48,19 @@ test("validateOnboarding catches unresolved wikilinks in entrypoints", () => {
     "AGENTS.md": "ok",
     "CLAUDE.md": "@AGENTS.md",
     "GEMINI.md": "ok",
-    "99 - Meta & Attachments/Guia do Jardineiro Digital.md": "ok",
-    "99 - Meta & Attachments/Seus Primeiros Passos.md": "ok",
-    "99 - Meta & Attachments/Exploracao Guiada do Vault.md": "ok",
-    "99 - Meta & Attachments/Preparando seu Computador para o Vault.md": "ok",
-    "99 - Meta & Attachments/Usando o Git e o GitHub para Sincronizar seu Vault.md":
+    "99 - Meta e Anexos/Guia do Jardineiro Digital.md": "ok",
+    "99 - Meta e Anexos/Seus Primeiros Passos.md": "ok",
+    "99 - Meta e Anexos/Exploracao Guiada do Vault.md": "ok",
+    "99 - Meta e Anexos/Preparando seu Computador para o Vault.md": "ok",
+    "99 - Meta e Anexos/Usando o Git e o GitHub para Sincronizar seu Vault.md":
       "ok",
-    "99 - Meta & Attachments/Configurando o Obsidian Git.md": "ok",
-    "99 - Meta & Attachments/Depois da Recepcao do Template.md": "ok",
-    "99 - Meta & Attachments/MOC Vault Seed.md": "ok",
-    "99 - Meta & Attachments/Vault Seed Kitchen Sink.base": "ok",
-    "40 - Resources/O que sao system prompts de IA.md": "ok",
-    "40 - Resources/Bases.md": "ok",
-    "40 - Resources/Dataview.md": "ok",
+    "99 - Meta e Anexos/Configurando o Obsidian Git.md": "ok",
+    "99 - Meta e Anexos/Depois da Recepcao do Template.md": "ok",
+    "99 - Meta e Anexos/MOC Vault Seed.md": "ok",
+    "99 - Meta e Anexos/Vault Seed Kitchen Sink.base": "ok",
+    "40 - Recursos/O que sao system prompts de IA.md": "ok",
+    "40 - Recursos/Bases.md": "ok",
+    "40 - Recursos/Dataview.md": "ok",
   };
 
   const result = validateOnboarding(makeVault(requiredFiles));
