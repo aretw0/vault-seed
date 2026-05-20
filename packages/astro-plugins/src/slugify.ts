@@ -5,7 +5,7 @@ export function slugify(input: string): string {
       segment
         .replace(/^\d+\s*-\s*/, '')
         .normalize('NFD')
-        .replace(/[̀-ͯ]/g, '')
+        .replace(/[̀-ͯ]/g, '')   // Combining Diacritical Marks
         .toLowerCase()
         .trim()
         .replace(/\s+/g, '-')
