@@ -52,8 +52,7 @@ jobs:
           VAULT_TITLE: ${{ vars.VAULT_TITLE }}
 
       - name: Upload Pages artifact
-        # TODO(deploy): pin to commit hash before first deploy — check https://github.com/actions/upload-pages-artifact/releases
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
           path: dist/
 
@@ -68,5 +67,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        # TODO(deploy): pin to commit hash before first deploy — check https://github.com/actions/deploy-pages/releases
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
