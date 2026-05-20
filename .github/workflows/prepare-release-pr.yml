@@ -49,7 +49,13 @@ jobs:
         run: |
           set -euo pipefail
           pnpm changeset version
+          if git diff --quiet package.json; then
+            echo "::error::No changeset files found. Run 'pnpm changeset' to create one before triggering this workflow."
+            exit 1
+          fi
           version=$(node -p "require('./package.json').version")
+          git add -A
+          git commit -m "chore(release): v${version}"
           echo "version=$version" >> "$GITHUB_OUTPUT"
           branch_name="chore/prepare-release-$(date +%s)"
           echo "branch_name=$branch_name" >> "$GITHUB_OUTPUT"
