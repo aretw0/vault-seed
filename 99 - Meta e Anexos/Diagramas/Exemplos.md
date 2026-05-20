@@ -8,8 +8,10 @@ status: published
 
 Para atualizar após editar um template, execute a partir desta pasta:
 
-    cd "99 - Meta e Anexos/Diagramas"
-    mdt update
+```bash
+cd "99 - Meta e Anexos/Diagramas"
+mdt update
+```
 
 ## Fluxo do Vault
 
