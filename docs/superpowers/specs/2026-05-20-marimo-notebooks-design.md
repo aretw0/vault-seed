@@ -203,13 +203,13 @@ Script em `package.json`:
 
 ## CI — Extensões ao `deploy-site.yml`
 
-### Paths trigger (adicionar):
+### Paths trigger (adicionar)
 ```yaml
 - "99 - Meta e Anexos/Notebooks/**"
 - "requirements.txt"
 ```
 
-### Steps (adicionar após o build do Astro, antes do upload do artifact):
+### Steps (adicionar após o build do Astro, antes do upload do artifact)
 
 ```yaml
 - name: Install Python dependencies
@@ -249,14 +249,14 @@ Qualquer bump de versão do Marimo ou Altair cria um PR automático, passa por C
 
 ## Fronteira do template (`initialize.yml`)
 
-### O usuário **herda**:
+### O usuário **herda**
 - `99 - Meta e Anexos/Notebooks/` — notebooks prontos para uso
 - `requirements.txt` — versão pinada do Marimo
 - `.site/integrations/generate-vault-json.ts` — geração do JSON
 - `.site/pages/analysis/index.astro` — índice dos notebooks
 - `.github/workflows/deploy-site.yml` — já atualizado com export
 
-### Nenhuma mudança em `files_to_remove`:
+### Nenhuma mudança em `files_to_remove`
 Os notebooks vivem dentro do vault (`99 - Meta e Anexos/`), que já vai para o usuário. Nenhum arquivo novo em `packages/` ou `docs/`.
 
 ---

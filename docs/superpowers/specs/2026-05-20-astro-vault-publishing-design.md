@@ -270,20 +270,20 @@ Adicionar scripts em `package.json` (template-dev) e `package.template.json` (us
 
 ## Fronteira do template (`initialize.yml`)
 
-### O usuário **herda** (não removido):
+### O usuário **herda** (não removido)
 - `astro.config.mjs` — com `{{REPO_OWNER}}` e `{{REPO_NAME}}` substituídos
 - `.site/` — layouts, content config, styles, integrations
 - `.github/workflows/deploy-site.yml`
 - `@dgk/astro-plugins` como dep em `package.template.json`
 
-### Template-dev **apenas** (adicionado a `files_to_remove`):
+### Template-dev **apenas** (adicionado a `files_to_remove`)
 - `packages/astro-plugins` — código-fonte dos plugins
 
-### Atualizações necessárias no `initialize.yml`:
+### Atualizações necessárias no `initialize.yml`
 1. Adicionar `packages/astro-plugins` à lista `files_to_remove`
 2. Adicionar substituição de `{{REPO_OWNER}}` e `{{REPO_NAME}}` no `astro.config.mjs` (além do `package.template.json` que já tem)
 
-### `publish-cli.yml` — estender para publicar `@dgk/astro-plugins`:
+### `publish-cli.yml` — estender para publicar `@dgk/astro-plugins`
 O workflow existente publica `@dgk/cli`. Adicionar `pnpm --filter @dgk/astro-plugins publish` no mesmo job para que os dois pacotes sejam publicados juntos a cada release.
 
 ---

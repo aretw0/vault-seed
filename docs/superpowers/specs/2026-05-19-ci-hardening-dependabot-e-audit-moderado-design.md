@@ -44,7 +44,7 @@ Dois ecosystems:
 
 - Diretório: `/` (varre todos os `uses:` em `.github/`)
 - Frequência: semanal (segunda-feira)
-- Prefixo: `chore(deps):` 
+- Prefixo: `chore(deps):`
 - Labels: `dependencies`, `automação`
 
 **Nota sobre o usuário:** `dependabot.yml` **não está** na lista `files_to_remove` do `initialize.yml`. O usuário herda a configuração — correto, pois o vault do usuário também se beneficia de deps atualizadas.
