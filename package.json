@@ -17,6 +17,8 @@
     "lint": "pnpm run lint:main && pnpm run lint:docs && pnpm run lint:templates",
     "smoke:template": "node scripts/smoke_template.js",
     "validate:onboarding": "node scripts/validate_onboarding.js",
+    "diagrams:update": "mdt update",
+    "diagrams:check": "mdt check",
     "validate": "pnpm run lint && pnpm run test && pnpm run validate:onboarding && pnpm run smoke:template",
     "changeset": "changeset",
     "changeset:version": "changeset version",
