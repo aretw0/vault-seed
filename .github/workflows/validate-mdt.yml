@@ -1,0 +1,46 @@
+name: Validate MDT Diagrams
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "docs/diagrams/.templates/**"
+      - "mdt.toml"
+      - "99 - Meta e Anexos/Visualização do Fluxo do Vault.md"
+      - "99 - Meta e Anexos/Entendendo a Estrutura de Pastas.md"
+      - ".github/workflows/validate-mdt.yml"
+  push:
+    branches: [main]
+    paths:
+      - "docs/diagrams/.templates/**"
+      - "mdt.toml"
+  workflow_dispatch:
+  schedule:
+    - cron: "0 14 * * 3"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Check MDT diagram sync
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Cache mdt_cli
+        id: cache-mdt
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: ~/.cargo/bin/mdt
+          key: ${{ runner.os }}-mdt-cli-0.7.0
+
+      - name: Install mdt_cli
+        if: steps.cache-mdt.outputs.cache-hit != 'true'
+        run: cargo install mdt_cli --locked --version 0.7.0
+
+      - name: Check MDT sync — vault diagrams
+        run: mdt check
