@@ -848,7 +848,7 @@ cd "99 - Meta e Anexos/Diagramas" && mdt check && cd ../..
 - [ ] **Step 3: Verificar que nenhuma referência antiga ao nome inglês sobrou nos templates**
 
 ```bash
-grep -rn "00 - Inbox\|10 - Fleeting\|40 - Resources\|50 - Archives\|90 - Templates\|99 - Meta & Attachments" \
+grep -rn "00 - Entrada\|10 - Fleeting\|40 - Recursos\|50 - Arquivo\|90 - Modelos\|99 - Meta e Anexos" \
   docs/diagrams/.templates/ "99 - Meta e Anexos/Diagramas/.templates/"
 # Expected: nenhuma linha — todos os nomes devem ser PT-BR
 ```

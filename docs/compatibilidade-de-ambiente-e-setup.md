@@ -3,7 +3,7 @@
 Este documento descreve as ferramentas necessárias para configurar o ambiente de desenvolvimento local e como rodar o setup do repositório.
 
 Se você está configurando um computador para usar o vault no dia a dia, comece
-pelo guia de usuário em `99 - Meta & Attachments/Preparando seu Computador para
+pelo guia de usuário em `99 - Meta e Anexos/Preparando seu Computador para
 o Vault.md`. Este documento aqui é a camada técnica para scripts e setup de desenvolvimento.
 
 ## Ferramentas Requeridas

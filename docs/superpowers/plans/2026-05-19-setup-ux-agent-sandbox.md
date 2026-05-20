@@ -4,7 +4,7 @@
 
 **Goal:** Tornar visíveis e bem documentados os dois caminhos de setup do vault (devcontainer e local), melhorar robustez do devcontainer com health checks, e preparar o vault como sandbox agnóstico para agentes de IA com automações representadas no Obsidian.
 
-**Architecture:** Documentação em `99 - Meta & Attachments/` sobrevive ao `initialize.yml` e vai para o usuário. Scripts em `scripts/obsidian/` são wrappers que os plugins do Obsidian chamam. O devcontainer ganha `post-start.sh` para health check ao retomar. `AGENTS.template.md` é reescrito como system prompt de PKM, sem conteúdo de desenvolvimento do template. `.claude/settings.json` entrega allowlists pré-configuradas para Claude Code.
+**Architecture:** Documentação em `99 - Meta e Anexos/` sobrevive ao `initialize.yml` e vai para o usuário. Scripts em `scripts/obsidian/` são wrappers que os plugins do Obsidian chamam. O devcontainer ganha `post-start.sh` para health check ao retomar. `AGENTS.template.md` é reescrito como system prompt de PKM, sem conteúdo de desenvolvimento do template. `.claude/settings.json` entrega allowlists pré-configuradas para Claude Code.
 
 **Tech Stack:** Bash, Markdown, JSON, pnpm, Obsidian plugins (Commander, Shell Commands, Templater, Obsidian Git).
 
@@ -18,10 +18,10 @@
 |---|---|
 | Modificar | `README.template.md` |
 | Modificar | `README.md` |
-| Modificar | `99 - Meta & Attachments/Preparando seu Computador para o Vault.md` |
-| Criar | `99 - Meta & Attachments/Configurando Localmente.md` |
-| Criar | `99 - Meta & Attachments/Configurando com Devcontainer.md` |
-| Criar | `99 - Meta & Attachments/Usando com Agentes de IA.md` |
+| Modificar | `99 - Meta e Anexos/Preparando seu Computador para o Vault.md` |
+| Criar | `99 - Meta e Anexos/Configurando Localmente.md` |
+| Criar | `99 - Meta e Anexos/Configurando com Devcontainer.md` |
+| Criar | `99 - Meta e Anexos/Usando com Agentes de IA.md` |
 | Modificar | `.devcontainer/post-create.sh` |
 | Criar | `.devcontainer/post-start.sh` |
 | Criar | `.claude/settings.json` |
@@ -30,9 +30,9 @@
 | Criar | `scripts/obsidian/validate.sh` |
 | Criar | `scripts/obsidian/lint.sh` |
 | Criar | `scripts/obsidian/check.sh` |
-| Criar | `99 - Meta & Attachments/config/commander-example.json` |
-| Criar | `99 - Meta & Attachments/config/shell-commands-example.json` |
-| Criar | `99 - Meta & Attachments/Automacoes no Obsidian.md` |
+| Criar | `99 - Meta e Anexos/config/commander-example.json` |
+| Criar | `99 - Meta e Anexos/config/shell-commands-example.json` |
+| Criar | `99 - Meta e Anexos/Automacoes no Obsidian.md` |
 | Modificar | `docs/compatibilidade-de-ambiente-e-setup.md` |
 
 ---
@@ -57,7 +57,7 @@ Abra `README.template.md`. Após a linha `> Template original: ...` e antes de `
 | Devcontainer (VS Code + Docker) | [[Configurando com Devcontainer]] |
 | Usar com agentes de IA | [[Usando com Agentes de IA]] |
 
-Os guias detalhados estão em `99 - Meta & Attachments/`.
+Os guias detalhados estão em `99 - Meta e Anexos/`.
 
 ```
 
@@ -97,8 +97,8 @@ git commit -m "docs: add persona navigation to README files"
 ## Task 2: Guias de setup — decisor + setup local
 
 **Files:**
-- Modify: `99 - Meta & Attachments/Preparando seu Computador para o Vault.md`
-- Create: `99 - Meta & Attachments/Configurando Localmente.md`
+- Modify: `99 - Meta e Anexos/Preparando seu Computador para o Vault.md`
+- Create: `99 - Meta e Anexos/Configurando Localmente.md`
 
 - [ ] **Step 2.1: Reescrever o início de "Preparando seu Computador para o Vault.md" como decisor**
 
@@ -130,7 +130,7 @@ Manter todo o conteúdo restante do arquivo (## Instalando o Git no Windows em d
 
 - [ ] **Step 2.2: Criar "Configurando Localmente.md"**
 
-Crie o arquivo `99 - Meta & Attachments/Configurando Localmente.md` com este conteúdo:
+Crie o arquivo `99 - Meta e Anexos/Configurando Localmente.md` com este conteúdo:
 
 ```markdown
 ---
@@ -271,7 +271,7 @@ Resultado esperado: sem erros de markdownlint.
 - [ ] **Step 2.4: Commit**
 
 ```bash
-git add "99 - Meta & Attachments/Preparando seu Computador para o Vault.md" "99 - Meta & Attachments/Configurando Localmente.md"
+git add "99 - Meta e Anexos/Preparando seu Computador para o Vault.md" "99 - Meta e Anexos/Configurando Localmente.md"
 git commit -m "docs: add decision table to setup guide, create local setup guide"
 ```
 
@@ -280,7 +280,7 @@ git commit -m "docs: add decision table to setup guide, create local setup guide
 ## Task 3: Guia do Devcontainer
 
 **Files:**
-- Create: `99 - Meta & Attachments/Configurando com Devcontainer.md`
+- Create: `99 - Meta e Anexos/Configurando com Devcontainer.md`
 
 - [ ] **Step 3.1: Criar "Configurando com Devcontainer.md"**
 
@@ -389,7 +389,7 @@ Resultado esperado: sem erros de markdownlint.
 - [ ] **Step 3.3: Commit**
 
 ```bash
-git add "99 - Meta & Attachments/Configurando com Devcontainer.md"
+git add "99 - Meta e Anexos/Configurando com Devcontainer.md"
 git commit -m "docs: add devcontainer setup guide"
 ```
 
@@ -398,7 +398,7 @@ git commit -m "docs: add devcontainer setup guide"
 ## Task 4: Guia de Agentes de IA
 
 **Files:**
-- Create: `99 - Meta & Attachments/Usando com Agentes de IA.md`
+- Create: `99 - Meta e Anexos/Usando com Agentes de IA.md`
 
 - [ ] **Step 4.1: Criar "Usando com Agentes de IA.md"**
 
@@ -432,7 +432,7 @@ um sistema de memória: use as próprias notas para dar contexto ao agente.
 
 **Padrão recomendado:**
 
-- `00 - Inbox/contexto-ativo.md` — estado atual do trabalho com o agente
+- `00 - Entrada/contexto-ativo.md` — estado atual do trabalho com o agente
   (o que está sendo feito, decisões recentes, próximos passos)
 - `10 - Projects/` — projetos onde o agente pode contribuir
 - `30 - Resources/` — referências que o agente pode consultar
@@ -490,7 +490,7 @@ Resultado esperado: sem erros de markdownlint.
 - [ ] **Step 4.3: Commit**
 
 ```bash
-git add "99 - Meta & Attachments/Usando com Agentes de IA.md"
+git add "99 - Meta e Anexos/Usando com Agentes de IA.md"
 git commit -m "docs: add AI agents usage guide"
 ```
 
@@ -675,7 +675,7 @@ referencias versionado com Git.
 
 Estrutura do vault (PARA):
 
-* 00 - Inbox/: Captura rapida sem curadoria. Toda nota nova entra aqui antes
+* 00 - Entrada/: Captura rapida sem curadoria. Toda nota nova entra aqui antes
   de ser processada e movida para o lugar certo.
 * 10 - Projects/: Projetos ativos com resultado e prazo definidos. Um projeto
   termina quando o resultado e alcancado.
@@ -685,7 +685,7 @@ Estrutura do vault (PARA):
   pesquisas, templates reutilizaveis.
 * 40 - Archive/: Material inativo — projetos concluidos, areas abandonadas,
   recursos obsoletos. Preservado para consulta futura.
-* 99 - Meta & Attachments/: Configuracao do vault, guias de uso, imagens e
+* 99 - Meta e Anexos/: Configuracao do vault, guias de uso, imagens e
   anexos. Nao e para notas de conhecimento — e para metadados do vault.
 
 Convencoes de notas:
@@ -696,7 +696,7 @@ Convencoes de notas:
   categoria, audience. Fica no topo do arquivo entre linhas ---.
 * Dataview: notas com blocos ```dataview``` fazem consultas dinamicas sobre
   o vault. Nao edite esses blocos sem entender a query.
-* Templater: templates ficam em 99 - Meta & Attachments/Templates/. Sao
+* Templater: templates ficam em 99 - Meta e Anexos/Templates/. Sao
   ativados pelo plugin Templater no Obsidian.
 
 Ferramentas que leem o vault:
@@ -714,7 +714,7 @@ O que fazer com seguranca:
 * Sugerir e criar wikilinks entre notas relacionadas.
 * Ler e consultar a estrutura de pastas e frontmatter das notas.
 * Criar templates e notas de projeto a partir de padroes existentes.
-* Organizar o inbox — mover notas de 00 - Inbox/ para a pasta PARA correta.
+* Organizar o inbox — mover notas de 00 - Entrada/ para a pasta PARA correta.
 
 O que evitar sem confirmacao explicita do usuario:
 
@@ -829,9 +829,9 @@ git commit -m "feat(obsidian): add shell command wrappers for Obsidian automatio
 ## Task 9: Automações no Obsidian — configs de exemplo e guia
 
 **Files:**
-- Create: `99 - Meta & Attachments/config/commander-example.json`
-- Create: `99 - Meta & Attachments/config/shell-commands-example.json`
-- Create: `99 - Meta & Attachments/Automacoes no Obsidian.md`
+- Create: `99 - Meta e Anexos/config/commander-example.json`
+- Create: `99 - Meta e Anexos/config/shell-commands-example.json`
+- Create: `99 - Meta e Anexos/Automacoes no Obsidian.md`
 
 - [ ] **Step 9.1: Criar commander-example.json**
 
@@ -839,7 +839,7 @@ O Commander plugin (obsidian-commander) adiciona botões customizados à ribbon
 e toolbars do Obsidian. Este é um exemplo de configuração — o formato exato
 pode variar entre versões do plugin.
 
-Crie `99 - Meta & Attachments/config/commander-example.json`:
+Crie `99 - Meta e Anexos/config/commander-example.json`:
 
 ```json
 {
@@ -877,7 +877,7 @@ Crie `99 - Meta & Attachments/config/commander-example.json`:
 O Shell Commands plugin (obsidian-shellcommands) executa comandos shell do
 Obsidian. Os IDs devem corresponder aos referenciados no commander-example.json.
 
-Crie `99 - Meta & Attachments/config/shell-commands-example.json`:
+Crie `99 - Meta e Anexos/config/shell-commands-example.json`:
 
 ```json
 {
@@ -928,7 +928,7 @@ Crie `99 - Meta & Attachments/config/shell-commands-example.json`:
 
 - [ ] **Step 9.3: Criar Automacoes no Obsidian.md**
 
-Crie `99 - Meta & Attachments/Automacoes no Obsidian.md`:
+Crie `99 - Meta e Anexos/Automacoes no Obsidian.md`:
 
 ```markdown
 ---
@@ -989,10 +989,10 @@ Copie os arquivos de exemplo para os diretórios dos plugins **após** instalá-
 
 ```bash
 # Ajuste os caminhos conforme seu sistema
-cp "99 - Meta & Attachments/config/shell-commands-example.json" \
+cp "99 - Meta e Anexos/config/shell-commands-example.json" \
    ".obsidian/plugins/obsidian-shellcommands/data.json"
 
-cp "99 - Meta & Attachments/config/commander-example.json" \
+cp "99 - Meta e Anexos/config/commander-example.json" \
    ".obsidian/plugins/cmdr/data.json"
 ```
 
@@ -1008,7 +1008,7 @@ notas nas pastas certas:
 
 ### Template: Nova nota no Inbox
 
-Crie `99 - Meta & Attachments/Templates/Nova nota inbox.md`:
+Crie `99 - Meta e Anexos/Templates/Nova nota inbox.md`:
 
 ```
 ---
@@ -1022,8 +1022,8 @@ status: rascunho
 
 ```
 
-Configure o Templater para usar `99 - Meta & Attachments/Templates/` como
-pasta de templates e `00 - Inbox/` como pasta de destino padrão.
+Configure o Templater para usar `99 - Meta e Anexos/Templates/` como
+pasta de templates e `00 - Entrada/` como pasta de destino padrão.
 
 ## Obsidian Git — sincronização pela interface
 
@@ -1049,9 +1049,9 @@ Resultado esperado: sem erros de markdownlint.
 - [ ] **Step 9.5: Commit**
 
 ```bash
-git add "99 - Meta & Attachments/config/commander-example.json" \
-        "99 - Meta & Attachments/config/shell-commands-example.json" \
-        "99 - Meta & Attachments/Automacoes no Obsidian.md"
+git add "99 - Meta e Anexos/config/commander-example.json" \
+        "99 - Meta e Anexos/config/shell-commands-example.json" \
+        "99 - Meta e Anexos/Automacoes no Obsidian.md"
 git commit -m "feat(obsidian): add automation config examples and setup guide"
 ```
 
@@ -1142,12 +1142,12 @@ Resultado esperado: 7 testes passando.
 - [ ] **Step 11.3: Verificar que os novos arquivos existem**
 
 ```bash
-ls "99 - Meta & Attachments/Configurando Localmente.md"
-ls "99 - Meta & Attachments/Configurando com Devcontainer.md"
-ls "99 - Meta & Attachments/Usando com Agentes de IA.md"
-ls "99 - Meta & Attachments/Automacoes no Obsidian.md"
-ls "99 - Meta & Attachments/config/commander-example.json"
-ls "99 - Meta & Attachments/config/shell-commands-example.json"
+ls "99 - Meta e Anexos/Configurando Localmente.md"
+ls "99 - Meta e Anexos/Configurando com Devcontainer.md"
+ls "99 - Meta e Anexos/Usando com Agentes de IA.md"
+ls "99 - Meta e Anexos/Automacoes no Obsidian.md"
+ls "99 - Meta e Anexos/config/commander-example.json"
+ls "99 - Meta e Anexos/config/shell-commands-example.json"
 ls .devcontainer/post-start.sh
 ls .claude/settings.json
 ls scripts/obsidian/validate.sh

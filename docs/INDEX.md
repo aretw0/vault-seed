@@ -4,10 +4,10 @@ Esta pasta guarda a documentacao operacional do projeto `vault-seed`: setup,
 Git, GitHub Actions, versionamento, seguranca e manutencao do template.
 
 Para aprender a usar o vault como sistema de conhecimento, comece em
-`99 - Meta & Attachments/Guia do Jardineiro Digital.md`.
+`99 - Meta e Anexos/Guia do Jardineiro Digital.md`.
 
 Para preparar um computador de usuario final, use
-`99 - Meta & Attachments/Preparando seu Computador para o Vault.md`.
+`99 - Meta e Anexos/Preparando seu Computador para o Vault.md`.
 
 ## Comece Aqui
 

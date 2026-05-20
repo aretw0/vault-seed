@@ -23,14 +23,14 @@ Este documento descreve a estrutura de pastas e arquivos do repositório sob uma
 │   └── setup.sh              # Script de configuração inicial do ambiente
 │   └── check_secrets_staged.sh # Exemplo de hook de pre-commit
 ├── node_modules/             # Dependências de pacotes Node.js (gerado pelo pnpm)
-├── 00 - Inbox/               # Notas temporárias e não processadas
-├── 10 - Fleeting & Daily/    # Notas diárias e pensamentos rápidos
-├── 20 - Projects/            # Notas e recursos relacionados a projetos específicos
-├── 30 - Areas/               # Notas e recursos relacionados a áreas de responsabilidade contínua
-├── 40 - Resources/           # Notas atômicas e base de conhecimento
-├── 50 - Archives/            # Conteúdo arquivado
-├── 90 - Templates/           # Modelos de notas para o Obsidian/Foam
-├── 99 - Meta & Attachments/  # Meta-documentação do vault e anexos
+├── 00 - Entrada/               # Notas temporárias e não processadas
+├── 10 - Diário/    # Notas diárias e pensamentos rápidos
+├── 20 - Projetos/            # Notas e recursos relacionados a projetos específicos
+├── 30 - Áreas/               # Notas e recursos relacionados a áreas de responsabilidade contínua
+├── 40 - Recursos/           # Notas atômicas e base de conhecimento
+├── 50 - Arquivo/            # Conteúdo arquivado
+├── 90 - Modelos/           # Modelos de notas para o Obsidian/Foam
+├── 99 - Meta e Anexos/  # Meta-documentação do vault e anexos
 │   └── Attachments/          # Pasta padrão para anexos de notas
 ├── .gitignore                # Arquivos e pastas a serem ignorados pelo Git
 ├── package.json              # Metadados do projeto e dependências Node.js
@@ -48,9 +48,9 @@ Este documento descreve a estrutura de pastas e arquivos do repositório sob uma
 *   **`scripts/`**: Contém scripts shell ou Node.js que auxiliam no desenvolvimento local, automação de tarefas, hooks do Git e validações de onboarding.
 *   **`node_modules/`**: Diretório gerado pelo `pnpm` que armazena todas as dependências de pacotes JavaScript/Node.js do projeto. Sempre ignorado pelo Git.
 *   **`scripts/*.test.js`**: Testes com `node:test` para garantir a funcionalidade e a integridade dos scripts do projeto.
-*   **Pastas Numeradas (`00 - Inbox/` a `50 - Archives/`)**: Embora seu propósito principal seja a organização do conhecimento pessoal, tecnicamente são diretórios que contêm arquivos Markdown (`.md`) e outros formatos de mídia (via `Attachments/`).
-*   **`90 - Templates/`**: Contém arquivos Markdown que servem como modelos para a criação de novas notas, utilizados por plugins como o Templater no Obsidian.
-*   **`99 - Meta & Attachments/`**: Além de meta-documentação sobre o vault, a subpasta `Attachments/` é o local padrão para anexos de mídia (imagens, PDFs) referenciados nas notas.
+*   **Pastas Numeradas (`00 - Entrada/` a `50 - Arquivo/`)**: Embora seu propósito principal seja a organização do conhecimento pessoal, tecnicamente são diretórios que contêm arquivos Markdown (`.md`) e outros formatos de mídia (via `Attachments/`).
+*   **`90 - Modelos/`**: Contém arquivos Markdown que servem como modelos para a criação de novas notas, utilizados por plugins como o Templater no Obsidian.
+*   **`99 - Meta e Anexos/`**: Além de meta-documentação sobre o vault, a subpasta `Attachments/` é o local padrão para anexos de mídia (imagens, PDFs) referenciados nas notas.
 *   **Arquivos na Raiz**:
     *   `.gitignore`: Define arquivos e diretórios a serem ignorados pelo controle de versão Git.
     *   `package.json` / `pnpm-lock.yaml`: Gerenciamento de dependências e scripts do projeto Node.js.

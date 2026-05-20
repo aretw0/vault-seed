@@ -27,14 +27,14 @@ O `initialize.yml` remove `docs/`, `packages/`, `.changeset/`, `pnpm-workspace.y
 
 | Antes | Depois |
 |---|---|
-| `00 - Inbox` | `00 - Entrada` |
-| `10 - Fleeting & Daily` | `10 - Diário` |
-| `20 - Projects` | `20 - Projetos` |
-| `30 - Areas` | `30 - Áreas` |
-| `40 - Resources` | `40 - Recursos` |
-| `50 - Archives` | `50 - Arquivo` |
-| `90 - Templates` | `90 - Modelos` |
-| `99 - Meta & Attachments` | `99 - Meta e Anexos` |
+| `00 - Entrada` | `00 - Entrada` |
+| `10 - Diário` | `10 - Diário` |
+| `20 - Projetos` | `20 - Projetos` |
+| `30 - Áreas` | `30 - Áreas` |
+| `40 - Recursos` | `40 - Recursos` |
+| `50 - Arquivo` | `50 - Arquivo` |
+| `90 - Modelos` | `90 - Modelos` |
+| `99 - Meta e Anexos` | `99 - Meta e Anexos` |
 
 ---
 
@@ -54,8 +54,8 @@ As 8 pastas raiz — rename com `git mv` para preservar histórico.
 | `VERSION` | Removido — fonte de verdade passa a ser `version` em `package.json` |
 | `scripts/validate_onboarding.js` | Paths hardcoded atualizados |
 | `scripts/validate_onboarding.test.js` | Assertions com novos nomes |
-| `.obsidian/daily-notes.json` | `folder`: `10 - Fleeting & Daily` → `10 - Diário` |
-| `.obsidian/plugins/templater-obsidian/data.json` | `templates_folder`: `90 - Templates` → `90 - Modelos` |
+| `.obsidian/daily-notes.json` | `folder`: `10 - Diário` → `10 - Diário` |
+| `.obsidian/plugins/templater-obsidian/data.json` | `templates_folder`: `90 - Modelos` → `90 - Modelos` |
 | `.obsidian/workspace.json` | Referências a pastas antigas |
 | ~32 arquivos `.md` | Wikilinks, exemplos de código, paths explícitos — todos os nomes em inglês |
 | `docs/` (guias, specs, planos) | Referências às pastas antigas |
@@ -161,14 +161,14 @@ Breaking change: pastas PARA renomeadas para português.
 
 | Antes | Depois |
 |---|---|
-| 00 - Inbox | 00 - Entrada |
-| 10 - Fleeting & Daily | 10 - Diário |
-| 20 - Projects | 20 - Projetos |
-| 30 - Areas | 30 - Áreas |
-| 40 - Resources | 40 - Recursos |
-| 50 - Archives | 50 - Arquivo |
-| 90 - Templates | 90 - Modelos |
-| 99 - Meta & Attachments | 99 - Meta e Anexos |
+| 00 - Entrada | 00 - Entrada |
+| 10 - Diário | 10 - Diário |
+| 20 - Projetos | 20 - Projetos |
+| 30 - Áreas | 30 - Áreas |
+| 40 - Recursos | 40 - Recursos |
+| 50 - Arquivo | 50 - Arquivo |
+| 90 - Modelos | 90 - Modelos |
+| 99 - Meta e Anexos | 99 - Meta e Anexos |
 
 **Migração manual para vaults existentes:** renomeie as pastas no explorador de arquivos e execute find & replace em todos os arquivos `.md` para atualizar wikilinks com os novos nomes.
 ```

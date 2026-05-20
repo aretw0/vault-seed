@@ -60,7 +60,7 @@ after = 0
 
 Cada template define um bloco nomeado com `<!-- {@nome} -->...<!-- {/nome} -->`. O conteúdo é Mermaid inline — sem SVG, sem build step. Obsidian e GitHub renderizam nativamente.
 
-**`vault-flow.t.md`** — migra o diagrama existente de `Visualização do Fluxo do Vault.md` (flowchart de ~100 linhas). Os nomes de pasta dentro do diagrama (`00 - Inbox`, etc.) são atualizados para PT-BR como parte desta tarefa.
+**`vault-flow.t.md`** — migra o diagrama existente de `Visualização do Fluxo do Vault.md` (flowchart de ~100 linhas). Os nomes de pasta dentro do diagrama (`00 - Entrada`, etc.) são atualizados para PT-BR como parte desta tarefa.
 
 Estrutura do template:
 ```markdown

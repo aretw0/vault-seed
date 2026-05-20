@@ -36,7 +36,7 @@ Ganha uma seção "Como Começar" no topo, antes do conteúdo atual:
 | Devcontainer (VS Code + Docker) | [[Configurando com Devcontainer]] |
 | Usar com agentes de IA | [[Usando com Agentes de IA]] |
 
-Os guias detalhados estão em `99 - Meta & Attachments/`.
+Os guias detalhados estão em `99 - Meta e Anexos/`.
 ```
 
 Nenhuma outra mudança estrutural — filosofia PARA, Obsidian e VS Code Foam permanecem.
@@ -50,7 +50,7 @@ Seção equivalente orientada a quem desenvolve o vault-seed, com links para
 
 ## 2. Guias de Setup para o Usuário
 
-Todos em `99 - Meta & Attachments/` — sobrevivem ao `initialize.yml`.
+Todos em `99 - Meta e Anexos/` — sobrevivem ao `initialize.yml`.
 
 ### `Preparando seu Computador para o Vault.md` (atualizado)
 
@@ -86,7 +86,7 @@ Filosofia e prática — agnóstico de ferramenta:
 - **O vault é a memória do agente**: usar notas, projetos e áreas do PARA para estruturar contexto, decisões e tarefas do agente
 - Como organizar trabalho com agentes dentro da estrutura existente (sem pastas ocultas, sem arquivos de estado externos)
 - O vault funciona com qualquer agente que leia arquivos (Claude Code, Codex CLI, Gemini CLI, etc.)
-- Dica: manter um arquivo de "contexto ativo" em `00 - Inbox/` para handoff entre sessões
+- Dica: manter um arquivo de "contexto ativo" em `00 - Entrada/` para handoff entre sessões
 
 ---
 
@@ -167,12 +167,12 @@ podem ignorar ou apagar o arquivo sem consequências.
 Conteúdo:
 
 1. **Estrutura do vault (PARA)**
-   - `00 - Inbox/` — captura rápida, sem curadoria
+   - `00 - Entrada/` — captura rápida, sem curadoria
    - `10 - Projects/` — projetos ativos com resultado definido
    - `20 - Areas/` — responsabilidades contínuas
    - `30 - Resources/` — referências e materiais de apoio
    - `40 - Archive/` — material inativo
-   - `99 - Meta & Attachments/` — configuração, guias, imagens
+   - `99 - Meta e Anexos/` — configuração, guias, imagens
 
 2. **Convenções de notas**
    - Wikilinks: `[[nome da nota]]`
@@ -220,7 +220,7 @@ Nenhuma mudança necessária — a fronteira do v0.3 já cobre tudo:
 |---|---|
 | `AGENTS.template.md` | Renomeado para `AGENTS.md` (sobrescreve o atual) |
 | `.claude/settings.local.json` | Vai para o usuário (não está em `files_to_remove`) |
-| `99 - Meta & Attachments/` | Vai para o usuário |
+| `99 - Meta e Anexos/` | Vai para o usuário |
 | `.devcontainer/` | Vai para o usuário |
 | `docs/` | Removido |
 
@@ -237,10 +237,10 @@ O CI do template bloqueia binários de plugins em `.obsidian/plugins/`. A entreg
 funciona em três camadas que não conflitam com esse constraint:
 
 1. **Scripts em `scripts/obsidian/`** — scripts chamados pelos plugins Shell Commands
-2. **Configurações de exemplo** em `99 - Meta & Attachments/config/` — arquivos
+2. **Configurações de exemplo** em `99 - Meta e Anexos/config/` — arquivos
    `.json` de exemplo para Commander e Shell Commands que o usuário copia para
    `.obsidian/plugins/<plugin>/data.json` após instalar os plugins
-3. **Documentação** em `99 - Meta & Attachments/Automacoes no Obsidian.md` —
+3. **Documentação** em `99 - Meta e Anexos/Automacoes no Obsidian.md` —
    quais plugins instalar, como aplicar as configurações de exemplo
 
 ### Plugins Necessários (instalados pelo usuário via Community Plugins)
@@ -256,7 +256,7 @@ funciona em três camadas que não conflitam com esse constraint:
 
 | Botão | Ação |
 |---|---|
-| Nova nota rápida | Cria nota em `00 - Inbox/` via template Templater |
+| Nova nota rápida | Cria nota em `00 - Entrada/` via template Templater |
 | Novo projeto | Cria nota em `10 - Projects/` via template |
 | Nova área | Cria nota em `20 - Areas/` via template |
 | Arquivar nota | Move nota ativa para `40 - Archive/` |
@@ -275,9 +275,9 @@ roda na raiz do vault, independente de onde o Obsidian foi aberto.
 ### Deliverables
 
 - `scripts/obsidian/validate.sh`, `lint.sh`, `check.sh` — wrappers para Shell Commands
-- `99 - Meta & Attachments/config/commander-example.json` — configuração de exemplo
-- `99 - Meta & Attachments/config/shell-commands-example.json` — configuração de exemplo
-- `99 - Meta & Attachments/Automacoes no Obsidian.md` — guia de instalação e setup
+- `99 - Meta e Anexos/config/commander-example.json` — configuração de exemplo
+- `99 - Meta e Anexos/config/shell-commands-example.json` — configuração de exemplo
+- `99 - Meta e Anexos/Automacoes no Obsidian.md` — guia de instalação e setup
 
 ---
 

@@ -65,9 +65,9 @@ O arquivo completo após a mudança:
     "test": "node --test scripts/*.test.js",
     "format": "prettier --write \"**/*.md\"",
     "format:check": "prettier --check .",
-    "lint:main": "markdownlint --config .markdownlint.json \"10 - Fleeting & Daily/**/*.md\" \"20 - Projects/**/*.md\" \"30 - Areas/**/*.md\" \"40 - Resources/**/*.md\" \"50 - Archives/**/*.md\" \"99 - Meta & Attachments/**/*.md\"",
+    "lint:main": "markdownlint --config .markdownlint.json \"10 - Diário/**/*.md\" \"20 - Projetos/**/*.md\" \"30 - Áreas/**/*.md\" \"40 - Recursos/**/*.md\" \"50 - Arquivo/**/*.md\" \"99 - Meta e Anexos/**/*.md\"",
     "lint:docs": "markdownlint --config docs/.markdownlint.json \"docs/**/*.md\"",
-    "lint:templates": "markdownlint --config \"90 - Templates/.markdownlint.json\" \"90 - Templates/**/*.md\"",
+    "lint:templates": "markdownlint --config \"90 - Modelos/.markdownlint.json\" \"90 - Modelos/**/*.md\"",
     "lint": "pnpm run lint:main && pnpm run lint:docs && pnpm run lint:templates",
     "smoke:template": "node scripts/smoke_template.js",
     "validate:onboarding": "node scripts/validate_onboarding.js",
@@ -336,7 +336,7 @@ test("validateOnboarding catches unresolved wikilinks in entrypoints", () => {
 pnpm run test
 ```
 
-Expected: FAIL — `Missing required onboarding file: 99 - Meta & Attachments/...` (script ainda usa caminhos antigos)
+Expected: FAIL — `Missing required onboarding file: 99 - Meta e Anexos/...` (script ainda usa caminhos antigos)
 
 - [ ] **Step 3: Commit do teste falhando**
 
@@ -355,14 +355,14 @@ git commit -m "test: update onboarding test for PT-BR folder names"
 - [ ] **Step 1: Renomear as 8 pastas**
 
 ```bash
-git mv "00 - Inbox" "00 - Entrada"
-git mv "10 - Fleeting & Daily" "10 - Diário"
-git mv "20 - Projects" "20 - Projetos"
-git mv "30 - Areas" "30 - Áreas"
-git mv "40 - Resources" "40 - Recursos"
-git mv "50 - Archives" "50 - Arquivo"
-git mv "90 - Templates" "90 - Modelos"
-git mv "99 - Meta & Attachments" "99 - Meta e Anexos"
+git mv "00 - Entrada" "00 - Entrada"
+git mv "10 - Diário" "10 - Diário"
+git mv "20 - Projetos" "20 - Projetos"
+git mv "30 - Áreas" "30 - Áreas"
+git mv "40 - Recursos" "40 - Recursos"
+git mv "50 - Arquivo" "50 - Arquivo"
+git mv "90 - Modelos" "90 - Modelos"
+git mv "99 - Meta e Anexos" "99 - Meta e Anexos"
 ```
 
 - [ ] **Step 2: Verificar que git rastreou os renames**
@@ -371,7 +371,7 @@ git mv "99 - Meta & Attachments" "99 - Meta e Anexos"
 git status --short | head -20
 ```
 
-Expected: linhas `R  "00 - Inbox/..." -> "00 - Entrada/..."` para cada pasta e seus arquivos.
+Expected: linhas `R  "00 - Entrada/..." -> "00 - Entrada/..."` para cada pasta e seus arquivos.
 
 - [ ] **Step 3: Commit**
 
@@ -513,7 +513,7 @@ Localizar a linha com `"templates_folder"` e alterar:
 
 - [ ] **Step 3: Atualizar `.obsidian/workspace.json`**
 
-Substituir `"40 - Resources/Bases.md"` por `"40 - Recursos/Bases.md"` no campo `"file"` do estado do leaf aberto:
+Substituir `"40 - Recursos/Bases.md"` por `"40 - Recursos/Bases.md"` no campo `"file"` do estado do leaf aberto:
 
 ```json
 "file": "40 - Recursos/Bases.md",
@@ -539,14 +539,14 @@ Localizar e substituir no arquivo `AGENTS.template.md`:
 
 | Buscar | Substituir |
 |---|---|
-| `00 - Inbox/` | `00 - Entrada/` |
-| `10 - Fleeting & Daily/` | `10 - Diário/` |
-| `20 - Projects/` | `20 - Projetos/` |
-| `30 - Areas/` | `30 - Áreas/` |
-| `40 - Resources/` | `40 - Recursos/` |
-| `50 - Archives/` | `50 - Arquivo/` |
-| `90 - Templates/` | `90 - Modelos/` |
-| `99 - Meta & Attachments/` | `99 - Meta e Anexos/` |
+| `00 - Entrada/` | `00 - Entrada/` |
+| `10 - Diário/` | `10 - Diário/` |
+| `20 - Projetos/` | `20 - Projetos/` |
+| `30 - Áreas/` | `30 - Áreas/` |
+| `40 - Recursos/` | `40 - Recursos/` |
+| `50 - Arquivo/` | `50 - Arquivo/` |
+| `90 - Modelos/` | `90 - Modelos/` |
+| `99 - Meta e Anexos/` | `99 - Meta e Anexos/` |
 
 - [ ] **Step 2: Commit**
 
@@ -572,14 +572,14 @@ const fs = require('fs');
 const path = require('path');
 
 const replacements = [
-  ['99 - Meta & Attachments', '99 - Meta e Anexos'],
-  ['50 - Archives', '50 - Arquivo'],
-  ['40 - Resources', '40 - Recursos'],
-  ['30 - Areas', '30 - Áreas'],
-  ['20 - Projects', '20 - Projetos'],
-  ['10 - Fleeting & Daily', '10 - Diário'],
-  ['00 - Inbox', '00 - Entrada'],
-  ['90 - Templates', '90 - Modelos'],
+  ['99 - Meta e Anexos', '99 - Meta e Anexos'],
+  ['50 - Arquivo', '50 - Arquivo'],
+  ['40 - Recursos', '40 - Recursos'],
+  ['30 - Áreas', '30 - Áreas'],
+  ['20 - Projetos', '20 - Projetos'],
+  ['10 - Diário', '10 - Diário'],
+  ['00 - Entrada', '00 - Entrada'],
+  ['90 - Modelos', '90 - Modelos'],
 ];
 
 const ignoreDirs = new Set(['.git', 'node_modules', '.obsidian', 'docs']);
@@ -625,7 +625,7 @@ Expected: saída listando ~32 arquivos atualizados.
 - [ ] **Step 2: Verificar que nenhuma referência antiga sobrou**
 
 ```bash
-grep -r "99 - Meta & Attachments\|40 - Resources\|10 - Fleeting\|00 - Inbox\|20 - Projects\|30 - Areas\|50 - Archives\|90 - Templates" --include="*.md" --include="*.base" --exclude-dir=".git" --exclude-dir="node_modules" --exclude-dir="docs" .
+grep -r "99 - Meta e Anexos\|40 - Recursos\|10 - Fleeting\|00 - Entrada\|20 - Projetos\|30 - Áreas\|50 - Arquivo\|90 - Modelos" --include="*.md" --include="*.base" --exclude-dir=".git" --exclude-dir="node_modules" --exclude-dir="docs" .
 ```
 
 Expected: nenhuma saída (zero ocorrências).
@@ -652,14 +652,14 @@ const fs = require('fs');
 const path = require('path');
 
 const replacements = [
-  ['99 - Meta & Attachments', '99 - Meta e Anexos'],
-  ['50 - Archives', '50 - Arquivo'],
-  ['40 - Resources', '40 - Recursos'],
-  ['30 - Areas', '30 - Áreas'],
-  ['20 - Projects', '20 - Projetos'],
-  ['10 - Fleeting & Daily', '10 - Diário'],
-  ['00 - Inbox', '00 - Entrada'],
-  ['90 - Templates', '90 - Modelos'],
+  ['99 - Meta e Anexos', '99 - Meta e Anexos'],
+  ['50 - Arquivo', '50 - Arquivo'],
+  ['40 - Recursos', '40 - Recursos'],
+  ['30 - Áreas', '30 - Áreas'],
+  ['20 - Projetos', '20 - Projetos'],
+  ['10 - Diário', '10 - Diário'],
+  ['00 - Entrada', '00 - Entrada'],
+  ['90 - Modelos', '90 - Modelos'],
 ];
 
 function walk(dir, files = []) {
@@ -691,7 +691,7 @@ console.log('Total docs updated:', changed);
 - [ ] **Step 2: Verificar que nenhuma referência antiga sobrou em docs/**
 
 ```bash
-grep -r "99 - Meta & Attachments\|40 - Resources\|10 - Fleeting\|00 - Inbox\|20 - Projects\|30 - Areas\|50 - Archives\|90 - Templates" --include="*.md" docs/
+grep -r "99 - Meta e Anexos\|40 - Recursos\|10 - Fleeting\|00 - Entrada\|20 - Projetos\|30 - Áreas\|50 - Arquivo\|90 - Modelos" --include="*.md" docs/
 ```
 
 Expected: nenhuma saída.
@@ -726,14 +726,14 @@ Breaking change: pastas PARA renomeadas para português.
 
 | Antes | Depois |
 |---|---|
-| 00 - Inbox | 00 - Entrada |
-| 10 - Fleeting & Daily | 10 - Diário |
-| 20 - Projects | 20 - Projetos |
-| 30 - Areas | 30 - Áreas |
-| 40 - Resources | 40 - Recursos |
-| 50 - Archives | 50 - Arquivo |
-| 90 - Templates | 90 - Modelos |
-| 99 - Meta & Attachments | 99 - Meta e Anexos |
+| 00 - Entrada | 00 - Entrada |
+| 10 - Diário | 10 - Diário |
+| 20 - Projetos | 20 - Projetos |
+| 30 - Áreas | 30 - Áreas |
+| 40 - Recursos | 40 - Recursos |
+| 50 - Arquivo | 50 - Arquivo |
+| 90 - Modelos | 90 - Modelos |
+| 99 - Meta e Anexos | 99 - Meta e Anexos |
 
 Migração manual para vaults existentes: renomeie as pastas no explorador de arquivos e execute find & replace nos arquivos .md para atualizar wikilinks com os novos nomes.
 ```
@@ -786,7 +786,7 @@ Expected: PASS.
 - [ ] **Step 4: Verificar que nenhuma referência antiga sobrou em qualquer lugar**
 
 ```bash
-grep -r "99 - Meta & Attachments\|40 - Resources\|10 - Fleeting\|00 - Inbox\|20 - Projects\|30 - Areas\|50 - Archives\|90 - Templates" \
+grep -r "99 - Meta e Anexos\|40 - Recursos\|10 - Fleeting\|00 - Entrada\|20 - Projetos\|30 - Áreas\|50 - Arquivo\|90 - Modelos" \
   --include="*.md" --include="*.json" --include="*.js" --include="*.yml" \
   --exclude-dir=".git" --exclude-dir="node_modules" \
   --exclude="CHANGELOG.md" \

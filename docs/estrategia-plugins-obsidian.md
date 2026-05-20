@@ -49,6 +49,6 @@ Neste vault, use `AGENTS.md` como fonte principal:
 
 - Se o plugin aceitar arquivo de contexto, aponte para `AGENTS.md`.
 - Se o plugin aceitar apenas texto, cole o conteúdo de `AGENTS.md`.
-- Se o plugin tiver biblioteca de prompts, registre a adaptação em uma nota criada com `90 - Templates/Template - Prompt.md`.
+- Se o plugin tiver biblioteca de prompts, registre a adaptação em uma nota criada com `90 - Modelos/Template - Prompt.md`.
 
 Evite manter várias cópias sem rastreio. Quando um prompt for colado dentro da configuração de um plugin, documente onde ele foi usado para facilitar atualizações futuras.
