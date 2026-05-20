@@ -1,11 +1,11 @@
-export function slugify(input: string): string {
+﻿export function slugify(input: string): string {
   return input
     .split('/')
     .map(segment =>
       segment
         .replace(/^\d+\s*-\s*/, '')
         .normalize('NFD')
-        .replace(/[̀-ͯ]/g, '')   // Combining Diacritical Marks
+        .replace(/[\u0300-\u036F]/g, '')
         .toLowerCase()
         .trim()
         .replace(/\s+/g, '-')
