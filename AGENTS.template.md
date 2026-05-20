@@ -5,17 +5,20 @@ referencias versionado com Git.
 
 Estrutura do vault (PARA):
 
-* 00 - Inbox/: Captura rapida sem curadoria. Toda nota nova entra aqui antes
+* 00 - Entrada/: Captura rapida sem curadoria. Toda nota nova entra aqui antes
   de ser processada e movida para o lugar certo.
-* 10 - Projects/: Projetos ativos com resultado e prazo definidos. Um projeto
+* 10 - Diario/: Notas diarias e efemeras. Captura rapida de pensamentos,
+  observacoes e ideias do dia a dia.
+* 20 - Projetos/: Projetos ativos com resultado e prazo definidos. Um projeto
   termina quando o resultado e alcancado.
-* 20 - Areas/: Responsabilidades continuas sem data de termino — saude,
+* 30 - Areas/: Responsabilidades continuas sem data de termino — saude,
   financas, trabalho, estudos, familia.
-* 30 - Resources/: Referencias, materiais de apoio, notas de leitura,
-  pesquisas, templates reutilizaveis.
-* 40 - Archive/: Material inativo — projetos concluidos, areas abandonadas,
+* 40 - Recursos/: Referencias, materiais de apoio, notas de leitura,
+  pesquisas e recursos reutilizaveis.
+* 50 - Arquivo/: Material inativo — projetos concluidos, areas abandonadas,
   recursos obsoletos. Preservado para consulta futura.
-* 99 - Meta & Attachments/: Configuracao do vault, guias de uso, imagens e
+* 90 - Modelos/: Templates do Obsidian. Ativados pelo plugin Templater.
+* 99 - Meta e Anexos/: Configuracao do vault, guias de uso, imagens e
   anexos. Nao e para notas de conhecimento — e para metadados do vault.
 
 Convencoes de notas:
@@ -26,7 +29,7 @@ Convencoes de notas:
   categoria, audience. Fica no topo do arquivo entre linhas ---.
 * Dataview: notas com blocos ```dataview``` fazem consultas dinamicas sobre
   o vault. Nao edite esses blocos sem entender a query.
-* Templater: templates ficam em 99 - Meta & Attachments/Templates/. Sao
+* Templater: templates ficam em 90 - Modelos/. Sao
   ativados pelo plugin Templater no Obsidian.
 
 Ferramentas que leem o vault:
@@ -44,7 +47,7 @@ O que fazer com seguranca:
 * Sugerir e criar wikilinks entre notas relacionadas.
 * Ler e consultar a estrutura de pastas e frontmatter das notas.
 * Criar templates e notas de projeto a partir de padroes existentes.
-* Organizar o inbox — mover notas de 00 - Inbox/ para a pasta PARA correta.
+* Organizar o inbox — mover notas de 00 - Entrada/ para a pasta PARA correta.
 
 O que evitar sem confirmacao explicita do usuario:
 
