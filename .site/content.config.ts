@@ -1,5 +1,5 @@
-// .site/content/config.ts
-import { defineCollection, z } from 'astro:content';
+// .site/content.config.ts
+import { defineCollection } from 'astro:content';
 import { docsSchema } from '@astrojs/starlight/schema';
 import { readFileSync } from 'node:fs';
 import { join, basename } from 'node:path';
@@ -15,7 +15,9 @@ const VAULT_FOLDERS = [
 
 export const collections = {
   docs: defineCollection({
-    loader: async ({ store, logger }: { store: any; logger: any }) => {
+    loader: {
+      name: 'vault-loader',
+      load: async ({ store, logger }: { store: any; logger: any }) => {
       const patterns = VAULT_FOLDERS.map(f => `${f}/**/*.md`);
       const files = globSync(patterns, { cwd: process.cwd() });
       let count = 0;
@@ -27,29 +29,38 @@ export const collections = {
 
         if (data.status !== 'published') continue;
 
-        const id = slugify(file.replace(/\.md$/, ''));
+        // Normalize to forward slashes before slugifying (glob may return OS-native separators).
+        const id = slugify(file.replace(/\\/g, '/').replace(/\.md$/, ''));
         const title: string = data.title ?? basename(file, '.md');
+
+        // js-yaml parses unquoted YAML dates (e.g. 2023-10-27) as Date objects;
+        // stringify them before storing to avoid Zod schema failures.
+        const safeData: Record<string, unknown> = {};
+        for (const [k, v] of Object.entries(data)) {
+          safeData[k] = v instanceof Date ? v.toISOString().slice(0, 10) : v;
+        }
 
         store.set({
           id,
-          data: { ...data, title },
+          data: {
+            ...safeData,
+            title,
+            // Starlight reads raw store data directly — apply schema defaults explicitly.
+            draft: false,
+            head: [],
+            editUrl: true,
+            template: 'doc',
+            pagefind: true,
+          },
           body: content,
+          filePath: fullPath,
         });
         count++;
       }
 
       logger.info(`Vault loader: ${count} published notes loaded`);
+      },
     },
-    schema: docsSchema({
-      extend: z.object({
-        status: z.string().optional(),
-        aliases: z.array(z.string()).optional(),
-        created: z.string().optional(),
-        updated: z.string().optional(),
-        category: z.string().optional(),
-        audience: z.string().optional(),
-        related: z.array(z.string()).optional(),
-      }),
-    }),
+    schema: docsSchema(),
   }),
 };
