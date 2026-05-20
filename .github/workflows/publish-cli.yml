@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - '@dgk/cli@*'
+      - '@dgk/astro-plugins@*'
 
 permissions:
   contents: read
