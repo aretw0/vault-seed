@@ -5,8 +5,8 @@ import remarkDirective from 'remark-directive';
 import { remarkCallouts, remarkWikiImages, remarkWikiLinks } from '@dgk/astro-plugins';
 import { collectPublishedSlugs } from './.site/integrations/collect-published-slugs.js';
 
-const site = process.env.ASTRO_SITE ?? 'https://username.github.io';
-const base = process.env.ASTRO_BASE ?? '/vault-name';
+const site = process.env.ASTRO_SITE;
+const base = process.env.ASTRO_BASE ?? '/';
 const publishedSlugs = await collectPublishedSlugs();
 
 export default defineConfig({
@@ -29,10 +29,10 @@ export default defineConfig({
         ? [{ icon: 'github', label: 'GitHub', href: `https://github.com/${process.env.GITHUB_REPOSITORY}` }]
         : [],
       sidebar: [
-        { label: 'Recursos',      autogenerate: { directory: 'recursos' } },
-        { label: 'Projetos',      autogenerate: { directory: 'projetos' } },
-        { label: 'Áreas',         autogenerate: { directory: 'areas' } },
-        { label: 'Meta',          autogenerate: { directory: 'meta-e-anexos' } },
+        { label: 'Recursos', items: [{ autogenerate: { directory: 'recursos' } }] },
+        { label: 'Projetos', items: [{ autogenerate: { directory: 'projetos' } }] },
+        { label: 'Áreas',    items: [{ autogenerate: { directory: 'areas' } }] },
+        { label: 'Meta',     items: [{ autogenerate: { directory: 'meta-e-anexos' } }] },
       ],
       customCss: ['./.site/styles/custom.css'],
     }),
