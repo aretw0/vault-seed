@@ -1,0 +1,72 @@
+name: Deploy Site
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "00 - Entrada/**"
+      - "10 - Diário/**"
+      - "20 - Projetos/**"
+      - "30 - Áreas/**"
+      - "40 - Recursos/**"
+      - "50 - Arquivo/**"
+      - "90 - Modelos/**"
+      - "99 - Meta e Anexos/**"
+      - ".site/**"
+      - "astro.config.mjs"
+      - "packages/astro-plugins/**"
+      - ".github/workflows/deploy-site.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build Astro site
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Build @dgk/astro-plugins
+        run: pnpm --filter @dgk/astro-plugins build
+
+      - name: Build site
+        run: pnpm run site:build
+        env:
+          ASTRO_SITE: https://${{ github.repository_owner }}.github.io
+          ASTRO_BASE: /${{ github.event.repository.name }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          VAULT_TITLE: ${{ vars.VAULT_TITLE }}
+
+      - name: Upload Pages artifact
+        # TODO(deploy): pin to commit hash before first deploy — check https://github.com/actions/upload-pages-artifact/releases
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        # TODO(deploy): pin to commit hash before first deploy — check https://github.com/actions/deploy-pages/releases
+        uses: actions/deploy-pages@v4
