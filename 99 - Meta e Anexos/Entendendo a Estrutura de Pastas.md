@@ -30,14 +30,14 @@ A ideia é começar com poucas pastas de alto nível, numeradas para manter a or
 ```mermaid
 graph LR
     Vault(["🌱 Vault"])
-    Vault --> E["00 - Entrada\nCaptura rápida"]
-    Vault --> D["10 - Diário\nNotas do dia"]
-    Vault --> P["20 - Projetos\nMetas com prazo"]
-    Vault --> A["30 - Áreas\nResponsabilidades"]
-    Vault --> R["40 - Recursos\nBase de conhecimento"]
-    Vault --> Arq["50 - Arquivo\nHistórico inativo"]
-    Vault --> M["90 - Modelos\nTemplates"]
-    Vault --> Meta["99 - Meta e Anexos\nConfiguração e guias"]
+    Vault --> E["00 - Entrada - Captura rápida"]
+    Vault --> D["10 - Diário - Notas do dia"]
+    Vault --> P["20 - Projetos - Metas com prazo"]
+    Vault --> A["30 - Áreas - Responsabilidades"]
+    Vault --> R["40 - Recursos - Base de conhecimento"]
+    Vault --> Arq["50 - Arquivo - Histórico inativo"]
+    Vault --> M["90 - Modelos - Templates"]
+    Vault --> Meta["99 - Meta e Anexos - Configuração e guias"]
 ```
 <!-- {/para-structure} -->
 
