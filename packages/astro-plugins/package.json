@@ -1,0 +1,37 @@
+{
+  "name": "@dgk/astro-plugins",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Remark plugins for @dgk vault publishing",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aretw0/vault-seed.git",
+    "directory": "packages/astro-plugins"
+  },
+  "dependencies": {
+    "remark-parse": "^11.0.0",
+    "unified": "^11.0.0",
+    "unist-util-visit": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/mdast": "^4.0.0",
+    "rehype-stringify": "^10.0.0",
+    "remark": "^15.0.0",
+    "remark-rehype": "^11.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
