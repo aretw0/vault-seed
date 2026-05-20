@@ -40,7 +40,7 @@ jobs:
         id: create_tag
         run: |
           set -euo pipefail
-          version="v$(cat VERSION)"
+          version="v$(node -p "require('./package.json').version")"
           echo "version_tag=$version" >> "$GITHUB_OUTPUT"
 
           if git rev-parse "$version" >/dev/null 2>&1; then
