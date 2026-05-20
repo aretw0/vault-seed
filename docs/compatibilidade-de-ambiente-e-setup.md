@@ -15,6 +15,7 @@ O script `scripts/setup.sh` detecta automaticamente as ferramentas disponíveis.
 | Node.js (versão) | `fnm` — cross-platform | `nvm` (Linux/macOS) |
 | Node.js (pacotes) | `pnpm` via Corepack | — |
 | Python (ferramentas) | `uv` — cross-platform | `pipx` |
+| Diagramas Mermaid | `mdt_cli` 0.7.0 via Cargo | — (opcional, CI valida) |
 
 ## O que o `setup.sh` Faz
 
@@ -54,6 +55,31 @@ Instale as ferramentas necessárias antes de rodar o setup:
     - macOS: `brew install python`
     - Linux/WSL: `sudo apt install python3`
 
+
+4.  **Instale o `mdt_cli` (gerenciador de diagramas Mermaid)** — opcional para uso local; o CI valida a sincronia automaticamente via `validate-mdt.yml`.
+
+    `mdt_cli` é uma ferramenta Rust que mantém diagramas Mermaid sincronizados entre templates e documentos alvo. Requer o toolchain Rust instalado via [`rustup`](https://rustup.rs/).
+
+    ```bash
+    cargo install mdt_cli --locked --version 0.7.0
+    ```
+
+    > **Windows:** o compilador Rust (`rustc`) exige o linker do MSVC. Instale as **C++ Build Tools** do [Visual Studio Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) (componente "Desenvolvimento para Desktop com C++") antes de rodar `cargo install`. O Git para Windows instala seu próprio `link.exe` que **não** é compatível com o linker MSVC — certifique-se de que o PATH priorize o linker correto após instalar as Build Tools.
+
+    Após instalar, os scripts do projeto estão disponíveis:
+
+    ```bash
+    pnpm run diagrams:update   # regenera o conteúdo dos documentos alvo
+    pnpm run diagrams:check    # verifica se os documentos estão em sincronia com os templates
+    ```
+
+    Para diagramas no kit do usuário (pasta `99 - Meta e Anexos/Diagramas/`):
+
+    ```bash
+    cd "99 - Meta e Anexos/Diagramas"
+    mdt update   # regenera Exemplos.md a partir dos templates em .templates/
+    mdt check    # verifica sincronia
+    ```
 
 ## Como Rodar o Setup
 
@@ -95,8 +121,9 @@ Executado uma única vez na criação do container:
 1. Locale `pt_BR.UTF-8` (suporte a caracteres brasileiros no terminal)
 2. `pnpm install --frozen-lockfile` (dependências do workspace)
 3. `bash scripts/setup_git.sh` (Git: encoding UTF-8, template de commit)
-4. Pi coding agent (`@earendil-works/pi-coding-agent` + `@aretw0/pi-stack`)
-5. Readiness gate (imprime versões de Node.js, pnpm, uv e Pi)
+4. `mdt_cli` 0.7.0 via `cargo install` (gerenciador de diagramas Mermaid)
+5. Pi coding agent (`@earendil-works/pi-coding-agent` + `@aretw0/pi-stack`)
+6. Readiness gate (imprime versões de Node.js, pnpm, uv e Pi)
 
 ### O que `post-start.sh` verifica
 
