@@ -1,0 +1,1 @@
+{"version":3,"file":"remark-wiki-images.d.ts","sourceRoot":"","sources":["../src/remark-wiki-images.ts"],"names":[],"mappings":"AACA,OAAO,KAAK,EAAE,MAAM,EAAE,MAAM,SAAS,CAAC;AACtC,OAAO,KAAK,EAAE,IAAI,EAAuB,MAAM,OAAO,CAAC;AAEvD,UAAU,OAAO;IACf,IAAI,CAAC,EAAE,MAAM,CAAC;CACf;AASD,QAAA,MAAM,gBAAgB,EAAE,MAAM,CAAC,CAAC,OAAO,CAAC,CAAC,EAAE,IAAI,CA6C9C,CAAC;AAEF,eAAe,gBAAgB,CAAC"}
