@@ -13,7 +13,7 @@ Esta é uma "semente" (seed) de cofre (vault) com foco no Obsidian e Visual Stud
 | Devcontainer (VS Code + Docker) | [[Configurando com Devcontainer]] |
 | Usar com agentes de IA | [[Usando com Agentes de IA]] |
 
-Os guias detalhados estão em `99 - Meta & Attachments/`.
+Os guias detalhados estão em `99 - Meta e Anexos/`.
 
 ## Pré-requisitos
 

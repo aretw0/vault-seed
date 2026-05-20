@@ -15,17 +15,17 @@ else greeting = "Boa noite";
 
 ## 🚀 Ações Rápidas
 - 📅 **Criar Nova Nota Diária** (Use o comando "Daily Notes: Open today's daily note" ou configure no menu lateral)
-- [[99 - Meta & Attachments/Guia do Jardineiro Digital|📖 Consultar Guia]]
+- [[99 - Meta e Anexos/Guia do Jardineiro Digital|📖 Consultar Guia]]
 
 ---
 
 ## 🏗️ Projetos em Andamento
 > [!info]
-> Esta seção busca notas em `20 - Projects` com a tag `#status/em-progresso`.
+> Esta seção busca notas em `20 - Projetos` com a tag `#status/em-progresso`.
 
 ```dataview
 TABLE deadline as "Prazo", priority as "Prioridade"
-FROM "20 - Projects"
+FROM "20 - Projetos"
 WHERE contains(file.tags, "#status/em-progresso")
 SORT deadline ASC
 LIMIT 5

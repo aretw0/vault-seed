@@ -51,7 +51,7 @@ flowchart TD
     end
 
     %% --- Inbox: Ponto de Entrada ---
-    subgraph "🗂️ 00 - Inbox"
+    subgraph "🗂️ 00 - Entrada"
         direction TB
         InboxDir(Inbox):::inbox
         ProcessNote[/"Processar Nota na Inbox"/]:::action
@@ -114,8 +114,8 @@ flowchart TD
     %% --- Meta, Templates e o Guia ---
     subgraph "⚙️ 90 & 99 - Meta, Templates & Anexos"
         direction LR
-        TemplatesDir("90 - Templates"):::meta
-        MetaDir("99 - Meta & Attachments"):::meta
+        TemplatesDir("90 - Modelos"):::meta
+        MetaDir("99 - Meta e Anexos"):::meta
         Guia(["Guia do Jardineiro Digital.md"]):::meta
         Diagrama(["Visualização do Fluxo do Vault.md"]):::meta
         MetaDir --> Guia & Diagrama

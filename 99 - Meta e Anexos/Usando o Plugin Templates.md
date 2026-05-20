@@ -30,13 +30,13 @@ O plugin nativo (core) "Templates" do Obsidian permite criar modelos de notas qu
 
 Após ativar, nas opções do plugin (`Configurações > Opções de plugins > Templates`), você encontrará:
 
--   **Pasta de templates** (`Template folder location`): Especifique a pasta onde você armazenará seus arquivos de template. A convenção neste vault é usar a pasta `90 - Templates`.
+-   **Pasta de templates** (`Template folder location`): Especifique a pasta onde você armazenará seus arquivos de template. A convenção neste vault é usar a pasta `90 - Modelos`.
 -   **Formato da data** (`Date format`): Defina como a variável `{{date}}` será formatada. O padrão é `YYYY-MM-DD`.
 -   **Formato da hora** (`Time format`): Defina como a variável `{{time}}` será formatada. O padrão é `HH:mm`.
 
 ## 3. Como Criar um Arquivo de Template
 
-1.  Navegue até a pasta que você configurou (ex: `90 - Templates`).
+1.  Navegue até a pasta que você configurou (ex: `90 - Modelos`).
 2.  Crie uma nova nota. O nome desta nota será o nome do seu template.
     -   *Exemplo: `Template - Anotação Diária.md`*
 3.  Edite o conteúdo desta nota para criar seu modelo. Você pode usar texto, formatação Markdown e as variáveis disponíveis: `{{date}}`, `{{time}}`, e `{{title}}` (que insere o título da nota atual).
@@ -55,7 +55,7 @@ Após ativar, nas opções do plugin (`Configurações > Opções de plugins > T
 
 ## Exemplo Prático: O Template de Documentação de Prompt
 
-Este vault já inclui um template para documentar prompts de IA, localizado em `90 - Templates/Template - Documentação de Prompt.md`. Ele foi construído usando os mesmos princípios descritos acima.
+Este vault já inclui um template para documentar prompts de IA, localizado em `90 - Modelos/Template - Documentação de Prompt.md`. Ele foi construído usando os mesmos princípios descritos acima.
 
 Para usá-lo:
 

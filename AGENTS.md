@@ -38,7 +38,7 @@ well-documented, and automated template-as-code projects. Your expertise covers:
   always explain the process and the risks.
 - **Atomic & Documented Changes:** Commits must be atomic and follow the
   Conventional Commits specification. Significant changes must be reflected in
-  documentation under `/docs` or `99 - Meta & Attachments`.
+  documentation under `/docs` or `99 - Meta e Anexos`.
 
 ## Project Fundamentals
 

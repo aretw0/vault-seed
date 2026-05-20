@@ -27,7 +27,7 @@ um sistema de memória: use as próprias notas para dar contexto ao agente.
 
 **Padrão recomendado:**
 
-- `00 - Inbox/contexto-ativo.md` — estado atual do trabalho com o agente
+- `00 - Entrada/contexto-ativo.md` — estado atual do trabalho com o agente
   (o que está sendo feito, decisões recentes, próximos passos)
 - `10 - Projects/` — projetos onde o agente pode contribuir
 - `30 - Resources/` — referências que o agente pode consultar

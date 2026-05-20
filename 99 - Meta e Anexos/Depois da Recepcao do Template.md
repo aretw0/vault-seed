@@ -32,13 +32,13 @@ Depois disso, o repositorio e seu. Esta nota ajuda a conferir se o ambiente fico
 2. Abra o vault no Obsidian e confira se [[Guia do Jardineiro Digital]] e [[Exploracao Guiada do Vault]] existem.
 3. Abra o repositorio no GitHub Desktop ou no VS Code e veja se nao ha arquivos pendentes antes de editar.
 4. Configure o Obsidian Git seguindo [[Configurando o Obsidian Git]].
-5. Faca uma nota pequena em `00 - Inbox/`, rode um primeiro commit e confirme se ela aparece no GitHub.
+5. Faca uma nota pequena em `00 - Entrada/`, rode um primeiro commit e confirme se ela aparece no GitHub.
 
 ## O Que Continua Com Voce
 
-- Notas de onboarding em `99 - Meta & Attachments/`.
-- Conceitos de apoio em `40 - Resources/`.
-- Templates em `90 - Templates/`.
+- Notas de onboarding em `99 - Meta e Anexos/`.
+- Conceitos de apoio em `40 - Recursos/`.
+- Templates em `90 - Modelos/`.
 - Configuracoes seguras do Obsidian, como plugins core e preferencias gerais.
 - `AGENTS.md`, `CLAUDE.md` e `GEMINI.md`, para assistentes de IA que aceitam system prompts de projeto.
 

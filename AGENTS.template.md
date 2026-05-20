@@ -11,7 +11,7 @@ Estrutura do vault (PARA):
   observacoes e ideias do dia a dia.
 * 20 - Projetos/: Projetos ativos com resultado e prazo definidos. Um projeto
   termina quando o resultado e alcancado.
-* 30 - Areas/: Responsabilidades continuas sem data de termino — saude,
+* 30 - Áreas/: Responsabilidades continuas sem data de termino — saude,
   financas, trabalho, estudos, familia.
 * 40 - Recursos/: Referencias, materiais de apoio, notas de leitura,
   pesquisas e recursos reutilizaveis.

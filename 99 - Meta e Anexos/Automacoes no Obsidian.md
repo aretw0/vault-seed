@@ -56,10 +56,10 @@ Copie os arquivos de exemplo para os diretórios dos plugins **após** instalá-
 
 ```bash
 # Ajuste os caminhos conforme seu sistema
-cp "99 - Meta & Attachments/config/shell-commands-example.json" \
+cp "99 - Meta e Anexos/config/shell-commands-example.json" \
    ".obsidian/plugins/obsidian-shellcommands/data.json"
 
-cp "99 - Meta & Attachments/config/commander-example.json" \
+cp "99 - Meta e Anexos/config/commander-example.json" \
    ".obsidian/plugins/cmdr/data.json"
 ```
 
@@ -75,7 +75,7 @@ notas nas pastas certas:
 
 ### Template: Nova nota no Inbox
 
-Crie `99 - Meta & Attachments/Templates/Nova nota inbox.md`:
+Crie `99 - Meta e Anexos/Templates/Nova nota inbox.md`:
 
 ```
 ---
@@ -89,8 +89,8 @@ status: rascunho
 
 ```
 
-Configure o Templater para usar `99 - Meta & Attachments/Templates/` como
-pasta de templates e `00 - Inbox/` como pasta de destino padrão.
+Configure o Templater para usar `99 - Meta e Anexos/Templates/` como
+pasta de templates e `00 - Entrada/` como pasta de destino padrão.
 
 ## Obsidian Git — sincronização pela interface
 

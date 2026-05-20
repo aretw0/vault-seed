@@ -35,7 +35,7 @@ Nomes claros e consistentes são a base de um vault organizado.
     -   **Notas Diárias:** Use o formato `YYYY-MM-DD` para fácil ordenação. Ex: `2025-09-11.md`.
 
 -   **Pastas:** Numeradas para manter uma ordem visual consistente no explorador de arquivos, seguindo a metodologia PARA.
-    -   **Exemplos:** `00 - Inbox`, `10 - Fleeting & Daily`, `20 - Projects`.
+    -   **Exemplos:** `00 - Entrada`, `10 - Diário`, `20 - Projetos`.
 
 -   **Templates:** Use o prefixo `Template -` para identificar facilmente os modelos de notas.
     -   **Exemplos:** `Template - Nota Conceitual`, `Template - Plano de Ação`.

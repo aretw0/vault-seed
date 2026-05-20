@@ -1,7 +1,7 @@
 filters:
   or:
-    - file.inFolder("99 - Meta & Attachments")
-    - file.inFolder("40 - Resources")
+    - file.inFolder("99 - Meta e Anexos")
+    - file.inFolder("40 - Recursos")
 properties:
   file.name:
     displayName: Nota

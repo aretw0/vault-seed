@@ -21,10 +21,10 @@ let friendlyDate = tp.date.now("dddd, D [de] MMMM [de] YYYY");
 - [ ] Atualizar status dos projetos
 
 ### 🧹 Pendências Anteriores
-> [!warning] Tarefas não concluídas de dias anteriores (`10 - Fleeting & Daily`)
+> [!warning] Tarefas não concluídas de dias anteriores (`10 - Diário`)
 ```dataview
 TASK
-FROM "10 - Fleeting & Daily"
+FROM "10 - Diário"
 WHERE !completed AND file.day < this.file.day
 ```
 

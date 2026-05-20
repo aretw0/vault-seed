@@ -57,7 +57,7 @@ Pense nesta nota como o canteiro principal do seu jardim. A partir daqui, você 
 
 Este vault é projetado para ser "inteligente", permitindo que você colabore com assistentes de IA para organizar, refinar e expandir seu conhecimento.
 
-- **[[../40 - Resources/O que sao system prompts de IA|Entenda system prompts de IA]]**: Descubra como o arquivo `AGENTS.md` na raiz do seu vault instrui assistentes de IA sobre como se comportar e interagir com suas notas, garantindo que eles sigam as convenções e a filosofia do seu jardim digital.
+- **[[../40 - Recursos/O que sao system prompts de IA|Entenda system prompts de IA]]**: Descubra como o arquivo `AGENTS.md` na raiz do seu vault instrui assistentes de IA sobre como se comportar e interagir com suas notas, garantindo que eles sigam as convenções e a filosofia do seu jardim digital.
 
 ## Dicas de Cultivo
 

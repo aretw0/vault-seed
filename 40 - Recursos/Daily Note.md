@@ -19,4 +19,4 @@ related:
 Daily Note e uma nota criada para um dia especifico. Ela funciona bem para
 captura rapida, planejamento do dia, revisao e registro de pequenas decisoes.
 
-Neste vault, notas diarias combinam com a pasta `10 - Fleeting & Daily`.
+Neste vault, notas diarias combinam com a pasta `10 - Diário`.

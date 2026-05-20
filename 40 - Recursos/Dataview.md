@@ -35,7 +35,7 @@ Exemplo com duas pastas como fonte:
 
 ```dataview
 TABLE status AS "Status", category AS "Categoria", audience AS "Publico"
-FROM "99 - Meta & Attachments" or "40 - Resources"
+FROM "99 - Meta e Anexos" or "40 - Recursos"
 WHERE status = "published"
 SORT file.name ASC
 ```

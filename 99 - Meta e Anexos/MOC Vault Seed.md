@@ -79,7 +79,7 @@ Se o plugin Dataview estiver instalado, este bloco lista guias e recursos public
 
 ```dataview
 TABLE status, category, audience, file.mtime AS "Atualizado"
-FROM "99 - Meta & Attachments" or "40 - Resources"
+FROM "99 - Meta e Anexos" or "40 - Recursos"
 WHERE status = "published"
 SORT file.name ASC
 ```

@@ -25,9 +25,9 @@ Bem-vindo(a) ao seu novo cofre de conhecimento! Esta nota é o seu ponto de part
 ## O Ciclo de Vida de uma Nota: Do Plantio à Colheita
 
 ### 1. Plantando a Semente (Captura Rápida - Fleeting Notes)
-*   **Onde:** `10 - Fleeting & Daily`
+*   **Onde:** `10 - Diário`
 *   **O quê:** Suas **sementes de ideias** – pensamentos rápidos, insights fugazes, informações que você não quer perder.
-*   **Como:** Use o atalho `Ctrl/Cmd + N` no Obsidian para criar uma nova nota diária, ou crie uma nota avulsa na pasta `10 - Fleeting & Daily`. Pense nisso como o **plantio inicial** no seu canteiro de rascunhos.
+*   **Como:** Use o atalho `Ctrl/Cmd + N` no Obsidian para criar uma nova nota diária, ou crie uma nota avulsa na pasta `10 - Diário`. Pense nisso como o **plantio inicial** no seu canteiro de rascunhos.
 *   **Exemplo Prático:**
     ```markdown
     - Lembrete: Pesquisar sobre o método PARA para organizar projetos.
@@ -35,16 +35,16 @@ Bem-vindo(a) ao seu novo cofre de conhecimento! Esta nota é o seu ponto de part
     ```
 
 ### 2. Nutrindo a Muda (Processamento - Literature Notes / Permanent Notes)
-*   **Onde:** `00 - Inbox`
+*   **Onde:** `00 - Entrada`
 *   **O quê:** Transforme suas **mudas de ideias** (notas rápidas) em algo mais estruturado e permanente. É o momento de **nutrir** e dar forma ao seu conhecimento.
 *   **Como:**
-    1.  Revise suas notas de `10 - Fleeting & Daily`.
+    1.  Revise suas notas de `10 - Diário`.
     2.  Expanda as ideias, adicione contexto, conecte com outros conceitos.
-    3.  Mova a nota para `00 - Inbox` para processamento posterior.
-    4.  Quando a nota estiver mais elaborada e pronta para ser integrada, mova-a para a pasta apropriada (ex: `20 - Projects`, `30 - Areas`, `40 - Resources`). Pense nisso como **transplantar** a muda para um vaso maior.
+    3.  Mova a nota para `00 - Entrada` para processamento posterior.
+    4.  Quando a nota estiver mais elaborada e pronta para ser integrada, mova-a para a pasta apropriada (ex: `20 - Projetos`, `30 - Áreas`, `40 - Recursos`). Pense nisso como **transplantar** a muda para um vaso maior.
 *   **Exemplo Prático:**
     *   **De:** `Lembrete: Pesquisar sobre o método PARA para organizar projetos.`
-    *   **Para:** Uma nova nota em `00 - Inbox` com o título `Pesquisa sobre Método PARA.md` contendo:
+    *   **Para:** Uma nova nota em `00 - Entrada` com o título `Pesquisa sobre Método PARA.md` contendo:
         ```markdown
         # Pesquisa sobre Método PARA
 
@@ -57,7 +57,7 @@ Bem-vindo(a) ao seu novo cofre de conhecimento! Esta nota é o seu ponto de part
         ```
 
 ### 3. Integrando ao Canteiro Principal (Organização - Permanent Notes / MOCs)
-*   **Onde:** `20 - Projects`, `30 - Areas`, `40 - Resources`, `50 - Archives`
+*   **Onde:** `20 - Projetos`, `30 - Áreas`, `40 - Recursos`, `50 - Arquivo`
 *   **O quê:** Integre suas **plantas maduras** (notas permanentes) ao seu **canteiro principal de conhecimento**. É a **colheita** do seu esforço, onde tudo se conecta.
 *   **Como:**
     1.  Crie links entre suas notas, como `[[O que é o método PARA]]` – tecendo as raízes do seu jardim.

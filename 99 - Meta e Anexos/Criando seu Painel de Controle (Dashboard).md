@@ -75,14 +75,14 @@ Para muitos, o verdadeiro dashboard é o **Hoje**. Se você usa o Obsidian para 
 *   **Vantagens:** O dashboard "reseta" todo dia, evitando acúmulo de tralha. Foco total na execução.
 *   **Como fazer:**
     1.  Ative o plugin core **Daily Notes**.
-    2.  Configure o template para usar o `90 - Templates/Template - Nova Nota Diaria`.
+    2.  Configure o template para usar o `90 - Modelos/Template - Nova Nota Diaria`.
     3.  Ative a opção "Open daily note on startup" nas configurações do plugin.
 *   **Dica:** Seu template diário pode incluir links para seu MOC de Projetos ou Inbox, agindo como um mini-dashboard transiente.
 
 ## Elementos Sugeridos para seu Dashboard
 
 *   **Barra de Navegação:** Links para `Inbox`, `Projetos`, `Áreas`, `Recursos`.
-*   **Caixa de Entrada:** Um link direto para a pasta `00 - Inbox/` ou uma nota manual de processamento.
+*   **Caixa de Entrada:** Um link direto para a pasta `00 - Entrada/` ou uma nota manual de processamento.
 *   **Foco Atual:** Uma lista simples (pode ser manual) das 3 prioridades da semana.
 *   **Jardim Recente:** Uma query do Dataview listando as últimas notas modificadas.
 

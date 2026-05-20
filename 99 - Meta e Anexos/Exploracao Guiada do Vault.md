@@ -35,7 +35,7 @@ ajuda a uma IA sem perder controle".
    importam mais que pastas perfeitas.
 5. Passe por [[Entendendo a Estrutura de Pastas]] e identifique onde uma nota
    nova entraria hoje.
-6. Leia [[Seus Primeiros Passos]] e crie uma nota simples em `00 - Inbox`.
+6. Leia [[Seus Primeiros Passos]] e crie uma nota simples em `00 - Entrada`.
 7. Abra [[MOC Vault Seed]] para ver o proprio template como mapa navegavel.
 8. Abra [[Convenções e Boas Práticas]] antes de criar muitas tags novas.
 9. Leia [[O que sao system prompts de IA]] se for usar assistentes de IA no
@@ -43,7 +43,7 @@ ajuda a uma IA sem perder controle".
 
 ## Primeira nota recomendada
 
-Crie uma nota em `00 - Inbox` chamada `Minha primeira nota.md`:
+Crie uma nota em `00 - Entrada` chamada `Minha primeira nota.md`:
 
 ```markdown
 # Minha primeira nota
@@ -61,15 +61,15 @@ cultivar aqui.
 - [[Seus Primeiros Passos]]
 ```
 
-Depois de alguns dias, mova essa nota para `20 - Projects`, `30 - Areas` ou
-`40 - Resources`, conforme ela amadurecer.
+Depois de alguns dias, mova essa nota para `20 - Projetos`, `30 - Áreas` ou
+`40 - Recursos`, conforme ela amadurecer.
 
 ## Como saber se estou fazendo certo?
 
 Voce esta no caminho certo quando:
 
 - consegue capturar uma ideia sem decidir a organizacao perfeita na hora;
-- revisa o `00 - Inbox` com alguma frequencia;
+- revisa o `00 - Entrada` com alguma frequencia;
 - usa links para conectar notas relacionadas;
 - cria MOCs quando um assunto comeca a ter muitas notas;
 - usa IA como apoio, mantendo revisao humana sobre mudancas importantes.

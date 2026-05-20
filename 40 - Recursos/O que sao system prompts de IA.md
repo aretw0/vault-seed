@@ -68,7 +68,7 @@ Use a opcao que o plugin suportar:
 - Se houver campo para contexto, instrucoes ou system prompt, cole o conteudo de
   `AGENTS.md`.
 - Se o plugin aceitar prompts reutilizaveis, crie uma nota baseada em
-  `90 - Templates/Template - Prompt.md` e registre qual trecho de `AGENTS.md`
+  `90 - Modelos/Template - Prompt.md` e registre qual trecho de `AGENTS.md`
   foi usado.
 
 Evite copiar o prompt para muitos lugares sem registrar onde ele foi colado.
