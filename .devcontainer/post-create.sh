@@ -47,6 +47,8 @@ for dir in \
   /home/vscode/.cache \
   /home/vscode/.npm-global \
   /home/vscode/.npm-global/bin \
+  /home/vscode/.claude \
+  /home/vscode/.codex \
   /home/vscode/.pi; do
   repair_owned_dir "$dir"
 done
