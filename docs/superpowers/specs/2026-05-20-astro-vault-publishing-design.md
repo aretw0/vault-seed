@@ -6,9 +6,9 @@
 
 **Architecture:** Astro 6 com `srcDir: '.site'` lê diretamente das pastas do vault via Content Layer (glob loader). Plugins remark para wikilinks, image embeds e callouts são extraídos para `@dgk/astro-plugins` (novo pacote no monorepo). O gating público/privado usa o campo `status: published` já presente nos frontmatters do vault. Starlight (tema oficial do Astro) fornece navegação, busca e dark mode sem configuração extra.
 
-**Tech Stack:** Astro 6, `@astrojs/starlight`, `@dgk/astro-plugins` (remark puro), pnpm workspaces, GitHub Actions, Pagefind (busca, bundled com Starlight)
+**Tech Stack:** Astro 6.3+, `@astrojs/starlight`, `@dgk/astro-plugins` (remark puro), pnpm workspaces, GitHub Actions, Pagefind (busca, bundled com Starlight)
 
-**Nota de versão:** O `astro-vault` (referência de código) usa Astro 6.17. Na implementação, migrar para Astro 6 — verificar breaking changes em `https://docs.astro.build/en/guides/upgrade-to/v6/` antes de adaptar os plugins e o Content Layer.
+**Nota de versão:** O `astro-vault` (referência de código) usa Astro 5.17. Na implementação, instalar a versão mais recente do Astro 6.x (`pnpm add astro@^6`) — atualmente 6.3+. Verificar breaking changes em `https://docs.astro.build/en/guides/upgrade-to/v6/` antes de adaptar os plugins e o Content Layer. Dependabot mantém a versão atualizada dentro do range `^6`.
 
 ---
 
