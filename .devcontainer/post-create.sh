@@ -68,6 +68,10 @@ pnpm add -g @earendil-works/pi-coding-agent \
 sudo cp .devcontainer/vault /usr/local/bin/vault
 sudo chmod +x /usr/local/bin/vault
 
+# mdt_cli — gerenciador de templates de diagramas Mermaid
+cargo install mdt_cli --locked --version 0.7.0 \
+  || echo "[aviso] mdt_cli install falhou. Execute: cargo install mdt_cli --locked --version 0.7.0"
+
 # Readiness gate — confirma que todas as ferramentas estão disponíveis
 echo ""
 echo "=== Ambiente pronto ==="
