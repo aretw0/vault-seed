@@ -26,21 +26,20 @@ A ideia é começar com poucas pastas de alto nível, numeradas para manter a or
 
 ## Estrutura Base
 
+<!-- {=para-structure} -->
+```mermaid
+graph LR
+    Vault(["🌱 Vault"])
+    Vault --> E["00 - Entrada\nCaptura rápida"]
+    Vault --> D["10 - Diário\nNotas do dia"]
+    Vault --> P["20 - Projetos\nMetas com prazo"]
+    Vault --> A["30 - Áreas\nResponsabilidades"]
+    Vault --> R["40 - Recursos\nBase de conhecimento"]
+    Vault --> Arq["50 - Arquivo\nHistórico inativo"]
+    Vault --> M["90 - Modelos\nTemplates"]
+    Vault --> Meta["99 - Meta e Anexos\nConfiguração e guias"]
 ```
-├── .github/workflows/      # Pasta para automações com GitHub Actions
-│   └── ci.yml              # Um workflow inicial
-├── 00 - Entrada/             # Captura rápida, notas não processadas
-├── 10 - Diário/  # Notas diárias, ideias rápidas, journaling
-├── 20 - Projetos/          # Esforços com começo e fim definidos
-├── 30 - Áreas/             # Áreas de responsabilidade contínua
-├── 40 - Recursos/         # Base de conhecimento, tópicos de interesse
-├── 50 - Arquivo/          # Projetos concluídos, Recursos inativos
-├── 90 - Modelos/         # Modelos para notas
-├── 99 - Meta e Anexos/ # Notas sobre o vault, anexos, etc.
-│   └── Attachments/        
-│   └── Manual do Vault.md
-│   └── Guia do Mochileiro do Vault.md
-```
+<!-- {/para-structure} -->
 
 ## Explicação dos Componentes
 

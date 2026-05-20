@@ -22,6 +22,7 @@ related:
 
 Para uma representação visual da estrutura de pastas e das conexões entre as notas, você pode visualizar o mapa mental do vault.
 
+<!-- {=vault-flow} -->
 ```mermaid
 flowchart TD
     %% --- Título do Diagrama e Configuração Global ---
@@ -50,11 +51,11 @@ flowchart TD
         P1 -- "[[Wikilinks]]" --> P2 -- "Cria" --> P3
     end
 
-    %% --- Inbox: Ponto de Entrada ---
+    %% --- Entrada: Ponto de Captura ---
     subgraph "🗂️ 00 - Entrada"
         direction TB
-        InboxDir(Inbox):::inbox
-        ProcessNote[/"Processar Nota na Inbox"/]:::action
+        InboxDir(Entrada):::inbox
+        ProcessNote[/"Processar Nota na Entrada"/]:::action
         InboxDir --> ProcessNote
     end
 
@@ -73,7 +74,6 @@ flowchart TD
     %% --- Ligando Fluxos ao Processo ---
     MainDecision -.-> KW1 & KW2 & KW3 & KW4;
 
-
     %% --- Ramificações de Pastas (Método PARA) ---
     MainDecision -- "É sensível ao tempo?" --> DailyDir;
     MainDecision -- "Tem objetivo e prazo definidos?" --> ProjectsDir;
@@ -81,38 +81,38 @@ flowchart TD
     MainDecision -- "É um conceito aprendido ou recurso?" --> KnowledgeDir;
     MainDecision -- "É de um projeto concluído/inativo?" --> ArchivesDir;
 
-    subgraph "📅 10 - Notas Rápidas e Diárias"
-        DailyDir(Fleeting & Daily):::inbox
+    subgraph "📅 10 - Diário"
+        DailyDir(Diário):::inbox
         Note_Daily["Ex: Nota Diária de Hoje.md"]
         DailyDir --> Note_Daily
     end
 
     subgraph "🚀 20 - Projetos"
-        ProjectsDir(Projects):::projects
+        ProjectsDir(Projetos):::projects
         Project_A["Ex: Planejar Viagem de Férias"]
         ProjectsDir --> Project_A
     end
 
     subgraph "🌳 30 - Áreas"
-        AreasDir(Areas):::areas
+        AreasDir(Áreas):::areas
         Area_A["Ex: Saúde e Bem-Estar"]
         AreasDir --> Area_A
     end
 
-    subgraph "📚 40 - Recursos (Base de Conhecimento)"
-        KnowledgeDir(Resources):::knowledge
-        Concept_A["Ex: [[O que é o método PARA]]"]
+    subgraph "📚 40 - Recursos"
+        KnowledgeDir(Recursos):::knowledge
+        Concept_A["Ex: O que é o método PARA"]
         KnowledgeDir --> Concept_A
     end
 
-    subgraph "🗄️ 50 - Arquivos"
-        ArchivesDir(Archives):::archives
+    subgraph "🗄️ 50 - Arquivo"
+        ArchivesDir(Arquivo):::archives
         CompletedProject["Ex: Projeto Viagem 2024"]
         ArchivesDir --> CompletedProject
     end
 
-    %% --- Meta, Templates e o Guia ---
-    subgraph "⚙️ 90 & 99 - Meta, Templates & Anexos"
+    %% --- Meta, Modelos e Anexos ---
+    subgraph "⚙️ 90 & 99 - Modelos, Meta e Anexos"
         direction LR
         TemplatesDir("90 - Modelos"):::meta
         MetaDir("99 - Meta e Anexos"):::meta
@@ -129,6 +129,7 @@ flowchart TD
     Area_A -- "Referencia" --> Concept_A
     P2 -.-> Concept_A & Note_Daily & Project_A
 ```
+<!-- {/vault-flow} -->
 
 ---
 Voltar para o [[Guia do Jardineiro Digital]]
