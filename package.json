@@ -24,7 +24,9 @@
     "site:check": "node scripts/smoke_site.js",
     "diagrams:update": "mdt update",
     "diagrams:check": "mdt check",
-    "validate": "pnpm run actions:pins && pnpm run lint && pnpm run test && pnpm run validate:onboarding && pnpm run smoke:template",
+    "release:package:smoke": "node scripts/release_package_smoke.mjs",
+    "release:package:smoke:json": "node scripts/release_package_smoke.mjs --json",
+    "validate": "pnpm run actions:pins && pnpm run lint && pnpm run test && pnpm run validate:onboarding && pnpm run smoke:template && pnpm run release:package:smoke",
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish"
