@@ -15,9 +15,9 @@ related:
 ---
 # Templater
 
-Templater e um plugin da comunidade do Obsidian que cria notas a partir de
-modelos mais poderosos que o plugin core Templates. Ele e util quando um modelo
-precisa inserir datas, caminhos ou pequenos trechos dinamicos.
+Templater é um plugin da comunidade do Obsidian que cria notas a partir de
+modelos mais poderosos que o plugin core Templates. Ele é útil quando um modelo
+precisa inserir datas, caminhos ou pequenos trechos dinâmicos.
 
-Voce nao precisa dele para comecar, mas alguns templates avancados deste vault
-ficam melhores quando o plugin esta instalado.
+Você não precisa dele para começar, mas alguns templates avançados deste vault
+ficam melhores quando o plugin está instalado.

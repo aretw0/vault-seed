@@ -15,8 +15,8 @@ related:
 ---
 # Obsidian
 
-Obsidian e um aplicativo para trabalhar com notas Markdown locais. Ele valoriza
-links entre notas, visualizacao em grafo e extensoes por plugins.
+Obsidian é um aplicativo para trabalhar com notas Markdown locais. Ele valoriza
+links entre notas, visualização em grafo e extensões por plugins.
 
-Neste vault, ele e a experiencia principal para leitura, escrita e exploracao
+Neste vault, ele é a experiência principal para leitura, escrita e exploração
 visual do conhecimento.

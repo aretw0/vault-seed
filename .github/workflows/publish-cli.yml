@@ -25,6 +25,8 @@ jobs:
 
       - name: Setup
         uses: ./.github/actions/setup
+        with:
+          cache-mode: "off"
 
       - name: Publish
         run: pnpm changeset publish

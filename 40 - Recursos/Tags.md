@@ -15,8 +15,8 @@ related:
 ---
 # Tags
 
-Tags ajudam a classificar notas por contexto, status ou tipo. Elas sao uteis
-para filtros e buscas, mas nao substituem links entre ideias.
+Tags ajudam a classificar notas por contexto, status ou tipo. Elas são úteis
+para filtros e buscas, mas não substituem links entre ideias.
 
 Prefira poucas tags claras, como:
 

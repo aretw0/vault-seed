@@ -23,7 +23,7 @@ related:
 
 # MOC Vault Seed
 
-Este mapa mostra o proprio vault-seed como exemplo de organizacao. Use-o para entender quais notas explicam o template, quais conceitos orbitam o vault e como Bases ou Dataview podem transformar propriedades em navegacao.
+Este mapa mostra o próprio vault-seed como exemplo de organização. Use-o para entender quais notas explicam o template, quais conceitos orbitam o vault e como Bases ou Dataview podem transformar propriedades em navegação.
 
 ## Comece Por Aqui
 
@@ -43,7 +43,7 @@ Este mapa mostra o proprio vault-seed como exemplo de organizacao. Use-o para en
 - [[Tags]]
 - [[Daily Note]]
 
-## Operacao e Ferramentas
+## Operação e Ferramentas
 
 - [[Obsidian]]
 - [[VS Code]]
@@ -54,9 +54,9 @@ Este mapa mostra o proprio vault-seed como exemplo de organizacao. Use-o para en
 
 ## Base Nativa
 
-Abra [[Vault Seed Kitchen Sink.base]] para ver uma Base nativa com guias e conceitos do template. Ela usa propriedades do frontmatter como `status`, `category` e `audience`, alem de propriedades de arquivo como `file.mtime`.
+Abra [[Vault Seed Kitchen Sink.base]] para ver uma Base nativa com guias e conceitos do template. Ela usa propriedades do frontmatter como `status`, `category` e `audience`, além de propriedades de arquivo como `file.mtime`.
 
-Voce tambem pode embutir uma Base em uma nota:
+Você também pode embutir uma Base em uma nota:
 
 ```base
 filters:
@@ -84,7 +84,7 @@ WHERE status = "published"
 SORT file.name ASC
 ```
 
-Use Bases quando quiser uma interface visual e nativa. Use Dataview quando precisar de consultas mais expressivas, especialmente em dashboards ou revisoes periodicas.
+Use Bases quando quiser uma interface visual e nativa. Use Dataview quando precisar de consultas mais expressivas, especialmente em dashboards ou revisões periódicas.
 
 ---
 

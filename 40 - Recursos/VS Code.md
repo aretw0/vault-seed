@@ -16,8 +16,8 @@ related:
 ---
 # VS Code
 
-VS Code e um editor de codigo que tambem funciona bem para editar Markdown,
-revisar historico Git e trabalhar com extensoes como Foam.
+VS Code é um editor de código que também funciona bem para editar Markdown,
+revisar histórico Git e trabalhar com extensões como Foam.
 
-Neste vault, ele e a opcao mais tecnica para quem quer combinar notas,
-automacao, scripts e controle de versao no mesmo ambiente.
+Neste vault, ele é a opção mais técnica para quem quer combinar notas,
+automação, scripts e controle de versão no mesmo ambiente.

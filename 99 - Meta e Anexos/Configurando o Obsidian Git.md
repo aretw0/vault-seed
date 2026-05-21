@@ -20,19 +20,19 @@ related:
 ---
 # Configurando o Obsidian Git
 
-Obsidian Git e o plugin que permite sincronizar o vault com Git sem sair do
+Obsidian Git é o plugin que permite sincronizar o vault com Git sem sair do
 Obsidian. Ele pode fazer pull, commit e push usando comandos dentro do app.
 
-Use este guia depois que o repositorio ja estiver clonado no dispositivo.
+Use este guia depois que o repositório já estiver clonado no dispositivo.
 
 ## Antes de instalar
 
 Confirme que:
 
-- o vault ja esta em uma pasta clonada com Git;
-- voce consegue abrir o vault no Obsidian;
-- o repositorio remoto esta no GitHub, GitLab, Gitea ou Forgejo;
-- voce sabe como autenticar: GitHub Desktop, Git Credential Manager, SSH ou PAT.
+- o vault já está em uma pasta clonada com Git;
+- você consegue abrir o vault no Obsidian;
+- o repositório remoto está no GitHub, GitLab, Gitea ou Forgejo;
+- você sabe como autenticar: GitHub Desktop, Git Credential Manager, SSH ou PAT.
 
 No Android, clone primeiro pelo Termux seguindo
 [[Preparando seu Computador para o Vault#Android com Termux]].
@@ -40,29 +40,29 @@ No Android, clone primeiro pelo Termux seguindo
 ## Instalar o plugin
 
 1. Abra o Obsidian.
-2. Va em **Settings > Community plugins**.
+2. Vá em **Settings > Community plugins**.
 3. Desative **Restricted mode**, se ainda estiver ativo.
 4. Clique em **Browse**.
 5. Procure **Obsidian Git**.
 6. Instale e ative o plugin.
 
-## Configuracao inicial segura
+## Configuração inicial segura
 
-Comece com sincronizacao manual. Isso reduz risco de conflitos enquanto voce
+Comece com sincronização manual. Isso reduz risco de conflitos enquanto você
 aprende o fluxo.
 
-Configuracoes recomendadas para o primeiro dia:
+Configurações recomendadas para o primeiro dia:
 
 - **Pull on startup:** ativado.
 - **Auto pull interval:** desativado ou com intervalo conservador.
-- **Commit-and-sync interval:** desativado no inicio.
+- **Commit-and-sync interval:** desativado no início.
 - **Commit message:** `vault backup: {{date}}`.
 - **Commit author:** use seu nome e email do Git, se o plugin pedir.
 
-Depois que o fluxo estiver estavel, voce pode ativar commit-and-sync automatico
+Depois que o fluxo estiver estável, você pode ativar commit-and-sync automático
 com intervalo maior, como 10 ou 15 minutos.
 
-## Rotina diaria
+## Rotina diária
 
 Ao abrir o vault:
 
@@ -76,58 +76,58 @@ Essa rotina faz:
 pull -> commit -> push
 ```
 
-Ou seja: baixa mudancas novas, registra suas mudancas e envia para o remoto.
+Ou seja: baixa mudanças novas, registra suas mudanças e envia para o remoto.
 
-## Comandos que voce precisa conhecer
+## Comandos que você precisa conhecer
 
-- `Obsidian Git: Pull`: baixa alteracoes do remoto.
+- `Obsidian Git: Pull`: baixa alterações do remoto.
 - `Obsidian Git: Push`: envia commits locais para o remoto.
 - `Obsidian Git: Commit all changes`: cria um commit com tudo que mudou.
 - `Obsidian Git: Commit-and-sync`: faz commit e sincroniza.
-- `Obsidian Git: Open source control view`: abre a visao de arquivos alterados,
-  se disponivel na sua versao do plugin.
+- `Obsidian Git: Open source control view`: abre a visão de arquivos alterados,
+  se disponível na sua versão do plugin.
 
-## Autenticacao
+## Autenticação
 
-Se o plugin pedir usuario e senha, lembre-se: GitHub nao aceita mais a senha da
+Se o plugin pedir usuário e senha, lembre-se: GitHub não aceita mais a senha da
 conta para Git via HTTPS.
 
-Use uma destas opcoes:
+Use uma destas opções:
 
 - Git Credential Manager no desktop.
 - Personal Access Token (PAT) no lugar da senha.
-- SSH, se voce ja usa chaves SSH.
+- SSH, se você já usa chaves SSH.
 
 Para criar PAT no GitHub:
 <https://docs.github.com/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token>
 
-Prefira token fine-grained limitado ao repositorio do vault, com permissao de
+Prefira token fine-grained limitado ao repositório do vault, com permissão de
 leitura e escrita em Contents.
 
 ## Evitando conflitos
 
 Regras simples:
 
-- Nao edite a mesma nota em dois dispositivos ao mesmo tempo.
-- Sempre faca pull ao abrir o vault.
-- Sempre faca commit-and-sync antes de trocar de dispositivo.
-- Se aparecer conflito, pare de escrever ate resolver.
+- Não edite a mesma nota em dois dispositivos ao mesmo tempo.
+- Sempre faça pull ao abrir o vault.
+- Sempre faça commit-and-sync antes de trocar de dispositivo.
+- Se aparecer conflito, pare de escrever até resolver.
 
-Para resolver conflitos, geralmente e mais facil usar VS Code ou GitHub Desktop
+Para resolver conflitos, geralmente é mais fácil usar VS Code ou GitHub Desktop
 no computador. No celular, evite resolver conflito grande.
 
-## Quando nao usar Obsidian Git
+## Quando não usar Obsidian Git
 
 Use GitHub Desktop em vez de Obsidian Git quando:
 
-- voce ainda nao entende commits;
-- precisa revisar muitas mudancas antes de enviar;
+- você ainda não entende commits;
+- precisa revisar muitas mudanças antes de enviar;
 - apareceu conflito;
-- voce vai renomear ou mover muitas notas de uma vez;
-- esta fazendo manutencao tecnica no template.
+- você vai renomear ou mover muitas notas de uma vez;
+- está fazendo manutenção técnica no template.
 
-Obsidian Git e excelente para rotina diaria de notas. Para mudancas grandes, uma
-interface dedicada de Git da mais controle.
+Obsidian Git é excelente para rotina diária de notas. Para mudanças grandes, uma
+interface dedicada de Git dá mais controle.
 
 ---
 Voltar para o [[Guia do Jardineiro Digital]]

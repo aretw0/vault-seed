@@ -1,8 +1,8 @@
 ---
-title: Exploracao Guiada do Vault
+title: Exploração Guiada do Vault
 aliases:
   - Checklist de Onboarding
-  - Roteiro de Exploracao
+  - Roteiro de Exploração
 tags:
   - meta/guia
   - meta/onboarding
@@ -20,23 +20,23 @@ related:
   - "[[Depois da Recepcao do Template]]"
   - "[[MOC Vault Seed]]"
 ---
-# Exploracao Guiada do Vault
+# Exploração Guiada do Vault
 
-Use esta nota como um roteiro de primeira visita. A ideia e sair de "abri uma
+Use esta nota como um roteiro de primeira visita. A ideia é sair de "abri uma
 pasta cheia de Markdown" para "sei onde capturar, organizar, revisar e pedir
 ajuda a uma IA sem perder controle".
 
 ## Roteiro de 30 minutos
 
-1. Abra [[Guia do Jardineiro Digital]] para entender a visao geral.
-2. Se ainda nao configurou o computador, siga [[Preparando seu Computador para o Vault]].
+1. Abra [[Guia do Jardineiro Digital]] para entender a visão geral.
+2. Se ainda não configurou o computador, siga [[Preparando seu Computador para o Vault]].
 3. Se este vault veio do GitHub template, abra [[Depois da Recepcao do Template]].
 4. Leia [[Filosofia e Conceitos Fundamentais]] para entender por que links
    importam mais que pastas perfeitas.
 5. Passe por [[Entendendo a Estrutura de Pastas]] e identifique onde uma nota
    nova entraria hoje.
 6. Leia [[Seus Primeiros Passos]] e crie uma nota simples em `00 - Entrada`.
-7. Abra [[MOC Vault Seed]] para ver o proprio template como mapa navegavel.
+7. Abra [[MOC Vault Seed]] para ver o próprio template como mapa navegável.
 8. Abra [[Convenções e Boas Práticas]] antes de criar muitas tags novas.
 9. Leia [[O que sao system prompts de IA]] se for usar assistentes de IA no
    Obsidian, VS Code ou terminal.
@@ -55,7 +55,7 @@ cultivar aqui.
 
 - 
 
-## Proximas conexoes
+## Próximas conexões
 
 - [[Guia do Jardineiro Digital]]
 - [[Seus Primeiros Passos]]
@@ -66,22 +66,22 @@ Depois de alguns dias, mova essa nota para `20 - Projetos`, `30 - Áreas` ou
 
 ## Como saber se estou fazendo certo?
 
-Voce esta no caminho certo quando:
+Você está no caminho certo quando:
 
-- consegue capturar uma ideia sem decidir a organizacao perfeita na hora;
-- revisa o `00 - Entrada` com alguma frequencia;
+- consegue capturar uma ideia sem decidir a organização perfeita na hora;
+- revisa o `00 - Entrada` com alguma frequência;
 - usa links para conectar notas relacionadas;
-- cria MOCs quando um assunto comeca a ter muitas notas;
-- usa IA como apoio, mantendo revisao humana sobre mudancas importantes.
+- cria MOCs quando um assunto começa a ter muitas notas;
+- usa IA como apoio, mantendo revisão humana sobre mudanças importantes.
 
 ## Quando pedir ajuda para uma IA
 
 Use `AGENTS.md` como contexto para qualquer assistente. Bons pedidos iniciais:
 
 - "Revise esta nota e sugira links internos que combinam com ela."
-- "Transforme estes bullets em uma nota conceitual seguindo as convencoes do
+- "Transforme estes bullets em uma nota conceitual seguindo as convenções do
   vault."
 - "Sugira em qual pasta PARA esta nota deveria entrar e explique o motivo."
 
 Evite pedir para a IA reorganizar muitas notas de uma vez. Comece com uma nota,
-revise o resultado e so depois amplie o escopo.
+revise o resultado e só depois amplie o escopo.

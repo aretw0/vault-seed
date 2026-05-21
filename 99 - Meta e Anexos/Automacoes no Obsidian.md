@@ -1,5 +1,5 @@
 ---
-title: Automacoes no Obsidian
+title: Automações no Obsidian
 aliases:
   - Botões no Obsidian
   - Shell Commands Obsidian
@@ -15,7 +15,7 @@ related:
   - "[[Preparando seu Computador para o Vault]]"
   - "[[Usando com Agentes de IA]]"
 ---
-# Automacoes no Obsidian
+# Automações no Obsidian
 
 Configure botões na interface do Obsidian para rodar automações do vault
 sem precisar abrir o terminal.
