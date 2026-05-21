@@ -68,6 +68,11 @@ async function renderMermaid() {
     const wrap = pre.closest('figure') ?? pre;
     try {
       const { svg } = await mermaid.render('mmd' + Math.random().toString(36).slice(2), pre.textContent.trim());
+      // Mermaid may return an error SVG instead of throwing; detect and skip.
+      if (svg.includes('Syntax error') || svg.includes('error in text')) {
+        console.warn('[mermaid] syntax error in diagram — leaving code block intact');
+        continue;
+      }
       const div = document.createElement('div');
       div.className = 'mermaid-diagram';
       div.innerHTML = svg;

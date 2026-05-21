@@ -1,4 +1,4 @@
----
+﻿---
 title: Visualização do Fluxo do Vault
 aliases:
   - Fluxo do Vault
@@ -48,7 +48,7 @@ flowchart TD
         P1(Notas Atômicas):::principle
         P2(Criação de Links):::principle
         P3(Teia de Conhecimento):::principle
-        P1 -- "[[Wikilinks]]" --> P2 -- "Cria" --> P3
+        P1 -- "wikilinks" --> P2 -- "Cria" --> P3
     end
 
     %% --- Entrada: Ponto de Captura ---
