@@ -20,7 +20,7 @@ export async function collectPublishedSlugs(): Promise<Set<string>> {
     const raw = readFileSync(join(process.cwd(), file), 'utf-8');
     const { data } = matter(raw);
     if (data.status === 'published') {
-      slugs.add(slugify(file.replace(/\.md$/, '')));
+      slugs.add(slugify(file.replace(/\\/g, '/').replace(/\.md$/, '')));
     }
   }
 

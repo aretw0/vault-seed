@@ -6,7 +6,8 @@
 //   - empty content pages (schema/rendering failures)
 //   - placeholder URLs left in HTML (ASTRO_BASE not configured)
 //   - broken internal anchor links
-//   - empty sidebar (autogenerate failed to match entry IDs to directories)
+//   - empty sidebar or empty sidebar groups (autogenerate failed, dynamic filter broken)
+//   - missing mermaid CDN script (head[] injection lost)
 //   - missing or empty Pagefind index (search broken)
 
 const fs = require("node:fs");
@@ -193,12 +194,30 @@ if (fs.existsSync(mocHtmlPath)) {
   const mocHtml = fs.readFileSync(mocHtmlPath, "utf8");
   const sidebarStart = mocHtml.indexOf('id="starlight__sidebar"');
   if (sidebarStart !== -1) {
-    const sidebarChunk = mocHtml.substring(sidebarStart, sidebarStart + 20000);
+    const sidebarEnd = mocHtml.indexOf("</nav>", sidebarStart);
+    const sidebarChunk = mocHtml.substring(sidebarStart, sidebarEnd);
+
+    // 6a. Known-populated sections must have at least one nav link.
     for (const section of SIDEBAR_SECTIONS) {
       const pattern = new RegExp(`href="[^"]*/${section}/[^"]*"`);
       requireCondition(
         pattern.test(sidebarChunk),
-        `Sidebar has no links for section '${section}' — autogenerate may have failed. Check filePath format in vault loader.`,
+        `Sidebar has no links for section '${section}' — autogenerate may have failed. ` +
+          `Common cause: backslash paths in collectPublishedSlugs on Windows, or filePath ` +
+          `format mismatch in vault loader.`,
+      );
+    }
+
+    // 6b. No sidebar group (<details>) may be completely empty.
+    // An empty group means the dynamic filter is producing sections that have
+    // no matching entries — the section should have been excluded instead.
+    const detailsChunks = [...sidebarChunk.matchAll(/<details[^>]*>([\s\S]*?)<\/details>/g)];
+    for (const [full, inner] of detailsChunks) {
+      const hasLink = /<a [^>]*href/.test(inner);
+      requireCondition(
+        hasLink,
+        `Sidebar contains an empty group (no nav links inside a <details> block). ` +
+          `The sidebar filter in astro.config.mjs may be including sections with no published notes.`,
       );
     }
   } else {
@@ -206,6 +225,13 @@ if (fs.existsSync(mocHtmlPath)) {
       "meta-e-anexos/moc-vault-seed/index.html: starlight__sidebar element not found.",
     );
   }
+
+  // 6c. Mermaid client-side script must be present in the head.
+  // Catches regressions in the astro.config.mjs head[] injection.
+  requireCondition(
+    mocHtml.includes("mermaid.esm.min.mjs"),
+    "Mermaid CDN script not found in page head — check head[] config in astro.config.mjs.",
+  );
 }
 
 // ── 8. pagefind index ────────────────────────────────────────────────────────
