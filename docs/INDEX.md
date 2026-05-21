@@ -15,6 +15,7 @@ Para preparar um computador de usuario final, use
 - [Compatibilidade de ambiente e setup](compatibilidade-de-ambiente-e-setup.md)
 - [Guia de lint](guia-de-lint.md)
 - [Estrategia de plugins do Obsidian](estrategia-plugins-obsidian.md)
+- [Mermaid no template](mermaid-no-template.md)
 
 ## Git e GitHub
 

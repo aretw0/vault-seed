@@ -1,4 +1,4 @@
-# Publicação do Vault com Astro + Starlight — Implementation Plan
+﻿# Publicação do Vault com Astro + Starlight — Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -1214,7 +1214,7 @@ Expected: todos os arquivos listados sem erro.
 python3 -c "
 import yaml
 for f in ['.github/workflows/deploy-site.yml', '.github/workflows/publish-cli.yml']:
-    yaml.safe_load(open(f))
+.safe_load(open(f))
     print(f'OK: {f}')
 "
 ```

@@ -1,4 +1,4 @@
-# mdt — Diagramas Mermaid Gerenciados por Template — Implementation Plan
+﻿# mdt — Diagramas Mermaid Gerenciados por Template — Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -870,7 +870,7 @@ files = [
   '.github/workflows/template-ci.yml',
 ]
 for f in files:
-    yaml.safe_load(open(f))
+.safe_load(open(f))
     print(f'OK: {f}')
 "
 # Expected:
