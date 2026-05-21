@@ -1,4 +1,4 @@
----
+﻿---
 title: Dataview
 aliases:
   - Plugin Dataview
@@ -34,7 +34,7 @@ A sintaxe mais comum é a DQL, escrita em blocos de código `dataview`. Uma cons
 
 Exemplo com duas pastas como fonte:
 
-```dataview
+```sql
 TABLE status AS "Status", category AS "Categoria", audience AS "Público"
 FROM "99 - Meta e Anexos" or "40 - Recursos"
 WHERE status = "published"
@@ -43,7 +43,7 @@ SORT file.name ASC
 
 Exemplo de lista por tag:
 
-```dataview
+```sql
 LIST
 FROM #obsidian/dataview or #obsidian/bases
 SORT file.name ASC

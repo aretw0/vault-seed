@@ -1,4 +1,4 @@
----
+﻿---
 title: Plugins Essenciais e Recomendados
 aliases:
   - Plugins Obsidian
@@ -47,7 +47,7 @@ Isso significa que você precisará instalar os plugins da comunidade em cada di
 - **`Dataview`**: Para usuários avançados que precisam de consultas complexas que o plugin `Bases` não consegue realizar através da sua interface. Permite criar visões dinâmicas usando uma linguagem de consulta (DQL).
   - _Exemplo em um MOC (hoje, isso pode ser feito de forma mais simples com o plugin `Bases`):_
   ````markdown
-  ```dataview
+  ```sql
   LIST
   FROM #tipo/livro AND #status/lendo
   SORT file.ctime DESC

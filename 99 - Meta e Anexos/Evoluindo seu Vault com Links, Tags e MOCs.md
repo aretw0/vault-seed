@@ -1,4 +1,4 @@
----
+﻿---
 title: Evoluindo seu Vault com Links, Tags e MOCs
 aliases:
   - Links, Tags e MOCs
@@ -52,7 +52,7 @@ A estrutura inicial é só um ponto de partida. A verdadeira organização emerg
     - **Veja o kitchen sink:** Abra [[MOC Vault Seed]] e [[Vault Seed Kitchen Sink.base]] para ver o proprio template usando MOC manual, Base nativa e Dataview no mesmo contexto.
     - Exemplo de Bloco Dataview em uma nota de dashboard:
       ````markdown
-      ```dataview
+      ```sql
       TABLE status, deadline
       FROM "20 - Projetos"
       WHERE contains(file.tags, "#status/em-progresso")

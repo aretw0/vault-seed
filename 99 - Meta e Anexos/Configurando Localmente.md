@@ -8,7 +8,7 @@ tags:
   - meta/devenv
 status: published
 created: 2026-05-19
-updated: 2026-05-19
+updated: 2026-05-21
 category: guia
 audience: tecnico
 related:
@@ -102,6 +102,8 @@ sudo apt install python3
 
 ## 4. Rodar o script de setup
 
+### Git Bash, WSL ou Linux/macOS
+
 Com as três ferramentas instaladas, rode na raiz do repositório:
 
 ```bash
@@ -114,6 +116,32 @@ O script configura:
 - `git-filter-repo` via `uv` (ferramenta de manutenção do histórico)
 - Node.js via `fnm` + `pnpm` via Corepack
 - Dependências do projeto (`pnpm install`)
+
+### Windows (PowerShell nativo, sem Git Bash ou WSL)
+
+Se você está no PowerShell puro, execute os passos manualmente:
+
+```powershell
+# 1. Ativar a versão correta do Node.js
+fnm use --install-if-missing
+
+# 2. Ativar o pnpm via Corepack
+corepack enable
+corepack prepare --activate
+
+# 3. Instalar dependências
+pnpm install --frozen-lockfile
+
+# 4. Configurar o Git
+git config core.autocrlf false
+git config core.eol lf
+git config i18n.commitEncoding utf-8
+git config i18n.logOutputEncoding utf-8
+```
+
+> O `scripts/setup.sh` usa bash. No Windows sem Git Bash ou WSL, execute
+> os passos acima manualmente uma vez. Para instalar o Git Bash (recomendado),
+> use `winget install Git.Git` — ele inclui um terminal bash completo.
 
 ## 5. Verificar o ambiente
 

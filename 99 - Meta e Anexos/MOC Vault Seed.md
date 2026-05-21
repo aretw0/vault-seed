@@ -1,4 +1,4 @@
----
+﻿---
 title: MOC Vault Seed
 aliases:
   - Kitchen Sink do Vault Seed
@@ -58,7 +58,7 @@ Abra [[Vault Seed Kitchen Sink.base]] para ver uma Base nativa com guias e conce
 
 Você também pode embutir uma Base em uma nota:
 
-```base
+```yaml
 filters:
   and:
     - file.ext == "md"
@@ -77,7 +77,7 @@ views:
 
 Se o plugin Dataview estiver instalado, este bloco lista guias e recursos publicados:
 
-```dataview
+```sql
 TABLE status, category, audience, file.mtime AS "Atualizado"
 FROM "99 - Meta e Anexos" or "40 - Recursos"
 WHERE status = "published"

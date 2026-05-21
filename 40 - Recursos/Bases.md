@@ -1,4 +1,4 @@
----
+﻿---
 title: Bases
 aliases:
   - Obsidian Bases
@@ -32,7 +32,7 @@ Use Bases quando quiser filtrar, ordenar e agrupar notas com uma interface visua
 
 ## Exemplo
 
-```base
+```yaml
 filters:
   and:
     - file.ext == "md"

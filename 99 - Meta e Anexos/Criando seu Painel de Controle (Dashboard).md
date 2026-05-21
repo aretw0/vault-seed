@@ -1,4 +1,4 @@
----
+﻿---
 title: Criando seu Painel de Controle (Dashboard)
 aliases:
   - Dashboard
@@ -86,7 +86,7 @@ Para muitos, o verdadeiro dashboard é o **Hoje**. Se você usa o Obsidian para 
 *   **Foco Atual:** Uma lista simples (pode ser manual) das 3 prioridades da semana.
 *   **Jardim Recente:** Uma query do Dataview listando as últimas notas modificadas.
 
-```dataview
+```sql
 LIST 
 FROM "" 
 WHERE file.mtime >= date(today) - dur(3 days)
