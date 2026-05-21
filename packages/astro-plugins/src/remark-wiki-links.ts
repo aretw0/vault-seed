@@ -51,7 +51,8 @@ const remarkWikiLinks: Plugin<[Options], Root> = (options) => {
         if (resolvedSlug !== undefined) {
           const link: Link = {
             type: 'link',
-            url: `${base}/${resolvedSlug}`,
+            // Normalize base to avoid double-slash when base is '/' (the default).
+            url: `${base.replace(/\/$/, '')}/${resolvedSlug}`,
             children: [{ type: 'text', value: displayText }],
           };
           children.push(link);
