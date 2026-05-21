@@ -1,0 +1,33 @@
+const test = require("node:test");
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+
+function read(path) {
+  return fs.readFileSync(path, "utf8");
+}
+
+test("deploy-site workflow keeps GitHub Pages deploy gated by build and smoke", () => {
+  const workflow = read(".github/workflows/deploy-site.yml");
+  const packageJson = JSON.parse(read("package.json"));
+
+  assert.equal(packageJson.scripts["site:build"], "pnpm --filter @dgk/astro-plugins build && astro build");
+  assert.equal(packageJson.scripts["site:check"], "node scripts/smoke_site.js");
+  assert.match(workflow, /name: Deploy Site/);
+  assert.match(workflow, /push:\n\s+branches: \[main\]/);
+  assert.match(workflow, /workflow_dispatch:/);
+  assert.match(workflow, /permissions:\n\s+contents: read\n\s+pages: write\n\s+id-token: write/);
+  assert.match(workflow, /concurrency:\n\s+group: pages\n\s+cancel-in-progress: true/);
+  assert.match(workflow, /build:\n\s+name: Build Astro site\n\s+runs-on: ubuntu-latest\n\s+timeout-minutes: 15/);
+  assert.match(workflow, /run: pnpm --filter @dgk\/astro-plugins build/);
+  assert.match(workflow, /run: pnpm run site:build/);
+  assert.match(workflow, /ASTRO_SITE: https:\/\/\$\{\{ github\.repository_owner \}\}\.github\.io/);
+  assert.match(workflow, /ASTRO_BASE: \/\$\{\{ github\.event\.repository\.name \}\}/);
+  assert.match(workflow, /run: pnpm run site:check/);
+  assert.match(workflow, /uses: actions\/upload-pages-artifact@[0-9a-f]{40}/);
+  assert.match(workflow, /path: dist\//);
+  assert.match(workflow, /deploy:\n\s+name: Deploy to GitHub Pages\n\s+needs: build/);
+  assert.match(workflow, /environment:\n\s+name: github-pages\n\s+url: \$\{\{ steps\.deployment\.outputs\.page_url \}\}/);
+  assert.match(workflow, /uses: actions\/deploy-pages@[0-9a-f]{40}/);
+  assert.doesNotMatch(workflow, /pull_request_target:/);
+  assert.doesNotMatch(workflow, /NPM_TOKEN|NODE_AUTH_TOKEN|npm publish|changeset publish/);
+});
