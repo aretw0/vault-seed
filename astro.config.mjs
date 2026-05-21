@@ -4,6 +4,7 @@ import starlight from '@astrojs/starlight';
 import remarkDirective from 'remark-directive';
 import { remarkCallouts, remarkWikiImages, remarkWikiLinks } from '@dgk/astro-plugins';
 import { collectVaultEntries } from './.site/integrations/collect-published-slugs.js';
+import { copyVaultAttachments } from './.site/integrations/copy-vault-attachments.js';
 import { sidebarSections } from './.site/sidebar.config.js';
 
 const site = process.env.ASTRO_SITE;
@@ -91,6 +92,7 @@ export default defineConfig({
     ],
   },
   integrations: [
+    copyVaultAttachments(),
     starlight({
       title: vaultTitle,
       // 'root' locale with lang: 'pt-BR' is required for Starlight to use its
