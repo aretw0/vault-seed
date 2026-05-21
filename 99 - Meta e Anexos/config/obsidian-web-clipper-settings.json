@@ -42,7 +42,7 @@
     "name": "Default Interpreter",
     "behavior": "create",
     "noteNameFormat": "{{title}}",
-    "path": "99 - Meta e Anexos\Clippings",
+    "path": "99 - Meta e Anexos/Clippings",
     "noteContentFormat": "{{\"Reduzir para metade enquanto preserva esses elementos: 1. Ideas principais pontos; 2. Detalhes essenciais; 3. Tom original e estilo; 4. Qualquer título e referência a pessoas, lugares, ou livros, devem estar no formato [[wikilink]]; 5. Se alguma informação pode ser uma tabela então deve ser.\"}}",
     "context": "",
     "properties": [
@@ -90,7 +90,7 @@
     "name": "Default",
     "behavior": "create",
     "noteNameFormat": "{{title}}",
-    "path": "99 - Meta e Anexos\Clippings",
+    "path": "99 - Meta e Anexos/Clippings",
     "noteContentFormat": "{{content}}",
     "context": "",
     "properties": [
@@ -134,10 +134,7 @@
     "triggers": []
   },
   "vaults": [],
-  "template_list": [
-    "17439161107454ry8kdqwj",
-    "175571879583472c04ggm4"
-  ],
+  "template_list": ["17439161107454ry8kdqwj", "175571879583472c04ggm4"],
   "property_types": [
     {
       "name": "title",
