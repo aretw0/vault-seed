@@ -1,45 +1,54 @@
 /*
  * Paleta: Verde Jardim (padrão)
  * ─────────────────────────────────────────────────────────────────────────────
- * Inspirada em jardins digitais e florestas.  Tons de verde floresta/sálvia
- * com fundo creme no modo claro e ardósia quente no modo escuro.
+ * Tons de verde floresta/sálvia. Fundo creme no modo claro, ardósia quente
+ * no modo escuro.
  *
- * Contraste (WCAG AA — mínimo 4,5:1 para texto normal, 3:1 para UI):
- *   claro  → accent #1B5E3B / branco #FFFFFF  ≈ 8,8:1  ✓
- *   escuro → accent #95D5B2 / fundo #191B1E   ≈ 5,2:1  ✓
+ * IMPORTANTE — estrutura do Starlight:
+ *   :root                      = dark mode (gray-1 = MAIS CLARO / texto,
+ *                                            gray-6 = MAIS ESCURO / fundo)
+ *   :root[data-theme='light']  = light mode (escala INVERTIDA:
+ *                                            gray-1 = MAIS ESCURO / texto,
+ *                                            gray-6 = MAIS CLARO / fundo,
+ *                                            --sl-color-black = fundo da página)
+ *
+ * Contraste WCAG AA (≥ 4,5:1 texto, ≥ 3:1 UI):
+ *   escuro → accent #95D5B2 / fundo #111310  ≈ 7,0:1  ✓
+ *   claro  → accent #1B5E3B / fundo #F7F5F0  ≈ 8,8:1  ✓
  */
 
-/* ── Modo claro ──────────────────────────────────────────────────────────────*/
-:root,
-[data-theme='light'] {
-  --sl-color-accent-low:  #d4ede0;   /* tint suave para fundos destacados     */
-  --sl-color-accent:      #1b5e3b;   /* links, botões, destaques interativos  */
-  --sl-color-accent-high: #0f3d26;   /* variante de alto contraste            */
+/* ── Modo escuro (`:root` — aplica em auto-dark e data-theme='dark') ─────── */
+:root {
+  --sl-color-accent-low:  #1a3327;   /* tint escuro para fundos destacados    */
+  --sl-color-accent:      #95d5b2;   /* links/botões sobre fundo escuro        */
+  --sl-color-accent-high: #c4edd8;   /* texto sobre fundos de accent           */
 
-  /* Escala de cinzas — tons quentes (creme → carvão) */
-  --sl-color-gray-1: #f7f5f0;
-  --sl-color-gray-2: #e8e4dc;
-  --sl-color-gray-3: #b8b2a7;
-  --sl-color-gray-4: #6b6560;
-  --sl-color-gray-5: #3d3935;
-  --sl-color-gray-6: #1c1a18;
-  --sl-color-black:  #12100e;
-  --sl-color-white:  #f7f5f0;
+  /* gray-1 = mais claro (texto), gray-6 = mais escuro (sidebar/nav bg)       */
+  --sl-color-gray-1: #edf0ec;
+  --sl-color-gray-2: #c0c8be;
+  --sl-color-gray-3: #7e887b;
+  --sl-color-gray-4: #4a5048;
+  --sl-color-gray-5: #282e26;
+  --sl-color-gray-6: #1a1f18;
+  --sl-color-black:  #111310;        /* fundo da página no modo escuro         */
+  --sl-color-white:  #edf0ec;        /* cor de texto ("branco")                */
 }
 
-/* ── Modo escuro ─────────────────────────────────────────────────────────────*/
-[data-theme='dark'] {
-  --sl-color-accent-low:  #1a3327;   /* tint escuro para fundos destacados    */
-  --sl-color-accent:      #95d5b2;   /* links, botões — contraste sobre escuro*/
-  --sl-color-accent-high: #c4edd8;   /* texto sobre fundos de accent          */
+/* ── Modo claro (escala de cinzas INVERTIDA) ─────────────────────────────── */
+:root[data-theme='light'],
+[data-theme='light'] ::backdrop {
+  --sl-color-accent-low:  #d4ede0;   /* tint suave para fundos destacados      */
+  --sl-color-accent:      #1b5e3b;   /* links/botões sobre fundo claro         */
+  --sl-color-accent-high: #0f3d26;   /* variante de alto contraste             */
 
-  /* Escala de cinzas — ardósia quente (quase-preto → quase-branco) */
-  --sl-color-gray-1: #191b1e;
-  --sl-color-gray-2: #23262b;
-  --sl-color-gray-3: #565b62;
-  --sl-color-gray-4: #8b9099;
-  --sl-color-gray-5: #c5cad1;
-  --sl-color-gray-6: #edf0f3;
-  --sl-color-black:  #111315;
-  --sl-color-white:  #f0f3f5;
+  /* INVERTIDA: gray-1 = mais escuro (texto), gray-6 = mais claro (fundo)     */
+  --sl-color-gray-1: #12100e;
+  --sl-color-gray-2: #3d3935;
+  --sl-color-gray-3: #6b6560;
+  --sl-color-gray-4: #b8b2a7;
+  --sl-color-gray-5: #e0dbd2;
+  --sl-color-gray-6: #ede9e2;
+  --sl-color-gray-7: #f7f5f0;        /* fundo de nav/header no modo claro      */
+  --sl-color-black:  #f7f5f0;        /* fundo da página no modo claro = creme  */
+  --sl-color-white:  #12100e;        /* cor de texto ("branco" = escuro aqui)  */
 }

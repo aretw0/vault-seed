@@ -18,6 +18,7 @@
     "smoke:template": "node scripts/smoke_template.js",
     "validate:onboarding": "node scripts/validate_onboarding.js",
     "validate:pt-text": "node scripts/check_pt_text.js",
+    "validate:theme": "node scripts/check_theme.js",
     "actions:pins": "node scripts/check_github_action_pins.mjs",
     "site:dev": "astro dev",
     "site:build": "pnpm --filter @dgk/astro-plugins build && astro build",
@@ -28,7 +29,7 @@
     "diagrams:check": "mdt check",
     "release:package:smoke": "node scripts/release_package_smoke.mjs",
     "release:package:smoke:json": "node scripts/release_package_smoke.mjs --json",
-    "validate": "pnpm run actions:pins && pnpm run lint && pnpm run test && pnpm run validate:onboarding && pnpm run validate:pt-text && pnpm run smoke:template && pnpm run release:package:smoke",
+    "validate": "pnpm run actions:pins && pnpm run lint && pnpm run test && pnpm run validate:onboarding && pnpm run validate:pt-text && pnpm run validate:theme && pnpm run smoke:template && pnpm run release:package:smoke",
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish"
