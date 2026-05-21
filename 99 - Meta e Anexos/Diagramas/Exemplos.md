@@ -33,7 +33,7 @@ flowchart TD
     classDef principle fill:#fde0dc,stroke:#980000,stroke-width:2px,stroke-dasharray:5 5,color:#620000
 
     %% --- Ponto de Partida ---
-    Start(💡 Nova Informação / Ideia / Nota Rápida) --> InboxDir;
+    Start("💡 Nova Informação / Ideia / Nota Rápida") --> InboxDir;
 
     %% --- Filosofia Central: Conectividade ---
     subgraph "FILOSOFIA CENTRAL: CONECTIVIDADE"
@@ -162,13 +162,14 @@ flowchart TD
 <!-- {=project-lifecycle} -->
 ```mermaid
 stateDiagram-v2
+    state "Concluído" as Concluido
     [*] --> Ideia : nova ideia capturada
     Ideia --> Planejando : decidir avançar
     Planejando --> Ativo : começar
-    Ativo --> Pausado : bloquear / deprioritizar
+    Ativo --> Pausado : bloquear ou deprioritizar
     Pausado --> Ativo : retomar
-    Ativo --> Concluído : objetivo atingido
-    Concluído --> Arquivo : mover para 50 - Arquivo
+    Ativo --> Concluido : objetivo atingido
+    Concluido --> Arquivo : mover para 50 - Arquivo
     Arquivo --> [*]
     Planejando --> Cancelado : desistir
     Cancelado --> [*]

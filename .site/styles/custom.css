@@ -9,6 +9,38 @@
   --sl-font: system-ui, -apple-system, sans-serif;
 }
 
+/* Mermaid diagram container */
+.mermaid-diagram {
+  position: relative;
+  overflow-x: auto;
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.mermaid-diagram svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.mermaid-copy-btn {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  background: var(--sl-color-bg-nav);
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 4px;
+  color: var(--sl-color-text);
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.mermaid-diagram:hover .mermaid-copy-btn {
+  opacity: 1;
+}
+
 /* Callout styles — complementam os do @dgk/astro-plugins */
 .callout {
   border-left: 4px solid var(--callout-color, var(--sl-color-accent));

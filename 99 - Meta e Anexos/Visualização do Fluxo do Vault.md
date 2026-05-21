@@ -40,7 +40,7 @@ flowchart TD
     classDef principle fill:#fde0dc,stroke:#980000,stroke-width:2px,stroke-dasharray:5 5,color:#620000
 
     %% --- Ponto de Partida ---
-    Start(💡 Nova Informação / Ideia / Nota Rápida) --> InboxDir;
+    Start("💡 Nova Informação / Ideia / Nota Rápida") --> InboxDir;
 
     %% --- Filosofia Central: Conectividade ---
     subgraph "FILOSOFIA CENTRAL: CONECTIVIDADE"

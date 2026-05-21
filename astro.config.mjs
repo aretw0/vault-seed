@@ -66,17 +66,31 @@ async function renderMermaid() {
   mermaid.initialize({ startOnLoad: false, theme: dark ? 'dark' : 'neutral' });
   for (const pre of document.querySelectorAll('pre[data-language="mermaid"]')) {
     const wrap = pre.closest('figure') ?? pre;
+    const source = pre.textContent.trim();
     try {
-      const { svg } = await mermaid.render('mmd' + Math.random().toString(36).slice(2), pre.textContent.trim());
+      const { svg } = await mermaid.render('mmd' + Math.random().toString(36).slice(2), source);
       // Mermaid may return an error SVG instead of throwing; detect and skip.
       if (svg.includes('Syntax error') || svg.includes('error in text')) {
         console.warn('[mermaid] syntax error in diagram — leaving code block intact');
         continue;
       }
-      const div = document.createElement('div');
-      div.className = 'mermaid-diagram';
-      div.innerHTML = svg;
-      wrap.replaceWith(div);
+      const container = document.createElement('div');
+      container.className = 'mermaid-diagram';
+      container.innerHTML = svg;
+      // Copy button — preserves Mermaid source since Expressive Code toolbar is replaced.
+      const btn = document.createElement('button');
+      btn.className = 'mermaid-copy-btn';
+      btn.setAttribute('aria-label', 'Copiar código Mermaid');
+      btn.setAttribute('title', 'Copiar código Mermaid');
+      btn.textContent = 'Copiar';
+      btn.addEventListener('click', () => {
+        navigator.clipboard.writeText(source).then(() => {
+          btn.textContent = 'Copiado!';
+          setTimeout(() => { btn.textContent = 'Copiar'; }, 2000);
+        });
+      });
+      container.appendChild(btn);
+      wrap.replaceWith(container);
     } catch(e) { console.warn('[mermaid]', e); }
   }
 }

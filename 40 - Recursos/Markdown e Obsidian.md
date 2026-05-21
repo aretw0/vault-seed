@@ -207,7 +207,7 @@ graph TD
 
 ```mermaid
 graph LR
-    Captura --> Organização --> Revisão --> Publicação
+    A["Captura"] --> B["Organização"] --> C["Revisão"] --> D["Publicação"]
 ```
 
 > **No site:** Mermaid é renderizado no lado do cliente via CDN
