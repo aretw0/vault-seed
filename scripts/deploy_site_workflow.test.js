@@ -20,8 +20,14 @@ test("deploy-site workflow keeps GitHub Pages deploy gated by build and smoke", 
   assert.match(workflow, /build:\n\s+name: Build Astro site\n\s+runs-on: ubuntu-latest\n\s+timeout-minutes: 15/);
   assert.match(workflow, /run: pnpm --filter @dgk\/astro-plugins build/);
   assert.match(workflow, /run: pnpm run site:build/);
-  assert.match(workflow, /ASTRO_SITE: https:\/\/\$\{\{ github\.repository_owner \}\}\.github\.io/);
-  assert.match(workflow, /ASTRO_BASE: \/\$\{\{ github\.event\.repository\.name \}\}/);
+  // ASTRO_SITE and ASTRO_BASE come from a detection step that checks for a
+  // custom Pages domain (CNAME) and falls back to github.io + repo-name base.
+  assert.match(workflow, /id: pages-url/);
+  assert.match(workflow, /gh api.*\/pages.*\.cname/);
+  assert.match(workflow, /github\.repository_owner.*\.github\.io/);
+  assert.match(workflow, /github\.event\.repository\.name/);
+  assert.match(workflow, /ASTRO_SITE: \$\{\{ steps\.pages-url\.outputs\.site \}\}/);
+  assert.match(workflow, /ASTRO_BASE: \$\{\{ steps\.pages-url\.outputs\.base \}\}/);
   assert.match(workflow, /run: pnpm run site:check/);
   assert.match(workflow, /uses: actions\/upload-pages-artifact@[0-9a-f]{40}/);
   assert.match(workflow, /path: dist\//);

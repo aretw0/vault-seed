@@ -40,21 +40,35 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
+      - name: Detect site URL and base path
+        id: pages-url
+        run: |
+          CNAME=$(gh api "repos/${{ github.repository }}/pages" --jq '.cname // ""' 2>/dev/null || echo "")
+          if [ -n "$CNAME" ]; then
+            echo "site=https://$CNAME" >> "$GITHUB_OUTPUT"
+            echo "base=/" >> "$GITHUB_OUTPUT"
+          else
+            echo "site=https://${{ github.repository_owner }}.github.io" >> "$GITHUB_OUTPUT"
+            echo "base=/${{ github.event.repository.name }}" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - name: Build @dgk/astro-plugins
         run: pnpm --filter @dgk/astro-plugins build
 
       - name: Build site
         run: pnpm run site:build
         env:
-          ASTRO_SITE: https://${{ github.repository_owner }}.github.io
-          ASTRO_BASE: /${{ github.event.repository.name }}
+          ASTRO_SITE: ${{ steps.pages-url.outputs.site }}
+          ASTRO_BASE: ${{ steps.pages-url.outputs.base }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           VAULT_TITLE: ${{ vars.VAULT_TITLE }}
 
       - name: Check site
         run: pnpm run site:check
         env:
-          ASTRO_BASE: /${{ github.event.repository.name }}
+          ASTRO_BASE: ${{ steps.pages-url.outputs.base }}
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
