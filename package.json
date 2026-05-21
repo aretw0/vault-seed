@@ -22,6 +22,7 @@
     "site:build": "pnpm --filter @dgk/astro-plugins build && astro build",
     "site:preview": "astro preview",
     "site:check": "node scripts/smoke_site.js",
+    "site:audit:sidebar": "node scripts/audit_sidebar.js",
     "diagrams:update": "mdt update",
     "diagrams:check": "mdt check",
     "release:package:smoke": "node scripts/release_package_smoke.mjs",
