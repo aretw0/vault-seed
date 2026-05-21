@@ -23,6 +23,7 @@ ensure_pnpm() {
   repair_owned_dir "$pnpm_home"
   repair_owned_dir "$pnpm_home/store"
   repair_owned_dir /home/vscode/.config
+  repair_owned_dir /home/vscode/.config/gh
   repair_owned_dir /home/vscode/.cache
   repair_owned_dir /home/vscode/.claude
   repair_owned_dir /home/vscode/.codex
@@ -50,6 +51,14 @@ ensure_pi() {
 
 ensure_pnpm
 ensure_pi
+
+if ! command -v gh >/dev/null 2>&1; then
+  echo "[aviso] GitHub CLI ausente. Rebuild o devcontainer para instalar gh."
+elif gh auth status -h github.com >/dev/null 2>&1; then
+  gh auth setup-git >/dev/null 2>&1 || true
+elif [ -z "${GH_TOKEN:-}" ]; then
+  echo "[info] GitHub CLI sem login. Execute: gh auth login"
+fi
 
 if [ ! -d "node_modules" ]; then
   echo "[aviso] node_modules ausente. Execute: pnpm install"

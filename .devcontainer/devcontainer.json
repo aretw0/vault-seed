@@ -4,6 +4,7 @@
     "ghcr.io/devcontainers/features/common-utils:2": {
       "installZsh": false
     },
+    "ghcr.io/devcontainers/features/github-cli:1": {},
     "ghcr.io/devcontainers/features/node:1": {
       "version": "22",
       "nodeGypDependencies": false
@@ -32,6 +33,7 @@
     "source=dgk-npm-global,target=/home/vscode/.npm-global,type=volume",
     "source=dgk-claude-home,target=/home/vscode/.claude,type=volume",
     "source=dgk-codex-home,target=/home/vscode/.codex,type=volume",
+    "source=dgk-gh-config,target=/home/vscode/.config/gh,type=volume",
     "source=dgk-pi-home,target=/home/vscode/.pi,type=volume"
   ],
   "postCreateCommand": "bash .devcontainer/post-create.sh",

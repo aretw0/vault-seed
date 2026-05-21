@@ -44,6 +44,7 @@ for dir in \
   /home/vscode/.local/share/pnpm \
   /home/vscode/.local/share/pnpm/store \
   /home/vscode/.config \
+  /home/vscode/.config/gh \
   /home/vscode/.cache \
   /home/vscode/.npm-global \
   /home/vscode/.npm-global/bin \
@@ -59,6 +60,9 @@ pnpm install --frozen-lockfile --config.confirm-modules-purge=false
 
 # Git
 bash scripts/setup_git.sh
+if command -v gh >/dev/null 2>&1 && gh auth status -h github.com >/dev/null 2>&1; then
+  gh auth setup-git >/dev/null 2>&1 || true
+fi
 
 # Pi coding agent — agente de IA local
 pnpm add -g @earendil-works/pi-coding-agent \
