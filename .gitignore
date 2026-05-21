@@ -62,6 +62,8 @@ Thumbs.db
 
 # Arquivos de configuração que podem conter chaves de API ou dados sensíveis.
 obsidian-web-clipper-settings.json
+# Esse é um template, deve ser salvo sempre sem credenciais
+!99 - Meta e Anexos/config/obsidian-web-clipper-settings.json
 
 # ===================================================================
 # Arquivos de configuração do Vault - Rastrear por padrão
@@ -80,5 +82,12 @@ obsidian-web-clipper-settings.json
 
 gha-creds-*.json
 
-# Claude Code local overrides
+# Claude Code local overrides and worktrees
 .claude/settings.local.json
+.claude/worktrees/
+
+# ===================================================================
+# Astro build output
+# ===================================================================
+dist/
+.astro/
