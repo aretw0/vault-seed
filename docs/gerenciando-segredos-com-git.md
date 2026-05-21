@@ -81,7 +81,7 @@ Apesar da elegância técnica da abordagem de filtros `clean`/`smudge`, para o c
 ### Por que foi descontinuada?
 
 1.  **Complexidade de Manutenção:** A configuração dos filtros, a criação de scripts e a necessidade de cada colaborador configurar seu ambiente local corretamente adicionam uma camada de complexidade que vai contra o princípio de "facilidade de adoção" do projeto.
-2.  **Problemas de Sincronização:** Como detalhado em `[[../docs/estrategia-plugins-obsidian.md|Estratégia de Gerenciamento de Plugins do Obsidian]]`, a sincronização da pasta de plugins inteira é inerentemente frágil. Mesmo com os segredos filtrados, as mudanças nos arquivos de configuração dos plugins ainda podem causar conflitos.
+2.  **Problemas de Sincronização:** Como detalhado em [Estratégia de Gerenciamento de Plugins do Obsidian](estrategia-plugins-obsidian.md), a sincronização da pasta de plugins inteira é inerentemente frágil. Mesmo com os segredos filtrados, as mudanças nos arquivos de configuração dos plugins ainda podem causar conflitos.
 3.  **Foco na Simplicidade:** A nova estratégia de ignorar completamente a pasta `.obsidian/plugins/` e rastrear apenas a lista de plugins (`community-plugins.json`) provou ser muito mais robusta, simples e segura para a grande maioria dos usuários.
 
 ### Menção Honrosa

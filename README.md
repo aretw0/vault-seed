@@ -3,18 +3,13 @@
 [![License](https://img.shields.io/github/license/aretw0/vault-seed.svg?color=red)](LICENSE.md)
 [![Release](https://img.shields.io/github/release/aretw0/vault-seed.svg?branch=main)](https://github.com/aretw0/vault-seed/releases)
 
-Esta "semente" (seed) de cofre (vault) com foco no Obsidian e Visual Studio Code (Foam), visa equilibrar estrutura e flexibilidade, permitindo que seu cofre de conhecimento cresça organicamente.
+Esta "semente" (seed) de cofre (vault) ajuda a criar um vault de conhecimento em Obsidian e Visual Studio Code (Foam) com estrutura inicial, automações básicas e documentação de uso.
 
 > Template original: [https://github.com/aretw0/vault-seed](https://github.com/aretw0/vault-seed)
 
-## Para Contribuidores
+## Para Quem Quer Criar Um Vault
 
-| Tarefa | Recurso |
-|---|---|
-| Setup local (fnm, uv, pnpm) | `docs/compatibilidade-de-ambiente-e-setup.md` |
-| Devcontainer do template | `.devcontainer/` |
-| Guia de contribuição | `CONTRIBUTING.md` |
-| Arquitetura e decisões | `docs/INDEX.md` |
+Use este repositório como template quando você quer começar um vault versionado sem montar toda a estrutura do zero. O conteúdo principal para usuários está nas notas dentro do vault, especialmente em `99 - Meta e Anexos/`.
 
 ## Pré-requisitos
 
@@ -24,13 +19,13 @@ Para utilizar este template e criar seu próprio cofre de conhecimento, você pr
 -   Uma conta no GitHub ([https://github.com/](https://github.com/)).
 -   Obsidian ([https://obsidian.md/](https://obsidian.md/)) ou Visual Studio Code ([https://code.visualstudio.com/](https://code.visualstudio.com/)) instalados.
 
-# 🚀 Primeiros Passos (Criando seu Cofre)
+## Primeiros Passos
 
 Este repositório é um template projetado para simplificar a criação do seu próprio cofre de conhecimento. Siga os passos abaixo para começar:
 
 ### 1. Crie seu Repositório a partir do Template
 
-Clique no botão "Use this template" no topo da página do GitHub ou use este link: <a id="copy" href="https://github.com/new?template_name=vault-seed&template_owner=aretw0"><img src="https://img.shields.io/badge/📠_Criar_seu_cofre-008000" height="25pt"/></a>. Isso criará um novo repositório na sua conta com uma cópia limpa de todos os arquivos, mas **sem o histórico de desenvolvimento deste template**.
+Clique no botão "Use this template" no topo da página do GitHub ou use este link: <a id="copy" href="https://github.com/new?template_name=vault-seed&template_owner=aretw0"><img src="https://img.shields.io/badge/Criar_seu_cofre-008000" height="25pt"/></a>. Isso criará um novo repositório na sua conta com uma cópia limpa de todos os arquivos, mas **sem o histórico de desenvolvimento deste template**.
 
 ### 2. Aguarde a Inicialização Automática (Importante!)
 
@@ -53,18 +48,18 @@ git clone https://github.com/SEU-USUARIO/NOME-DO-SEU-REPOSITORIO.git
 
 ### 4. Abra e Explore
 
-Agora seu cofre está pronto! Abra a pasta no Obsidian ou Visual Studio Code.
+Agora seu cofre está pronto. Abra a pasta no Obsidian ou Visual Studio Code.
 
-➡️ Para começar sua jornada, abra a nota **`[[Guia do Jardineiro Digital]]`**.
-Depois, siga **`[[Exploracao Guiada do Vault]]`** para uma primeira visita de
+Para começar, abra a nota **[Guia do Jardineiro Digital](99%20-%20Meta%20e%20Anexos/Guia%20do%20Jardineiro%20Digital.md)**.
+Depois, siga **[Exploracao Guiada do Vault](99%20-%20Meta%20e%20Anexos/Exploracao%20Guiada%20do%20Vault.md)** para uma primeira visita de
 30 minutos sem precisar entender Git, plugins ou automações de uma vez.
 
 Se este for seu primeiro vault versionado, abra também
-**`[[Preparando seu Computador para o Vault]]`** para configurar Obsidian,
+**[Preparando seu Computador para o Vault](99%20-%20Meta%20e%20Anexos/Preparando%20seu%20Computador%20para%20o%20Vault.md)** para configurar Obsidian,
 VS Code, Git, GitHub Desktop e sincronização sem conflitos entre dispositivos.
 
 Quando a recepção automática do template terminar, abra
-**`[[Depois da Recepcao do Template]]`** para conferir o que ficou com você,
+**[Depois da Recepcao do Template](99%20-%20Meta%20e%20Anexos/Depois%20da%20Recepcao%20do%20Template.md)** para conferir o que ficou com você,
 o que não deve ser sincronizado manualmente e como operar o vault entre
 desktop e celular.
 
@@ -92,6 +87,18 @@ pnpm run validate
 Esse comando roda lint Markdown, testes dos scripts e smokes de template. Ele
 verifica se os arquivos essenciais de onboarding existem, se os wikilinks do
 vault apontam para notas reais e se as automacoes continuam usando `pnpm`.
+
+## Para Contribuidores Do Template
+
+| Tarefa | Recurso |
+|---|---|
+| Setup local (fnm, uv, pnpm) | `docs/compatibilidade-de-ambiente-e-setup.md` |
+| Devcontainer do template | `.devcontainer/` |
+| Guia de contribuição | `CONTRIBUTING.md` |
+| Arquitetura e decisões | `docs/INDEX.md` |
+| Release e publish dry-run | `pnpm run release:package:smoke` |
+
+Contribuidores trabalham no template original. Usuários que geraram um vault a partir dele não precisam seguir o fluxo interno de release do template para usar suas próprias notas.
 
 ---
 ## Contribuições e Traduções
