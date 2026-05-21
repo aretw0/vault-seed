@@ -127,7 +127,7 @@ dialog.mermaid-dialog::backdrop {
  * Unlayered CSS beats @layer starlight.core automatically, no !important needed. */
 @media (min-width: 50rem) {
   .hero {
-    grid-template-columns: 4fr 7fr;
+    grid-template-columns: 5fr 6fr;
   }
 
   .hero > .hero-html {
