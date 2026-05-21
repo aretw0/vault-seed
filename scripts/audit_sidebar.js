@@ -35,6 +35,7 @@ function slugify(input) {
 }
 
 // ── config (mirrors .site/sidebar.config.ts) ─────────────────────────────────
+// IMPORTANT: keep in sync with sidebarSections in .site/sidebar.config.ts
 
 const VAULT_FOLDERS = [
   '00 - Entrada', '10 - Diário', '20 - Projetos',
@@ -46,7 +47,7 @@ const VAULT_FOLDERS = [
 const sidebarSections = [
   { label: 'Primeiros Passos',  tag: 'meta/onboarding' },
   { label: 'Conceitos de PKM',  tag: 'conceito/pkm' },
-  { label: 'Ferramentas',       directory: 'recursos' },
+  { label: 'Ferramentas',       tag: 'recurso/ferramenta' },
   { label: 'Meta',              directory: 'meta-e-anexos' },
 ];
 

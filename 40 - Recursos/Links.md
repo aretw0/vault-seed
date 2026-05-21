@@ -6,6 +6,7 @@ aliases:
 tags:
   - pkm/conceito
   - obsidian/link
+  - recurso/ferramenta
 status: published
 created: 2026-05-18
 updated: 2026-05-18

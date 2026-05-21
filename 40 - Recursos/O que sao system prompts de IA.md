@@ -7,6 +7,7 @@ aliases:
 tags:
   - meta/documentacao
   - ia/configuracao
+  - recurso/ferramenta
 status: published
 created: 2025-11-20
 updated: 2026-05-18

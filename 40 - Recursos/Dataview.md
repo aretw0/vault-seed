@@ -5,6 +5,7 @@ aliases:
 tags:
   - obsidian/dataview
   - tipo/conceito
+  - recurso/ferramenta
 status: published
 created: 2026-05-19
 updated: 2026-05-19

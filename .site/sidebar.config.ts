@@ -29,6 +29,6 @@ export type SidebarSection =
 export const sidebarSections: SidebarSection[] = [
   { label: 'Primeiros Passos', tag: 'meta/onboarding' },
   { label: 'Conceitos de PKM', tag: 'conceito/pkm' },
-  { label: 'Ferramentas',      directory: 'recursos' },
+  { label: 'Ferramentas',      tag: 'recurso/ferramenta' },
   { label: 'Meta',             directory: 'meta-e-anexos' },
 ];

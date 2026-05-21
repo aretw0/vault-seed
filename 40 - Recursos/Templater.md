@@ -3,6 +3,7 @@ title: Templater
 tags:
   - obsidian/plugin
   - obsidian/templates
+  - recurso/ferramenta
 status: published
 created: 2026-05-18
 updated: 2026-05-18
