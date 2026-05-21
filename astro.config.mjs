@@ -7,6 +7,12 @@ import { collectPublishedSlugs } from './.site/integrations/collect-published-sl
 
 const site = process.env.ASTRO_SITE;
 const base = process.env.ASTRO_BASE ?? '/';
+
+// Title: explicit env var → repo name from GitHub context → cwd basename
+const repoName = process.env.GITHUB_REPOSITORY?.split('/')[1]
+  ?? process.cwd().split(/[\\/]/).pop()
+  ?? 'Meu Vault';
+const vaultTitle = process.env.VAULT_TITLE ?? repoName;
 const publishedSlugs = await collectPublishedSlugs();
 
 export default defineConfig({
@@ -23,7 +29,7 @@ export default defineConfig({
   },
   integrations: [
     starlight({
-      title: process.env.VAULT_TITLE ?? 'Meu Vault',
+      title: vaultTitle,
       defaultLocale: 'pt-BR',
       social: process.env.GITHUB_REPOSITORY
         ? [{ icon: 'github', label: 'GitHub', href: `https://github.com/${process.env.GITHUB_REPOSITORY}` }]

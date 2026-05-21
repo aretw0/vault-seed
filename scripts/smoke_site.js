@@ -6,7 +6,8 @@
 //   - empty content pages (schema/rendering failures)
 //   - placeholder URLs left in HTML (ASTRO_BASE not configured)
 //   - broken internal anchor links
-//   - missing Pagefind index (search broken)
+//   - empty sidebar (autogenerate failed to match entry IDs to directories)
+//   - missing or empty Pagefind index (search broken)
 
 const fs = require("node:fs");
 const path = require("node:path");
@@ -175,14 +176,58 @@ for (const htmlFile of contentPages) {
   }
 }
 
-// ── 6. pagefind index ────────────────────────────────────────────────────────
+// ── 6. sidebar has nav links ─────────────────────────────────────────────────
+// Sample the MOC page (always present) and verify at least one sidebar link
+// points into each configured section directory. An empty sidebar means
+// autogenerate failed to match entry IDs to directory names.
+
+const SIDEBAR_SECTIONS = ["recursos", "meta-e-anexos"];
+const mocHtmlPath = path.join(
+  distDir,
+  "meta-e-anexos",
+  "moc-vault-seed",
+  "index.html",
+);
+
+if (fs.existsSync(mocHtmlPath)) {
+  const mocHtml = fs.readFileSync(mocHtmlPath, "utf8");
+  const sidebarStart = mocHtml.indexOf('id="starlight__sidebar"');
+  if (sidebarStart !== -1) {
+    const sidebarChunk = mocHtml.substring(sidebarStart, sidebarStart + 20000);
+    for (const section of SIDEBAR_SECTIONS) {
+      const pattern = new RegExp(`href="[^"]*/${section}/[^"]*"`);
+      requireCondition(
+        pattern.test(sidebarChunk),
+        `Sidebar has no links for section '${section}' — autogenerate may have failed. Check filePath format in vault loader.`,
+      );
+    }
+  } else {
+    errors.push(
+      "meta-e-anexos/moc-vault-seed/index.html: starlight__sidebar element not found.",
+    );
+  }
+}
+
+// ── 8. pagefind index ────────────────────────────────────────────────────────
 
 requireCondition(
   fs.existsSync(path.join(distDir, "pagefind", "pagefind.js")),
   "dist/pagefind/pagefind.js missing — Pagefind search index was not built.",
 );
 
-// ── 7. sitemap (warning only — requires ASTRO_SITE to be set) ────────────────
+// Pagefind index must have non-trivial size (real content was indexed).
+const pagefindIndexDir = path.join(distDir, "pagefind");
+if (fs.existsSync(pagefindIndexDir)) {
+  const indexFiles = fs
+    .readdirSync(pagefindIndexDir)
+    .filter((f) => f.endsWith(".pf_index") || f.endsWith(".pf_meta"));
+  requireCondition(
+    indexFiles.length > 0,
+    "dist/pagefind/ has no index files (.pf_index / .pf_meta) — search index may be empty.",
+  );
+}
+
+// ── 9. sitemap (warning only — requires ASTRO_SITE to be set) ────────────────
 
 warnCondition(
   fs.existsSync(path.join(distDir, "sitemap-index.xml")),
