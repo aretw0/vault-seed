@@ -118,10 +118,21 @@ dialog.mermaid-dialog::backdrop {
 }
 
 /* Hero splash diagram — large and decorative, toolbar recuada.
- * Starlight hardcodes .hero > .hero-html { width: min(100%, 25rem) } inside
- * @layer starlight.core — unlayered CSS wins automatically, no !important needed. */
-.hero > .hero-html {
-  width: min(90%, 38rem);
+ *
+ * Starlight's Hero uses grid-template-columns: 7fr 4fr on desktop, giving the
+ * image column only ~36% of the hero width with a 25rem cap.  We override both:
+ *   1. Flip to 4fr 7fr so the diagram gets ~64% of the space.
+ *   2. Remove the width cap so the column fills its new, wider grid track.
+ * On mobile the hero is a single-column grid — no changes needed there.
+ * Unlayered CSS beats @layer starlight.core automatically, no !important needed. */
+@media (min-width: 50rem) {
+  .hero {
+    grid-template-columns: 4fr 7fr;
+  }
+
+  .hero > .hero-html {
+    width: 100%;
+  }
 }
 
 .hero-diagram {
