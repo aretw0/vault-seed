@@ -41,7 +41,7 @@ export TERM=\${TERM:-xterm-256color}
 export COLORTERM=\${COLORTERM:-truecolor}
 export PNPM_HOME=/home/${TARGET_USER}/.local/share/pnpm
 export NPM_CONFIG_PREFIX=/home/${TARGET_USER}/.npm-global
-export PATH=/home/${TARGET_USER}/.local/share/pnpm:/home/${TARGET_USER}/.npm-global/bin:/home/${TARGET_USER}/.local/bin:\$PATH
+export PATH=/home/${TARGET_USER}/.local/share/pnpm/bin:/home/${TARGET_USER}/.local/share/pnpm:/home/${TARGET_USER}/.npm-global/bin:/home/${TARGET_USER}/.local/bin:\$PATH
 cd "${PROJECT_DIR}"
 INIT
 

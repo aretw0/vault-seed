@@ -26,7 +26,7 @@
     "LANGUAGE": "pt_BR:pt:en",
     "TERM": "xterm-256color",
     "PNPM_HOME": "/home/vscode/.local/share/pnpm",
-    "PATH": "/home/vscode/.local/share/pnpm:/home/vscode/.npm-global/bin:${containerEnv:PATH}"
+    "PATH": "/home/vscode/.local/share/pnpm/bin:/home/vscode/.local/share/pnpm:/home/vscode/.npm-global/bin:${containerEnv:PATH}"
   },
   "mounts": [
     "source=dgk-pnpm-store,target=/home/vscode/.local/share/pnpm/store,type=volume",

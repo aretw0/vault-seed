@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+export PNPM_HOME="${PNPM_HOME:-/home/vscode/.local/share/pnpm}"
+export PATH="$PNPM_HOME/bin:$PNPM_HOME:$PATH"
+
 repair_owned_dir() {
   local dir="$1"
   mkdir -p "$dir" 2>/dev/null || {
@@ -18,6 +21,7 @@ repair_owned_dir() {
 ensure_pnpm() {
   local pnpm_home="${PNPM_HOME:-/home/vscode/.local/share/pnpm}"
   repair_owned_dir "$pnpm_home"
+  repair_owned_dir "$pnpm_home/bin"
 
   corepack prepare --activate
 
@@ -42,6 +46,7 @@ for dir in \
   /home/vscode/.local/state \
   /home/vscode/.local/share \
   /home/vscode/.local/share/pnpm \
+  /home/vscode/.local/share/pnpm/bin \
   /home/vscode/.local/share/pnpm/store \
   /home/vscode/.config \
   /home/vscode/.config/gh \
