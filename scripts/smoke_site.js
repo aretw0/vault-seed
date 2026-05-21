@@ -44,9 +44,18 @@ function listHtmlFiles(dir, results = []) {
   return results;
 }
 
+// Base URL prefix Astro prepends to all internal links (e.g., /vault-seed).
+// Links in built HTML are <base>/slug, but files live at dist/slug.
+const astroBase = (process.env.ASTRO_BASE || "").replace(/\/$/, "");
+
 function distExists(urlPath) {
+  // Strip base prefix so /vault-seed/foo/bar → /foo/bar before resolving.
+  let rel = urlPath;
+  if (astroBase && rel.startsWith(astroBase + "/")) {
+    rel = rel.slice(astroBase.length);
+  }
   // /foo/bar/ → dist/foo/bar/index.html  or  dist/foo/bar.html
-  const clean = urlPath.replace(/^\//, "").replace(/\/$/, "");
+  const clean = rel.replace(/^\//, "").replace(/\/$/, "");
   if (!clean) return fs.existsSync(path.join(distDir, "index.html"));
   return (
     fs.existsSync(path.join(distDir, clean, "index.html")) ||
