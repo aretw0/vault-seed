@@ -3,7 +3,8 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import remarkDirective from 'remark-directive';
 import { remarkCallouts, remarkWikiImages, remarkWikiLinks } from '@dgk/astro-plugins';
-import { collectPublishedSlugs } from './.site/integrations/collect-published-slugs.js';
+import { collectVaultEntries } from './.site/integrations/collect-published-slugs.js';
+import { sidebarSections } from './.site/sidebar.config.js';
 
 const site = process.env.ASTRO_SITE;
 const base = process.env.ASTRO_BASE ?? '/';
@@ -13,23 +14,46 @@ const repoName = process.env.GITHUB_REPOSITORY?.split('/')[1]
   ?? process.cwd().split(/[\\/]/).pop()
   ?? 'Meu Vault';
 const vaultTitle = process.env.VAULT_TITLE ?? repoName;
-const publishedSlugs = await collectPublishedSlugs();
 
-// Sidebar sections are only shown when at least one published note lives in
-// that directory. Empty sections disappear automatically; they reappear as
-// soon as the user publishes a note there.
-const SIDEBAR_SECTIONS = [
-  { label: 'Recursos', directory: 'recursos' },
-  { label: 'Projetos', directory: 'projetos' },
-  { label: 'Áreas',    directory: 'areas' },
-  { label: 'Meta',     directory: 'meta-e-anexos' },
-];
-const sidebar = SIDEBAR_SECTIONS
-  .filter(({ directory }) => [...publishedSlugs].some(s => s.startsWith(directory + '/')))
-  .map(({ label, directory }) => ({
-    label,
-    items: [{ autogenerate: { directory } }],
-  }));
+const vaultEntries = await collectVaultEntries();
+const publishedSlugs = new Set(vaultEntries.map(e => e.slug));
+
+// Build sidebar from .site/sidebar.config.ts.
+// Directory sections use Starlight autogenerate (respects sidebar.order from frontmatter).
+// Tag/property sections produce explicit { slug } items sorted by sidebar.order then title.
+// Sections with no matching entries are omitted automatically.
+function buildSidebarItems(entries) {
+  return sidebarSections
+    .map(section => {
+      if ('directory' in section) {
+        const hasEntries = entries.some(e => e.slug.startsWith(section.directory + '/'));
+        if (!hasEntries) return null;
+        return {
+          label: section.label,
+          collapsed: section.collapsed,
+          items: [{ autogenerate: { directory: section.directory } }],
+        };
+      }
+      const matched = entries.filter(e => {
+        if ('tag' in section) {
+          const tags = e.data.tags;
+          return Array.isArray(tags) && tags.includes(section.tag);
+        }
+        return e.data[section.property] === section.value;
+      });
+      if (matched.length === 0) return null;
+      const items = matched
+        .sort((a, b) => {
+          const ao = (a.data.sidebar?.order) ?? 999;
+          const bo = (b.data.sidebar?.order) ?? 999;
+          return ao !== bo ? ao - bo : a.title.localeCompare(b.title, 'pt');
+        })
+        .map(e => ({ slug: e.slug }));
+      return { label: section.label, collapsed: section.collapsed, items };
+    })
+    .filter(Boolean);
+}
+const sidebar = buildSidebarItems(vaultEntries);
 
 // Client-side mermaid rendering.  Expressive Code keeps the copy button and
 // syntax highlighting intact; after page load we replace the <figure> with

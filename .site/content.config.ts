@@ -66,7 +66,9 @@ export const collections = {
               editUrl: true,
               template: 'doc',
               pagefind: true,
-              sidebar: { hidden: false, attrs: {} },
+              // Preserve frontmatter sidebar fields (order, label, hidden) —
+              // spread user values over defaults so per-note overrides work.
+              sidebar: { hidden: false, attrs: {}, ...(safeData.sidebar as object ?? {}) },
             },
             body,
             // Synthetic relative path so Starlight's sidebar autogenerate can strip the

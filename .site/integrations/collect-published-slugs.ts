@@ -1,6 +1,6 @@
 // .site/integrations/collect-published-slugs.ts
 import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, basename } from 'node:path';
 import { globSync } from 'glob';
 import matter from 'gray-matter';
 import { slugify } from '@dgk/astro-plugins';
@@ -11,18 +11,34 @@ const VAULT_FOLDERS = [
   '90 - Modelos', '99 - Meta e Anexos',
 ];
 
-export async function collectPublishedSlugs(): Promise<Set<string>> {
-  const slugs = new Set<string>();
+export interface VaultEntry {
+  slug: string;
+  title: string;
+  data: Record<string, unknown>;
+}
+
+/** Returns all published vault entries with their full frontmatter data. */
+export async function collectVaultEntries(): Promise<VaultEntry[]> {
+  const entries: VaultEntry[] = [];
   const patterns = VAULT_FOLDERS.map(f => `${f}/**/*.md`);
   const files = globSync(patterns, { cwd: process.cwd() });
 
   for (const file of files) {
     const raw = readFileSync(join(process.cwd(), file), 'utf-8');
     const { data } = matter(raw);
-    if (data.status === 'published') {
-      slugs.add(slugify(file.replace(/\\/g, '/').replace(/\.md$/, '')));
-    }
+    if (data.status !== 'published') continue;
+
+    // Normalize to forward slashes before slugifying (glob may return OS-native separators).
+    const slug = slugify(file.replace(/\\/g, '/').replace(/\.md$/, ''));
+    const title = (data.title as string | undefined) ?? basename(file, '.md');
+    entries.push({ slug, title, data });
   }
 
-  return slugs;
+  return entries;
+}
+
+/** Returns a Set of published slugs (backward-compatible helper). */
+export async function collectPublishedSlugs(): Promise<Set<string>> {
+  const entries = await collectVaultEntries();
+  return new Set(entries.map(e => e.slug));
 }
