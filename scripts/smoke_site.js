@@ -10,6 +10,7 @@
 //   - broken internal anchor links
 //   - empty sidebar or empty sidebar groups (autogenerate failed, dynamic filter broken)
 //   - missing mermaid CDN script (head[] injection lost)
+//   - missing mermaid code blocks in known diagram pages (pipeline regression)
 //   - missing or empty Pagefind index (search broken)
 
 const fs = require("node:fs");
@@ -94,6 +95,7 @@ const REQUIRED_DIST_PATHS = [
   // Core resource notes
   "recursos/bases",
   "recursos/dataview",
+  "recursos/mermaid",
   "recursos/o-que-sao-system-prompts-de-ia",
 ];
 
@@ -250,6 +252,32 @@ if (fs.existsSync(mocHtmlPath)) {
   requireCondition(
     mocHtml.includes("mermaid.esm.min.mjs"),
     "Mermaid CDN script not found in page head — check head[] config in astro.config.mjs.",
+  );
+}
+
+// ── 7. Mermaid code blocks present in diagram pages ──────────────────────────
+// These pages are known to contain mermaid blocks.  Verifies that the blocks
+// survived the remark/Expressive Code pipeline and will be available for the
+// client-side renderer to replace.  Does NOT verify actual SVG rendering
+// (that requires a headless browser).
+
+const MERMAID_PAGES = [
+  "recursos/mermaid",
+  "meta-e-anexos/diagramas/exemplos",
+  "meta-e-anexos/visualizacao-do-fluxo-do-vault",
+];
+
+for (const slug of MERMAID_PAGES) {
+  const htmlPath = path.join(distDir, slug, "index.html");
+  if (!fs.existsSync(htmlPath)) {
+    // Page existence already caught by REQUIRED_DIST_PATHS for contract pages;
+    // skip the mermaid block check if the file is simply absent.
+    continue;
+  }
+  const pageHtml = fs.readFileSync(htmlPath, "utf8");
+  requireCondition(
+    pageHtml.includes('data-language="mermaid"'),
+    `${slug}/index.html: no mermaid code blocks found — diagram content may have been lost during build.`,
   );
 }
 

@@ -8,7 +8,7 @@
     "url": "https://github.com/aretw0/vault-seed.git"
   },
   "scripts": {
-    "test": "node --test scripts/*.test.js",
+    "test": "node --test scripts/*.test.js --exclude scripts/mermaid_render_contract.test.js",
     "format": "prettier --write \"**/*.md\"",
     "format:check": "prettier --check .",
     "lint:main": "markdownlint --config .markdownlint.json \"10 - Diário/**/*.md\" \"20 - Projetos/**/*.md\" \"30 - Áreas/**/*.md\" \"40 - Recursos/**/*.md\" \"50 - Arquivo/**/*.md\" \"99 - Meta e Anexos/**/*.md\"",
@@ -25,6 +25,7 @@
     "site:build": "pnpm --filter @dgk/astro-plugins build && astro build",
     "site:preview": "astro preview",
     "site:check": "node scripts/smoke_site.js",
+    "site:test": "node --test scripts/mermaid_render_contract.test.js scripts/mermaid_toggle.test.js",
     "site:audit:sidebar": "node scripts/audit_sidebar.js",
     "diagrams:update": "mdt update",
     "diagrams:check": "mdt check",

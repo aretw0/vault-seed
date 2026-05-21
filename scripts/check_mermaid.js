@@ -129,8 +129,15 @@ function checkBlock(body, sourceFile, blockIndex) {
       // Pattern: word followed by ( then text without " that contains /
       const unquotedSlash = /\w+\((?!")([^)]*\/[^)]*)\)/;
       if (unquotedSlash.test(line)) {
-        const m2 = line.match(unquotedSlash);
         issues.push(`linha ${i + 1}: label não-quotado com "/" dentro de () — use id("texto / com barra"): ${line.trim()}`);
+      }
+
+      // Unquoted ( ) or { } label containing emoji/supplementary Unicode.
+      // Mermaid v11 lexer fails on surrogate pairs (codepoints > U+FFFF) in unquoted labels.
+      // Fix: use id("label com emoji") or id["label com emoji"].
+      const unquotedEmoji = /\b\w+\((?!["'\[])([^)"']*[\uD800-\uDFFF])/;
+      if (unquotedEmoji.test(line)) {
+        issues.push(`linha ${i + 1}: emoji em label não-quotado — use id("label"): ${line.trim()}`);
       }
     }
   }
