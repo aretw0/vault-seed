@@ -113,11 +113,14 @@ function buildBlock(source) {
     })
   `;
 
-  // Stub getDialog so expandBtn's click handler doesn't throw ReferenceError
-  // if a future test clicks it.
+  // Stub globals that the block-building code references but that live outside
+  // the extracted slice: _mermaidBlocks (registry owned by renderMermaid),
+  // getDialog (expand button handler), requestAnimationFrame (fit() debounce).
+  const _mermaidBlocks = [];
   const fn = vm.runInNewContext(fnSrc, {
+    _mermaidBlocks,
     getDialog: function() {
-      return { dlg: { showModal() {}, close() {} }, canvas: makeElement('div'), fit: function() {} };
+      return { dlg: { showModal() {}, close() {} }, canvas: makeElement('div'), fit: function() {}, src: null };
     },
     requestAnimationFrame: function(cb) { cb(); },
   });
