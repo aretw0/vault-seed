@@ -4,6 +4,8 @@
 //   - missing root redirect (404 at /)
 //   - missing template-contract pages (slugify regressions, status not published)
 //   - empty content pages (schema/rendering failures)
+//   - duplicate <h1> titles (vault loader must strip leading # heading)
+//   - protocol-relative URLs like href="//path" (remark-wiki-links base normalization)
 //   - placeholder URLs left in HTML (ASTRO_BASE not configured)
 //   - broken internal anchor links
 //   - empty sidebar or empty sidebar groups (autogenerate failed, dynamic filter broken)
@@ -158,6 +160,23 @@ for (const htmlFile of contentPages) {
   requireCondition(
     hasMarkdownContent.test(content),
     `${rel}: missing sl-markdown-content wrapper — page may have rendered empty.`,
+  );
+
+  // 5e. No duplicate <h1> — Starlight renders one from frontmatter title; the
+  // vault loader must strip any leading # heading from the markdown body.
+  const h1Count = (content.match(/<h1[\s>]/g) || []).length;
+  requireCondition(
+    h1Count <= 1,
+    `${rel}: ${h1Count} <h1> elements found — duplicate title. Check H1-stripping ` +
+      `regex in vault loader (content.config.ts).`,
+  );
+
+  // 5f. No protocol-relative URLs (double-slash like //path). These are caused
+  // by remarkWikiLinks when base is '/' and the slug is not prefixed correctly.
+  requireCondition(
+    !/<a[^>]+href="\/\//.test(content),
+    `${rel}: contains a protocol-relative URL (href="//...") — check base normalization ` +
+      `in remark-wiki-links.ts.`,
   );
 
   // 5c. Page must have meaningful size.
