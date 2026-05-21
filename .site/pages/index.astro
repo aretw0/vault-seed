@@ -10,7 +10,15 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     template: 'splash',
     hero: {
       image: {
-        html: `<img src="${base}/assets/vault-seed-banner.svg" alt="Rede de notas interligadas brotando de uma semente central — o conceito por trás do vault-seed" style="max-width:100%;height:auto;">`,
+        html: `<div class="hero-diagram"><pre data-language="mermaid">graph TB
+  V(("vault-seed")) --> D["Diário"]
+  V --> P["Projetos"]
+  V --> A["Áreas"]
+  V --> R["Recursos"]
+  V --> Q["Arquivo"]
+  P --> S(["Site publicado"])
+  R -.-> P
+  A -.-> P</pre></div>`,
       },
       tagline: 'Um template de vault pessoal para Obsidian — organizado, versionado e publicável como site.',
       actions: [
