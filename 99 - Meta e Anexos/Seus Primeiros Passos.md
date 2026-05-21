@@ -5,6 +5,7 @@ aliases:
   - Primeiros Passos no Vault
 tags:
   - meta/guia
+  - meta/onboarding
   - meta/workflow
   - iniciante
 status: published

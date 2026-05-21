@@ -32,6 +32,7 @@ function makeElement(tag) {
     className: '',
     textContent: '',
     hidden: false,
+    style: {},
     _children: [],
     _listeners: {},
     innerHTML: '',

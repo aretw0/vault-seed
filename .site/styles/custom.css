@@ -12,6 +12,8 @@
 /* Mermaid toggle block */
 .mermaid-block {
   margin: 1rem 0;
+  /* Prevent scroll-anchoring from jumping the page when views are swapped. */
+  overflow-anchor: none;
 }
 
 .mermaid-toolbar {
@@ -143,7 +145,17 @@ dialog.mermaid-dialog::backdrop {
   margin: 0;
 }
 
+.hero-diagram .mermaid-rendered {
+  display: flex;
+  justify-content: center;
+}
+
 .hero-diagram .mermaid-rendered svg {
+  /* Cap height so the hero never pushes the page beyond the viewport.
+   * width:auto lets the SVG scale down proportionally if height is the limit. */
+  max-height: min(55dvh, 420px);
+  width: auto;
+  max-width: 100%;
   opacity: 0.92;
 }
 
