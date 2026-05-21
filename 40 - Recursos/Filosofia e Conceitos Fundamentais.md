@@ -1,3 +1,13 @@
+---
+title: Filosofia e Conceitos Fundamentais
+status: published
+tags:
+  - conceito/pkm
+  - recurso/fundamentos
+created: 2026-05-21
+updated: 2026-05-21
+---
+
 # Filosofia e Conceitos Fundamentais
 
 A força do Obsidian (e de um Second Brain eficaz) reside nas conexões ([[Links|wikilinks]]).

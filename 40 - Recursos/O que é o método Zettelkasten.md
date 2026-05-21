@@ -1,3 +1,13 @@
+---
+title: O que é o método Zettelkasten
+status: published
+tags:
+  - conceito/pkm
+  - recurso/metodo
+created: 2026-05-21
+updated: 2026-05-21
+---
+
 # O que é o método Zettelkasten
 
 O Zettelkasten (alemão para "caixa de notas") é um método de gerenciamento de conhecimento e anotações focado em criar uma rede de pensamentos interligados.
