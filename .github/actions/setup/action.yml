@@ -15,6 +15,17 @@ runs:
         node-version-file: ".nvmrc"
         cache: "pnpm"
 
+    - name: Validate lockfile
+      shell: bash
+      run: |
+        set -euo pipefail
+        if [ ! -f pnpm-lock.yaml ]; then
+          echo "::error::pnpm-lock.yaml is required for deterministic CI."
+          exit 1
+        fi
+
     - name: Install dependencies
       shell: bash
-      run: pnpm install --frozen-lockfile
+      run: |
+        set -euo pipefail
+        pnpm install --frozen-lockfile
