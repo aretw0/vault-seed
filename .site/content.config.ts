@@ -41,10 +41,17 @@ export const collections = {
             safeData[k] = v instanceof Date ? v.toISOString().slice(0, 10) : v;
           }
 
+          // Strip a leading H1 heading from the body: Starlight already renders
+          // an <h1> from the frontmatter `title`, so the markdown # Title would
+          // create a visible duplicate on the page.
+          // \s* handles leading blank lines that matter() may leave after the
+          // frontmatter block. (?!#) ensures we only strip H1, not ## or ###.
+          const body = content.replace(/^\s*#(?!#)[^\n]*\n?/, '').trimStart();
+
           // Render markdown through Astro's pipeline (applies all remark plugins:
           // remarkCallouts, remarkWikiImages, remarkWikiLinks).
           // Custom loaders do NOT auto-process body — renderMarkdown must be called explicitly.
-          const rendered = await renderMarkdown(content, {
+          const rendered = await renderMarkdown(body, {
             fileURL: pathToFileURL(fullPath),
           });
 
@@ -61,7 +68,7 @@ export const collections = {
               pagefind: true,
               sidebar: { hidden: false, attrs: {} },
             },
-            body: content,
+            body,
             // Synthetic relative path so Starlight's sidebar autogenerate can strip the
             // collection prefix ('.site/content/docs/') and match against directory names.
             // The real vault file path is passed to renderMarkdown via fileURL instead.

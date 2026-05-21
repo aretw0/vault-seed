@@ -1,5 +1,29 @@
 ---
-// Root redirect to the vault's Map of Content.
-// BASE_URL handles both base:'/' (dev) and base:'/repo-name' (GitHub Pages).
-return Astro.redirect(import.meta.env.BASE_URL + 'meta-e-anexos/moc-vault-seed/');
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
+
+<StarlightPage
+  frontmatter={{
+    title: 'Bem-vindo ao Vault Seed',
+    template: 'splash',
+    hero: {
+      tagline: 'Um template de vault pessoal para Obsidian — organizado, versionado e publicável como site.',
+      actions: [
+        {
+          text: 'Começar',
+          link: `${base}/meta-e-anexos/seus-primeiros-passos/`,
+          icon: 'right-arrow',
+          variant: 'primary',
+        },
+        {
+          text: 'Ver o Vault',
+          link: `${base}/meta-e-anexos/moc-vault-seed/`,
+          icon: 'open-book',
+        },
+      ],
+    },
+  }}
+>
+</StarlightPage>

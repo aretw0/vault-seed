@@ -69,7 +69,12 @@ export default defineConfig({
   integrations: [
     starlight({
       title: vaultTitle,
-      defaultLocale: 'pt-BR',
+      // 'root' locale with lang: 'pt-BR' is required for Starlight to use its
+      // built-in Portuguese translations. Setting only defaultLocale: 'pt-BR'
+      // (bare string, no locales object) is silently ignored and falls back to English.
+      locales: {
+        root: { label: 'Português (Brasil)', lang: 'pt-BR' },
+      },
       social: process.env.GITHUB_REPOSITORY
         ? [{ icon: 'github', label: 'GitHub', href: `https://github.com/${process.env.GITHUB_REPOSITORY}` }]
         : [],
