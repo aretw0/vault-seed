@@ -9,23 +9,145 @@
   --sl-font: system-ui, -apple-system, sans-serif;
 }
 
-/* Mermaid diagram container */
-.mermaid-diagram {
-  position: relative;
-  overflow-x: auto;
+/* Mermaid toggle block */
+.mermaid-block {
   margin: 1rem 0;
+}
+
+.mermaid-toolbar {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.mermaid-btn {
+  background: var(--sl-color-bg-nav);
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 4px;
+  color: var(--sl-color-text);
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  transition: background 0.1s;
+}
+
+.mermaid-btn:hover {
+  background: var(--sl-color-gray-6, #e8e8e8);
+}
+
+.mermaid-rendered {
+  overflow-x: auto;
   text-align: center;
 }
 
-.mermaid-diagram svg {
-  max-width: 100%;
+.mermaid-rendered svg {
+  width: 100%;
   height: auto;
 }
 
-.mermaid-copy-btn {
+/* Ensure [hidden] is respected even if a CSS reset overrides the browser default */
+.mermaid-view[hidden] { display: none !important; }
+
+/* code view reuses EC's own styles — no extra rules needed */
+
+/* Fullscreen dialog for pan/zoom */
+dialog.mermaid-dialog {
+  position: fixed;
+  inset: 0;
+  margin: 0;
+  width: 100vw;
+  height: 100dvh;
+  max-width: 100vw;
+  max-height: 100dvh;
+  padding: 0;
+  border: none;
+  background: var(--sl-color-black);
+  color: var(--sl-color-white);
+  overflow: hidden;
+  /* display:flex cannot go here — it would override the UA display:none
+     that hides the dialog when [open] is absent. */
+}
+
+dialog.mermaid-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+dialog.mermaid-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.mermaid-dialog-toolbar {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.5rem 0.6rem;
+  background: var(--sl-color-bg-nav);
+  border-bottom: 1px solid var(--sl-color-hairline);
+  flex-shrink: 0;
+}
+
+.mermaid-dialog-close {
+  margin-left: auto;
+}
+
+/* Dialog buttons get slightly more breathing room than inline toolbar buttons */
+.mermaid-dialog-toolbar .mermaid-btn {
+  font-size: 0.8rem;
+  padding: 0.35rem 0.8rem;
+}
+
+.mermaid-dialog-viewport {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  cursor: grab;
+}
+
+.mermaid-dialog-canvas {
   position: absolute;
-  top: 0.4rem;
-  right: 0.4rem;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  user-select: none;
+}
+
+.mermaid-dialog-canvas svg {
+  display: block;
+  max-width: none;
+  height: auto;
+}
+
+/* Hero splash diagram — large and decorative, toolbar recuada.
+ * Starlight hardcodes .hero > .hero-html { width: min(100%, 25rem) } inside
+ * @layer starlight.core — unlayered CSS wins automatically, no !important needed. */
+.hero > .hero-html {
+  width: min(90%, 38rem);
+}
+
+.hero-diagram {
+  width: 100%;
+}
+
+.hero-diagram .mermaid-block {
+  margin: 0;
+}
+
+.hero-diagram .mermaid-rendered svg {
+  opacity: 0.92;
+}
+
+.hero-diagram .mermaid-toolbar {
+  opacity: 0.55;
+  transition: opacity 0.15s;
+}
+
+.hero-diagram .mermaid-toolbar:hover,
+.hero-diagram .mermaid-toolbar:focus-within {
+  opacity: 1;
+}
+
+/* Legacy selector kept for any old references — can be removed later */
+.mermaid-copy-btn {
   background: var(--sl-color-bg-nav);
   border: 1px solid var(--sl-color-hairline);
   border-radius: 4px;
@@ -33,12 +155,6 @@
   cursor: pointer;
   font-size: 0.75rem;
   padding: 0.2rem 0.5rem;
-  opacity: 0;
-  transition: opacity 0.15s;
-}
-
-.mermaid-diagram:hover .mermaid-copy-btn {
-  opacity: 1;
 }
 
 /* Callout styles — complementam os do @dgk/astro-plugins */
