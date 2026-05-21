@@ -1,4 +1,10 @@
-/* .site/styles/custom.css */
+/* .site/styles/custom.css — estilos base do vault-seed */
+/*
+ * Paleta de cores: definida em .site/styles/themes/<nome>.css
+ * Para trocar de tema edite a opção customCss em astro.config.mjs:
+ *   customCss: ['...\/custom.css', '...\/themes\/verde-jardim.css']
+ * Paletas disponíveis: verde-jardim (padrão) · oceano · terracota
+ */
 :root {
   --sl-font: system-ui, -apple-system, sans-serif;
 }

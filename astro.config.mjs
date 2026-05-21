@@ -106,7 +106,12 @@ export default defineConfig({
       head: [
         { tag: 'script', attrs: { type: 'module' }, content: mermaidScript },
       ],
-      customCss: ['./.site/styles/custom.css'],
+      customCss: [
+        './.site/styles/custom.css',
+        // Paleta ativa — troque o arquivo para mudar o tema visual:
+        // verde-jardim (padrão) · oceano · terracota
+        './.site/styles/themes/verde-jardim.css',
+      ],
     }),
   ],
 });

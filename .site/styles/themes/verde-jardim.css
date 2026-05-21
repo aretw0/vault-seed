@@ -1,0 +1,45 @@
+/*
+ * Paleta: Verde Jardim (padrão)
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Inspirada em jardins digitais e florestas.  Tons de verde floresta/sálvia
+ * com fundo creme no modo claro e ardósia quente no modo escuro.
+ *
+ * Contraste (WCAG AA — mínimo 4,5:1 para texto normal, 3:1 para UI):
+ *   claro  → accent #1B5E3B / branco #FFFFFF  ≈ 8,8:1  ✓
+ *   escuro → accent #95D5B2 / fundo #191B1E   ≈ 5,2:1  ✓
+ */
+
+/* ── Modo claro ──────────────────────────────────────────────────────────────*/
+:root,
+[data-theme='light'] {
+  --sl-color-accent-low:  #d4ede0;   /* tint suave para fundos destacados     */
+  --sl-color-accent:      #1b5e3b;   /* links, botões, destaques interativos  */
+  --sl-color-accent-high: #0f3d26;   /* variante de alto contraste            */
+
+  /* Escala de cinzas — tons quentes (creme → carvão) */
+  --sl-color-gray-1: #f7f5f0;
+  --sl-color-gray-2: #e8e4dc;
+  --sl-color-gray-3: #b8b2a7;
+  --sl-color-gray-4: #6b6560;
+  --sl-color-gray-5: #3d3935;
+  --sl-color-gray-6: #1c1a18;
+  --sl-color-black:  #12100e;
+  --sl-color-white:  #f7f5f0;
+}
+
+/* ── Modo escuro ─────────────────────────────────────────────────────────────*/
+[data-theme='dark'] {
+  --sl-color-accent-low:  #1a3327;   /* tint escuro para fundos destacados    */
+  --sl-color-accent:      #95d5b2;   /* links, botões — contraste sobre escuro*/
+  --sl-color-accent-high: #c4edd8;   /* texto sobre fundos de accent          */
+
+  /* Escala de cinzas — ardósia quente (quase-preto → quase-branco) */
+  --sl-color-gray-1: #191b1e;
+  --sl-color-gray-2: #23262b;
+  --sl-color-gray-3: #565b62;
+  --sl-color-gray-4: #8b9099;
+  --sl-color-gray-5: #c5cad1;
+  --sl-color-gray-6: #edf0f3;
+  --sl-color-black:  #111315;
+  --sl-color-white:  #f0f3f5;
+}

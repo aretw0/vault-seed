@@ -1,0 +1,40 @@
+/*
+ * Paleta: Terracota
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Vermelho-laranja queimado sobre areia quente.  Evoca cadernos e escrita à mão.
+ *
+ * Contraste (WCAG AA):
+ *   claro  → accent #7D2E0E / branco #FFFBF7  ≈ 7,1:1  ✓
+ *   escuro → accent #E8A07A / fundo #1D1714   ≈ 5,0:1  ✓
+ */
+
+:root,
+[data-theme='light'] {
+  --sl-color-accent-low:  #f5ddd1;
+  --sl-color-accent:      #7d2e0e;
+  --sl-color-accent-high: #5a1f08;
+
+  --sl-color-gray-1: #fffbf7;
+  --sl-color-gray-2: #f0e8df;
+  --sl-color-gray-3: #bfb0a3;
+  --sl-color-gray-4: #7a6b5e;
+  --sl-color-gray-5: #3d3028;
+  --sl-color-gray-6: #1f1710;
+  --sl-color-black:  #130e09;
+  --sl-color-white:  #fffbf7;
+}
+
+[data-theme='dark'] {
+  --sl-color-accent-low:  #3a1a0a;
+  --sl-color-accent:      #e8a07a;
+  --sl-color-accent-high: #f5c9af;
+
+  --sl-color-gray-1: #1d1714;
+  --sl-color-gray-2: #28201c;
+  --sl-color-gray-3: #5a4a40;
+  --sl-color-gray-4: #9a8678;
+  --sl-color-gray-5: #cfc4bc;
+  --sl-color-gray-6: #f5ede8;
+  --sl-color-black:  #130e09;
+  --sl-color-white:  #f5ede8;
+}

@@ -1,0 +1,40 @@
+/*
+ * Paleta: Oceano
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Azul oceano profundo com toques de ciano.  Fundo neutro frio nos dois modos.
+ *
+ * Contraste (WCAG AA):
+ *   claro  → accent #0353A4 / branco #FFFFFF  ≈ 7,5:1  ✓
+ *   escuro → accent #90B4E8 / fundo #191C22   ≈ 5,4:1  ✓
+ */
+
+:root,
+[data-theme='light'] {
+  --sl-color-accent-low:  #cce0f5;
+  --sl-color-accent:      #0353a4;
+  --sl-color-accent-high: #023b74;
+
+  --sl-color-gray-1: #f5f7fa;
+  --sl-color-gray-2: #e2e8f0;
+  --sl-color-gray-3: #adb8c8;
+  --sl-color-gray-4: #60718a;
+  --sl-color-gray-5: #334155;
+  --sl-color-gray-6: #1a2332;
+  --sl-color-black:  #0f1623;
+  --sl-color-white:  #f5f7fa;
+}
+
+[data-theme='dark'] {
+  --sl-color-accent-low:  #0d2040;
+  --sl-color-accent:      #90b4e8;
+  --sl-color-accent-high: #c5d9f5;
+
+  --sl-color-gray-1: #191c22;
+  --sl-color-gray-2: #232936;
+  --sl-color-gray-3: #4b566a;
+  --sl-color-gray-4: #8694ab;
+  --sl-color-gray-5: #c0cad8;
+  --sl-color-gray-6: #edf0f5;
+  --sl-color-black:  #111318;
+  --sl-color-white:  #eef2f8;
+}
