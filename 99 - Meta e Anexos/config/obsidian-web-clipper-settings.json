@@ -1,0 +1,201 @@
+{
+  "migrationVersion": 1,
+  "interpreter_settings": {
+    "interpreterModel": "1755603971920",
+    "models": [
+      {
+        "id": "1755603971920",
+        "providerId": "1755603954218",
+        "providerModelId": "gemini-2.5-flash",
+        "name": "Gemini 2.5 Flash",
+        "enabled": true
+      }
+    ],
+    "providers": [
+      {
+        "id": "1755603954218",
+        "name": "Google Gemini",
+        "baseUrl": "https://generativelanguage.googleapis.com/v1beta/chat/completions",
+        "apiKey": "",
+        "apiKeyRequired": true
+      }
+    ],
+    "interpreterEnabled": true,
+    "interpreterAutoRun": false,
+    "defaultPromptContext": ""
+  },
+  "highlighter_settings": {
+    "highlighterEnabled": true,
+    "alwaysShowHighlights": true,
+    "highlightBehavior": "replace-content"
+  },
+  "general_settings": {
+    "showMoreActionsButton": false,
+    "betaFeatures": false,
+    "legacyMode": false,
+    "silentOpen": true,
+    "openBehavior": "popup",
+    "saveBehavior": "addToObsidian"
+  },
+  "template_175571879583472c04ggm4": {
+    "id": "175571879583472c04ggm4",
+    "name": "Default Interpreter",
+    "behavior": "create",
+    "noteNameFormat": "{{title}}",
+    "path": "99 - Meta e Anexos\Clippings",
+    "noteContentFormat": "{{\"Reduzir para metade enquanto preserva esses elementos: 1. Ideas principais pontos; 2. Detalhes essenciais; 3. Tom original e estilo; 4. Qualquer título e referência a pessoas, lugares, ou livros, devem estar no formato [[wikilink]]; 5. Se alguma informação pode ser uma tabela então deve ser.\"}}",
+    "context": "",
+    "properties": [
+      {
+        "id": "17439161107453bhjyz3u0",
+        "name": "title",
+        "value": "{{title}}",
+        "type": "text"
+      },
+      {
+        "id": "17439161107456h7i9zwc8",
+        "name": "source",
+        "value": "{{url}}",
+        "type": "text"
+      },
+      {
+        "id": "1743916110745nnmbbjp9v",
+        "name": "author",
+        "value": "{{author|split:\\\", \\\"|wikilink|join}}",
+        "type": "multitext"
+      },
+      {
+        "id": "1743916110745j7c9dh72d",
+        "name": "created",
+        "value": "{{date}}",
+        "type": "date"
+      },
+      {
+        "id": "1743916110745hsdij1zv6",
+        "name": "description",
+        "value": "{{\\\"uma descrição curta, 200 caracteres ou menos\\\"}}",
+        "type": "text"
+      },
+      {
+        "id": "1743916110745un2m9fjp8",
+        "name": "tags",
+        "value": "clippings,interpreted,{{\\\"3 tags sobre esta página, separados por vírgula e com traço (-) em vez de espaço para tags com multi-palavras\\\"}}",
+        "type": "multitext"
+      }
+    ],
+    "triggers": []
+  },
+  "template_17439161107454ry8kdqwj": {
+    "id": "17439161107454ry8kdqwj",
+    "name": "Default",
+    "behavior": "create",
+    "noteNameFormat": "{{title}}",
+    "path": "99 - Meta e Anexos\Clippings",
+    "noteContentFormat": "{{content}}",
+    "context": "",
+    "properties": [
+      {
+        "id": "17439161107453bhjyz3u0",
+        "name": "title",
+        "value": "{{title}}",
+        "type": "text"
+      },
+      {
+        "id": "17439161107456h7i9zwc8",
+        "name": "source",
+        "value": "{{url}}",
+        "type": "text"
+      },
+      {
+        "id": "1743916110745nnmbbjp9v",
+        "name": "author",
+        "value": "{{author|split:\\\", \\\"|wikilink|join}}",
+        "type": "multitext"
+      },
+      {
+        "id": "1743916110745j7c9dh72d",
+        "name": "created",
+        "value": "{{date}}",
+        "type": "date"
+      },
+      {
+        "id": "1743916110745hsdij1zv6",
+        "name": "description",
+        "value": "{{description}}",
+        "type": "text"
+      },
+      {
+        "id": "1743916110745un2m9fjp8",
+        "name": "tags",
+        "value": "clippings",
+        "type": "multitext"
+      }
+    ],
+    "triggers": []
+  },
+  "vaults": [],
+  "template_list": [
+    "17439161107454ry8kdqwj",
+    "175571879583472c04ggm4"
+  ],
+  "property_types": [
+    {
+      "name": "title",
+      "type": "text",
+      "defaultValue": "{{title}}"
+    },
+    {
+      "name": "source",
+      "type": "text",
+      "defaultValue": "{{url}}"
+    },
+    {
+      "name": "author",
+      "type": "multitext",
+      "defaultValue": "{{author|split:\", \"|wikilink|join}}"
+    },
+    {
+      "name": "published",
+      "type": "date",
+      "defaultValue": "{{published}}"
+    },
+    {
+      "name": "created",
+      "type": "date",
+      "defaultValue": "{{date}}"
+    },
+    {
+      "name": "description",
+      "type": "text",
+      "defaultValue": "{{description}}"
+    },
+    {
+      "name": "tags",
+      "type": "multitext",
+      "defaultValue": "clippings"
+    }
+  ],
+  "reader_settings": {
+    "fontSize": 1.5,
+    "lineHeight": 1.6,
+    "maxWidth": 38,
+    "lightTheme": "default",
+    "darkTheme": "same",
+    "appearance": "auto",
+    "fonts": [],
+    "defaultFont": "",
+    "blendImages": true,
+    "colorLinks": false,
+    "followLinks": true,
+    "pinPlayer": true,
+    "autoScroll": true,
+    "highlightActiveLine": true,
+    "customCss": ""
+  },
+  "stats": {
+    "addToObsidian": 90,
+    "saveFile": 0,
+    "copyToClipboard": 0,
+    "share": 0
+  }
+}
