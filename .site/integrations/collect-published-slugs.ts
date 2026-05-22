@@ -4,12 +4,7 @@ import { join, basename } from 'node:path';
 import { globSync } from 'glob';
 import matter from 'gray-matter';
 import { slugify } from '@dgk/astro-plugins';
-
-const VAULT_FOLDERS = [
-  '00 - Entrada', '10 - Diário', '20 - Projetos',
-  '30 - Áreas', '40 - Recursos', '50 - Arquivo',
-  '90 - Modelos', '99 - Meta e Anexos',
-];
+import { VAULT_FOLDERS } from './vault-config.js';
 
 export interface VaultEntry {
   slug: string;

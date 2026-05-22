@@ -22,16 +22,11 @@ import { globSync } from 'glob';
 import { existsSync, mkdirSync, copyFileSync, statSync, readFileSync } from 'node:fs';
 import { join, basename } from 'node:path';
 import type { AstroIntegration } from 'astro';
+import { VAULT_FOLDERS } from './vault-config.js';
 
 const ATTACHMENT_FOLDER = '99 - Meta e Anexos/Anexos';
 const PUBLIC_ASSETS     = 'public/assets';
 const IMAGE_EXTENSIONS  = '{png,jpg,jpeg,gif,svg,webp}';
-
-const VAULT_FOLDERS = [
-  '00 - Entrada', '10 - Diário', '20 - Projetos',
-  '30 - Áreas', '40 - Recursos', '50 - Arquivo',
-  '90 - Modelos', '99 - Meta e Anexos',
-];
 
 /** Returns the set of image filenames referenced in any vault note. */
 function collectReferencedImages(root: string): Set<string> {
