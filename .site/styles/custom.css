@@ -131,13 +131,15 @@ dialog.mermaid-dialog::backdrop {
   /* Stretch the hero section to fill the viewport (minus sticky header) so
      the footer always lands at the very bottom of the above-the-fold area.
      Flex chain: content-panel → sl-container → hero → stack (already flex col).
-     Each level needs display:flex + flex:1 to propagate the available height. */
+     Each level needs display:flex + flex:1 to propagate the available height.
+     --sl-main-pad adds 3vh padding-bottom to <main> outside .content-panel;
+     zero it here so we only need to subtract the two known header variables. */
+  main:has(.hero) {
+    padding: 0;
+  }
   .content-panel:has(.hero) {
     display: flex;
     flex-direction: column;
-    /* .main-frame padding-top = nav-height + mobile-toc-height (3rem below 72rem,
-       0rem above). Subtracting both keeps the content-panel outer height exactly
-       100dvh - that padding, so the page never overflows by a pixel. */
     min-height: calc(100dvh - var(--sl-nav-height) - var(--sl-mobile-toc-height));
   }
   .content-panel:has(.hero) > .sl-container {
