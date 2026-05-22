@@ -14,7 +14,7 @@ const base = process.env.ASTRO_BASE ?? '/';
 const repoName = process.env.GITHUB_REPOSITORY?.split('/')[1]
   ?? process.cwd().split(/[\\/]/).pop()
   ?? 'Meu Vault';
-const vaultTitle = process.env.VAULT_TITLE ?? repoName;
+const vaultTitle = process.env.VAULT_TITLE?.trim() || repoName;
 
 const vaultEntries = await collectVaultEntries();
 const publishedSlugs = new Set(vaultEntries.map(e => e.slug));
@@ -359,6 +359,9 @@ export default defineConfig({
         // verde-jardim (padrão) · oceano · terracota
         './.site/styles/themes/verde-jardim.css',
       ],
+      components: {
+        Footer: './.site/components/Footer.astro',
+      },
     }),
   ],
 });

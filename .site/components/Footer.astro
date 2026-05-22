@@ -1,0 +1,48 @@
+---
+import EditLink from 'virtual:starlight/components/EditLink';
+import LastUpdated from 'virtual:starlight/components/LastUpdated';
+import Pagination from 'virtual:starlight/components/Pagination';
+---
+
+<footer class="sl-flex">
+	<div class="meta sl-flex">
+		<EditLink />
+		<LastUpdated />
+	</div>
+	<Pagination />
+	<p class="kudos">
+		made with ♥ by <a href="https://github.com/aretw0">@aretw0</a> · {new Date().getFullYear()}
+	</p>
+</footer>
+
+<style>
+	footer {
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+	/* Mirrors Starlight's .meta styles but without the unconditional margin-top
+	   that adds 3rem of blank space even when EditLink/LastUpdated render nothing. */
+	.meta {
+		gap: 0.75rem 3rem;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		font-size: var(--sl-text-sm);
+		color: var(--sl-color-gray-3);
+	}
+	.meta > :global(*) {
+		margin-top: 3rem;
+	}
+	.kudos {
+		text-align: center;
+		font-size: var(--sl-text-xs);
+		color: var(--sl-color-gray-3);
+		margin: 0 auto;
+	}
+	.kudos a {
+		color: inherit;
+		text-decoration: none;
+	}
+	.kudos a:hover {
+		color: var(--sl-color-white);
+	}
+</style>
