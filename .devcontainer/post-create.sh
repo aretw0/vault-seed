@@ -81,11 +81,16 @@ sudo chmod +x /usr/local/bin/vault
 cargo install mdt_cli --locked --version 0.7.0 \
   || echo "[aviso] mdt_cli install falhou. Execute: cargo install mdt_cli --locked --version 0.7.0"
 
+# Python deps — Marimo e libs de análise
+uv pip install -r requirements.txt \
+  || echo "[aviso] pip install falhou. Execute: uv pip install -r requirements.txt"
+
 # Readiness gate — confirma que todas as ferramentas estão disponíveis
 echo ""
 echo "=== Ambiente pronto ==="
 echo "Node.js : $(node -v)"
 echo "pnpm    : $(pnpm --version)"
 echo "uv      : $(uv --version)"
+echo "marimo  : $(marimo --version 2>/dev/null || echo 'não instalado')"
 echo "Pi      : $(pi --version 2>/dev/null || echo 'não instalado')"
 echo "======================="

@@ -27,6 +27,7 @@
     "site:check": "node scripts/smoke_site.js",
     "site:test": "node --test scripts/mermaid_render_contract.test.js scripts/mermaid_toggle.test.js",
     "site:audit:sidebar": "node scripts/audit_sidebar.js",
+    "notebooks:dev": "marimo edit \"99 - Meta e Anexos/Notebooks\"",
     "diagrams:update": "mdt update",
     "diagrams:check": "mdt check",
     "release:package:smoke": "node scripts/release_package_smoke.mjs",
