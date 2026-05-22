@@ -63,7 +63,7 @@ Mensagem de commit simples:
 docs: atualiza notas de leitura
 ```
 
-Para um vault pessoal, esse fluxo já resolve o essencial.
+Para a maioria dos vaults, esse fluxo já resolve o essencial.
 
 ## Fluxo usando só Obsidian Git
 
@@ -130,13 +130,13 @@ instalados localmente em cada dispositivo.
 
 ## Branch e Pull Request
 
-Para usuário iniciante, `main` pode ser a branch principal do vault pessoal.
-Quando você quiser testar mudanças grandes, crie um "Rascunho Seguro" (branch).
+Para vaults simples, `main` pode ser a branch principal.
+Quando quiser testar mudanças grandes, crie um "Rascunho Seguro" (branch).
 
 - **Branch:** cópia de trabalho para experimentar.
 - **Pull Request:** proposta para revisar antes de juntar ao `main`.
 
-Mesmo em um vault pessoal, Pull Requests são úteis para mudanças grandes:
+Pull Requests são úteis para mudanças grandes em qualquer vault:
 renomear muitas notas, reorganizar pastas ou alterar templates.
 
 ## Quando usar terminal?

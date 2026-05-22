@@ -53,7 +53,7 @@ graph LR
 7.  **`50 - Arquivo/`**: Mantém o vault principal focado no que é ativo ou relevante, sem perder o histórico.
 8.  **`90 - Modelos/`**: Centraliza os modelos de notas.
 9. **`99 - Meta e Anexos/`**: Separa arquivos de configuração/suporte e anexos das notas de conteúdo.
-    - `Manual do Vault.md`: Uma nota interna explicando suas próprias convenções, estrutura, como usar tags, etc. É o seu manual pessoal do vault.
+    - `Manual do Vault.md`: Uma nota interna explicando as convenções do vault, estrutura, como usar tags, etc. É o manual interno do vault.
     - Configure o Obsidian em `Settings > Files & Links > Default location for new attachments` para usar `99 - Meta e Anexos/Attachments/`.
 
 ## Distinção entre `docs/` e `99 - Meta e Anexos/`
@@ -65,7 +65,7 @@ Para manter a clareza na organização da documentação, é importante entender
     *   **Analogia**: Pense nisso como o **manual de instruções do carro**. Ele explica como o motor funciona, como trocar um pneu, ou como usar o sistema de navegação. É sobre as *partes técnicas e operacionais* do carro.
 
 *   **`99 - Meta e Anexos/` (Meta-Documentação e Boas Práticas do Vault)**:
-    *   **Propósito**: Contém a documentação sobre a *filosofia, as convenções, as boas práticas e o "como usar" o vault como um sistema de gestão de conhecimento pessoal*. É sobre a experiência de uso do vault, suas regras internas, e anexos relacionados a essa meta-discussão.
+    *   **Propósito**: Contém a documentação sobre a *filosofia, as convenções, as boas práticas e o "como usar" o vault como sistema de gestão de conhecimento*. É sobre a experiência de uso do vault, suas regras internas, e anexos relacionados a essa meta-discussão.
     *   **Analogia**: Pense nisso como o **guia de direção defensiva e dicas de viagem**. Ele explica a *filosofia* de como dirigir com segurança, as *melhores rotas* para diferentes tipos de viagem, ou *como manter o carro limpo* para uma melhor experiência. É sobre a *experiência e as melhores práticas* de usar o carro, não sobre o funcionamento interno.
 
 Essa distinção ajuda a manter a documentação organizada e fácil de navegar, direcionando o leitor para o tipo de informação que ele procura.

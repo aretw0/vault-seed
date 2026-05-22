@@ -47,13 +47,13 @@ Use Conventional Commits para manter o histórico legível:
 
 `CHANGELOG.md` resume mudanças relevantes. Um release marca um ponto do histórico que você quer preservar ou compartilhar.
 
-Para um vault pessoal, release pode ser opcional. Para o template original, release ajuda a comunicar mudanças para quem gera novos vaults a partir dele.
+Para vaults menores ou de uso interno, release pode ser opcional. Para o template original, release ajuda a comunicar mudanças para quem gera novos vaults a partir dele.
 
 ## Branches
 
 `main` deve representar o estado principal do vault. Se você quiser experimentar mudanças maiores, use uma branch separada e só faça merge quando revisar o resultado.
 
-Em um vault pessoal simples, você pode trabalhar direto em `main` desde que revise o diff antes de sincronizar.
+Em vaults simples (individual ou de pequena equipe), você pode trabalhar direto em `main` desde que revise o diff antes de sincronizar.
 
 ## Próximos Passos
 

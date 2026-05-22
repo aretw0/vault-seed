@@ -6,8 +6,8 @@ let friendlyDate = tp.date.now("dddd, D [de] MMMM [de] YYYY");
 -%>
 # <% friendlyDate %>
 
-> [!quote] O que faria hoje ser um dia excelente?
-> Escreva aqui sua meta principal.
+> [!note] Foco do dia
+> Qual é a prioridade principal hoje?
 
 ## 📝 Log Rápido
 - [ ]
