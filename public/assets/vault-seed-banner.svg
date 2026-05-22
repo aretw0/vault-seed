@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 320" role="img" aria-label="Vault Seed — rede de notas crescendo a partir de uma semente">
+  <defs>
+    <style>
+      .bg   { fill: #f7f5f0; }
+      .line { stroke: #b7e4c7; stroke-width: 1.5; stroke-linecap: round; }
+      .node { fill: #d4ede0; stroke: #52b788; stroke-width: 2; }
+      .seed { fill: #1b5e3b; }
+      .stem { stroke: #1b5e3b; stroke-width: 2.5; stroke-linecap: round; fill: none; }
+      .leaf { fill: #52b788; opacity: 0.85; }
+      .label-main { font-family: system-ui, -apple-system, sans-serif; font-size: 28px; font-weight: 600; fill: #1b5e3b; letter-spacing: -0.5px; }
+      .label-sub  { font-family: system-ui, -apple-system, sans-serif; font-size: 14px; fill: #4a7c59; letter-spacing: 0.5px; }
+      .note-rect  { fill: #edf7f2; stroke: #74c69d; stroke-width: 1.5; rx: 6; }
+      .note-line  { stroke: #b7e4c7; stroke-width: 1.5; stroke-linecap: round; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect class="bg" width="800" height="320" rx="12"/>
+
+  <!-- ── Connection lines (graph edges) ──────────────────────────────── -->
+  <!-- center → top-left note -->
+  <line class="line" x1="400" y1="160" x2="210" y2="90"/>
+  <!-- center → top-right note -->
+  <line class="line" x1="400" y1="160" x2="590" y2="90"/>
+  <!-- center → bottom-left note -->
+  <line class="line" x1="400" y1="160" x2="210" y2="230"/>
+  <!-- center → bottom-right note -->
+  <line class="line" x1="400" y1="160" x2="590" y2="230"/>
+  <!-- cross edges -->
+  <line class="line" x1="210" y1="90" x2="590" y2="90" opacity="0.4"/>
+  <line class="line" x1="210" y1="230" x2="590" y2="230" opacity="0.4"/>
+
+  <!-- ── Satellite note cards ──────────────────────────────────────── -->
+  <!-- Top-left -->
+  <rect x="140" y="58" width="140" height="64" rx="8" class="note-rect"/>
+  <line class="note-line" x1="155" y1="82" x2="265" y2="82"/>
+  <line class="note-line" x1="155" y1="96" x2="245" y2="96"/>
+  <line class="note-line" x1="155" y1="110" x2="255" y2="110"/>
+
+  <!-- Top-right -->
+  <rect x="520" y="58" width="140" height="64" rx="8" class="note-rect"/>
+  <line class="note-line" x1="535" y1="82" x2="645" y2="82"/>
+  <line class="note-line" x1="535" y1="96" x2="625" y2="96"/>
+  <line class="note-line" x1="535" y1="110" x2="635" y2="110"/>
+
+  <!-- Bottom-left -->
+  <rect x="140" y="198" width="140" height="64" rx="8" class="note-rect"/>
+  <line class="note-line" x1="155" y1="222" x2="265" y2="222"/>
+  <line class="note-line" x1="155" y1="236" x2="245" y2="236"/>
+  <line class="note-line" x1="155" y1="250" x2="255" y2="250"/>
+
+  <!-- Bottom-right -->
+  <rect x="520" y="198" width="140" height="64" rx="8" class="note-rect"/>
+  <line class="note-line" x1="535" y1="222" x2="645" y2="222"/>
+  <line class="note-line" x1="535" y1="236" x2="625" y2="236"/>
+  <line class="note-line" x1="535" y1="250" x2="635" y2="250"/>
+
+  <!-- ── Central seed node ────────────────────────────────────────── -->
+  <circle cx="400" cy="160" r="44" class="node"/>
+
+  <!-- Stem -->
+  <path class="stem" d="M400 148 Q400 130 400 115"/>
+  <!-- Left leaf -->
+  <path class="leaf" d="M400 128 Q385 112 368 118 Q380 132 400 128 Z"/>
+  <!-- Right leaf -->
+  <path class="leaf" d="M400 122 Q415 106 432 112 Q420 126 400 122 Z"/>
+  <!-- Seed dot -->
+  <circle cx="400" cy="152" r="7" class="seed"/>
+
+  <!-- ── Wordmark ───────────────────────────────────────────────── -->
+  <text x="400" y="292" class="label-main" text-anchor="middle">vault · seed</text>
+  <text x="400" y="312" class="label-sub"  text-anchor="middle">um jardim digital para o seu conhecimento</text>
+</svg>
