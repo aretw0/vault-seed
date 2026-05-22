@@ -45,6 +45,10 @@
     "4321": {
       "label": "Vault Seed Astro site",
       "onAutoForward": "silent"
+    },
+    "2718": {
+      "label": "Marimo notebooks",
+      "onAutoForward": "silent"
     }
   },
   "postCreateCommand": "bash .devcontainer/post-create.sh",
