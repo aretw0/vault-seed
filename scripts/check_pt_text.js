@@ -64,7 +64,9 @@ const ACCENT_RULES = [
  * Blanking (not removing) preserves line/column positions for error messages.
  */
 function stripNonProse(raw) {
-  let text = raw;
+  // Strip UTF-8 BOM so the frontmatter regex anchored at ^ can match.
+  // Obsidian saves files with BOM by default.
+  let text = raw.charCodeAt(0) === 0xFEFF ? raw.slice(1) : raw;
 
   // Blank wikilinks: [[...]] → spaces of same length
   text = text.replace(/\[\[[^\]]*\]\]/g, m => ' '.repeat(m.length));
