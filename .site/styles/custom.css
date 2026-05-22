@@ -135,6 +135,9 @@ dialog.mermaid-dialog::backdrop {
   .content-panel:has(.hero) {
     display: flex;
     flex-direction: column;
+    /* border-box includes Starlight's 1.5rem padding in the min-height so the
+       total outer height is exactly 100dvh - nav, not 100dvh - nav + 3rem. */
+    box-sizing: border-box;
     min-height: calc(100dvh - var(--sl-nav-height));
   }
   .content-panel:has(.hero) > .sl-container {
