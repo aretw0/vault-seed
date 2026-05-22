@@ -362,6 +362,7 @@ export default defineConfig({
         './.site/styles/themes/verde-jardim.css',
       ],
       components: {
+        Header: './.site/components/Header.astro',
         Footer: './.site/components/Footer.astro',
       },
     }),
