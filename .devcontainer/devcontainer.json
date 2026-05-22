@@ -36,6 +36,17 @@
     "source=dgk-gh-config,target=/home/vscode/.config/gh,type=volume",
     "source=dgk-pi-home,target=/home/vscode/.pi,type=volume"
   ],
+  "runArgs": [
+    "--publish",
+    "127.0.0.1:4321:4321"
+  ],
+  "forwardPorts": [4321],
+  "portsAttributes": {
+    "4321": {
+      "label": "Vault Seed Astro site",
+      "onAutoForward": "silent"
+    }
+  },
   "postCreateCommand": "bash .devcontainer/post-create.sh",
   "postStartCommand": "bash .devcontainer/post-start.sh",
   "customizations": {
