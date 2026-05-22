@@ -130,6 +130,9 @@ dialog.mermaid-dialog::backdrop {
 @media (min-width: 50rem) {
   .hero {
     grid-template-columns: 5fr 6fr;
+    /* Starlight default is clamp(2.5rem, 1rem + 10vmin, 10rem) — too tall at
+       common laptop viewport heights (~720-900px), pushing content past 100vh. */
+    padding-block: clamp(1.5rem, 0.5rem + 3vmin, 3.5rem);
   }
 
   .hero > .hero-html {
