@@ -45,3 +45,18 @@ updates:
     labels:
       - "dependencies"
       - "automação"
+
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    groups:
+      python-deps:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: "chore(deps):"
+    labels:
+      - "dependencies"
+      - "automação"
