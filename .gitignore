@@ -92,3 +92,4 @@ gha-creds-*.json
 dist/
 .astro/
 .sandbox/
+public/lab/
