@@ -32,6 +32,8 @@ Este mapa mostra o próprio vault-seed como exemplo de organização. Use-o para
 - [[Preparando seu Computador para o Vault]]
 - [[Depois da Recepcao do Template]]
 - [[Configurando o Obsidian Git]]
+- [[Publicando seu Vault como Site]]
+- [[Usando o Lab (Notebooks Marimo)]]
 
 ## Conceitos Que Sustentam o Vault
 
@@ -50,6 +52,8 @@ Este mapa mostra o próprio vault-seed como exemplo de organização. Use-o para
 - [[Templater]]
 - [[Plugins Essenciais e Recomendados]]
 - [[Usando o Git e o GitHub para Sincronizar seu Vault]]
+- [[Publicando seu Vault como Site]]
+- [[Usando o Lab (Notebooks Marimo)]]
 - [[Usando o Vault no Celular vs. Desktop]]
 
 ## Base Nativa
