@@ -33,8 +33,9 @@ O template usa **GitHub Actions** para executar a recepção inicial do novo vau
 1.  **Criação do Vault**: Quando um novo repositório (seu novo vault) é criado a partir deste template no GitHub, e você faz o primeiro `push` para a branch `main` (seu "Rascunho Seguro" principal), o GitHub Actions é ativado.
 2.  **Identificação do contexto**: O workflow verifica se está rodando no repositório de template original ou em um novo vault. Ele foi configurado para *não fazer nada* no repositório de template.
 3.  **Limpeza automática**: Se for um novo vault, o workflow executa as tarefas de inicialização necessárias, como:
-    *   Resetar o `CHANGELOG.md` para um estado limpo.
-    *   Definir a versão inicial do vault para `0.0.1` no arquivo `VERSION`.
+    *   Renomear arquivos `.template` para os nomes finais usados no vault.
+    *   Remover pastas, workflows e scripts que pertencem só ao desenvolvimento do template.
+    *   Manter a stack que o usuário realmente usa: Git, GitHub Actions, Astro, Obsidian, VS Code/Foam e Marimo.
     *   Essas mudanças são automaticamente commitadas e enviadas para o seu novo vault.
 4.  **Remoção do workflow**: Após completar a inicialização, `.github/workflows/initialize.yml` é removido do novo vault. Isso garante que ele rode apenas uma vez.
 

@@ -15,8 +15,7 @@ audience: todos
 related:
   - "[[Guia do Jardineiro Digital]]"
   - "[[Usando o Git e o GitHub para Sincronizar seu Vault]]"
-  - "[[Processo de Release]]"
-  - "[[git-workflow]]"
+  - "[[Publicando seu Vault como Site]]"
 ---
 
 # O Ciclo de Vida do Conhecimento
@@ -43,11 +42,13 @@ Use Conventional Commits para manter o histórico legível:
 | `chore:` | Manutenção do repositório |
 | `BREAKING CHANGE:` ou `!` | Mudança que exige ação manual, como reorganizar pastas ou atualizar links |
 
-## Changelog E Releases
+## Commits Como Histórico
 
-`CHANGELOG.md` resume mudanças relevantes. Um release marca um ponto do histórico que você quer preservar ou compartilhar.
+No vault gerado, o histórico principal é o próprio Git. Cada commit registra uma mudança que você decidiu preservar: uma nota nova, uma revisão, uma reorganização, uma automação ou uma correção.
 
-Para vaults menores ou de uso interno, release pode ser opcional. Para o template original, release ajuda a comunicar mudanças para quem gera novos vaults a partir dele.
+Você não precisa manter `CHANGELOG.md`, arquivo `VERSION` ou release formal para usar o vault. Esses mecanismos pertencem a projetos de software que precisam empacotar versões para outras pessoas. Para um vault de conhecimento, commits claros costumam ser o suficiente.
+
+Quando quiser marcar um ponto importante, use uma tag Git ou uma nota de resumo dentro do próprio vault. O mais importante é que o registro continue perto do conteúdo.
 
 ## Branches
 
@@ -58,5 +59,4 @@ Em vaults simples (individual ou de pequena equipe), você pode trabalhar direto
 ## Próximos Passos
 
 - Para sincronização diária, veja [[Usando o Git e o GitHub para Sincronizar seu Vault]].
-- Para automação de release do template original, veja [Processo de Release e Versionamento](../../docs/processo-de-release.md).
-- Para estratégia de branches do template original, veja [Fluxo de Trabalho Git](../../docs/git-workflow.md).
+- Para publicar notas, veja [[Publicando seu Vault como Site]].

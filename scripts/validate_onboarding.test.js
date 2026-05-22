@@ -57,6 +57,8 @@ test("validateOnboarding catches unresolved wikilinks in entrypoints", () => {
     "99 - Meta e Anexos/Configurando o Obsidian Git.md": "ok",
     "99 - Meta e Anexos/Depois da Recepcao do Template.md": "ok",
     "99 - Meta e Anexos/MOC Vault Seed.md": "ok",
+    "99 - Meta e Anexos/Publicando seu Vault como Site.md": "ok",
+    "99 - Meta e Anexos/Usando o Lab (Notebooks Marimo).md": "ok",
     "99 - Meta e Anexos/Vault Seed Kitchen Sink.base": "ok",
     "40 - Recursos/O que sao system prompts de IA.md": "ok",
     "40 - Recursos/Bases.md": "ok",

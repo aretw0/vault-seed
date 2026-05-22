@@ -51,6 +51,7 @@ function requireCondition(condition, message) {
 }
 
 const pkg = readJson("package.json");
+const templatePkg = readJson("package.template.json");
 
 requireCondition(
   typeof pkg.packageManager === "string" &&
@@ -61,6 +62,21 @@ requireCondition(exists("pnpm-lock.yaml"), "pnpm-lock.yaml must exist.");
 requireCondition(
   !exists("package-lock.json"),
   "package-lock.json must not exist.",
+);
+requireCondition(
+  !("standard-version" in (templatePkg.devDependencies || {})),
+  "package.template.json must not ship release-only standard-version to generated vaults.",
+);
+requireCondition(
+  !Object.values(templatePkg.scripts || {}).some((script) =>
+    /\bstandard-version\b|CHANGELOG\.md|VERSION/.test(script),
+  ),
+  "package.template.json scripts must not reference release-only changelog or version tooling.",
+);
+requireCondition(
+  templatePkg.scripts?.["notebooks:dev"] ===
+    'marimo edit "99 - Meta e Anexos/Notebooks"',
+  "package.template.json must expose notebooks:dev for generated vaults.",
 );
 
 const trackedPluginFiles = gitLsFiles([".obsidian/plugins"]);
