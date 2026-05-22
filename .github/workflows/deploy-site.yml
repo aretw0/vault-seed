@@ -12,6 +12,8 @@ on:
       - "50 - Arquivo/**"
       - "90 - Modelos/**"
       - "99 - Meta e Anexos/**"
+      - "99 - Meta e Anexos/Notebooks/**"
+      - "requirements.txt"
       - ".site/**"
       - "astro.config.mjs"
       - "packages/astro-plugins/**"
@@ -64,11 +66,27 @@ jobs:
           ASTRO_BASE: ${{ steps.pages-url.outputs.base }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           VAULT_TITLE: ${{ vars.VAULT_TITLE }}
+          VAULT_NOTEBOOKS_PATH: ${{ vars.VAULT_NOTEBOOKS_PATH || 'lab' }}
 
       - name: Check site
         run: pnpm run site:check
         env:
           ASTRO_BASE: ${{ steps.pages-url.outputs.base }}
+
+      - name: Install Python dependencies
+        run: pip install uv && uv pip install -r requirements.txt
+
+      - name: Export analysis notebooks
+        env:
+          VAULT_NOTEBOOKS_PATH: ${{ vars.VAULT_NOTEBOOKS_PATH || 'lab' }}
+        run: |
+          mkdir -p "dist/$VAULT_NOTEBOOKS_PATH"
+          marimo export html-wasm \
+            "99 - Meta e Anexos/Notebooks/analise-publicacao.py" \
+            --output "dist/$VAULT_NOTEBOOKS_PATH/publishing.html"
+          marimo export html-wasm \
+            "99 - Meta e Anexos/Notebooks/analise-grafo.py" \
+            --output "dist/$VAULT_NOTEBOOKS_PATH/graph.html"
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
