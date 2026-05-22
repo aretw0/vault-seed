@@ -128,15 +128,34 @@ dialog.mermaid-dialog::backdrop {
  * On mobile the hero is a single-column grid — no changes needed there.
  * Unlayered CSS beats @layer starlight.core automatically, no !important needed. */
 @media (min-width: 50rem) {
+  /* Stretch the hero section to fill the viewport (minus sticky header) so
+     the footer always lands at the very bottom of the above-the-fold area.
+     Flex chain: content-panel → sl-container → hero → stack (already flex col).
+     Each level needs display:flex + flex:1 to propagate the available height. */
+  .content-panel:has(.hero) {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100dvh - var(--sl-nav-height));
+  }
+  .content-panel:has(.hero) > .sl-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
   .hero {
     grid-template-columns: 5fr 6fr;
-    /* Starlight default is clamp(2.5rem, 1rem + 10vmin, 10rem) — too tall at
-       common laptop viewport heights (~720-900px), pushing content past 100vh. */
-    padding-block: clamp(1.5rem, 0.5rem + 3vmin, 3.5rem);
+    flex: 1;
+    align-items: stretch;
+    padding-block: clamp(2rem, 1rem + 4vmin, 5rem);
   }
-
+  /* Keep the diagram column centered vertically despite align-items:stretch above. */
   .hero > .hero-html {
     width: 100%;
+    align-self: center;
+  }
+  /* Push footer to the bottom of the text column. */
+  .hero > .stack > footer {
+    margin-top: auto;
   }
 }
 
