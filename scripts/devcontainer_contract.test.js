@@ -8,13 +8,18 @@ function readJson(path) {
 
 test("devcontainer publishes the Astro site port for host browsers", () => {
   const config = readJson(".devcontainer/devcontainer.json");
+  const expectedPorts = [4321, 2718];
 
-  assert.deepEqual(config.forwardPorts, [4321, 2718]);
-  assert.deepEqual(config.runArgs, ["--publish", "127.0.0.1:4321:4321"]);
+  assert.deepEqual(config.forwardPorts, expectedPorts);
+  for (const port of expectedPorts) {
+    assert.ok(
+      config.runArgs.includes(`127.0.0.1:${port}:${port}`),
+      `missing explicit host publish for ${port}`,
+    );
+    assert.equal(config.portsAttributes[String(port)].onAutoForward, "silent");
+  }
   assert.equal(config.portsAttributes["4321"].label, "Vault Seed Astro site");
-  assert.equal(config.portsAttributes["4321"].onAutoForward, "silent");
   assert.equal(config.portsAttributes["2718"].label, "Marimo notebooks");
-  assert.equal(config.portsAttributes["2718"].onAutoForward, "silent");
 });
 
 test("devcontainer shell scripts stay LF-only for Linux bash", () => {
