@@ -1,0 +1,43 @@
+# Marimo, WASM e ETL no vault-seed
+
+Este documento registra a fronteira técnica entre notebooks Marimo, site Astro e
+ingestão de dados no `vault-seed`.
+
+## Princípio
+
+Notebooks publicados em `/lab/` devem ser consumidores de dados preparados, não
+o principal motor de coleta. O HTML WebAssembly roda no navegador via Pyodide:
+isso é ótimo para exploração interativa, mas não substitui um ambiente Python
+local, um runner de CI ou um backend.
+
+## Modos
+
+| Modo | Runtime | Bom para | Evitar |
+| --- | --- | --- | --- |
+| `pnpm run notebooks:dev` | Python local via `uv` | desenvolvimento, depuração, agentes, Playwright, OCR, APIs autenticadas | assumir que tudo isso funcionará no export WASM |
+| `marimo run` | servidor Python | app interno com backend | GitHub Pages sem servidor |
+| `marimo export html-wasm` | navegador via Pyodide | publicação estática, demos, análise leve sobre snapshots | dependências nativas, browser automation, secrets locais, processos longos |
+
+## ETL
+
+O kit de ingestão deve ficar em scripts ou módulos Python/Node versionados. O
+resultado esperado para o Lab é um artefato de leitura: JSON, CSV, Parquet ou
+outro formato que o navegador consiga baixar e carregar de forma previsível.
+
+Fluxo recomendado:
+
+1. Extrair dados de arquivos, páginas, OCR ou APIs em ambiente local/CI.
+2. Transformar e reduzir para um snapshot pequeno o suficiente para publicação.
+3. Salvar esse snapshot em caminho servido pelo site.
+4. Carregar o snapshot no notebook Marimo.
+
+Para arquivos empacotados junto de um notebook WebAssembly, a documentação do
+Marimo recomenda uma pasta `public/` ao lado do notebook e `mo.notebook_location()`
+para montar caminhos que funcionem localmente e no export.
+
+## Referência Local
+
+Há um notebook experimental em `../v0_1_Base_ETL.ipynb` com módulos de scraping,
+upload/manual files, OCR, APIs sociais, transformação e persistência. Ele serve
+como referência de requisitos para o desenho da camada de ETL, mas não deve ser
+copiado como texto de produto nem como promessa de escopo.

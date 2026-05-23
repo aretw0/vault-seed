@@ -104,7 +104,42 @@ O mesmo vale para o seletor de tema do site Astro: ele aparece no `vault-seed` p
 
 O workflow `.github/workflows/deploy-site.yml` exporta como HTML WebAssembly apenas os notebooks listados em `.site/lab.notebooks.json` com `publish: true`. Por padrão, eles ficam em `/lab/` junto com o site publicado.
 
-No preview local do Astro, a página `/lab/` aparece, mas os notebooks exportados só existem depois do passo de deploy. Para testar a experiência interativa localmente, use `pnpm run notebooks:dev`.
+No preview local do Astro, a página `/lab/` aparece, mas os notebooks exportados só existem depois do passo de export. Para experimentar a versão empacotada localmente, rode:
+
+```bash
+pnpm run site:build
+pnpm run notebooks:export
+pnpm run site:preview
+```
+
+Para desenvolver notebooks com Python rodando no seu computador, use `pnpm run notebooks:dev`.
+
+## Modos De Execução
+
+O Lab tem três modos com limites diferentes:
+
+| Modo | Onde o Python roda | Uso indicado |
+| --- | --- | --- |
+| `pnpm run notebooks:dev` | No seu computador | criação, depuração, acesso a arquivos locais e integração com agentes |
+| `marimo run` | Em um servidor Python | apps internos com backend, quando houver infraestrutura para isso |
+| `marimo export html-wasm` | No navegador, via WebAssembly/Pyodide | publicação estática, demos, exploração leve e interativa |
+
+O modo publicado não tem um computador remoto por baixo. Ele roda no navegador de quem abre a página. Por isso, notebooks publicados devem evitar dependências de sistema, automação de navegador, processos longos, credenciais locais e acesso direto ao filesystem da máquina.
+
+## Dados E ETL
+
+Use os notebooks publicados como camada de leitura, exploração e apresentação. Quando a coleta ou transformação exigir Playwright, OCR, APIs autenticadas, scraping, arquivos grandes ou dependências de sistema, prefira rodar essa etapa antes, em scripts locais ou em automações de CI.
+
+O fluxo recomendado é:
+
+1. Coletar dados de fontes locais ou remotas com scripts versionados.
+2. Normalizar e reduzir os dados para formatos portáteis, como JSON, CSV ou Parquet.
+3. Publicar apenas snapshots e arquivos auxiliares necessários para a análise.
+4. Fazer o notebook Marimo consumir esses snapshots.
+
+Para dados que devem ir junto com um notebook WebAssembly, use uma pasta `public/` ao lado do notebook e acesse os arquivos com `mo.notebook_location()`. Para dados remotos em runtime, prefira APIs públicas ou endpoints preparados para navegador, observando CORS, tamanho de resposta e tempo de carregamento.
+
+Essa separação mantém o site barato de hospedar, fácil de publicar e previsível para quem abre o Lab.
 
 ## Criando Um Notebook
 

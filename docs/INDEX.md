@@ -16,6 +16,7 @@ Para preparar um computador de usuario final, use
 - [Guia de lint](guia-de-lint.md)
 - [Estrategia de plugins do Obsidian](estrategia-plugins-obsidian.md)
 - [Mermaid no template](mermaid-no-template.md)
+- [Marimo, WASM e ETL](marimo-etl-boundaries.md)
 - [Agents Lab](agents-lab.md)
 
 ## Git e GitHub

@@ -22,6 +22,11 @@ const notebooks = manifest
     Os links abaixo ficam disponíveis após o primeiro deploy via GitHub Actions.
   </p>
 
+  <p>
+    A versão publicada roda no navegador. Coletas, scraping, OCR e outras etapas de ETL devem gerar
+    snapshots antes da publicação; os notebooks publicados consomem esses dados preparados.
+  </p>
+
   <ul class="notebook-list">
     {notebooks.map((notebook) => (
       <li data-notebook-link={notebook.href}>
