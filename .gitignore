@@ -12,6 +12,7 @@
 # Dependências
 node_modules/
 .pnpm-store/
+__pycache__/
 
 # Arquivos de Sistema e temporários
 *~

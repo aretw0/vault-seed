@@ -83,7 +83,7 @@ cargo install mdt_cli --locked --version 0.7.0 \
 
 # Python deps — Marimo e libs de análise
 uv pip install -r requirements.txt \
-  || echo "[aviso] pip install falhou. Execute: uv pip install -r requirements.txt"
+  || echo "[aviso] instalação Python falhou. Execute: uv pip install -r requirements.txt"
 
 # Readiness gate — confirma que todas as ferramentas estão disponíveis
 echo ""

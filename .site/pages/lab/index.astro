@@ -1,21 +1,17 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import manifest from '../../lab.notebooks.json';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const notebooksPath = import.meta.env.VAULT_NOTEBOOKS_PATH ?? 'lab';
 
-const notebooks = [
-  {
-    title: 'Publicação',
-    href: `${base}/${notebooksPath}/publishing.html`,
-    description: 'status das notas, tags e distribuição por pasta',
-  },
-  {
-    title: 'Grafo',
-    href: `${base}/${notebooksPath}/graph.html`,
-    description: 'notas órfãs, links quebrados, densidade por pasta',
-  },
-];
+const notebooks = manifest
+  .filter((notebook) => notebook.publish)
+  .map((notebook) => ({
+    title: notebook.title,
+    href: `${base}/${notebooksPath}/${notebook.output}`,
+    description: notebook.description,
+  }));
 ---
 
 <StarlightPage frontmatter={{ title: 'Lab' }}>

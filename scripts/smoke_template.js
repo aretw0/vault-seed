@@ -74,8 +74,9 @@ requireCondition(
   "package.template.json scripts must not reference release-only changelog or version tooling.",
 );
 requireCondition(
-  templatePkg.scripts?.["notebooks:dev"] ===
-    'marimo edit "99 - Meta e Anexos/Notebooks"',
+  templatePkg.scripts?.["notebooks:data"] === "node scripts/generate_vault_data.mjs" &&
+    templatePkg.scripts?.["notebooks:dev"] === "node scripts/notebooks_dev.mjs" &&
+    templatePkg.scripts?.["notebooks:export"] === "node scripts/export_notebooks.mjs",
   "package.template.json must expose notebooks:dev for generated vaults.",
 );
 

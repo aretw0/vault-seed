@@ -1,0 +1,16 @@
+[
+  {
+    "title": "Publicação",
+    "source": "99 - Meta e Anexos/Notebooks/analise-publicacao.py",
+    "output": "publishing.html",
+    "description": "status das notas, tags e distribuição por pasta",
+    "publish": true
+  },
+  {
+    "title": "Grafo",
+    "source": "99 - Meta e Anexos/Notebooks/analise-grafo.py",
+    "output": "graph.html",
+    "description": "notas órfãs, links quebrados, densidade por pasta",
+    "publish": true
+  }
+]

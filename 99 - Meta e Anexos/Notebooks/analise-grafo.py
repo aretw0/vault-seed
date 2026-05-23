@@ -1,6 +1,6 @@
 import marimo
 
-app = marimo.App(width="medium", title="Análise de Grafo")
+app = marimo.App(width="medium")
 
 
 @app.cell
@@ -18,7 +18,8 @@ def _(json, os):
         from pyodide.http import open_url  # type: ignore
         data = json.loads(open_url("./vault-data.json").read())
     except ImportError:
-        _path = os.path.join(os.getcwd(), "public", "lab", "vault-data.json")
+        _notebooks_path = os.environ.get("VAULT_NOTEBOOKS_PATH", "lab")
+        _path = os.path.join(os.getcwd(), "public", _notebooks_path, "vault-data.json")
         with open(_path) as _f:
             data = json.load(_f)
     notes = data["notes"]
@@ -36,13 +37,29 @@ def _(data, mo, notes):
 
 @app.cell
 def _(notes):
+    def _slugify(value):
+        import re
+        import unicodedata
+
+        def _segment_slug(segment):
+            segment = re.sub(r"^\d+\s*-\s*", "", segment)
+            segment = unicodedata.normalize("NFD", segment)
+            segment = segment.encode("ascii", "ignore").decode("ascii")
+            segment = re.sub(r"\s+", "-", segment.lower().strip())
+            segment = re.sub(r"[^a-z0-9-]", "", segment)
+            segment = re.sub(r"-+", "-", segment)
+            return segment.strip("-")
+
+        return "/".join(filter(None, [_segment_slug(segment) for segment in value.split("/")]))
+
     all_slugs = {n["id"] for n in notes}
     inverse_index: dict[str, list[str]] = {n["id"]: [] for n in notes}
     for _n in notes:
         for _link in _n.get("links", []):
-            if _link in inverse_index:
-                inverse_index[_link].append(_n["id"])
-    return all_slugs, inverse_index
+            _link_id = _slugify(_link)
+            if _link_id in inverse_index:
+                inverse_index[_link_id].append(_n["id"])
+    return all_slugs, inverse_index, _slugify
 
 
 @app.cell
@@ -69,28 +86,28 @@ def _(inverse_index, mo, notes, pd):
 
 
 @app.cell
-def _(all_slugs, mo, notes):
+def _(all_slugs, mo, notes, _slugify):
     import pandas as _pd2
 
     _broken = [
         {"nota": n["id"], "link_quebrado": link}
         for n in notes
         for link in n.get("links", [])
-        if link not in all_slugs
+        if _slugify(link) not in all_slugs
     ]
     mo.md(f"## 🔗 Links Quebrados\n\n{len(_broken)} links apontam para notas inexistentes no vault.")
     return ()
 
 
 @app.cell
-def _(all_slugs, mo, notes):
+def _(all_slugs, mo, notes, _slugify):
     import pandas as _pd3
 
     _broken = [
         {"nota": n["id"], "link_quebrado": link}
         for n in notes
         for link in n.get("links", [])
-        if link not in all_slugs
+        if _slugify(link) not in all_slugs
     ]
     mo.ui.table(_pd3.DataFrame(_broken)) if _broken else mo.md("_Nenhum link quebrado._")
     return ()

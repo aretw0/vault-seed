@@ -1,6 +1,6 @@
 import marimo
 
-app = marimo.App(width="medium", title="Explorador do Vault")
+app = marimo.App(width="medium")
 
 
 @app.cell
@@ -18,7 +18,8 @@ def _(json, os):
         from pyodide.http import open_url  # type: ignore
         data = json.loads(open_url("../vault-data.json").read())
     except ImportError:
-        _path = os.path.join(os.getcwd(), "public", "lab", "vault-data.json")
+        _notebooks_path = os.environ.get("VAULT_NOTEBOOKS_PATH", "lab")
+        _path = os.path.join(os.getcwd(), "public", _notebooks_path, "vault-data.json")
         with open(_path) as _f:
             data = json.load(_f)
     notes = data["notes"]

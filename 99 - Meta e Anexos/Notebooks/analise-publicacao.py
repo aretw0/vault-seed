@@ -1,6 +1,6 @@
 import marimo
 
-app = marimo.App(width="medium", title="Análise de Publicação")
+app = marimo.App(width="medium")
 
 
 @app.cell
@@ -19,7 +19,8 @@ def _(json, os):
         _raw = open_url("./vault-data.json").read()
         data = json.loads(_raw)
     except ImportError:
-        _path = os.path.join(os.getcwd(), "public", "lab", "vault-data.json")
+        _notebooks_path = os.environ.get("VAULT_NOTEBOOKS_PATH", "lab")
+        _path = os.path.join(os.getcwd(), "public", _notebooks_path, "vault-data.json")
         with open(_path) as _f:
             data = json.load(_f)
     notes = data["notes"]

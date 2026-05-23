@@ -20,6 +20,12 @@ test("deploy-site workflow keeps GitHub Pages deploy gated by build and smoke", 
   assert.match(workflow, /build:\n\s+name: Build Astro site\n\s+runs-on: ubuntu-latest\n\s+timeout-minutes: 15/);
   assert.match(workflow, /run: pnpm --filter @dgk\/astro-plugins build/);
   assert.match(workflow, /run: pnpm run site:build/);
+  assert.match(workflow, /uses: astral-sh\/setup-uv@[0-9a-f]{40}/);
+  assert.match(workflow, /run: uv pip install --system -r requirements\.txt/);
+  assert.match(workflow, /run: pnpm run notebooks:export/);
+  assert.match(packageJson.scripts["notebooks:data"], /generate_vault_data\.mjs/);
+  assert.match(packageJson.scripts["notebooks:dev"], /notebooks_dev\.mjs/);
+  assert.match(packageJson.scripts["notebooks:export"], /export_notebooks\.mjs/);
   // ASTRO_SITE and ASTRO_BASE come from a detection step that checks for a
   // custom Pages domain (CNAME) and falls back to github.io + repo-name base.
   assert.match(workflow, /id: pages-url/);

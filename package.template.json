@@ -20,7 +20,9 @@
     "site:build": "astro build",
     "site:preview": "astro preview",
     "site:check": "node scripts/smoke_site.js",
-    "notebooks:dev": "marimo edit \"99 - Meta e Anexos/Notebooks\"",
+    "notebooks:data": "node scripts/generate_vault_data.mjs",
+    "notebooks:dev": "node scripts/notebooks_dev.mjs",
+    "notebooks:export": "node scripts/export_notebooks.mjs",
     "validate": "pnpm run lint && pnpm run test && pnpm run validate:onboarding"
   },
   "keywords": [],
