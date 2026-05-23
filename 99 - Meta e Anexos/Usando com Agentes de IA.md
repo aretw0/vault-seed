@@ -8,12 +8,13 @@ tags:
   - meta/agentes
 status: published
 created: 2026-05-19
-updated: 2026-05-19
+updated: 2026-05-23
 category: guia
 audience: tecnico
 related:
   - "[[Preparando seu Computador para o Vault]]"
   - "[[Automacoes no Obsidian]]"
+  - "[[Conhecendo o Agents Lab]]"
 ---
 # Usando com Agentes de IA
 
@@ -60,6 +61,10 @@ O `AGENTS.md` funciona como contexto para qualquer agente:
   com o conteúdo `@AGENTS.md`
 - **Obsidian plugins de IA:** cole o conteúdo de `AGENTS.md` no campo
   de system prompt do plugin
+
+Se quiser explorar um projeto do mesmo ecossistema dedicado a skills, tools e
+experimentos com agentes, veja [[Conhecendo o Agents Lab]]. Ele é opcional e
+não faz parte do uso básico do vault.
 
 ## Dicas de uso
 

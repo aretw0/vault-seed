@@ -11,7 +11,7 @@ tags:
   - obsidian/moc
 status: published
 created: 2026-05-19
-updated: 2026-05-19
+updated: 2026-05-23
 category: moc
 audience: iniciante
 related:
@@ -54,6 +54,7 @@ Este mapa mostra o próprio vault-seed como exemplo de organização. Use-o para
 - [[Usando o Git e o GitHub para Sincronizar seu Vault]]
 - [[Publicando seu Vault como Site]]
 - [[Usando o Lab (Notebooks Marimo)]]
+- [[Conhecendo o Agents Lab]]
 - [[Usando o Vault no Celular vs. Desktop]]
 
 ## Base Nativa
