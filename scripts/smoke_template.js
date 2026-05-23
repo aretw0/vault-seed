@@ -95,6 +95,11 @@ requireCondition(
   "package.template.json must expose notebooks:dev for generated vaults.",
 );
 requireCondition(
+  templatePkg.scripts?.["notebooks:export:public"] === "node scripts/export_notebooks.mjs --public" &&
+    templatePkg.scripts?.["site:dev:lab"] === "pnpm run notebooks:export:public && astro dev",
+  "package.template.json must expose a local published-Lab preview path for generated vaults.",
+);
+requireCondition(
   templatePkg.dependencies?.["@dgk/astro-plugins"] === "workspace:^",
   "Generated vaults must use the local workspace @dgk/astro-plugins package until it is published.",
 );

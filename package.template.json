@@ -26,6 +26,8 @@
     "notebooks:check": "node scripts/notebooks_check.mjs",
     "notebooks:pair": "node scripts/notebooks_pair.mjs",
     "notebooks:export": "node scripts/export_notebooks.mjs",
+    "notebooks:export:public": "node scripts/export_notebooks.mjs --public",
+    "site:dev:lab": "pnpm run notebooks:export:public && astro dev",
     "validate": "pnpm run lint && pnpm run test && pnpm run validate:onboarding"
   },
   "keywords": [],

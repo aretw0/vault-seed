@@ -112,6 +112,12 @@ pnpm run notebooks:export
 pnpm run site:preview
 ```
 
+Para ver os notebooks exportados enquanto usa o servidor de desenvolvimento do Astro, gere os HTMLs em `public/lab/` e suba o site:
+
+```bash
+pnpm run site:dev:lab
+```
+
 Para desenvolver notebooks com Python rodando no seu computador, use `pnpm run notebooks:dev`.
 
 ## Modos De Execução

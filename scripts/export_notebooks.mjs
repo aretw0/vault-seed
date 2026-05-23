@@ -6,9 +6,13 @@ import { fileURLToPath } from "node:url";
 import { uvEnv } from "./uv_env.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
+const args = new Set(process.argv.slice(2));
 const manifestPath = join(ROOT, ".site", "lab.notebooks.json");
 const notebooksPath = process.env.VAULT_NOTEBOOKS_PATH || "lab";
-const outDir = join(ROOT, "dist", notebooksPath);
+const outputRoot = args.has("--public")
+  ? join(ROOT, "public")
+  : process.env.VAULT_NOTEBOOKS_OUTPUT_DIR || join(ROOT, "dist");
+const outDir = join(outputRoot, notebooksPath);
 const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
 const packageJson = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"));
 const THEME_SELECTOR_MARKER = "data-vault-marimo-theme-selector";
@@ -123,7 +127,7 @@ for (const notebook of manifest.filter((entry) => entry.publish)) {
   const source = join(ROOT, notebook.source);
   const output = join(outDir, notebook.output);
   mkdirSync(dirname(output), { recursive: true });
-  console.log(`export notebook: ${notebook.source} -> dist/${notebooksPath}/${notebook.output}`);
+  console.log(`export notebook: ${notebook.source} -> ${outputRoot.replace(ROOT, "").replace(/^[\\/]/, "")}/${notebooksPath}/${notebook.output}`);
   const result = spawnSync("uv", [
     "run",
     "--no-project",

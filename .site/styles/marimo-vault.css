@@ -194,6 +194,204 @@ marimo-table {
   --grass-11: #f5c9af;
 }
 
+:root[data-vault-marimo-theme="light"],
+:root[data-vault-marimo-theme="light"] .dark,
+:root[data-vault-marimo-theme="light"] .dark-theme,
+:root[data-vault-marimo-theme="light"] .light,
+:root[data-vault-marimo-theme="light"] .light-theme {
+  --background: #f7f5f0;
+  --foreground: #12100e;
+  --card: #f7f5f0;
+  --card-foreground: #12100e;
+  --popover: #f7f5f0;
+  --popover-foreground: #12100e;
+  --primary: #1b5e3b;
+  --primary-foreground: #f7f5f0;
+  --secondary: #e0dbd2;
+  --secondary-foreground: #12100e;
+  --muted: #ede9e2;
+  --muted-foreground: #6b6560;
+  --accent: #d4ede0;
+  --accent-foreground: #0f3d26;
+  --border: #b8b2a7;
+  --input: #b8b2a7;
+  --ring: #1b5e3b;
+  --slate-1: #f7f5f0;
+  --slate-2: #ede9e2;
+  --slate-3: #e0dbd2;
+  --slate-4: #b8b2a7;
+  --slate-11: #3d3935;
+  --slate-12: #12100e;
+  --grass-7: #2d7a4d;
+  --grass-9: #1b5e3b;
+  --grass-11: #0f3d26;
+}
+
+:root[data-vault-marimo-theme="dark"],
+:root[data-vault-marimo-theme="dark"] .dark,
+:root[data-vault-marimo-theme="dark"] .dark-theme,
+:root[data-vault-marimo-theme="dark"] .light,
+:root[data-vault-marimo-theme="dark"] .light-theme {
+  --background: #111310;
+  --foreground: #edf0ec;
+  --card: #1a1f18;
+  --card-foreground: #edf0ec;
+  --popover: #1a1f18;
+  --popover-foreground: #edf0ec;
+  --primary: #95d5b2;
+  --primary-foreground: #111310;
+  --secondary: #282e26;
+  --secondary-foreground: #edf0ec;
+  --muted: #1a1f18;
+  --muted-foreground: #c0c8be;
+  --accent: #1a3327;
+  --accent-foreground: #c4edd8;
+  --border: #4a5048;
+  --input: #4a5048;
+  --ring: #95d5b2;
+  --slate-1: #111310;
+  --slate-2: #1a1f18;
+  --slate-3: #282e26;
+  --slate-4: #4a5048;
+  --slate-11: #c0c8be;
+  --slate-12: #edf0ec;
+  --grass-7: #4f9d72;
+  --grass-9: #95d5b2;
+  --grass-11: #c4edd8;
+}
+
+:root[data-vault-marimo-theme="light"][data-vault-marimo-palette="oceano"],
+:root[data-vault-marimo-theme="light"][data-vault-marimo-palette="oceano"] .dark,
+:root[data-vault-marimo-theme="light"][data-vault-marimo-palette="oceano"] .dark-theme,
+:root[data-vault-marimo-theme="light"][data-vault-marimo-palette="oceano"] .light,
+:root[data-vault-marimo-theme="light"][data-vault-marimo-palette="oceano"] .light-theme {
+  --background: #f5f7fa;
+  --foreground: #0f1623;
+  --card: #f5f7fa;
+  --card-foreground: #0f1623;
+  --popover: #f5f7fa;
+  --popover-foreground: #0f1623;
+  --primary: #0353a4;
+  --primary-foreground: #f5f7fa;
+  --secondary: #dde4ee;
+  --secondary-foreground: #0f1623;
+  --muted: #dde4ee;
+  --muted-foreground: #334155;
+  --accent: #cce0f5;
+  --accent-foreground: #023b74;
+  --border: #60718a;
+  --input: #60718a;
+  --ring: #0353a4;
+  --slate-1: #f5f7fa;
+  --slate-2: #dde4ee;
+  --slate-3: #adb8c8;
+  --slate-4: #60718a;
+  --slate-11: #1a2332;
+  --slate-12: #0f1623;
+  --grass-7: #2267b3;
+  --grass-9: #0353a4;
+  --grass-11: #023b74;
+}
+
+:root[data-vault-marimo-theme="dark"][data-vault-marimo-palette="oceano"],
+:root[data-vault-marimo-theme="dark"][data-vault-marimo-palette="oceano"] .dark,
+:root[data-vault-marimo-theme="dark"][data-vault-marimo-palette="oceano"] .dark-theme,
+:root[data-vault-marimo-theme="dark"][data-vault-marimo-palette="oceano"] .light,
+:root[data-vault-marimo-theme="dark"][data-vault-marimo-palette="oceano"] .light-theme {
+  --background: #0f1623;
+  --foreground: #eef2f8;
+  --card: #181c26;
+  --card-foreground: #eef2f8;
+  --popover: #181c26;
+  --popover-foreground: #eef2f8;
+  --primary: #90b4e8;
+  --primary-foreground: #0f1623;
+  --secondary: #232936;
+  --secondary-foreground: #eef2f8;
+  --muted: #181c26;
+  --muted-foreground: #c0cad8;
+  --accent: #0d2040;
+  --accent-foreground: #c5d9f5;
+  --border: #445060;
+  --input: #445060;
+  --ring: #90b4e8;
+  --slate-1: #0f1623;
+  --slate-2: #181c26;
+  --slate-3: #232936;
+  --slate-4: #445060;
+  --slate-11: #c0cad8;
+  --slate-12: #eef2f8;
+  --grass-7: #6e9edb;
+  --grass-9: #90b4e8;
+  --grass-11: #c5d9f5;
+}
+
+:root[data-vault-marimo-theme="light"][data-vault-marimo-palette="terracota"],
+:root[data-vault-marimo-theme="light"][data-vault-marimo-palette="terracota"] .dark,
+:root[data-vault-marimo-theme="light"][data-vault-marimo-palette="terracota"] .dark-theme,
+:root[data-vault-marimo-theme="light"][data-vault-marimo-palette="terracota"] .light,
+:root[data-vault-marimo-theme="light"][data-vault-marimo-palette="terracota"] .light-theme {
+  --background: #fffbf7;
+  --foreground: #130e09;
+  --card: #fffbf7;
+  --card-foreground: #130e09;
+  --popover: #fffbf7;
+  --popover-foreground: #130e09;
+  --primary: #7d2e0e;
+  --primary-foreground: #fffbf7;
+  --secondary: #f0e8df;
+  --secondary-foreground: #130e09;
+  --muted: #f0e8df;
+  --muted-foreground: #7a6b5e;
+  --accent: #f5ddd1;
+  --accent-foreground: #5a1f08;
+  --border: #bfb0a3;
+  --input: #bfb0a3;
+  --ring: #7d2e0e;
+  --slate-1: #fffbf7;
+  --slate-2: #f0e8df;
+  --slate-3: #e8e0d8;
+  --slate-4: #bfb0a3;
+  --slate-11: #3d3028;
+  --slate-12: #130e09;
+  --grass-7: #a1451f;
+  --grass-9: #7d2e0e;
+  --grass-11: #5a1f08;
+}
+
+:root[data-vault-marimo-theme="dark"][data-vault-marimo-palette="terracota"],
+:root[data-vault-marimo-theme="dark"][data-vault-marimo-palette="terracota"] .dark,
+:root[data-vault-marimo-theme="dark"][data-vault-marimo-palette="terracota"] .dark-theme,
+:root[data-vault-marimo-theme="dark"][data-vault-marimo-palette="terracota"] .light,
+:root[data-vault-marimo-theme="dark"][data-vault-marimo-palette="terracota"] .light-theme {
+  --background: #1d1714;
+  --foreground: #f5ede8;
+  --card: #211710;
+  --card-foreground: #f5ede8;
+  --popover: #211710;
+  --popover-foreground: #f5ede8;
+  --primary: #e8a07a;
+  --primary-foreground: #1d1714;
+  --secondary: #2e231c;
+  --secondary-foreground: #f5ede8;
+  --muted: #211710;
+  --muted-foreground: #cfc4bc;
+  --accent: #3a1a0a;
+  --accent-foreground: #f5c9af;
+  --border: #5a4a40;
+  --input: #5a4a40;
+  --ring: #e8a07a;
+  --slate-1: #1d1714;
+  --slate-2: #211710;
+  --slate-3: #2e231c;
+  --slate-4: #5a4a40;
+  --slate-11: #cfc4bc;
+  --slate-12: #f5ede8;
+  --grass-7: #d58a64;
+  --grass-9: #e8a07a;
+  --grass-11: #f5c9af;
+}
+
 .vault-marimo-theme-selector {
   position: fixed;
   z-index: 10000;
