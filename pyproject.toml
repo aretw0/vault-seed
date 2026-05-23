@@ -1,4 +1,3 @@
 [tool.marimo.display]
 locale = "pt-BR"
-theme = "system"
 custom_css = [".site/styles/marimo-vault.css"]

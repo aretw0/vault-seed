@@ -131,6 +131,10 @@ requireCondition(
   "pyproject.toml must configure Marimo display locale as pt-BR.",
 );
 requireCondition(
+  !/\[tool\.marimo\.display\][\s\S]*?^\s*theme\s*=/m.test(pyproject),
+  "pyproject.toml must not force a Marimo theme; notebooks:dev should respect the user's Marimo light/dark setting.",
+);
+requireCondition(
   /custom_css = \["\.site\/styles\/marimo-vault\.css"\]/.test(pyproject) &&
     marimoCss.includes("--primary: #1b5e3b") &&
     marimoCss.includes("--primary: #95d5b2"),

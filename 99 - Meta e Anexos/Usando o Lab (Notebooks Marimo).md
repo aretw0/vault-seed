@@ -94,7 +94,7 @@ O Marimo carrega `.site/styles/marimo-vault.css` via `custom_css` em `pyproject.
 
 A personalização atua sobre variáveis CSS usadas pelo Marimo, como `--background`, `--foreground`, `--primary`, `--accent`, `--border` e escalas `--slate-*`/`--grass-*`. A estrutura do editor continua sendo do Marimo; o vault controla a paleta e alguns detalhes de leitura, não substitui completamente o tema interno da ferramenta.
 
-No Marimo local, a seleção claro/escuro/sistema é do próprio editor. No site publicado do `vault-seed`, o export injeta um seletor discreto em cada notebook com as paletas Verde jardim, Oceano e Terracota, além das opções Sistema, Claro e Escuro. A escolha fica no `localStorage` do navegador e não altera arquivos do vault.
+No Marimo local, a seleção claro/escuro/sistema é do próprio editor. O `pyproject.toml` do vault não fixa `theme`, justamente para respeitar a escolha feita nas configurações do Marimo. No site publicado do `vault-seed`, o export injeta um seletor discreto em cada notebook com as paletas Verde jardim, Oceano e Terracota, além das opções Sistema, Claro e Escuro. A escolha fica no `localStorage` do navegador e não altera arquivos do vault.
 
 Esse seletor é uma demonstração do `vault-seed`; vaults criados a partir dele herdam a paleta e o arquivo de configuração, mas não recebem o seletor por padrão. Para uma demonstração pontual em outro vault, rode o export com `VAULT_MARIMO_THEME_SELECTOR=1`.
 
