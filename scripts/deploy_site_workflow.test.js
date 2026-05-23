@@ -21,7 +21,8 @@ test("deploy-site workflow keeps GitHub Pages deploy gated by build and smoke", 
   assert.match(workflow, /run: pnpm --filter @dgk\/astro-plugins build/);
   assert.match(workflow, /run: pnpm run site:build/);
   assert.match(workflow, /uses: astral-sh\/setup-uv@[0-9a-f]{40}/);
-  assert.match(workflow, /run: uv pip install --system -r requirements\.txt/);
+  assert.match(workflow, /version: "0\.11\.11"/);
+  assert.doesNotMatch(workflow, /uv pip install --system/);
   assert.match(workflow, /run: pnpm run notebooks:export/);
   assert.match(packageJson.scripts["notebooks:data"], /generate_vault_data\.mjs/);
   assert.match(packageJson.scripts["notebooks:dev"], /notebooks_dev\.mjs/);
