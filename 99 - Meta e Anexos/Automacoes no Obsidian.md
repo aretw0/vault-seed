@@ -25,7 +25,7 @@ sem precisar abrir o terminal.
 Instale via **Settings → Community Plugins → Browse**:
 
 | Plugin | ID no marketplace | Função |
-|---|---|---|
+| --- | --- | --- |
 | Shell Commands | `obsidian-shellcommands` | Executa scripts shell |
 | Commander | `cmdr` | Adiciona botões à ribbon e toolbars |
 | Templater | `templater-obsidian` | Botões em notas via templates |

@@ -58,6 +58,7 @@ const gitignore = read(".gitignore");
 const notebooksDevScript = read("scripts/notebooks_dev.mjs");
 const notebooksCheckScript = read("scripts/notebooks_check.mjs");
 const notebooksExportScript = read("scripts/export_notebooks.mjs");
+const notebooksSlidesScript = read("scripts/export_notebook_slides.mjs");
 const headerComponent = read(".site/components/Header.astro");
 const astroConfig = read("astro.config.mjs");
 const pyproject = read("pyproject.toml");
@@ -96,6 +97,7 @@ requireCondition(
 );
 requireCondition(
   templatePkg.scripts?.["notebooks:export:public"] === "node scripts/export_notebooks.mjs --public" &&
+    templatePkg.scripts?.["notebooks:export:slides"] === "node scripts/export_notebook_slides.mjs" &&
     templatePkg.scripts?.["site:dev:lab"] === "pnpm run notebooks:export:public && astro dev",
   "package.template.json must expose a local published-Lab preview path for generated vaults.",
 );
@@ -160,6 +162,13 @@ requireCondition(
     !notebooksExportScript.includes('document.addEventListener("DOMContentLoaded", init') &&
     marimoCss.includes(".vault-marimo-theme-selector"),
   "Marimo palette selector must be gated to vault-seed demo exports and apply theme before the WASM app boots.",
+);
+requireCondition(
+  notebooksExportScript.includes("data-vault-marimo-navigation") &&
+    notebooksExportScript.includes('<a href="../">Vault</a>\n  <a href="./">Lab</a>') &&
+    notebooksSlidesScript.includes("data-vault-marimo-navigation") &&
+    marimoCss.includes(".vault-marimo-navigation"),
+  "Marimo exported notebooks must include stable navigation back to the Lab and vault site.",
 );
 requireCondition(
   astroConfig.includes("process.env.VAULT_THEME_SELECTOR ??=") &&

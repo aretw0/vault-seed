@@ -23,7 +23,7 @@ de automação. Funciona no Windows (Git Bash ou WSL), macOS e Linux.
 ## Ferramentas necessárias
 
 | Ferramenta | Função | Instalar |
-|---|---|---|
+| --- | --- | --- |
 | fnm | Gerenciar versão do Node.js | Ver abaixo |
 | uv | Instalar ferramentas Python | Ver abaixo |
 | Python 3 | Necessário para o script de setup | Ver abaixo |

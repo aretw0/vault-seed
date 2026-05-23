@@ -30,7 +30,7 @@ seu computador para operar o vault com Git.
 ## Qual caminho é pra mim?
 
 | Quero... | Caminho recomendado |
-|---|---|
+| --- | --- |
 | Usar só o Obsidian, sem terminal | Instale o Obsidian e abra esta pasta |
 | VS Code + scripts (fnm, uv) | [[Configurando Localmente]] |
 | Devcontainer (VS Code + Docker) | [[Configurando com Devcontainer]] |

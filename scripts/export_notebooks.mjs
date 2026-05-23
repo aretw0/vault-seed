@@ -17,6 +17,7 @@ const outDir = join(outputRoot, notebooksPath);
 const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
 const packageJson = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"));
 const THEME_SELECTOR_MARKER = "data-vault-marimo-theme-selector";
+const NAVIGATION_MARKER = "data-vault-marimo-navigation";
 const themeSelectorMode = process.env.VAULT_MARIMO_THEME_SELECTOR;
 const isVaultSeedRepo = String(packageJson.repository?.url ?? "").includes("aretw0/vault-seed");
 const shouldInjectThemeSelector =
@@ -24,6 +25,13 @@ const shouldInjectThemeSelector =
 
 const { data, outDir: sourceDataDir } = writeVaultData({ cwd: ROOT, notebooksPath });
 console.log(`[notebooks:data] ${data.noteCount} notas`);
+
+const navigationHtml = String.raw`
+<nav class="vault-marimo-navigation" data-vault-marimo-navigation aria-label="Navegação do vault">
+  <a href="../">Vault</a>
+  <a href="./">Lab</a>
+</nav>
+`;
 
 const themeSelectorHtml = String.raw`
 <div class="vault-marimo-theme-selector" data-vault-marimo-theme-selector role="group" aria-label="Tema do notebook">
@@ -120,6 +128,17 @@ const themeSelectorHtml = String.raw`
 </script>
 `;
 
+function injectNotebookNavigation(htmlPath) {
+  const html = readFileSync(htmlPath, "utf8");
+  if (html.includes(NAVIGATION_MARKER)) {
+    return;
+  }
+  if (!html.includes("</body>")) {
+    throw new Error(`HTML exportado sem </body>: ${htmlPath}`);
+  }
+  writeFileSync(htmlPath, html.replace("</body>", `${navigationHtml}\n</body>`));
+}
+
 function injectThemeSelector(htmlPath) {
   const html = readFileSync(htmlPath, "utf8");
   if (html.includes(THEME_SELECTOR_MARKER)) {
@@ -171,6 +190,7 @@ for (const notebook of manifest.filter((entry) => entry.publish)) {
   if (result.status !== 0) {
     process.exit(result.status ?? 1);
   }
+  injectNotebookNavigation(output);
   if (shouldInjectThemeSelector) {
     injectThemeSelector(output);
   }

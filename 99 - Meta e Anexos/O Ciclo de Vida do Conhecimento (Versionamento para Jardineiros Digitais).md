@@ -34,7 +34,7 @@ Versionar um vault é registrar mudanças importantes nas notas, na estrutura e 
 Use Conventional Commits para manter o histórico legível:
 
 | Tipo | Quando usar |
-|---|---|
+| --- | --- |
 | `fix:` | Correção de link, erro de escrita, configuração ou automação |
 | `feat:` | Nova nota, novo fluxo, novo template ou nova automação |
 | `refactor:` | Reorganização sem mudar a intenção do conteúdo |
