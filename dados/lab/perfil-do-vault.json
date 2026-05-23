@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "source": "scripts/lab_etl_demo.mjs",
+  "noteCount": 48,
+  "totalWords": 15865,
+  "averageWords": 331,
+  "folders": [
+    {
+      "name": "99 - Meta e Anexos",
+      "count": 28
+    },
+    {
+      "name": "40 - Recursos",
+      "count": 15
+    },
+    {
+      "name": "90 - Modelos",
+      "count": 5
+    }
+  ],
+  "statuses": [
+    {
+      "name": "published",
+      "count": 43
+    },
+    {
+      "name": "sem status",
+      "count": 4
+    },
+    {
+      "name": "a-fazer",
+      "count": 1
+    }
+  ],
+  "tags": [
+    {
+      "name": "recurso/ferramenta",
+      "count": 11
+    },
+    {
+      "name": "meta/workflow",
+      "count": 8
+    },
+    {
+      "name": "iniciante",
+      "count": 6
+    },
+    {
+      "name": "conceito/pkm",
+      "count": 4
+    },
+    {
+      "name": "meta/git",
+      "count": 4
+    },
+    {
+      "name": "meta/guia",
+      "count": 4
+    },
+    {
+      "name": "meta/onboarding",
+      "count": 4
+    },
+    {
+      "name": "meta/organizacao",
+      "count": 4
+    },
+    {
+      "name": "obsidian/plugin",
+      "count": 4
+    },
+    {
+      "name": "pkm/conceito",
+      "count": 4
+    },
+    {
+      "name": "meta/automacao",
+      "count": 3
+    },
+    {
+      "name": "meta/setup",
+      "count": 3
+    }
+  ],
+  "largestNotes": [
+    {
+      "title": "Usando o Lab (Notebooks Marimo)",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "tags": [
+        "meta/lab",
+        "meta/notebooks",
+        "meta/automacao"
+      ],
+      "words": 2087
+    },
+    {
+      "title": "Preparando seu Computador para o Vault",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "tags": [
+        "meta/setup",
+        "meta/git",
+        "iniciante"
+      ],
+      "words": 914
+    },
+    {
+      "title": "Criando seu Painel de Controle (Dashboard)",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "tags": [
+        "meta/organizacao",
+        "meta/workflow",
+        "obsidian/dashboard",
+        "obsidian/canvas"
+      ],
+      "words": 700
+    },
+    {
+      "title": "Usando o Git e o GitHub para Sincronizar seu Vault",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "tags": [
+        "meta/git",
+        "meta/github",
+        "meta/workflow"
+      ],
+      "words": 660
+    },
+    {
+      "title": "Markdown e Obsidian",
+      "folder": "40 - Recursos",
+      "status": "published",
+      "tags": [
+        "recurso/ferramenta",
+        "pkm/conceito",
+        "obsidian/markdown"
+      ],
+      "words": 589
+    },
+    {
+      "title": "Integrando com VSCode (Foam)",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "tags": [
+        "meta/ferramentas",
+        "meta/vscode",
+        "meta/foam"
+      ],
+      "words": 572
+    },
+    {
+      "title": "Entendendo a Estrutura de Pastas",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "tags": [
+        "meta/estrutura",
+        "meta/organizacao",
+        "iniciante"
+      ],
+      "words": 535
+    },
+    {
+      "title": "Convenções e Boas Práticas",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "tags": [
+        "meta/organizacao",
+        "meta/workflow",
+        "iniciante"
+      ],
+      "words": 530
+    },
+    {
+      "title": "Configurando o Obsidian Git",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "tags": [
+        "obsidian/plugin",
+        "meta/git",
+        "meta/sincronizacao"
+      ],
+      "words": 525
+    },
+    {
+      "title": "Evoluindo seu Vault com Links, Tags e MOCs",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "tags": [
+        "meta/organizacao",
+        "meta/workflow",
+        "obsidian/dataview",
+        "obsidian/bases",
+        "obsidian/moc"
+      ],
+      "words": 494
+    }
+  ]
+}

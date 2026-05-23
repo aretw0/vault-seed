@@ -103,6 +103,24 @@ pnpm run notebooks:export
 pnpm run site:dev:lab
 ```
 
+## Exemplo incluído
+
+O comando `pnpm run notebooks:etl` roda primeiro um exemplo pequeno de ETL local:
+
+```bash
+pnpm run notebooks:etl:demo
+```
+
+Esse script lê as notas Markdown no computador, calcula um perfil simples do
+vault e escreve `dados/lab/perfil-do-vault.json`. Depois,
+`prepare_lab_datasets.mjs` empacota esse arquivo em `public/lab/datasets/` e
+`public/lab/assets/datasets/`.
+
+O notebook `ETL`, publicado como `/lab/etl.html`, lê esse snapshot empacotado.
+Ele também mostra uma fonte remota opcional declarada no manifesto. Essa fonte
+não é baixada durante o preparo local; ela só é acessada no navegador quando a
+pessoa ativa o carregamento no notebook publicado.
+
 ## O que é verificável
 
 Para arquivos locais, o manifesto gerado registra tamanho em bytes e `sha256`.

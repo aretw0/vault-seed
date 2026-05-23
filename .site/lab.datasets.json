@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "id": "perfil-do-vault",
+    "title": "Perfil do vault",
+    "description": "Snapshot gerado localmente para demonstrar ETL antes do notebook",
+    "source": "dados/lab/perfil-do-vault.json",
+    "output": "perfil-do-vault.json",
+    "format": "json",
+    "publish": true
+  },
+  {
+    "id": "json-remoto-opcional",
+    "title": "JSON remoto opcional",
+    "description": "Exemplo de fonte que um notebook WASM pode carregar no navegador quando houver CORS e rede",
+    "runtimeUrl": "https://api.github.com/repos/aretw0/vault-seed",
+    "output": "json-remoto-opcional.json",
+    "format": "json",
+    "publish": true
+  }
+]

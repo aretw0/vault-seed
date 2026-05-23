@@ -30,6 +30,10 @@
   --grass-7: #2d7a4d;
   --grass-9: #1b5e3b;
   --grass-11: #0f3d26;
+  --vault-marimo-presentation-width: 78rem;
+  --vault-marimo-presentation-content-width: 74rem;
+  --vault-marimo-presentation-gutter: clamp(0.5rem, 1.5vw, 1.25rem);
+  --vault-marimo-presentation-viewport-gutter: clamp(0.75rem, 3vw, 4rem);
 }
 
 :root[data-vault-marimo-theme="dark"],
@@ -661,18 +665,66 @@ iframe {
   background: var(--muted);
 }
 
-marimo-carousel {
-  display: block;
-  width: min(100%, 72rem) !important;
-  max-width: min(72rem, calc(100vw - clamp(2rem, 10vw, 12rem))) !important;
-  margin-inline: auto !important;
-  padding-inline: clamp(0.75rem, 2vw, 2rem);
+:root[data-vault-marimo-presentation="carousel"] {
+  scrollbar-gutter: stable;
 }
 
-marimo-carousel .markdown,
-marimo-carousel .prose {
-  max-width: 64rem;
+:root[data-vault-marimo-presentation="carousel"],
+:root[data-vault-marimo-presentation="carousel"] body {
+  min-height: 100dvh;
+}
+
+:root[data-vault-marimo-presentation="carousel"] marimo-carousel {
+  display: block;
+  width: min(100%, var(--vault-marimo-presentation-width)) !important;
+  max-width: min(
+    var(--vault-marimo-presentation-width),
+    calc(100vw - var(--vault-marimo-presentation-viewport-gutter))
+  ) !important;
+  margin-inline: auto !important;
+  padding-inline: var(--vault-marimo-presentation-gutter);
+}
+
+:root[data-vault-marimo-presentation="carousel"] marimo-carousel .markdown,
+:root[data-vault-marimo-presentation="carousel"] marimo-carousel .prose {
+  max-width: var(--vault-marimo-presentation-content-width);
   margin-inline: auto;
+}
+
+[data-vault-marimo-fullscreen-button] {
+  min-width: 2.25rem !important;
+  min-height: 2.25rem !important;
+  font-size: 1.1rem !important;
+  line-height: 1 !important;
+}
+
+.vault-marimo-presentation-fullscreen-toggle {
+  position: fixed;
+  z-index: 10001;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--card) 92%, transparent);
+  color: var(--foreground);
+  cursor: pointer;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--foreground) 12%, transparent);
+}
+
+:root[data-vault-marimo-presentation="carousel"] .vault-marimo-theme-selector {
+  top: 3.5rem;
+}
+
+@media (min-width: 45rem) {
+  :root[data-vault-marimo-presentation="carousel"],
+  :root[data-vault-marimo-presentation="carousel"] body {
+    overflow: hidden;
+  }
 }
 
 @media (max-width: 44rem) {
@@ -697,7 +749,7 @@ marimo-carousel .prose {
     font-size: 0.86rem;
   }
 
-  marimo-carousel {
+  :root[data-vault-marimo-presentation="carousel"] marimo-carousel {
     width: 100% !important;
     max-width: calc(100vw - 1rem) !important;
     padding-inline: 0;
@@ -710,6 +762,10 @@ marimo-carousel .prose {
     left: 0.75rem;
     flex-wrap: wrap;
     justify-content: flex-end;
+  }
+
+  :root[data-vault-marimo-presentation="carousel"] .vault-marimo-theme-selector {
+    bottom: 3.65rem;
   }
 
   .vault-marimo-navigation {

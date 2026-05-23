@@ -60,7 +60,11 @@ const notebooksCheckScript = read("scripts/notebooks_check.mjs");
 const notebooksExportScript = read("scripts/export_notebooks.mjs");
 const notebooksSlidesScript = read("scripts/export_notebook_slides.mjs");
 const presentationNotebook = read("99 - Meta e Anexos/Notebooks/apresentacao-vault-seed.py");
+const etlNotebook = read("99 - Meta e Anexos/Notebooks/etl-demo.py");
+const labDatasetsManifest = readJson(".site/lab.datasets.json");
+const labNotebooksManifest = readJson(".site/lab.notebooks.json");
 const labDatasetsScript = read("scripts/prepare_lab_datasets.mjs");
+const labEtlDemoScript = read("scripts/lab_etl_demo.mjs");
 const headerComponent = read(".site/components/Header.astro");
 const astroConfig = read("astro.config.mjs");
 const pyproject = read("pyproject.toml");
@@ -91,7 +95,8 @@ requireCondition(
 );
 requireCondition(
   templatePkg.scripts?.["notebooks:data"] === "node scripts/generate_vault_data.mjs" &&
-    templatePkg.scripts?.["notebooks:etl"] === "node scripts/prepare_lab_datasets.mjs" &&
+    templatePkg.scripts?.["notebooks:etl:demo"] === "node scripts/lab_etl_demo.mjs" &&
+    templatePkg.scripts?.["notebooks:etl"] === "pnpm run notebooks:etl:demo && node scripts/prepare_lab_datasets.mjs" &&
     templatePkg.scripts?.["notebooks:dev"] === "node scripts/notebooks_dev.mjs" &&
     templatePkg.scripts?.["notebooks:check"] === "node scripts/notebooks_check.mjs" &&
     templatePkg.scripts?.["notebooks:pair"] === "node scripts/notebooks_pair.mjs" &&
@@ -194,13 +199,26 @@ requireCondition(
   notebooksExportScript.includes("data-vault-marimo-navigation") &&
     notebooksExportScript.includes('<a href="../">Vault</a>\n  <a href="./">Lab</a>') &&
     notebooksExportScript.includes("data-vault-marimo-presentation-fullscreen") &&
+    notebooksExportScript.includes("vault-marimo-presentation-fullscreen-toggle") &&
     notebooksExportScript.includes("Fechar tela cheia") &&
     notebooksSlidesScript.includes("data-vault-marimo-navigation") &&
     notebooksSlidesScript.includes("data-vault-marimo-presentation-fullscreen") &&
+    notebooksSlidesScript.includes("vault-marimo-presentation-fullscreen-toggle") &&
     notebooksSlidesScript.includes("Fechar tela cheia") &&
     !notebooksExportScript.includes("data-vault-marimo-presentation-exit") &&
     marimoCss.includes(".vault-marimo-navigation"),
   "Marimo exported notebooks must include stable navigation and fullscreen labeling for presentations.",
+);
+requireCondition(
+  pkg.scripts?.["notebooks:etl:demo"] === "node scripts/lab_etl_demo.mjs" &&
+    pkg.scripts?.["notebooks:etl"]?.includes("notebooks:etl:demo") &&
+    labEtlDemoScript.includes("dados\", \"lab\", \"perfil-do-vault.json") &&
+    labDatasetsManifest.some((entry) => entry.id === "perfil-do-vault" && entry.source === "dados/lab/perfil-do-vault.json") &&
+    labDatasetsManifest.some((entry) => entry.id === "json-remoto-opcional" && entry.runtimeUrl) &&
+    labNotebooksManifest.some((entry) => entry.source === "99 - Meta e Anexos/Notebooks/etl-demo.py" && entry.publish === true) &&
+    etlNotebook.includes("assets/datasets/manifest.json") &&
+    etlNotebook.includes("Carregar exemplo remoto no navegador"),
+  "Lab ETL demo must keep local snapshot generation, dataset manifest packaging, and a published notebook example wired together.",
 );
 requireCondition(
   astroConfig.includes("process.env.VAULT_THEME_SELECTOR ??=") &&

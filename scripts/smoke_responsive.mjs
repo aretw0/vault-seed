@@ -26,6 +26,7 @@ const pages = [
   },
   { path: "/lab/publishing.html", label: "notebook-publicacao", type: "notebook" },
   { path: "/lab/graph.html", label: "notebook-grafo", type: "notebook" },
+  { path: "/lab/etl.html", label: "notebook-etl", type: "notebook" },
   {
     path: "/lab/vault-seed-slides.html",
     label: "notebook-apresentacao",
@@ -235,13 +236,36 @@ async function assertPresentationSizing(page, target, viewport, label, externalN
     return;
   }
 
-  const maxExpectedWidth = Math.min(1152, viewport.width - 96);
+  const maxExpectedWidth = Math.min(1248, viewport.width - 48);
   if (carouselBox.width > maxExpectedWidth + 2) {
     fail(
       `${label}: presentation carousel too wide (${Math.round(
         carouselBox.width,
       )}px > ${maxExpectedWidth}px)`,
     );
+  }
+
+  const overflowY = await page.evaluate(() => getComputedStyle(document.body).overflowY);
+  if (overflowY !== "hidden") {
+    fail(`${label}: presentation page should not expose body vertical scroll`);
+  }
+
+  if (!externalNetworkAvailable) {
+    return;
+  }
+
+  const fullscreenLabel = await page
+    .locator("[data-vault-marimo-fullscreen-button]")
+    .first()
+    .evaluate((button) => ({
+      text: button.textContent?.trim() ?? "",
+      aria: button.getAttribute("aria-label") ?? "",
+    }))
+    .catch(() => null);
+  if (!fullscreenLabel) {
+    fail(`${label}: presentation fullscreen icon button was not normalized`);
+  } else if (/full\s*screen/i.test(`${fullscreenLabel.text} ${fullscreenLabel.aria}`)) {
+    fail(`${label}: presentation fullscreen control still exposes English text`);
   }
 }
 

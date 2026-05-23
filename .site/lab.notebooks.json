@@ -14,6 +14,13 @@
     "publish": true
   },
   {
+    "title": "ETL",
+    "source": "99 - Meta e Anexos/Notebooks/etl-demo.py",
+    "output": "etl.html",
+    "description": "snapshot local empacotado e fonte remota opcional em runtime",
+    "publish": true
+  },
+  {
     "title": "Apresentação",
     "source": "99 - Meta e Anexos/Notebooks/apresentacao-vault-seed.py",
     "output": "vault-seed-slides.html",
