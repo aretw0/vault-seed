@@ -88,6 +88,12 @@ Esse comando escreve:
 A duplicação é intencional. O export WebAssembly do Marimo pode resolver
 arquivos relativos a partir da raiz do Lab ou da pasta `assets/`.
 
+Quando a coleta exigir navegador real, use Playwright em scripts locais ou de CI
+antes do export. O Playwright faz parte da stack do vault porque também valida a
+renderização responsiva do site publicado; o contrato continua igual: ele deve
+produzir snapshots servíveis para o Lab, não virar dependência do notebook
+WebAssembly.
+
 Os comandos do Lab também preparam os datasets automaticamente:
 
 ```bash

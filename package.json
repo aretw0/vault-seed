@@ -25,6 +25,7 @@
     "site:build": "pnpm --filter @dgk/astro-plugins build && astro build",
     "site:preview": "astro preview",
     "site:check": "node scripts/smoke_site.js",
+    "site:responsive": "pnpm run site:build && pnpm run notebooks:export && node scripts/smoke_responsive.mjs",
     "site:test": "node --test scripts/mermaid_render_contract.test.js scripts/mermaid_toggle.test.js",
     "site:audit:sidebar": "node scripts/audit_sidebar.js",
     "notebooks:data": "node scripts/generate_vault_data.mjs",
@@ -51,6 +52,7 @@
   "type": "commonjs",
   "devDependencies": {
     "@astrojs/starlight": "^0.39.2",
+    "@playwright/test": "^1.60.0",
     "@changesets/cli": "^2.0.0",
     "astro": "^6.3.5",
     "glob": "^13.0.6",

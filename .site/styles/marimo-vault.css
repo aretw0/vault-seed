@@ -69,6 +69,27 @@ body {
   overflow-x: hidden;
 }
 
+body * {
+  min-width: 0;
+}
+
+a {
+  overflow-wrap: anywhere;
+}
+
+pre,
+code,
+[class*="max-w-2xl"] {
+  max-width: calc(100vw - 1rem) !important;
+}
+
+div,
+span,
+pre,
+code {
+  overflow-wrap: anywhere;
+}
+
 .marimo,
 main,
 article,
@@ -93,6 +114,7 @@ article,
 .markdown code,
 .prose pre,
 .prose code {
+  max-width: 100%;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }

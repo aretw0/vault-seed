@@ -21,6 +21,7 @@
     "site:build": "pnpm --filter @dgk/astro-plugins build && astro build",
     "site:preview": "astro preview",
     "site:check": "node scripts/smoke_site.js",
+    "site:responsive": "pnpm run site:build && pnpm run notebooks:export && node scripts/smoke_responsive.mjs",
     "notebooks:data": "node scripts/generate_vault_data.mjs",
     "notebooks:etl": "node scripts/prepare_lab_datasets.mjs",
     "notebooks:dev": "node scripts/notebooks_dev.mjs",
@@ -38,6 +39,7 @@
   "type": "commonjs",
   "devDependencies": {
     "@astrojs/starlight": "^0.39.2",
+    "@playwright/test": "^1.60.0",
     "astro": "^6.3.5",
     "glob": "^13.0.6",
     "gray-matter": "^4.0.3",

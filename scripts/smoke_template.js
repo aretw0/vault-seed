@@ -111,7 +111,10 @@ requireCondition(
 requireCondition(
   templatePkg.scripts?.["notebooks:export:public"] === "node scripts/export_notebooks.mjs --public" &&
     templatePkg.scripts?.["notebooks:export:slides"] === "node scripts/export_notebook_slides.mjs" &&
-    templatePkg.scripts?.["site:dev:lab"] === "pnpm run notebooks:export:public && astro dev",
+    templatePkg.scripts?.["site:dev:lab"] === "pnpm run notebooks:export:public && astro dev" &&
+    templatePkg.scripts?.["site:responsive"] === "pnpm run site:build && pnpm run notebooks:export && node scripts/smoke_responsive.mjs" &&
+    templatePkg.devDependencies?.["@playwright/test"] === "^1.60.0" &&
+    exists("scripts/smoke_responsive.mjs"),
   "package.template.json must expose a local published-Lab preview path for generated vaults.",
 );
 requireCondition(

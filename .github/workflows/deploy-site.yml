@@ -84,6 +84,12 @@ jobs:
           VAULT_NOTEBOOKS_PATH: ${{ vars.VAULT_NOTEBOOKS_PATH || 'lab' }}
         run: pnpm run notebooks:export
 
+      - name: Install Playwright browser
+        run: pnpm exec playwright install chromium
+
+      - name: Smoke responsive site and Lab
+        run: node scripts/smoke_responsive.mjs
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:

@@ -83,7 +83,20 @@
 /* Ensure [hidden] is respected even if a CSS reset overrides the browser default */
 .mermaid-view[hidden] { display: none !important; }
 
-/* code view reuses EC's own styles — no extra rules needed */
+.sl-markdown-content pre,
+.sl-markdown-content code,
+.sl-markdown-content .expressive-code,
+.sl-markdown-content .expressive-code .frame,
+.sl-markdown-content .expressive-code .code,
+.sl-markdown-content .expressive-code .ec-line {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.sl-markdown-content pre,
+.sl-markdown-content code {
+  overflow-wrap: anywhere;
+}
 
 /* Fullscreen dialog for pan/zoom */
 dialog.mermaid-dialog {

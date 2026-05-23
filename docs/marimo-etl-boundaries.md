@@ -46,6 +46,11 @@ A camada de ETL deve crescer como stack própria do repositório, não como
 dependência dos notebooks Marimo empacotados. Se uma ferramenta não funciona no
 HTML WebAssembly, ela não deve ser requisito do notebook publicado.
 
+Playwright entra nessa stack como ferramenta local/CI para duas tarefas que se
+reforçam: validar responsividade do site publicado em navegador real e executar
+coletas que exigem browser automation. Em ambos os casos, o resultado publicável
+deve ser um artefato estável consumido pelo Lab.
+
 Essa stack pode incluir conectores para arquivos, páginas, OCR, APIs e outras
 fontes, desde que rode antes da publicação e produza artefatos estáveis para o
 Lab consumir.
