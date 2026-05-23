@@ -80,6 +80,8 @@ requireCondition(
 requireCondition(
   templatePkg.scripts?.["notebooks:data"] === "node scripts/generate_vault_data.mjs" &&
     templatePkg.scripts?.["notebooks:dev"] === "node scripts/notebooks_dev.mjs" &&
+    templatePkg.scripts?.["notebooks:check"] === "node scripts/notebooks_check.mjs" &&
+    templatePkg.scripts?.["notebooks:pair"] === "node scripts/notebooks_pair.mjs" &&
     templatePkg.scripts?.["notebooks:export"] === "node scripts/export_notebooks.mjs",
   "package.template.json must expose notebooks:dev for generated vaults.",
 );

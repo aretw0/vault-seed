@@ -1,5 +1,6 @@
 import marimo
 
+__generated_with = "0.23.8"
 app = marimo.App(width="medium")
 
 
@@ -37,7 +38,7 @@ def _(data, mo, notes):
 
 @app.cell
 def _(notes):
-    def _slugify(value):
+    def slugify(value):
         import re
         import unicodedata
 
@@ -56,10 +57,10 @@ def _(notes):
     inverse_index: dict[str, list[str]] = {n["id"]: [] for n in notes}
     for _n in notes:
         for _link in _n.get("links", []):
-            _link_id = _slugify(_link)
+            _link_id = slugify(_link)
             if _link_id in inverse_index:
                 inverse_index[_link_id].append(_n["id"])
-    return all_slugs, inverse_index, _slugify
+    return all_slugs, inverse_index, slugify
 
 
 @app.cell
@@ -86,28 +87,28 @@ def _(inverse_index, mo, notes, pd):
 
 
 @app.cell
-def _(all_slugs, mo, notes, _slugify):
+def _(all_slugs, mo, notes, slugify):
     import pandas as _pd2
 
     _broken = [
         {"nota": n["id"], "link_quebrado": link}
         for n in notes
         for link in n.get("links", [])
-        if _slugify(link) not in all_slugs
+        if slugify(link) not in all_slugs
     ]
     mo.md(f"## 🔗 Links Quebrados\n\n{len(_broken)} links apontam para notas inexistentes no vault.")
     return ()
 
 
 @app.cell
-def _(all_slugs, mo, notes, _slugify):
+def _(all_slugs, mo, notes, slugify):
     import pandas as _pd3
 
     _broken = [
         {"nota": n["id"], "link_quebrado": link}
         for n in notes
         for link in n.get("links", [])
-        if _slugify(link) not in all_slugs
+        if slugify(link) not in all_slugs
     ]
     mo.ui.table(_pd3.DataFrame(_broken)) if _broken else mo.md("_Nenhum link quebrado._")
     return ()

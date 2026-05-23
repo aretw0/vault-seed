@@ -23,6 +23,8 @@
     "site:check": "node scripts/smoke_site.js",
     "notebooks:data": "node scripts/generate_vault_data.mjs",
     "notebooks:dev": "node scripts/notebooks_dev.mjs",
+    "notebooks:check": "node scripts/notebooks_check.mjs",
+    "notebooks:pair": "node scripts/notebooks_pair.mjs",
     "notebooks:export": "node scripts/export_notebooks.mjs",
     "validate": "pnpm run lint && pnpm run test && pnpm run validate:onboarding"
   },

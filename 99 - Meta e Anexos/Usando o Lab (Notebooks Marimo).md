@@ -33,7 +33,7 @@ Consequências práticas:
 - A ordem visual das células não é a única fonte de verdade; as dependências entre variáveis importam.
 - Evite definir a mesma variável global em várias células. Prefira funções, nomes temporários com `_` e transformações explícitas.
 - O arquivo salvo é Python. Você revisa alterações com `git diff`, compila com Python e pode executar/exportar por linha de comando.
-- O editor do Marimo pode normalizar o arquivo ao salvar, incluindo metadados de versão e formatação de células. Revise o diff antes de commitar.
+- O editor do Marimo pode normalizar o arquivo ao salvar, incluindo metadados como `__generated_with` e formatação de células. Revise o diff antes de commitar.
 - Pastas locais de estado como `__marimo__/` não são parte do conhecimento do vault e ficam ignoradas pelo Git.
 
 Referências úteis: [Coming from Jupyter](https://docs.marimo.io/guides/coming_from/jupyter/), [Using agent CLIs](https://docs.marimo.io/guides/generate_with_ai/marimo_pair/) e [WebAssembly HTML](https://docs.marimo.io/guides/exporting/webassembly_html/).
@@ -61,6 +61,14 @@ Se quiser só atualizar os dados sem abrir o Marimo, use:
 ```bash
 pnpm run notebooks:data
 ```
+
+Para validar os notebooks sem depender do navegador, use:
+
+```bash
+pnpm run notebooks:check
+```
+
+Esse comando regenera `vault-data.json`, roda `marimo check` nos notebooks e executa as sessões com `marimo export session`. Os snapshots de sessão ficam em `__marimo__/`, uma pasta local ignorada pelo Git.
 
 ## Como Os Dados Chegam Ao Notebook
 
@@ -118,15 +126,23 @@ Prompt operacional útil:
 ```text
 Edite o notebook em 99 - Meta e Anexos/Notebooks/NOME.py.
 Use os notebooks existentes como padrão.
-Depois rode pnpm run notebooks:data e valide o arquivo com Python.
+Depois rode pnpm run notebooks:check.
 Não publique o notebook sem atualizar conscientemente .site/lab.notebooks.json.
 ```
 
-Para colaboração mais integrada, Marimo também tem recursos experimentais:
+Se o agente precisa de feedback do runtime vivo, abra o notebook com `pnpm run notebooks:dev` e gere o prompt de pareamento:
 
-- `marimo pair`: dá a agentes CLI acesso ao notebook em execução, incluindo variáveis, células e UI.
-- ACP: permite conectar agentes externos ao painel de agentes do editor Marimo.
-- MCP: permite expor ferramentas do Marimo para aplicações compatíveis com MCP.
+```bash
+pnpm run notebooks:pair -- --url URL_DO_MARIMO --codex
+```
+
+Troque `--codex` por `--claude` ou `--opencode` quando estiver usando outro agente compatível. Esse comando chama `marimo pair prompt`; ele não substitui o Git nem o diff, mas dá ao agente instruções para trabalhar com a sessão aberta.
+
+Camadas disponíveis:
+
+- `pnpm run notebooks:check`: feedback determinístico de arquivo e execução de sessão.
+- `marimo pair`: acesso ao notebook em execução, incluindo variáveis, células e UI, quando a skill do agente está instalada.
+- ACP e MCP: integrações de editor/protocolo que devem ser tratadas como opcionais e verificadas contra a versão instalada do Marimo.
 - AI do editor: usa chaves próprias configuradas no Marimo e pode gerar/refatorar células com contexto de variáveis em memória.
 
 Essas opções são úteis, mas não são pré-requisito do Lab. A regra deste vault é: primeiro o fluxo local, versionado e revisável; depois integrações assistidas quando fizerem sentido.

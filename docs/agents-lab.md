@@ -26,7 +26,8 @@ scripts, documentacao, validacoes ou arquivos versionados.
 Para Marimo, a recomendacao atual e separar duas camadas:
 
 - **Arquivo e terminal:** fluxo estavel hoje. O agente edita notebooks `.py`,
-  roda `pnpm run notebooks:data`, valida Python e revisa `git diff`.
+  roda `pnpm run notebooks:check`, valida execucao de sessao e revisa
+  `git diff`.
 - **Runtime Marimo:** fluxo a estudar. `marimo pair`, MCP e ACP podem dar acesso
   a celulas, variaveis em memoria e UI, mas devem entrar como integracao
   governada, com testes e fallback para o fluxo de arquivo.
@@ -34,9 +35,9 @@ Para Marimo, a recomendacao atual e separar duas camadas:
 Um backlog natural para `agents-lab` e uma skill/tool Marimo que:
 
 - inicia `pnpm run notebooks:dev`;
+- gera prompts com `pnpm run notebooks:pair`;
 - lista notebooks em `99 - Meta e Anexos/Notebooks/`;
-- regenera `vault-data.json`;
-- valida notebooks com Python;
+- executa `pnpm run notebooks:check`;
 - inspeciona diffs antes de publicar;
 - orienta quando atualizar `.site/lab.notebooks.json`.
 

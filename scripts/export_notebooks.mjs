@@ -3,6 +3,7 @@ import { mkdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { uvEnv } from "./uv_env.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const manifestPath = join(ROOT, ".site", "lab.notebooks.json");
@@ -29,6 +30,7 @@ for (const notebook of manifest.filter((entry) => entry.publish)) {
     output,
   ], {
     cwd: ROOT,
+    env: uvEnv(),
     stdio: "inherit",
   });
   if (result.error) {

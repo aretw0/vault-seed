@@ -3,6 +3,7 @@ import { spawn } from "node:child_process";
 import { statSync } from "node:fs";
 import { globSync } from "glob";
 import { writeVaultData } from "./generate_vault_data.mjs";
+import { uvEnv } from "./uv_env.mjs";
 
 const NOTEBOOKS_DIR = "99 - Meta e Anexos/Notebooks";
 const VAULT_PATTERNS = [
@@ -45,6 +46,7 @@ const interval = setInterval(() => {
 
 const port = process.env.MARIMO_PORT || "2718";
 const child = spawn("uv", ["run", "--with-requirements", "requirements.txt", "marimo", "edit", NOTEBOOKS_DIR, "--port", port, "--watch"], {
+  env: uvEnv(),
   stdio: "inherit",
 });
 
