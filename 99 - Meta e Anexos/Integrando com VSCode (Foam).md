@@ -35,7 +35,7 @@ Ambas as ferramentas são poderosas e a escolha depende da tarefa que você est�
 | **Refatoração Avançada** | **VSCode + Foam** | Para buscas e substituições complexas com Regex em todo o vault ou para criar scripts de manutenção, o VSCode é insuperável. |
 | **Navegação Visual** | **Obsidian** | O gráfico do Obsidian e seu ecossistema de plugins oferecem uma experiência visual mais rica e madura. |
 | **Integração com Git** | **VSCode** | A integração nativa com Git no VSCode é mais poderosa que a dos plugins do Obsidian. |
-| **Ambiente de Desenvolvimento**| **VSCode** | Se você já é um desenvolvedor, pode preferir ficar no seu ambiente familiar. |
+| **Ambiente de Desenvolvimento** | **VSCode** | Se você já é um desenvolvedor, pode preferir ficar no seu ambiente familiar. |
 
 Ao renomear arquivos no Obsidian, mantenha a opção de atualizar links internos ativa para preservar os `[[wikilinks]]`. Para tags, prefira revisar com busca global antes de mudanças em massa, porque `#tags` não têm o mesmo fluxo guiado de renomeação que notas.
 
