@@ -18,8 +18,9 @@ const notebooks = manifest
   <p>Notebooks interativos <a href="https://marimo.io">Marimo</a> para explorar a saúde do seu vault.</p>
 
   <p>
-    Os notebooks são exportados como WebAssembly e publicados junto com o site durante o deploy.
-    Os links abaixo ficam disponíveis após o primeiro deploy via GitHub Actions.
+    Os notebooks são exportados como WebAssembly e servidos junto com o site.
+    Rode <code>pnpm run site:dev:lab</code> para ver a versão empacotada localmente;
+    em produção, o GitHub Actions faz a mesma exportação durante o deploy.
   </p>
 
   <p>
@@ -32,7 +33,7 @@ const notebooks = manifest
       <li data-notebook-link={notebook.href}>
         <strong>{notebook.title}</strong>
         <span>— {notebook.description}</span>
-        <span class="availability" data-availability>Disponível após deploy</span>
+        <span class="availability" data-availability>Aguardando exportação</span>
       </li>
     ))}
   </ul>
@@ -56,7 +57,7 @@ const notebooks = manifest
         link.href = href;
         link.textContent = title.textContent;
         title.replaceChildren(link);
-        availability.textContent = 'Publicado';
+        availability.textContent = 'Disponível';
       })
       .catch(() => {});
   }

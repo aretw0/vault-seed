@@ -100,6 +100,12 @@ requireCondition(
   "package.template.json must expose a local published-Lab preview path for generated vaults.",
 );
 requireCondition(
+  notebooksExportScript.includes("copyVaultDataForWasm") &&
+    notebooksExportScript.includes('"assets", "vault-data.json"') &&
+    notebooksExportScript.includes("writeVaultData"),
+  "notebooks:export must copy vault-data.json to both notebook root and assets/ for WASM runtime fetches.",
+);
+requireCondition(
   templatePkg.dependencies?.["@dgk/astro-plugins"] === "workspace:^",
   "Generated vaults must use the local workspace @dgk/astro-plugins package until it is published.",
 );

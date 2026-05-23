@@ -1,9 +1,10 @@
 #!/usr/bin/env node
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { uvEnv } from "./uv_env.mjs";
+import { writeVaultData } from "./generate_vault_data.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const args = new Set(process.argv.slice(2));
@@ -20,6 +21,9 @@ const themeSelectorMode = process.env.VAULT_MARIMO_THEME_SELECTOR;
 const isVaultSeedRepo = String(packageJson.repository?.url ?? "").includes("aretw0/vault-seed");
 const shouldInjectThemeSelector =
   themeSelectorMode === "1" || (themeSelectorMode !== "0" && isVaultSeedRepo);
+
+const { data, outDir: sourceDataDir } = writeVaultData({ cwd: ROOT, notebooksPath });
+console.log(`[notebooks:data] ${data.noteCount} notas`);
 
 const themeSelectorHtml = String.raw`
 <div class="vault-marimo-theme-selector" data-vault-marimo-theme-selector role="group" aria-label="Tema do notebook">
@@ -121,7 +125,16 @@ function injectThemeSelector(htmlPath) {
   writeFileSync(htmlPath, html.replace("</body>", `${themeSelectorHtml}\n</body>`));
 }
 
+function copyVaultDataForWasm() {
+  const source = join(sourceDataDir, "vault-data.json");
+  mkdirSync(outDir, { recursive: true });
+  mkdirSync(join(outDir, "assets"), { recursive: true });
+  copyFileSync(source, join(outDir, "vault-data.json"));
+  copyFileSync(source, join(outDir, "assets", "vault-data.json"));
+}
+
 mkdirSync(outDir, { recursive: true });
+copyVaultDataForWasm();
 
 for (const notebook of manifest.filter((entry) => entry.publish)) {
   const source = join(ROOT, notebook.source);

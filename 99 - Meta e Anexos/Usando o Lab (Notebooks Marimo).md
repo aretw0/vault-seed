@@ -147,6 +147,8 @@ Para dados que devem ir junto com um notebook WebAssembly, use uma pasta `public
 
 Essa separação mantém o site barato de hospedar, fácil de publicar e previsível para quem abre o Lab.
 
+O export do Lab copia `vault-data.json` para `/lab/vault-data.json` e `/lab/assets/vault-data.json`. O segundo caminho atende ao runtime WebAssembly do Marimo, que pode resolver arquivos relativos a partir da pasta de assets do pacote exportado.
+
 ## Criando Um Notebook
 
 1. Copie um arquivo de `99 - Meta e Anexos/Notebooks/starters/`.
