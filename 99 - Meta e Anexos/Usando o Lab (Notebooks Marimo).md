@@ -130,5 +130,3 @@ Para colaboração mais integrada, Marimo também tem recursos experimentais:
 - AI do editor: usa chaves próprias configuradas no Marimo e pode gerar/refatorar células com contexto de variáveis em memória.
 
 Essas opções são úteis, mas não são pré-requisito do Lab. A regra deste vault é: primeiro o fluxo local, versionado e revisável; depois integrações assistidas quando fizerem sentido.
-
-Para o Pi curado em `../../agents-lab`, o próximo passo natural é uma skill/tool Marimo que automatize o caminho estável: iniciar `pnpm run notebooks:dev`, listar notebooks, regenerar dados, validar diffs e orientar publicação. Integrações ACP/MCP devem entrar como camada separada porque a API ainda é experimental.
