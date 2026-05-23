@@ -14,6 +14,53 @@ const VAULT_FOLDERS = [
   '90 - Modelos', '99 - Meta e Anexos',
 ];
 
+function escapeHtml(value: unknown): string {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function normalizeList(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item).trim()).filter(Boolean);
+  }
+  if (typeof value === 'string') {
+    return value
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+  return [];
+}
+
+function renderMetaBadges(data: Record<string, unknown>): string {
+  const tags = normalizeList(data.tags);
+  const properties = [
+    ['status', data.status],
+    ['categoria', data.category],
+    ['público', data.audience],
+  ].filter(([, value]) => typeof value === 'string' && value.trim().length > 0);
+
+  if (tags.length === 0 && properties.length === 0) {
+    return '';
+  }
+
+  const tagBadges = tags
+    .map((tag) => `<span class="vault-badge vault-badge--tag">#${escapeHtml(tag)}</span>`)
+    .join('');
+  const propertyBadges = properties
+    .map(
+      ([label, value]) =>
+        `<span class="vault-badge vault-badge--property"><span class="vault-badge__label">${escapeHtml(label)}</span>${escapeHtml(value)}</span>`,
+    )
+    .join('');
+
+  return `<aside class="vault-meta-badges" aria-label="Metadados da nota">${tagBadges}${propertyBadges}</aside>`;
+}
+
 export const collections = {
   docs: defineCollection({
     loader: {
@@ -51,7 +98,7 @@ export const collections = {
           // Render markdown through Astro's pipeline (applies all remark plugins:
           // remarkCallouts, remarkWikiImages, remarkWikiLinks).
           // Custom loaders do NOT auto-process body — renderMarkdown must be called explicitly.
-          const rendered = await renderMarkdown(body, {
+          const rendered = await renderMarkdown(`${renderMetaBadges(safeData)}\n\n${body}`, {
             fileURL: pathToFileURL(fullPath),
           });
 

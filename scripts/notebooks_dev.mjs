@@ -45,7 +45,7 @@ const interval = setInterval(() => {
 }, 2000);
 
 const port = process.env.MARIMO_PORT || "2718";
-const child = spawn("uv", ["run", "--no-project", "--with-requirements", "requirements.txt", "marimo", "edit", NOTEBOOKS_DIR, "--port", port, "--watch"], {
+const child = spawn("uv", ["run", "--no-project", "--with-requirements", "requirements.txt", "marimo", "--yes", "edit", NOTEBOOKS_DIR, "--port", port, "--watch"], {
   env: uvEnv(),
   stdio: "inherit",
 });

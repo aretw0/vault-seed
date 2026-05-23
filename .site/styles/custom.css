@@ -9,6 +9,39 @@
   --sl-font: system-ui, -apple-system, sans-serif;
 }
 
+.vault-meta-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: -0.35rem 0 1.25rem;
+}
+
+.vault-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 1.65rem;
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 999px;
+  background: var(--sl-color-bg-nav);
+  color: var(--sl-color-gray-2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  padding: 0.25rem 0.6rem;
+}
+
+.vault-badge--tag {
+  border-color: color-mix(in srgb, var(--sl-color-accent) 38%, var(--sl-color-hairline));
+  background: color-mix(in srgb, var(--sl-color-accent) 14%, transparent);
+  color: var(--sl-color-text-accent);
+}
+
+.vault-badge__label {
+  color: var(--sl-color-gray-3);
+  font-weight: 500;
+}
+
 /* Mermaid toggle block */
 .mermaid-block {
   margin: 1rem 0;

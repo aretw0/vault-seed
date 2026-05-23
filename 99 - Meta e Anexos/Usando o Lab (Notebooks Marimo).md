@@ -56,6 +56,8 @@ pnpm run notebooks:dev
 
 O comando gera `public/lab/vault-data.json`, sobe apenas o servidor Marimo na porta `2718`, abre a pasta `99 - Meta e Anexos/Notebooks` e mantém o snapshot local atualizado enquanto você edita notas. Ele também usa `--watch`, então alterações feitas por VS Code, Codex, Claude ou Pi no arquivo `.py` podem ser recarregadas no editor do Marimo.
 
+Para encerrar o servidor local, use `Ctrl+C` no terminal onde ele está rodando. O comando passa `--yes` para o Marimo para evitar o prompt interativo de confirmação, que pode se comportar mal em wrappers de terminal no Windows.
+
 Se quiser só atualizar os dados sem abrir o Marimo, use:
 
 ```bash
@@ -91,6 +93,8 @@ Os notebooks leem `vault-data.json` com `encoding="utf-8"` para preservar acento
 O Marimo carrega `.site/styles/marimo-vault.css` via `custom_css` em `pyproject.toml`. Esse arquivo aproxima os notebooks da paleta verde-jardim do site, em modo claro e escuro.
 
 A personalização atua sobre variáveis CSS usadas pelo Marimo, como `--background`, `--foreground`, `--primary`, `--accent`, `--border` e escalas `--slate-*`/`--grass-*`. A estrutura do editor continua sendo do Marimo; o vault controla a paleta e alguns detalhes de leitura, não substitui completamente o tema interno da ferramenta.
+
+No Marimo local, a seleção claro/escuro/sistema é do próprio editor. No site publicado, o export do vault injeta um seletor discreto em cada notebook com as opções Sistema, Claro e Escuro. A escolha fica no `localStorage` do navegador e não altera arquivos do vault.
 
 ## Publicação
 

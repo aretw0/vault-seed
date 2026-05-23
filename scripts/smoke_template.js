@@ -57,8 +57,11 @@ const initializeWorkflow = read(".github/workflows/initialize.yml");
 const gitignore = read(".gitignore");
 const notebooksDevScript = read("scripts/notebooks_dev.mjs");
 const notebooksCheckScript = read("scripts/notebooks_check.mjs");
+const notebooksExportScript = read("scripts/export_notebooks.mjs");
 const pyproject = read("pyproject.toml");
 const marimoCss = read(".site/styles/marimo-vault.css");
+const vaultLoader = read(".site/content.config.ts");
+const customCss = read(".site/styles/custom.css");
 
 requireCondition(
   typeof pkg.packageManager === "string" &&
@@ -101,6 +104,10 @@ requireCondition(
   "notebooks:dev must start marimo with --watch so external editor and agent changes reload locally.",
 );
 requireCondition(
+  notebooksDevScript.includes('"--yes"') || notebooksDevScript.includes("'-y'"),
+  "notebooks:dev must run marimo with --yes so Ctrl+C exits cleanly through wrapper terminals.",
+);
+requireCondition(
   notebooksDevScript.includes('"--no-project"') &&
     notebooksCheckScript.includes('"--no-project"'),
   "Notebook uv commands must use --no-project so pyproject.toml config does not trigger Python project resolution.",
@@ -114,6 +121,17 @@ requireCondition(
     marimoCss.includes("--primary: #1b5e3b") &&
     marimoCss.includes("--primary: #95d5b2"),
   "Marimo must load the vault CSS palette for light and dark notebook themes.",
+);
+requireCondition(
+  notebooksExportScript.includes("data-vault-marimo-theme-selector") &&
+    marimoCss.includes(".vault-marimo-theme-selector"),
+  "Published Marimo notebook exports must include the vault theme selector.",
+);
+requireCondition(
+  vaultLoader.includes("renderMetaBadges(safeData)") &&
+    customCss.includes(".vault-meta-badges") &&
+    customCss.includes(".vault-badge--tag"),
+  "Published notes must render frontmatter tag/property badges.",
 );
 requireCondition(
   (() => {

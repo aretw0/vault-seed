@@ -1,5 +1,6 @@
 /* Marimo notebooks: aproxima a UI da paleta verde-jardim do vault. */
 :root,
+:root[data-vault-marimo-theme="light"],
 .light,
 .light-theme {
   --background: #f7f5f0;
@@ -31,6 +32,7 @@
   --grass-11: #0f3d26;
 }
 
+:root[data-vault-marimo-theme="dark"],
 .dark,
 .dark-theme {
   --background: #111310;
@@ -74,4 +76,48 @@ body {
 
 marimo-table {
   --border: var(--border);
+}
+
+.vault-marimo-theme-selector {
+  position: fixed;
+  z-index: 10000;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--card) 92%, transparent);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--foreground) 12%, transparent);
+}
+
+.vault-marimo-theme-selector button {
+  min-width: 4.25rem;
+  border: 0;
+  border-radius: 0.35rem;
+  background: transparent;
+  color: var(--foreground);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.78rem;
+  line-height: 1;
+  padding: 0.45rem 0.6rem;
+}
+
+.vault-marimo-theme-selector button:hover {
+  background: var(--muted);
+}
+
+.vault-marimo-theme-selector button[aria-pressed="true"] {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+@media (max-width: 44rem) {
+  .vault-marimo-theme-selector {
+    top: auto;
+    right: 0.75rem;
+    bottom: 0.75rem;
+  }
 }
