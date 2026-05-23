@@ -165,8 +165,7 @@ requireCondition(
 );
 requireCondition(
   notebooksExportScript.includes("data-vault-marimo-navigation") &&
-    notebooksExportScript.includes('<a href="./">Lab</a>') &&
-    notebooksExportScript.includes('<a href="../">Vault</a>') &&
+    notebooksExportScript.includes('<a href="../">Vault</a>\n  <a href="./">Lab</a>') &&
     notebooksSlidesScript.includes("data-vault-marimo-navigation") &&
     marimoCss.includes(".vault-marimo-navigation"),
   "Marimo exported notebooks must include stable navigation back to the Lab and vault site.",

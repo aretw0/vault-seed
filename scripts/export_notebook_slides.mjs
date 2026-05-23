@@ -15,8 +15,8 @@ const NAVIGATION_MARKER = "data-vault-marimo-navigation";
 
 const navigationHtml = String.raw`
 <nav class="vault-marimo-navigation" data-vault-marimo-navigation aria-label="Navegação do vault">
-  <a href="./">Lab</a>
   <a href="../">Vault</a>
+  <a href="./">Lab</a>
 </nav>
 `;
 
