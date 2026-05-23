@@ -24,6 +24,11 @@ O kit de ingestão deve ficar em scripts ou módulos Python/Node versionados. O
 resultado esperado para o Lab é um artefato de leitura: JSON, CSV, Parquet ou
 outro formato que o navegador consiga baixar e carregar de forma previsível.
 
+O contrato inicial é `.site/lab.datasets.json`, processado por
+`pnpm run notebooks:etl`. Entradas com `source` copiam snapshots locais para
+`public/lab/datasets/` e `public/lab/assets/datasets/`; entradas com
+`runtimeUrl` são registradas no manifesto sem fetch local.
+
 Fluxo recomendado:
 
 1. Extrair dados de arquivos, páginas, OCR ou APIs em ambiente local/CI.

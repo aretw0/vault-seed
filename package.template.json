@@ -22,6 +22,7 @@
     "site:preview": "astro preview",
     "site:check": "node scripts/smoke_site.js",
     "notebooks:data": "node scripts/generate_vault_data.mjs",
+    "notebooks:etl": "node scripts/prepare_lab_datasets.mjs",
     "notebooks:dev": "node scripts/notebooks_dev.mjs",
     "notebooks:check": "node scripts/notebooks_check.mjs",
     "notebooks:pair": "node scripts/notebooks_pair.mjs",

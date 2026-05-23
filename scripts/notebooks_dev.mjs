@@ -3,6 +3,7 @@ import { spawn } from "node:child_process";
 import { statSync } from "node:fs";
 import { globSync } from "glob";
 import { writeVaultData } from "./generate_vault_data.mjs";
+import { buildLabDatasets } from "./prepare_lab_datasets.mjs";
 import { uvEnv } from "./uv_env.mjs";
 
 const NOTEBOOKS_DIR = "99 - Meta e Anexos/Notebooks";
@@ -32,7 +33,9 @@ function snapshot() {
 
 function refresh(reason) {
   const { data } = writeVaultData();
+  const { data: datasetData } = buildLabDatasets();
   console.log(`[notebooks:data] ${data.noteCount} notas (${reason})`);
+  console.log(`[notebooks:etl] ${datasetData.datasetCount} dataset(s) (${reason})`);
 }
 
 refresh("inicial");

@@ -59,6 +59,7 @@ const notebooksDevScript = read("scripts/notebooks_dev.mjs");
 const notebooksCheckScript = read("scripts/notebooks_check.mjs");
 const notebooksExportScript = read("scripts/export_notebooks.mjs");
 const notebooksSlidesScript = read("scripts/export_notebook_slides.mjs");
+const labDatasetsScript = read("scripts/prepare_lab_datasets.mjs");
 const headerComponent = read(".site/components/Header.astro");
 const astroConfig = read("astro.config.mjs");
 const pyproject = read("pyproject.toml");
@@ -89,11 +90,22 @@ requireCondition(
 );
 requireCondition(
   templatePkg.scripts?.["notebooks:data"] === "node scripts/generate_vault_data.mjs" &&
+    templatePkg.scripts?.["notebooks:etl"] === "node scripts/prepare_lab_datasets.mjs" &&
     templatePkg.scripts?.["notebooks:dev"] === "node scripts/notebooks_dev.mjs" &&
     templatePkg.scripts?.["notebooks:check"] === "node scripts/notebooks_check.mjs" &&
     templatePkg.scripts?.["notebooks:pair"] === "node scripts/notebooks_pair.mjs" &&
     templatePkg.scripts?.["notebooks:export"] === "node scripts/export_notebooks.mjs",
   "package.template.json must expose notebooks:dev for generated vaults.",
+);
+requireCondition(
+  exists(".site/lab.datasets.json") &&
+    notebooksDevScript.includes("buildLabDatasets") &&
+    notebooksCheckScript.includes("buildLabDatasets") &&
+    notebooksExportScript.includes("buildLabDatasets") &&
+    notebooksSlidesScript.includes("buildLabDatasets") &&
+    labDatasetsScript.includes('"assets", DATASET_ROOT') &&
+    labDatasetsScript.includes("sha256"),
+  "Lab ETL tooling must prepare deterministic local/runtime dataset manifests for dev, check, and export.",
 );
 requireCondition(
   templatePkg.scripts?.["notebooks:export:public"] === "node scripts/export_notebooks.mjs --public" &&

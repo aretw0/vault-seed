@@ -3,6 +3,7 @@ import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { globSync } from "glob";
 import { writeVaultData } from "./generate_vault_data.mjs";
+import { buildLabDatasets } from "./prepare_lab_datasets.mjs";
 import { uvEnv } from "./uv_env.mjs";
 
 const NOTEBOOKS_DIR = "99 - Meta e Anexos/Notebooks";
@@ -24,6 +25,8 @@ function run(label, args) {
 
 const { data } = writeVaultData();
 console.log(`[notebooks:data] ${data.noteCount} notas`);
+const { data: datasetData } = buildLabDatasets();
+console.log(`[notebooks:etl] ${datasetData.datasetCount} dataset(s)`);
 
 run("estrutura e formatação", ["check", NOTEBOOKS_DIR, "--strict", "--ignore-scripts"]);
 run("execução de sessão", ["export", "session", NOTEBOOKS_DIR, "--force-overwrite", "--no-continue-on-error"]);

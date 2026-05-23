@@ -5,6 +5,7 @@ import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { uvEnv } from "./uv_env.mjs";
 import { writeVaultData } from "./generate_vault_data.mjs";
+import { buildLabDatasets } from "./prepare_lab_datasets.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const args = new Set(process.argv.slice(2));
@@ -25,6 +26,8 @@ const shouldInjectThemeSelector =
 
 const { data, outDir: sourceDataDir } = writeVaultData({ cwd: ROOT, notebooksPath });
 console.log(`[notebooks:data] ${data.noteCount} notas`);
+const { data: datasetData } = buildLabDatasets({ cwd: ROOT, targetRoot: outDir });
+console.log(`[notebooks:etl] ${datasetData.datasetCount} dataset(s)`);
 
 const navigationHtml = String.raw`
 <nav class="vault-marimo-navigation" data-vault-marimo-navigation aria-label="Navegação do vault">

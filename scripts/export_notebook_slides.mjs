@@ -5,6 +5,7 @@ import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { uvEnv } from "./uv_env.mjs";
 import { writeVaultData } from "./generate_vault_data.mjs";
+import { buildLabDatasets } from "./prepare_lab_datasets.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const NOTEBOOK =
@@ -35,6 +36,8 @@ const { data, outDir: sourceDataDir } = writeVaultData({ cwd: ROOT });
 console.log(`[notebooks:data] ${data.noteCount} notas`);
 mkdirSync(dirname(OUTPUT), { recursive: true });
 mkdirSync(join(dirname(OUTPUT), "assets"), { recursive: true });
+const { data: datasetData } = buildLabDatasets({ cwd: ROOT, targetRoot: dirname(OUTPUT) });
+console.log(`[notebooks:etl] ${datasetData.datasetCount} dataset(s)`);
 copyFileSync(
   join(sourceDataDir, "vault-data.json"),
   join(dirname(OUTPUT), "vault-data.json"),

@@ -34,6 +34,7 @@ Este mapa mostra o vault como exemplo de organização. Use-o para entender quai
 - [[Configurando o Obsidian Git]]
 - [[Publicando seu Vault como Site]]
 - [[Usando o Lab (Notebooks Marimo)]]
+- [[Preparando Dados para o Lab]]
 
 ## Conceitos Que Sustentam o Vault
 
@@ -54,6 +55,7 @@ Este mapa mostra o vault como exemplo de organização. Use-o para entender quai
 - [[Usando o Git e o GitHub para Sincronizar seu Vault]]
 - [[Publicando seu Vault como Site]]
 - [[Usando o Lab (Notebooks Marimo)]]
+- [[Preparando Dados para o Lab]]
 - [[Conhecendo o Agents Lab]]
 - [[Usando o Vault no Celular vs. Desktop]]
 

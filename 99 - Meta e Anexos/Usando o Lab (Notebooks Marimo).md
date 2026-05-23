@@ -196,6 +196,8 @@ Essa separação mantém o site barato de hospedar, fácil de publicar e previs�
 
 O export do Lab copia `vault-data.json` para `/lab/vault-data.json` e `/lab/assets/vault-data.json`. O segundo caminho atende ao runtime WebAssembly do Marimo, que pode resolver arquivos relativos a partir da pasta de assets do pacote exportado.
 
+Datasets adicionais são declarados em `.site/lab.datasets.json` e preparados com `pnpm run notebooks:etl`. Veja [[Preparando Dados para o Lab]] para o contrato entre scripts de ingestão, snapshots publicados e notebooks.
+
 ## Criando Um Notebook
 
 1. Copie um arquivo de `99 - Meta e Anexos/Notebooks/starters/`.
