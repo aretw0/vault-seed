@@ -18,6 +18,14 @@ const path = require("node:path");
 
 const root = process.cwd();
 const distDir = path.join(root, "dist");
+const labManifest = JSON.parse(
+  fs.readFileSync(path.join(root, ".site", "lab.notebooks.json"), "utf8"),
+);
+const marimoNotebookPaths = new Set(
+  labManifest
+    .filter((entry) => entry.publish)
+    .map((entry) => `lab/${entry.output}`),
+);
 const errors = [];
 const warnings = [];
 
@@ -118,13 +126,15 @@ for (const slug of REQUIRED_DIST_PATHS) {
 // ── 4. collect content pages ──────────────────────────────────────────────────
 
 const allHtml = listHtmlFiles(distDir);
-// Exclude: 404, index (redirect), Starlight internals (_astro/).
+// Exclude: 404, index (redirect), Starlight internals (_astro/), and exported
+// Marimo notebooks. Marimo HTML is intentionally not rendered by Starlight.
 const contentPages = allHtml.filter((f) => {
   const rel = path.relative(distDir, f).replace(/\\/g, "/");
   return (
     !rel.endsWith("404.html") &&
     rel !== "index.html" &&
-    !rel.startsWith("_")
+    !rel.startsWith("_") &&
+    !isMarimoNotebook(rel)
   );
 });
 
@@ -154,6 +164,29 @@ const internalHrefPattern = /<a\s[^>]*href="(\/[^"#?][^"]*?)"/g;
 
 // Starlight wraps rendered markdown in this class.
 const hasMarkdownContent = /class="[^"]*sl-markdown-content[^"]*"/;
+
+function isMarimoNotebook(relPath) {
+  return marimoNotebookPaths.has(relPath);
+}
+
+function hasMarimoRuntime(content) {
+  return content.includes("<marimo-wasm") && content.includes('data-marimo="true"');
+}
+
+for (const htmlFile of allHtml) {
+  const rel = path.relative(distDir, htmlFile).replace(/\\/g, "/");
+  if (!isMarimoNotebook(rel)) continue;
+  const content = fs.readFileSync(htmlFile, "utf8");
+
+  requireCondition(
+    hasMarimoRuntime(content),
+    `${rel}: missing Marimo WASM runtime markers — notebook export may be invalid.`,
+  );
+  requireCondition(
+    content.includes("./assets/"),
+    `${rel}: missing relative assets references — notebook export may not load in /lab/.`,
+  );
+}
 
 for (const htmlFile of contentPages) {
   const rel = path.relative(distDir, htmlFile).replace(/\\/g, "/");
