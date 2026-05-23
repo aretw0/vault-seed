@@ -46,7 +46,7 @@ flowchart LR
 ## Tipos de diagrama suportados
 
 | Tipo | Declaração | Uso |
-|:-----|:-----------|:----|
+| :--- | :--- | :--- |
 | Fluxograma | `flowchart TD` / `graph LR` | Processos e decisões |
 | Sequência | `sequenceDiagram` | Interações entre sistemas |
 | Estado | `stateDiagram-v2` | Ciclos de vida e estados |
@@ -145,7 +145,7 @@ classDef destaque fill:#fff0e6,stroke:#ff8c1a,stroke-dasharray:5 5
 ## O que funciona onde
 
 | Funcionalidade | Obsidian | Site publicado |
-|:---------------|:--------:|:--------------:|
+| :--- | :---: | :---: |
 | Todos os tipos listados acima | ✓ | ✓ |
 | Labels com acentos (entre aspas) | ✓ | ✓ |
 | Emoji em labels (entre aspas) | ✓ | ✓ |

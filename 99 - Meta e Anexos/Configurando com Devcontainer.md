@@ -32,7 +32,7 @@ Tudo vem pré-configurado — incluindo extensões, locale PT-BR e dependências
 ## O que vem pré-instalado
 
 | Ferramenta | Versão |
-|---|---|
+| --- | --- |
 | Node.js | 22 (LTS) |
 | pnpm | via Corepack |
 | uv | última estável |
