@@ -2,6 +2,7 @@
   "name": "digital-gardening-kit",
   "version": "0.0.1",
   "description": "Kit de ferramentas para a jardinagem digital",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/{{REPO_NAME}}.git"
@@ -17,7 +18,7 @@
     "smoke:template": "node scripts/smoke_template.js",
     "validate:onboarding": "node scripts/validate_onboarding.js",
     "site:dev": "astro dev",
-    "site:build": "astro build",
+    "site:build": "pnpm --filter @dgk/astro-plugins build && astro build",
     "site:preview": "astro preview",
     "site:check": "node scripts/smoke_site.js",
     "notebooks:data": "node scripts/generate_vault_data.mjs",
@@ -31,7 +32,6 @@
   "type": "commonjs",
   "devDependencies": {
     "@astrojs/starlight": "^0.39.2",
-    "@dgk/astro-plugins": "^0.1.0",
     "astro": "^6.3.5",
     "glob": "^13.0.6",
     "gray-matter": "^4.0.3",
@@ -42,5 +42,8 @@
   "packageManager": "pnpm@11.1.3+sha512.c85357fe17ca12dd23dd7071822666dfd7e3cb76fe214e3370b5ea2fb34f2a231185509b63e717f3cd0acb38dd3f8d82bcd5e8172400ae678b70ea4fbed0896d",
   "engines": {
     "node": ">=22"
+  },
+  "dependencies": {
+    "@dgk/astro-plugins": "workspace:^"
   }
 }

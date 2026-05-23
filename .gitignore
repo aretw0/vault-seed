@@ -13,6 +13,7 @@
 node_modules/
 .pnpm-store/
 __pycache__/
+__marimo__/
 
 # Arquivos de Sistema e temporários
 *~

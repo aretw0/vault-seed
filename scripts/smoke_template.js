@@ -52,6 +52,10 @@ function requireCondition(condition, message) {
 
 const pkg = readJson("package.json");
 const templatePkg = readJson("package.template.json");
+const templateLock = read("pnpm-lock.template.yaml");
+const initializeWorkflow = read(".github/workflows/initialize.yml");
+const gitignore = read(".gitignore");
+const notebooksDevScript = read("scripts/notebooks_dev.mjs");
 
 requireCondition(
   typeof pkg.packageManager === "string" &&
@@ -78,6 +82,47 @@ requireCondition(
     templatePkg.scripts?.["notebooks:dev"] === "node scripts/notebooks_dev.mjs" &&
     templatePkg.scripts?.["notebooks:export"] === "node scripts/export_notebooks.mjs",
   "package.template.json must expose notebooks:dev for generated vaults.",
+);
+requireCondition(
+  templatePkg.dependencies?.["@dgk/astro-plugins"] === "workspace:^",
+  "Generated vaults must use the local workspace @dgk/astro-plugins package until it is published.",
+);
+requireCondition(
+  gitignore.includes("__marimo__/"),
+  ".gitignore must ignore Marimo local state directories.",
+);
+requireCondition(
+  notebooksDevScript.includes('"--watch"') || notebooksDevScript.includes("'--watch'"),
+  "notebooks:dev must start marimo with --watch so external editor and agent changes reload locally.",
+);
+requireCondition(
+  (() => {
+    const match = initializeWorkflow.match(/files_to_remove:\s*"([^"]+)"/);
+    const removed = match ? match[1].split(/\s+/) : [];
+    return !removed.includes("packages") &&
+      !removed.includes("pnpm-workspace.yaml") &&
+      removed.includes("packages/cli");
+  })(),
+  "initialize.yml must keep pnpm-workspace.yaml and packages/astro-plugins, removing only packages/cli.",
+);
+for (const [name, specifier] of Object.entries({
+  ...(templatePkg.dependencies || {}),
+  ...(templatePkg.devDependencies || {}),
+})) {
+  const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const escapedSpecifier = String(specifier).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  requireCondition(
+    new RegExp(`\\n      '?${escapedName}'?:\\n        specifier: ${escapedSpecifier}\\n`).test(templateLock),
+    `pnpm-lock.template.yaml root importer must include ${name}@${specifier}.`,
+  );
+}
+requireCondition(
+  !/standard-version:/.test(templateLock),
+  "pnpm-lock.template.yaml must not retain removed standard-version dependency.",
+);
+requireCondition(
+  /packages\/astro-plugins:/.test(templateLock) && !/\n  packages\/cli:/.test(templateLock),
+  "pnpm-lock.template.yaml must model the generated vault workspace: packages/astro-plugins only.",
 );
 
 const trackedPluginFiles = gitLsFiles([".obsidian/plugins"]);
