@@ -58,6 +58,7 @@ const shouldRenderThemeSelect = themeSelectorMode === '1' || (themeSelectorMode 
 						const mode = modes.includes(localStorage.getItem(modeKey) || '')
 							? localStorage.getItem(modeKey)
 							: 'system';
+						localStorage.setItem('starlight-theme', mode === 'system' ? '' : mode);
 						root.dataset.vaultPalette = palette;
 						root.dataset.theme = resolveMode(mode);
 						document.querySelectorAll('[data-vault-palette-select]').forEach((select) => {
