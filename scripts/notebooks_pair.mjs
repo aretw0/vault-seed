@@ -22,7 +22,7 @@ const passthrough = args.filter((arg, index) => {
 });
 const result = spawnSync(
   "uv",
-  ["run", "--with-requirements", "requirements.txt", "marimo", "pair", "prompt", "--url", url, ...passthrough],
+  ["run", "--no-project", "--with-requirements", "requirements.txt", "marimo", "pair", "prompt", "--url", url, ...passthrough],
   {
     cwd: process.cwd(),
     env: uvEnv(),

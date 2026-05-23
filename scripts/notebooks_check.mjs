@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process";
+import { readFileSync } from "node:fs";
+import { globSync } from "glob";
 import { writeVaultData } from "./generate_vault_data.mjs";
 import { uvEnv } from "./uv_env.mjs";
 
@@ -7,7 +9,7 @@ const NOTEBOOKS_DIR = "99 - Meta e Anexos/Notebooks";
 
 function run(label, args) {
   console.log(`[notebooks:check] ${label}`);
-  const result = spawnSync("uv", ["run", "--with-requirements", "requirements.txt", "marimo", ...args], {
+  const result = spawnSync("uv", ["run", "--no-project", "--with-requirements", "requirements.txt", "marimo", ...args], {
     cwd: process.cwd(),
     env: uvEnv(),
     stdio: "inherit",
@@ -25,3 +27,15 @@ console.log(`[notebooks:data] ${data.noteCount} notas`);
 
 run("estrutura e formatação", ["check", NOTEBOOKS_DIR, "--strict", "--ignore-scripts"]);
 run("execução de sessão", ["export", "session", NOTEBOOKS_DIR, "--force-overwrite", "--no-continue-on-error"]);
+
+const mojibakeFiles = globSync([
+  "public/lab/vault-data.json",
+  "99 - Meta e Anexos/Notebooks/**/__marimo__/session/*.json",
+])
+  .filter((file) => /(?:\\u00c3|Ã)/.test(readFileSync(file, "utf8")));
+
+if (mojibakeFiles.length > 0) {
+  console.error("[notebooks:check] possível mojibake UTF-8 encontrado:");
+  for (const file of mojibakeFiles) console.error(`- ${file}`);
+  process.exit(1);
+}

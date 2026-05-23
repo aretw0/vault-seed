@@ -21,7 +21,7 @@ def _(json, os):
     except ImportError:
         _notebooks_path = os.environ.get("VAULT_NOTEBOOKS_PATH", "lab")
         _path = os.path.join(os.getcwd(), "public", _notebooks_path, "vault-data.json")
-        with open(_path) as _f:
+        with open(_path, encoding="utf-8") as _f:
             data = json.load(_f)
     notes = data["notes"]
     return data, notes

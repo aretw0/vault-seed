@@ -78,6 +78,14 @@ Isso mantém o Lab em modo leitura: ele ajuda a enxergar o vault, mas não modif
 
 O Lab modifica apenas os notebooks que você edita. As notas Markdown do vault são lidas para gerar o snapshot `vault-data.json`.
 
+## Idioma E Acentos
+
+Este vault configura o Marimo com `locale = "pt-BR"` em `pyproject.toml`. Isso ajusta formatação de datas, números e tempos relativos quando o navegador e o Marimo suportam esse locale.
+
+Essa configuração não traduz toda a interface do Marimo. Segundo a documentação oficial, textos da UI, mensagens de erro e documentação do Marimo ainda não são localizados. Por isso, os notebooks deste vault mantêm títulos, seções e labels em português, enquanto alguns controles internos do editor podem continuar em inglês.
+
+Os notebooks leem `vault-data.json` com `encoding="utf-8"` para preservar acentos e tils em títulos e links.
+
 ## Publicação
 
 O workflow `.github/workflows/deploy-site.yml` exporta como HTML WebAssembly apenas os notebooks listados em `.site/lab.notebooks.json` com `publish: true`. Por padrão, eles ficam em `/lab/` junto com o site publicado.

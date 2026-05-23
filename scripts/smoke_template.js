@@ -56,6 +56,8 @@ const templateLock = read("pnpm-lock.template.yaml");
 const initializeWorkflow = read(".github/workflows/initialize.yml");
 const gitignore = read(".gitignore");
 const notebooksDevScript = read("scripts/notebooks_dev.mjs");
+const notebooksCheckScript = read("scripts/notebooks_check.mjs");
+const pyproject = read("pyproject.toml");
 
 requireCondition(
   typeof pkg.packageManager === "string" &&
@@ -96,6 +98,15 @@ requireCondition(
 requireCondition(
   notebooksDevScript.includes('"--watch"') || notebooksDevScript.includes("'--watch'"),
   "notebooks:dev must start marimo with --watch so external editor and agent changes reload locally.",
+);
+requireCondition(
+  notebooksDevScript.includes('"--no-project"') &&
+    notebooksCheckScript.includes('"--no-project"'),
+  "Notebook uv commands must use --no-project so pyproject.toml config does not trigger Python project resolution.",
+);
+requireCondition(
+  /\[tool\.marimo\.display\]\s+locale = "pt-BR"/m.test(pyproject),
+  "pyproject.toml must configure Marimo display locale as pt-BR.",
 );
 requireCondition(
   (() => {

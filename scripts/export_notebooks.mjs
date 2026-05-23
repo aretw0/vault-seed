@@ -20,6 +20,7 @@ for (const notebook of manifest.filter((entry) => entry.publish)) {
   console.log(`export notebook: ${notebook.source} -> dist/${notebooksPath}/${notebook.output}`);
   const result = spawnSync("uv", [
     "run",
+    "--no-project",
     "--with-requirements",
     "requirements.txt",
     "marimo",
