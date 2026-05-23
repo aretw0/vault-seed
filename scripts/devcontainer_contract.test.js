@@ -18,8 +18,39 @@ test("devcontainer publishes the Astro site port for host browsers", () => {
 });
 
 test("devcontainer shell scripts stay LF-only for Linux bash", () => {
-  for (const path of [".devcontainer/post-create.sh", ".devcontainer/post-start.sh", ".devcontainer/vault"]) {
+  for (const path of [".devcontainer/Dockerfile", ".devcontainer/post-create.sh", ".devcontainer/post-start.sh", ".devcontainer/vault"]) {
     const content = fs.readFileSync(path, "utf8");
     assert.equal(content.includes("\r"), false, `${path} must stay LF-only`);
   }
+});
+
+test("devcontainer provides the baseline sandbox tools expected by agents", () => {
+  const config = readJson(".devcontainer/devcontainer.json");
+  const dockerfile = fs.readFileSync(".devcontainer/Dockerfile", "utf8");
+  const postStart = fs.readFileSync(".devcontainer/post-start.sh", "utf8");
+
+  assert.deepEqual(config.build, { dockerfile: "Dockerfile", context: "." });
+  assert.deepEqual(config.features["ghcr.io/devcontainers/features/github-cli:1"], {});
+  assert.deepEqual(config.features["ghcr.io/jsburckhardt/devcontainer-features/uv:1"], {});
+
+  for (const packageName of [
+    "bash-completion",
+    "bubblewrap",
+    "fd-find",
+    "git-lfs",
+    "hyperfine",
+    "jq",
+    "ripgrep",
+    "shellcheck",
+    "shfmt",
+    "tree",
+    "unzip",
+  ]) {
+    assert.match(dockerfile, new RegExp(`\\b${packageName}\\b`), `${packageName} must be installed in the devcontainer image`);
+  }
+
+  assert.match(dockerfile, /ln -sf \/usr\/bin\/fdfind \/usr\/local\/bin\/fd/);
+  assert.match(postStart, /check_agent_sandbox_tools\(\)/);
+  assert.match(postStart, /for tool in bwrap fd gh jq rg shellcheck shfmt tree uv; do/);
+  assert.match(postStart, /Ferramentas de sandbox ausentes/);
 });

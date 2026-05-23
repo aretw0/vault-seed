@@ -53,7 +53,30 @@ ensure_pi() {
     || echo "[aviso] Pi install falhou. Execute: pnpm add -g @earendil-works/pi-coding-agent"
 }
 
+check_agent_sandbox_tools() {
+  missing=()
+
+  for tool in bwrap fd gh jq rg shellcheck shfmt tree uv; do
+    if ! command -v "$tool" >/dev/null 2>&1; then
+      missing+=("$tool")
+    fi
+  done
+
+  if [ ${#missing[@]} -gt 0 ]; then
+    echo "[aviso] Ferramentas de sandbox ausentes: ${missing[*]}"
+    echo "[aviso] Rebuild o devcontainer para aplicar Dockerfile/features."
+  fi
+
+  if command -v bwrap >/dev/null 2>&1; then
+    if ! bwrap --ro-bind / / true >/dev/null 2>&1; then
+      echo "[aviso] bubblewrap instalado, mas sem permissão de namespace."
+      echo "[aviso] Reabra/rebuild o devcontainer ou habilite unprivileged user namespaces no host."
+    fi
+  fi
+}
+
 ensure_pnpm
+check_agent_sandbox_tools
 ensure_pi
 
 if ! command -v gh >/dev/null 2>&1; then
