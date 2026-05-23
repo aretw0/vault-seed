@@ -15,26 +15,81 @@ def _():
 
 @app.cell
 def _(json, os):
+    def candidate_paths(path_or_url):
+        if path_or_url.startswith(("http://", "https://")):
+            return [path_or_url]
+
+        base = path_or_url.removeprefix("./").removeprefix("/")
+        no_assets = base.removeprefix("assets/")
+        candidates = {
+            base,
+            f"./{base}",
+            f"../{base}",
+            no_assets,
+            f"./{no_assets}",
+            f"../{no_assets}",
+            f"assets/{no_assets}",
+            f"./assets/{no_assets}",
+            f"../assets/{no_assets}",
+        }
+        return [candidate for candidate in candidates if candidate]
+
     try:
-        import pyodide  # type: ignore
         from pyodide.http import open_url  # type: ignore
 
         def read_json(path_or_url):
-            return json.loads(open_url(path_or_url).read())
+            last_error = None
+            for candidate in candidate_paths(path_or_url):
+                try:
+                    return json.loads(open_url(candidate).read())
+                except Exception as exc:
+                    last_error = exc
+                    continue
+            if last_error:
+                raise last_error
+            raise RuntimeError("Não foi possível carregar o recurso de datasets.")
 
-        manifest = read_json("./assets/datasets/manifest.json")
+        manifest = None
+        for path in candidate_paths("./datasets/manifest.json"):
+            try:
+                manifest = read_json(path)
+                break
+            except Exception:
+                manifest = None
+
+        if manifest is None:
+            raise RuntimeError("Não foi possível carregar o manifest de datasets.") from None
     except ImportError:
         from urllib.request import urlopen
 
         def read_json(path_or_url):
             if path_or_url.startswith("http"):
                 return json.loads(urlopen(path_or_url, timeout=15).read())
-            _notebooks_path = os.environ.get("VAULT_NOTEBOOKS_PATH", "lab")
-            _path = os.path.join(os.getcwd(), "public", _notebooks_path, path_or_url)
-            with open(_path, encoding="utf-8") as _f:
-                return json.load(_f)
 
-        manifest = read_json("assets/datasets/manifest.json")
+            _notebooks_path = os.environ.get("VAULT_NOTEBOOKS_PATH", "lab")
+            last_error = None
+            for candidate in candidate_paths(path_or_url):
+                _path = os.path.join(os.getcwd(), "public", _notebooks_path, candidate)
+                try:
+                    with open(_path, encoding="utf-8") as _f:
+                        return json.load(_f)
+                except Exception as exc:
+                    last_error = exc
+                    continue
+            if last_error:
+                raise last_error
+            raise RuntimeError("Não foi possível carregar o recurso de datasets.")
+
+        manifest = None
+        for path in candidate_paths("./datasets/manifest.json"):
+            try:
+                manifest = read_json(path)
+                break
+            except Exception:
+                manifest = None
+
+        if manifest is None:
+            raise RuntimeError("Não foi possível carregar o manifest de datasets.") from None
 
     datasets = {dataset["id"]: dataset for dataset in manifest["datasets"]}
     snapshot = read_json(datasets["perfil-do-vault"]["assetPath"])
@@ -93,7 +148,6 @@ def _(mo, runtime_sources):
         "## Fonte remota opcional\n\n"
         "O notebook publicado também pode buscar JSON remoto em runtime, desde que a fonte aceite CORS e o visitante tenha rede."
     )
-    load_remote
     return load_remote
 
 

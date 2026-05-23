@@ -96,7 +96,7 @@ export function buildLabDatasets({ cwd = ROOT, manifest = readManifest(), target
 
       record.kind = "snapshot";
       record.path = `${DATASET_ROOT}/${output}`;
-      record.assetPath = `assets/${DATASET_ROOT}/${output}`;
+      record.assetPath = `${DATASET_ROOT}/${output}`;
       record.bytes = stats.size;
       record.sha256 = sha256(source);
     } else if (entry.runtimeUrl) {
