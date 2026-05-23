@@ -15,24 +15,28 @@ def _():
 
 @app.cell
 def _(json, os):
-    def candidate_paths(path_or_url):
+    def normalize_path(path_or_url):
         if path_or_url.startswith(("http://", "https://")):
-            return [path_or_url]
+            return path_or_url
 
-        base = path_or_url.removeprefix("./").removeprefix("/")
-        no_assets = base.removeprefix("assets/")
-        candidates = {
-            base,
-            f"./{base}",
-            f"../{base}",
-            no_assets,
-            f"./{no_assets}",
-            f"../{no_assets}",
-            f"assets/{no_assets}",
-            f"./assets/{no_assets}",
-            f"../assets/{no_assets}",
-        }
-        return [candidate for candidate in candidates if candidate]
+        value = path_or_url.replace("\\", "/").strip()
+        value = value.removeprefix("./").removeprefix("/")
+        while value.startswith("assets/"):
+            value = value.removeprefix("assets/")
+        return value
+
+    def candidate_paths(path_or_url):
+        normalized = normalize_path(path_or_url)
+        if normalized.startswith(("http://", "https://")):
+            return [normalized]
+
+        candidates = []
+        if normalized:
+            candidates.append(normalized)
+            if not normalized.startswith("assets/"):
+                candidates.append(f"assets/{normalized}")
+
+        return candidates
 
     try:
         from pyodide.http import open_url  # type: ignore
@@ -50,7 +54,7 @@ def _(json, os):
             raise RuntimeError("Não foi possível carregar o recurso de datasets.")
 
         manifest = None
-        for path in candidate_paths("./datasets/manifest.json"):
+        for path in candidate_paths("datasets/manifest.json"):
             try:
                 manifest = read_json(path)
                 break
@@ -58,7 +62,9 @@ def _(json, os):
                 manifest = None
 
         if manifest is None:
-            raise RuntimeError("Não foi possível carregar o manifest de datasets.") from None
+            raise RuntimeError(
+                "Não foi possível carregar o manifest de datasets."
+            ) from None
     except ImportError:
         from urllib.request import urlopen
 
@@ -81,7 +87,7 @@ def _(json, os):
             raise RuntimeError("Não foi possível carregar o recurso de datasets.")
 
         manifest = None
-        for path in candidate_paths("./datasets/manifest.json"):
+        for path in candidate_paths("datasets/manifest.json"):
             try:
                 manifest = read_json(path)
                 break
@@ -89,10 +95,12 @@ def _(json, os):
                 manifest = None
 
         if manifest is None:
-            raise RuntimeError("Não foi possível carregar o manifest de datasets.") from None
+            raise RuntimeError(
+                "Não foi possível carregar o manifest de datasets."
+            ) from None
 
     datasets = {dataset["id"]: dataset for dataset in manifest["datasets"]}
-    snapshot = read_json(datasets["perfil-do-vault"]["assetPath"])
+    snapshot = read_json(normalize_path(datasets["perfil-do-vault"]["assetPath"]))
     runtime_sources = [
         dataset for dataset in manifest["datasets"] if dataset["kind"] == "runtime"
     ]
