@@ -66,6 +66,53 @@
 body {
   background: var(--background);
   color: var(--foreground);
+  overflow-x: hidden;
+}
+
+.marimo,
+main,
+article,
+.markdown,
+.prose {
+  max-width: 100%;
+}
+
+.markdown,
+.prose {
+  overflow-wrap: anywhere;
+}
+
+.markdown p,
+.markdown li,
+.prose p,
+.prose li {
+  line-height: 1.58;
+}
+
+.markdown pre,
+.markdown code,
+.prose pre,
+.prose code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.markdown img,
+.prose img,
+.markdown svg,
+.prose svg,
+canvas,
+iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+.markdown table,
+.prose table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 :root[data-vault-marimo-theme="light"] {
@@ -601,14 +648,48 @@ body {
 }
 
 @media (max-width: 44rem) {
+  body {
+    font-size: 0.95rem;
+  }
+
+  .markdown h1,
+  .prose h1 {
+    font-size: clamp(1.9rem, 10vw, 2.5rem);
+    line-height: 1.05;
+  }
+
+  .markdown h2,
+  .prose h2 {
+    font-size: clamp(1.35rem, 7vw, 1.8rem);
+    line-height: 1.15;
+  }
+
+  .markdown table,
+  .prose table {
+    font-size: 0.86rem;
+  }
+
+  [data-testid*="carousel"],
+  [class*="carousel"],
+  [class*="Carousel"] {
+    max-width: calc(100vw - 1rem) !important;
+  }
+
   .vault-marimo-theme-selector {
     top: auto;
     right: 0.75rem;
     bottom: 0.75rem;
+    left: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
   }
 
   .vault-marimo-navigation {
     top: 0.75rem;
     left: 0.75rem;
+  }
+
+  .vault-marimo-theme-selector select {
+    flex: 1 1 100%;
   }
 }

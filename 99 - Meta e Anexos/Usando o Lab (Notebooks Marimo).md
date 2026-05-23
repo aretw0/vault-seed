@@ -126,7 +126,7 @@ O editor local do Marimo tem controles de visualização que ajudam durante a cr
 
 No Lab publicado, o export usa `marimo export html-wasm` em modo `run`. Esse modo entrega uma página interativa, sem depender de servidor Python, mas não leva todos os controles do editor local.
 
-Slides em WebAssembly não são um parâmetro separado como `html-wasm --as=slides`. O caminho é configurar o notebook com um `layout_file` do tipo `slides`; esse layout é embutido no HTML WASM quando o notebook é exportado.
+Para apresentações publicadas no navegador, este vault usa `mo.carousel` dentro do próprio notebook. Isso mantém a apresentação empacotada como HTML WebAssembly e evita depender de um `layout_file` de slides, que é mais sensível em navegadores móveis.
 
 O Marimo também exporta notebooks para outros formatos. Os caminhos mais úteis aqui são:
 
@@ -141,9 +141,9 @@ O Marimo também exporta notebooks para outros formatos. Os caminhos mais úteis
 | Script | `marimo export script` | gerar um Python plano |
 | Session | `marimo export session` | validar execução sem navegador |
 
-O vault já tem um notebook de apresentação em `99 - Meta e Anexos/Notebooks/apresentacao-vault-seed.py`. Ele aponta para `99 - Meta e Anexos/Notebooks/layouts/apresentacao-vault-seed.slides.json`, que declara o layout de slides.
+O vault já tem um notebook de apresentação em `99 - Meta e Anexos/Notebooks/apresentacao-vault-seed.py`. Ele usa `mo.carousel` para criar uma navegação de apresentação dentro do HTML publicado.
 
-Para exportá-lo como HTML WebAssembly com layout de slides:
+Para exportá-lo como HTML WebAssembly de apresentação:
 
 ```bash
 pnpm run notebooks:export:slides
@@ -163,7 +163,7 @@ Esse caminho pode precisar de Chromium instalado pelo Playwright. Se o export ac
 uv run --with playwright playwright install chromium
 ```
 
-Esse caminho gera um artefato de apresentação estático, mas é mais sensível ao ambiente local. Em Windows, o caminho PDF pode esbarrar na combinação `nbconvert` + Playwright + event loop assíncrono; nesse caso, prefira o HTML WebAssembly com layout de slides ou rode o PDF em Linux/WSL/CI.
+Esse caminho gera um artefato de apresentação estático, mas é mais sensível ao ambiente local. Em Windows, o caminho PDF pode esbarrar na combinação `nbconvert` + Playwright + event loop assíncrono; nesse caso, prefira a apresentação em HTML WebAssembly ou rode o PDF em Linux/WSL/CI.
 
 Para o site `/lab/`, continue usando o HTML WebAssembly como experiência interativa principal. Slides não entram automaticamente em `.site/lab.notebooks.json`; publique ou distribua esse artefato conscientemente quando ele fizer parte de uma entrega.
 

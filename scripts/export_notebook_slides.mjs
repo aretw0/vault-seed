@@ -74,7 +74,7 @@ if (result.error) {
 
 if (result.status !== 0) {
   console.error(
-    "[notebooks:export:slides] falha ao exportar HTML WebAssembly com layout de slides.",
+    "[notebooks:export:slides] falha ao exportar apresentação HTML WebAssembly.",
   );
   process.exit(result.status ?? 1);
 }

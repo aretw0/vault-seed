@@ -59,6 +59,7 @@ const notebooksDevScript = read("scripts/notebooks_dev.mjs");
 const notebooksCheckScript = read("scripts/notebooks_check.mjs");
 const notebooksExportScript = read("scripts/export_notebooks.mjs");
 const notebooksSlidesScript = read("scripts/export_notebook_slides.mjs");
+const presentationNotebook = read("99 - Meta e Anexos/Notebooks/apresentacao-vault-seed.py");
 const labDatasetsScript = read("scripts/prepare_lab_datasets.mjs");
 const headerComponent = read(".site/components/Header.astro");
 const astroConfig = read("astro.config.mjs");
@@ -163,6 +164,16 @@ requireCondition(
     marimoCss.includes('[role="option"][aria-selected="true"]') &&
     marimoCss.includes('.text-muted-foreground'),
   "Marimo exported notebooks must harden table, data-grid, and select colors for accessible dark/light themes.",
+);
+requireCondition(
+  presentationNotebook.includes("mo.carousel([") &&
+    presentationNotebook.includes('app = marimo.App(width="medium")') &&
+    !presentationNotebook.includes("layout_file") &&
+    !exists("99 - Meta e Anexos/Notebooks/layouts/apresentacao-vault-seed.slides.json") &&
+    marimoCss.includes("overflow-x: hidden") &&
+    marimoCss.includes("-webkit-overflow-scrolling: touch") &&
+    marimoCss.includes('[class*="carousel"]'),
+  "Marimo presentation notebooks must use the responsive carousel path instead of a fragile slides layout file.",
 );
 requireCondition(
   notebooksExportScript.includes("VAULT_MARIMO_THEME_SELECTOR") &&
