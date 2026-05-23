@@ -86,6 +86,12 @@ Essa configuração não traduz toda a interface do Marimo. Segundo a documenta�
 
 Os notebooks leem `vault-data.json` com `encoding="utf-8"` para preservar acentos e tils em títulos e links.
 
+## Tema Visual
+
+O Marimo carrega `.site/styles/marimo-vault.css` via `custom_css` em `pyproject.toml`. Esse arquivo aproxima os notebooks da paleta verde-jardim do site, em modo claro e escuro.
+
+A personalização atua sobre variáveis CSS usadas pelo Marimo, como `--background`, `--foreground`, `--primary`, `--accent`, `--border` e escalas `--slate-*`/`--grass-*`. A estrutura do editor continua sendo do Marimo; o vault controla a paleta e alguns detalhes de leitura, não substitui completamente o tema interno da ferramenta.
+
 ## Publicação
 
 O workflow `.github/workflows/deploy-site.yml` exporta como HTML WebAssembly apenas os notebooks listados em `.site/lab.notebooks.json` com `publish: true`. Por padrão, eles ficam em `/lab/` junto com o site publicado.

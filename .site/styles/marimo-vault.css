@@ -1,0 +1,77 @@
+/* Marimo notebooks: aproxima a UI da paleta verde-jardim do vault. */
+:root,
+.light,
+.light-theme {
+  --background: #f7f5f0;
+  --foreground: #12100e;
+  --card: #f7f5f0;
+  --card-foreground: #12100e;
+  --popover: #f7f5f0;
+  --popover-foreground: #12100e;
+  --primary: #1b5e3b;
+  --primary-foreground: #f7f5f0;
+  --secondary: #e0dbd2;
+  --secondary-foreground: #12100e;
+  --muted: #ede9e2;
+  --muted-foreground: #6b6560;
+  --accent: #d4ede0;
+  --accent-foreground: #0f3d26;
+  --border: #b8b2a7;
+  --input: #b8b2a7;
+  --ring: #1b5e3b;
+  --radius: 0.5rem;
+  --slate-1: #f7f5f0;
+  --slate-2: #ede9e2;
+  --slate-3: #e0dbd2;
+  --slate-4: #b8b2a7;
+  --slate-11: #3d3935;
+  --slate-12: #12100e;
+  --grass-7: #2d7a4d;
+  --grass-9: #1b5e3b;
+  --grass-11: #0f3d26;
+}
+
+.dark,
+.dark-theme {
+  --background: #111310;
+  --foreground: #edf0ec;
+  --card: #1a1f18;
+  --card-foreground: #edf0ec;
+  --popover: #1a1f18;
+  --popover-foreground: #edf0ec;
+  --primary: #95d5b2;
+  --primary-foreground: #111310;
+  --secondary: #282e26;
+  --secondary-foreground: #edf0ec;
+  --muted: #1a1f18;
+  --muted-foreground: #c0c8be;
+  --accent: #1a3327;
+  --accent-foreground: #c4edd8;
+  --border: #4a5048;
+  --input: #4a5048;
+  --ring: #95d5b2;
+  --slate-1: #111310;
+  --slate-2: #1a1f18;
+  --slate-3: #282e26;
+  --slate-4: #4a5048;
+  --slate-11: #c0c8be;
+  --slate-12: #edf0ec;
+  --grass-7: #4f9d72;
+  --grass-9: #95d5b2;
+  --grass-11: #c4edd8;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3 {
+  color: var(--primary);
+}
+
+marimo-table {
+  --border: var(--border);
+}

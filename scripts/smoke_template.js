@@ -58,6 +58,7 @@ const gitignore = read(".gitignore");
 const notebooksDevScript = read("scripts/notebooks_dev.mjs");
 const notebooksCheckScript = read("scripts/notebooks_check.mjs");
 const pyproject = read("pyproject.toml");
+const marimoCss = read(".site/styles/marimo-vault.css");
 
 requireCondition(
   typeof pkg.packageManager === "string" &&
@@ -107,6 +108,12 @@ requireCondition(
 requireCondition(
   /\[tool\.marimo\.display\]\s+locale = "pt-BR"/m.test(pyproject),
   "pyproject.toml must configure Marimo display locale as pt-BR.",
+);
+requireCondition(
+  /custom_css = \["\.site\/styles\/marimo-vault\.css"\]/.test(pyproject) &&
+    marimoCss.includes("--primary: #1b5e3b") &&
+    marimoCss.includes("--primary: #95d5b2"),
+  "Marimo must load the vault CSS palette for light and dark notebook themes.",
 );
 requireCondition(
   (() => {
