@@ -41,7 +41,7 @@ Pense nesta nota como o canteiro principal do seu jardim. A partir daqui, você 
 - [[Exploracao Guiada do Vault|Siga uma exploração guiada de 30 minutos]]
 - [[Preparando seu Computador para o Vault|Prepare Obsidian, VS Code, Git e sincronização]]
 - [[Depois da Recepcao do Template|Confira o que fazer depois que a inicialização automática terminar]]
-- [[MOC Vault Seed|Use o mapa do próprio template como kitchen sink de navegação]]
+- [[MOC Vault Seed|Use o mapa do próprio vault como kitchen sink de navegação]]
 - [[Filosofia e Conceitos Fundamentais|Explore a filosofia por trás do cofre e os conceitos que o sustentam]]
 - [[Entendendo a Estrutura de Pastas|Entenda como o cofre é organizado e como encontrar o que você precisa]]
 - [[Evoluindo seu Vault com Links, Tags e MOCs|Aprenda a conectar suas ideias e criar um mapa do seu conhecimento]]

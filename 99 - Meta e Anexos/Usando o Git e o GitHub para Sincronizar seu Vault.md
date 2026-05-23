@@ -124,7 +124,7 @@ Evite estes padrões:
   conflitos entre sincronizadores;
 - versionar `.obsidian/plugins/` inteiro.
 
-O template já ignora os arquivos mais problemáticos de plugins. A lista de
+Este vault já ignora os arquivos mais problemáticos de plugins. A lista de
 plugins ativados pode ser versionada; os arquivos baixados dos plugins devem ser
 instalados localmente em cada dispositivo.
 

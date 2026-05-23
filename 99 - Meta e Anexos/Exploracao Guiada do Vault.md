@@ -36,7 +36,7 @@ ajuda a uma IA sem perder controle".
 5. Passe por [[Entendendo a Estrutura de Pastas]] e identifique onde uma nota
    nova entraria hoje.
 6. Leia [[Seus Primeiros Passos]] e crie uma nota simples em `00 - Entrada`.
-7. Abra [[MOC Vault Seed]] para ver o próprio template como mapa navegável.
+7. Abra [[MOC Vault Seed]] para ver o próprio vault como mapa navegável.
 8. Abra [[Convenções e Boas Práticas]] antes de criar muitas tags novas.
 9. Leia [[O que sao system prompts de IA]] se for usar assistentes de IA no
    Obsidian, VS Code ou terminal.

@@ -44,7 +44,7 @@ Use Conventional Commits para manter o histórico legível:
 
 ## Commits Como Histórico
 
-No vault gerado, o histórico principal é o próprio Git. Cada commit registra uma mudança que você decidiu preservar: uma nota nova, uma revisão, uma reorganização, uma automação ou uma correção.
+No seu vault, o histórico principal é o próprio Git. Cada commit registra uma mudança que você decidiu preservar: uma nota nova, uma revisão, uma reorganização, uma automação ou uma correção.
 
 Você não precisa manter `CHANGELOG.md`, arquivo `VERSION` ou release formal para usar o vault. Esses mecanismos pertencem a projetos de software que precisam empacotar versões para outras pessoas. Para um vault de conhecimento, commits claros costumam ser o suficiente.
 

@@ -49,7 +49,7 @@ A estrutura inicial é só um ponto de partida. A verdadeira organização emerg
 7.  **Crie Vistas Dinâmicas com [[Bases]] e [[Dataview]]**:
     - **Comece com `Bases` (Plugin Nativo):** Esta é a ferramenta recomendada para começar. `Bases` permite que você crie visualizações de banco de dados (tabelas, cartões) de suas notas de forma visual e intuitiva, sem precisar de código. É perfeito para criar dashboards de projetos, listas de leitura, etc.
     - **Use `Dataview` para Consultas Avançadas:** Se você precisar de uma lógica de consulta que `Bases` não suporta (como extrair informações do _corpo_ da nota ou lógicas muito complexas), o `Dataview` é a ferramenta. Ele usa uma linguagem de consulta própria.
-    - **Veja o kitchen sink:** Abra [[MOC Vault Seed]] e [[Vault Seed Kitchen Sink.base]] para ver o proprio template usando MOC manual, Base nativa e Dataview no mesmo contexto.
+    - **Veja o kitchen sink:** Abra [[MOC Vault Seed]] e [[Vault Seed Kitchen Sink.base]] para ver o próprio vault usando MOC manual, Base nativa e Dataview no mesmo contexto.
     - Exemplo de Bloco Dataview em uma nota de dashboard:
       ````markdown
       ```sql

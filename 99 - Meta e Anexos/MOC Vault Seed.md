@@ -23,7 +23,7 @@ related:
 
 # MOC Vault Seed
 
-Este mapa mostra o próprio vault-seed como exemplo de organização. Use-o para entender quais notas explicam o template, quais conceitos orbitam o vault e como Bases ou Dataview podem transformar propriedades em navegação.
+Este mapa mostra o vault como exemplo de organização. Use-o para entender quais notas explicam o seu ambiente, quais conceitos orbitam o vault e como Bases ou Dataview podem transformar propriedades em navegação.
 
 ## Comece Por Aqui
 
@@ -59,7 +59,7 @@ Este mapa mostra o próprio vault-seed como exemplo de organização. Use-o para
 
 ## Base Nativa
 
-Abra [[Vault Seed Kitchen Sink.base]] para ver uma Base nativa com guias e conceitos do template. Ela usa propriedades do frontmatter como `status`, `category` e `audience`, além de propriedades de arquivo como `file.mtime`.
+Abra [[Vault Seed Kitchen Sink.base]] para ver uma Base nativa com guias e conceitos deste vault. Ela usa propriedades do frontmatter como `status`, `category` e `audience`, além de propriedades de arquivo como `file.mtime`.
 
 Você também pode embutir uma Base em uma nota:
 
