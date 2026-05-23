@@ -1,0 +1,96 @@
+/*
+ * Paletas runtime do vault-seed.
+ *
+ * O usuário final herda estes tokens para configurar uma paleta fixa. A UI que
+ * alterna as paletas em runtime é gated para a demonstração do vault-seed.
+ */
+
+:root[data-vault-palette='verde-jardim'] {
+  --sl-color-accent-low:  #1a3327;
+  --sl-color-accent:      #95d5b2;
+  --sl-color-accent-high: #c4edd8;
+  --sl-color-gray-1: #edf0ec;
+  --sl-color-gray-2: #c0c8be;
+  --sl-color-gray-3: #7e887b;
+  --sl-color-gray-4: #4a5048;
+  --sl-color-gray-5: #282e26;
+  --sl-color-gray-6: #1a1f18;
+  --sl-color-black:  #111310;
+  --sl-color-white:  #edf0ec;
+}
+
+:root[data-theme='light'][data-vault-palette='verde-jardim'],
+[data-theme='light'][data-vault-palette='verde-jardim'] ::backdrop {
+  --sl-color-accent-low:  #d4ede0;
+  --sl-color-accent:      #1b5e3b;
+  --sl-color-accent-high: #0f3d26;
+  --sl-color-gray-1: #12100e;
+  --sl-color-gray-2: #3d3935;
+  --sl-color-gray-3: #6b6560;
+  --sl-color-gray-4: #b8b2a7;
+  --sl-color-gray-5: #e0dbd2;
+  --sl-color-gray-6: #ede9e2;
+  --sl-color-gray-7: #f7f5f0;
+  --sl-color-black:  #f7f5f0;
+  --sl-color-white:  #12100e;
+}
+
+:root[data-vault-palette='oceano'] {
+  --sl-color-accent-low:  #0d2040;
+  --sl-color-accent:      #90b4e8;
+  --sl-color-accent-high: #c5d9f5;
+  --sl-color-gray-1: #eef2f8;
+  --sl-color-gray-2: #c0cad8;
+  --sl-color-gray-3: #7a8899;
+  --sl-color-gray-4: #445060;
+  --sl-color-gray-5: #232936;
+  --sl-color-gray-6: #181c26;
+  --sl-color-black:  #0f1623;
+  --sl-color-white:  #eef2f8;
+}
+
+:root[data-theme='light'][data-vault-palette='oceano'],
+[data-theme='light'][data-vault-palette='oceano'] ::backdrop {
+  --sl-color-accent-low:  #cce0f5;
+  --sl-color-accent:      #0353a4;
+  --sl-color-accent-high: #023b74;
+  --sl-color-gray-1: #0f1623;
+  --sl-color-gray-2: #1a2332;
+  --sl-color-gray-3: #334155;
+  --sl-color-gray-4: #60718a;
+  --sl-color-gray-5: #adb8c8;
+  --sl-color-gray-6: #dde4ee;
+  --sl-color-gray-7: #f5f7fa;
+  --sl-color-black:  #f5f7fa;
+  --sl-color-white:  #0f1623;
+}
+
+:root[data-vault-palette='terracota'] {
+  --sl-color-accent-low:  #3a1a0a;
+  --sl-color-accent:      #e8a07a;
+  --sl-color-accent-high: #f5c9af;
+  --sl-color-gray-1: #f5ede8;
+  --sl-color-gray-2: #cfc4bc;
+  --sl-color-gray-3: #9a8678;
+  --sl-color-gray-4: #5a4a40;
+  --sl-color-gray-5: #2e231c;
+  --sl-color-gray-6: #211710;
+  --sl-color-black:  #1d1714;
+  --sl-color-white:  #f5ede8;
+}
+
+:root[data-theme='light'][data-vault-palette='terracota'],
+[data-theme='light'][data-vault-palette='terracota'] ::backdrop {
+  --sl-color-accent-low:  #f5ddd1;
+  --sl-color-accent:      #7d2e0e;
+  --sl-color-accent-high: #5a1f08;
+  --sl-color-gray-1: #130e09;
+  --sl-color-gray-2: #3d3028;
+  --sl-color-gray-3: #7a6b5e;
+  --sl-color-gray-4: #bfb0a3;
+  --sl-color-gray-5: #e8e0d8;
+  --sl-color-gray-6: #f0e8df;
+  --sl-color-gray-7: #fffbf7;
+  --sl-color-black:  #fffbf7;
+  --sl-color-white:  #130e09;
+}

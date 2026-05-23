@@ -69,6 +69,7 @@ jobs:
           ASTRO_BASE: ${{ steps.pages-url.outputs.base }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           VAULT_TITLE: ${{ vars.VAULT_TITLE }}
+          VAULT_THEME_SELECTOR: ${{ github.repository == 'aretw0/vault-seed' && '1' || '0' }}
           VAULT_NOTEBOOKS_PATH: ${{ vars.VAULT_NOTEBOOKS_PATH || 'lab' }}
 
       - name: Check site

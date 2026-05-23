@@ -16,6 +16,9 @@ const repoName = process.env.GITHUB_REPOSITORY?.split('/')[1]
   ?? process.cwd().split(/[\\/]/).pop()
   ?? 'Meu Vault';
 const vaultTitle = process.env.VAULT_TITLE?.trim() || repoName;
+const isVaultSeedDemo = process.env.GITHUB_REPOSITORY === 'aretw0/vault-seed' || repoName === 'vault-seed';
+
+process.env.VAULT_THEME_SELECTOR ??= isVaultSeedDemo ? '1' : '0';
 
 const vaultEntries = await collectVaultEntries();
 const publishedSlugs = new Set(vaultEntries.map(e => e.slug));
@@ -360,6 +363,7 @@ export default defineConfig({
         // Paleta ativa — troque o arquivo para mudar o tema visual:
         // verde-jardim (padrão) · oceano · terracota
         './.site/styles/themes/verde-jardim.css',
+        './.site/styles/theme-runtime.css',
       ],
       components: {
         Header: './.site/components/Header.astro',

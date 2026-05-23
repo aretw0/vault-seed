@@ -10,19 +10,31 @@ const manifestPath = join(ROOT, ".site", "lab.notebooks.json");
 const notebooksPath = process.env.VAULT_NOTEBOOKS_PATH || "lab";
 const outDir = join(ROOT, "dist", notebooksPath);
 const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+const packageJson = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"));
 const THEME_SELECTOR_MARKER = "data-vault-marimo-theme-selector";
+const themeSelectorMode = process.env.VAULT_MARIMO_THEME_SELECTOR;
+const isVaultSeedRepo = String(packageJson.repository?.url ?? "").includes("aretw0/vault-seed");
+const shouldInjectThemeSelector =
+  themeSelectorMode === "1" || (themeSelectorMode !== "0" && isVaultSeedRepo);
 
 const themeSelectorHtml = String.raw`
 <div class="vault-marimo-theme-selector" data-vault-marimo-theme-selector role="group" aria-label="Tema do notebook">
+  <select data-vault-marimo-palette-option aria-label="Paleta do notebook">
+    <option value="verde-jardim">Verde jardim</option>
+    <option value="oceano">Oceano</option>
+    <option value="terracota">Terracota</option>
+  </select>
   <button type="button" data-vault-marimo-theme-option="system" aria-pressed="true">Sistema</button>
   <button type="button" data-vault-marimo-theme-option="light" aria-pressed="false">Claro</button>
   <button type="button" data-vault-marimo-theme-option="dark" aria-pressed="false">Escuro</button>
 </div>
 <script>
 (() => {
-  const storageKey = "vault-seed:marimo-theme";
+  const themeStorageKey = "vault-seed:marimo-theme";
+  const paletteStorageKey = "vault-seed:marimo-palette";
   const root = document.documentElement;
   const media = window.matchMedia("(prefers-color-scheme: dark)");
+  const palettes = ["verde-jardim", "oceano", "terracota"];
 
   function resolveTheme(choice) {
     return choice === "system" ? (media.matches ? "dark" : "light") : choice;
@@ -36,10 +48,12 @@ const themeSelectorHtml = String.raw`
     target.classList.toggle("light-theme", resolved === "light");
   }
 
-  function applyTheme(choice) {
+  function applyTheme(choice, paletteChoice) {
     const selected = ["system", "light", "dark"].includes(choice) ? choice : "system";
+    const palette = palettes.includes(paletteChoice) ? paletteChoice : "verde-jardim";
     const resolved = resolveTheme(selected);
 
+    root.dataset.vaultMarimoPalette = palette;
     root.dataset.vaultMarimoThemeChoice = selected;
     root.dataset.vaultMarimoTheme = resolved;
     setClass(root, resolved);
@@ -49,22 +63,37 @@ const themeSelectorHtml = String.raw`
       const active = button.dataset.vaultMarimoThemeOption === selected;
       button.setAttribute("aria-pressed", String(active));
     });
+    document.querySelectorAll("[data-vault-marimo-palette-option]").forEach((select) => {
+      select.value = palette;
+    });
   }
 
   function init() {
-    const saved = localStorage.getItem(storageKey) || "system";
-    applyTheme(saved);
+    const savedTheme = localStorage.getItem(themeStorageKey) || "system";
+    const savedPalette = localStorage.getItem(paletteStorageKey) || "verde-jardim";
+    applyTheme(savedTheme, savedPalette);
 
     document.querySelectorAll("[data-vault-marimo-theme-option]").forEach((button) => {
       button.addEventListener("click", () => {
         const next = button.dataset.vaultMarimoThemeOption || "system";
-        localStorage.setItem(storageKey, next);
-        applyTheme(next);
+        localStorage.setItem(themeStorageKey, next);
+        applyTheme(next, localStorage.getItem(paletteStorageKey) || "verde-jardim");
+      });
+    });
+
+    document.querySelectorAll("[data-vault-marimo-palette-option]").forEach((select) => {
+      select.addEventListener("change", () => {
+        const next = select.value || "verde-jardim";
+        localStorage.setItem(paletteStorageKey, next);
+        applyTheme(localStorage.getItem(themeStorageKey) || "system", next);
       });
     });
 
     media.addEventListener("change", () => {
-      applyTheme(localStorage.getItem(storageKey) || "system");
+      applyTheme(
+        localStorage.getItem(themeStorageKey) || "system",
+        localStorage.getItem(paletteStorageKey) || "verde-jardim"
+      );
     });
   }
 
@@ -119,5 +148,7 @@ for (const notebook of manifest.filter((entry) => entry.publish)) {
   if (result.status !== 0) {
     process.exit(result.status ?? 1);
   }
-  injectThemeSelector(output);
+  if (shouldInjectThemeSelector) {
+    injectThemeSelector(output);
+  }
 }

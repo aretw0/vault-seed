@@ -58,8 +58,11 @@ const gitignore = read(".gitignore");
 const notebooksDevScript = read("scripts/notebooks_dev.mjs");
 const notebooksCheckScript = read("scripts/notebooks_check.mjs");
 const notebooksExportScript = read("scripts/export_notebooks.mjs");
+const headerComponent = read(".site/components/Header.astro");
+const astroConfig = read("astro.config.mjs");
 const pyproject = read("pyproject.toml");
 const marimoCss = read(".site/styles/marimo-vault.css");
+const themeRuntimeCss = read(".site/styles/theme-runtime.css");
 const vaultLoader = read(".site/content.config.ts");
 const customCss = read(".site/styles/custom.css");
 
@@ -123,9 +126,22 @@ requireCondition(
   "Marimo must load the vault CSS palette for light and dark notebook themes.",
 );
 requireCondition(
-  notebooksExportScript.includes("data-vault-marimo-theme-selector") &&
+  notebooksExportScript.includes("VAULT_MARIMO_THEME_SELECTOR") &&
+    notebooksExportScript.includes("aretw0/vault-seed") &&
+    notebooksExportScript.includes("data-vault-marimo-theme-selector") &&
+    notebooksExportScript.includes("data-vault-marimo-palette-option") &&
     marimoCss.includes(".vault-marimo-theme-selector"),
-  "Published Marimo notebook exports must include the vault theme selector.",
+  "Marimo palette selector must be gated to vault-seed demo exports, while keeping theme CSS available.",
+);
+requireCondition(
+  astroConfig.includes("process.env.VAULT_THEME_SELECTOR ??=") &&
+  headerComponent.includes("VAULT_THEME_SELECTOR") &&
+    headerComponent.includes("GITHUB_REPOSITORY") &&
+    headerComponent.includes("aretw0/vault-seed") &&
+    headerComponent.includes("data-vault-palette-select") &&
+    themeRuntimeCss.includes("data-vault-palette='oceano'") &&
+    themeRuntimeCss.includes("data-vault-palette='terracota'"),
+  "Astro palette selector must be gated to vault-seed demo builds, while keeping themes available.",
 );
 requireCondition(
   vaultLoader.includes("renderMetaBadges(safeData)") &&

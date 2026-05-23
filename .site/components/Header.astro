@@ -4,11 +4,13 @@ import LanguageSelect from 'virtual:starlight/components/LanguageSelect';
 import Search from 'virtual:starlight/components/Search';
 import SiteTitle from 'virtual:starlight/components/SiteTitle';
 import SocialIcons from 'virtual:starlight/components/SocialIcons';
-import ThemeSelect from 'virtual:starlight/components/ThemeSelect';
 
 const shouldRenderSearch =
 	config.pagefind || config.components.Search !== '@astrojs/starlight/components/Search.astro';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const themeSelectorMode = import.meta.env.VAULT_THEME_SELECTOR;
+const isVaultSeedRepo = import.meta.env.GITHUB_REPOSITORY === 'aretw0/vault-seed';
+const shouldRenderThemeSelect = themeSelectorMode === '1' || (themeSelectorMode !== '0' && isVaultSeedRepo);
 ---
 
 <div class="header">
@@ -23,7 +25,64 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 		<div class="sl-flex social-icons">
 			<SocialIcons />
 		</div>
-		<ThemeSelect />
+		{shouldRenderThemeSelect && (
+			<div class="vault-theme-demo" aria-label="Tema do site">
+				<select data-vault-palette-select aria-label="Paleta">
+					<option value="verde-jardim">Verde jardim</option>
+					<option value="oceano">Oceano</option>
+					<option value="terracota">Terracota</option>
+				</select>
+				<select data-vault-mode-select aria-label="Modo">
+					<option value="system">Sistema</option>
+					<option value="light">Claro</option>
+					<option value="dark">Escuro</option>
+				</select>
+			</div>
+			<script is:inline>
+				(() => {
+					const root = document.documentElement;
+					const paletteKey = 'vault-seed:palette';
+					const modeKey = 'vault-seed:mode';
+					const media = window.matchMedia('(prefers-color-scheme: dark)');
+					const palettes = ['verde-jardim', 'oceano', 'terracota'];
+					const modes = ['system', 'light', 'dark'];
+
+					function resolveMode(mode) {
+						return mode === 'system' ? (media.matches ? 'dark' : 'light') : mode;
+					}
+
+					function apply() {
+						const palette = palettes.includes(localStorage.getItem(paletteKey) || '')
+							? localStorage.getItem(paletteKey)
+							: 'verde-jardim';
+						const mode = modes.includes(localStorage.getItem(modeKey) || '')
+							? localStorage.getItem(modeKey)
+							: 'system';
+						root.dataset.vaultPalette = palette;
+						root.dataset.theme = resolveMode(mode);
+						document.querySelectorAll('[data-vault-palette-select]').forEach((select) => {
+							select.value = palette;
+						});
+						document.querySelectorAll('[data-vault-mode-select]').forEach((select) => {
+							select.value = mode;
+						});
+					}
+
+					document.addEventListener('change', (event) => {
+						if (event.target?.matches?.('[data-vault-palette-select]')) {
+							localStorage.setItem(paletteKey, event.target.value);
+							apply();
+						}
+						if (event.target?.matches?.('[data-vault-mode-select]')) {
+							localStorage.setItem(modeKey, event.target.value);
+							apply();
+						}
+					});
+					media.addEventListener('change', apply);
+					apply();
+				})();
+			</script>
+		)}
 		<LanguageSelect />
 	</div>
 </div>
@@ -70,6 +129,24 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 			content: '';
 			height: 2rem;
 			border-inline-end: 1px solid var(--sl-color-gray-5);
+		}
+
+		.vault-theme-demo {
+			display: flex;
+			gap: 0.35rem;
+			align-items: center;
+		}
+
+		.vault-theme-demo select {
+			max-width: 8.25rem;
+			border: 1px solid var(--sl-color-hairline);
+			border-radius: 0.35rem;
+			background: var(--sl-color-bg-nav);
+			color: var(--sl-color-text);
+			font: inherit;
+			font-size: var(--sl-text-xs);
+			line-height: 1;
+			padding: 0.3rem 0.45rem;
 		}
 
 		@media (min-width: 50rem) {
