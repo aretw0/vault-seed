@@ -1,9 +1,9 @@
 # Agents Lab
 
-`agents-lab` e outro projeto do mesmo ecossistema, usado como laboratorio de
-agentes para curar capacidades que podem apoiar o desenvolvimento do
-`vault-seed`, especialmente skills, extensoes, tools e pesquisas operacionais
-sobre agentes.
+[`agents-lab`](https://github.com/aretw0/agents-lab) e outro projeto do mesmo
+ecossistema, usado como laboratorio de agentes para curar capacidades que podem
+apoiar o desenvolvimento do `vault-seed`, especialmente skills, extensoes,
+tools e pesquisas operacionais sobre agentes.
 
 Ele nao faz parte deste repositorio e tambem nao faz parte do vault gerado para
 o usuario final. Nesta maquina de desenvolvimento, o checkout local fica em
