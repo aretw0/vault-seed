@@ -35,9 +35,17 @@ Para arquivos empacotados junto de um notebook WebAssembly, a documentação do
 Marimo recomenda uma pasta `public/` ao lado do notebook e `mo.notebook_location()`
 para montar caminhos que funcionem localmente e no export.
 
-## Referência Local
+## Stack De Dados
 
-Há um notebook experimental em `../v0_1_Base_ETL.ipynb` com módulos de scraping,
-upload/manual files, OCR, APIs sociais, transformação e persistência. Ele serve
-como referência de requisitos para o desenho da camada de ETL, mas não deve ser
-copiado como texto de produto nem como promessa de escopo.
+A camada de ETL deve crescer como stack própria do repositório, não como
+dependência dos notebooks Marimo empacotados. Se uma ferramenta não funciona no
+HTML WebAssembly, ela não deve ser requisito do notebook publicado.
+
+Essa stack pode incluir conectores para arquivos, páginas, OCR, APIs e outras
+fontes, desde que rode antes da publicação e produza artefatos estáveis para o
+Lab consumir.
+
+O Lab publicado não deve carregar detalhes de implementação dessa camada nem
+depender diretamente de ferramentas que só funcionam em ambiente local ou CI. O
+contrato entre as duas partes é o dado preparado: JSON, CSV, Parquet ou outro
+formato servível pelo site.
