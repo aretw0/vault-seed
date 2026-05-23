@@ -68,6 +68,14 @@ function parseTheme(filePath) {
   return { dark: darkVars, light: lightVars };
 }
 
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function parseMarimoVariant(css, selector) {
+  return extractBlock(css, new RegExp(`${escapeRegExp(selector)}[^{}]*\\{([^}]+)\\}`));
+}
+
 // ── Check pairs ───────────────────────────────────────────────────────────────
 
 const THEME_DIR = path.join(__dirname, '..', '.site', 'styles', 'themes');
@@ -78,6 +86,13 @@ const PAIRS = [
   ['sl-color-gray-1',      'sl-color-black', 'gray-1/fundo',     3.0],
   ['sl-color-accent',      'sl-color-black', 'accent/fundo',     4.5],
   ['sl-color-accent-high', 'sl-color-black', 'accent-high/fundo', 3.0],
+];
+
+const MARIMO_PAIRS = [
+  ['foreground',         'background', 'texto/fundo',       4.5],
+  ['popover-foreground', 'popover',    'select/popover',    4.5],
+  ['muted-foreground',   'background', 'cabecalho/tabela',  4.5],
+  ['accent-foreground',  'accent',     'item selecionado',  4.5],
 ];
 
 let failures = 0;
@@ -121,6 +136,46 @@ for (const file of files.sort()) {
         console.error(line);
         failures++;
       }
+    }
+  }
+}
+
+const marimoCssPath = path.join(__dirname, '..', '.site', 'styles', 'marimo-vault.css');
+const marimoCss = fs.readFileSync(marimoCssPath, 'utf-8');
+const marimoVariants = [
+  ['verde-jardim', 'claro', ':root[data-vault-marimo-theme="light"]'],
+  ['verde-jardim', 'escuro', ':root[data-vault-marimo-theme="dark"]'],
+  ['oceano', 'claro', ':root[data-vault-marimo-theme="light"][data-vault-marimo-palette="oceano"]'],
+  ['oceano', 'escuro', ':root[data-vault-marimo-theme="dark"][data-vault-marimo-palette="oceano"]'],
+  ['terracota', 'claro', ':root[data-vault-marimo-theme="light"][data-vault-marimo-palette="terracota"]'],
+  ['terracota', 'escuro', ':root[data-vault-marimo-theme="dark"][data-vault-marimo-palette="terracota"]'],
+];
+
+for (const [name, modeName, selector] of marimoVariants) {
+  const vars = parseMarimoVariant(marimoCss, selector);
+  if (!Object.keys(vars).length) {
+    console.error(`  ✗ marimo ${name} [${modeName}]: bloco não encontrado`);
+    failures++;
+    continue;
+  }
+
+  for (const [fgVar, bgVar, label, minRatio] of MARIMO_PAIRS) {
+    const fg = vars[fgVar];
+    const bg = vars[bgVar];
+
+    if (!fg || !bg || !fg.startsWith('#') || !bg.startsWith('#')) continue;
+
+    const ratio = contrastRatio(fg, bg);
+    const pass  = ratio >= minRatio;
+    const icon  = pass ? '✓' : '✗';
+    const line  = `  ${icon} marimo ${name} [${modeName}] ${label}: ${ratio.toFixed(1)}:1` +
+                  (pass ? '' : `  ← FALHA (mínimo ${minRatio}:1)`);
+
+    if (pass) {
+      console.log(line);
+    } else {
+      console.error(line);
+      failures++;
     }
   }
 }

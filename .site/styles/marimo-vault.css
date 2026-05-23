@@ -68,14 +68,84 @@ body {
   color: var(--foreground);
 }
 
+:root[data-vault-marimo-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-vault-marimo-theme="dark"] {
+  color-scheme: dark;
+}
+
 .markdown h1,
 .markdown h2,
 .markdown h3 {
   color: var(--primary);
 }
 
-marimo-table {
+marimo-table,
+marimo-table table,
+table {
   --border: var(--border);
+  background: var(--background);
+  color: var(--foreground);
+}
+
+marimo-table th,
+table th {
+  background: var(--background);
+  color: var(--muted-foreground);
+}
+
+marimo-table td,
+marimo-table caption,
+table td,
+table caption {
+  color: var(--foreground);
+}
+
+marimo-table tr,
+table tr {
+  border-color: var(--border);
+}
+
+select,
+option,
+[role="combobox"],
+[role="listbox"],
+[role="option"] {
+  background-color: var(--popover);
+  color: var(--popover-foreground);
+  border-color: var(--border);
+}
+
+[role="option"]:focus,
+[role="option"][data-highlighted] {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.bg-background {
+  background-color: var(--background) !important;
+}
+
+.bg-popover {
+  background-color: var(--popover) !important;
+}
+
+.bg-muted {
+  background-color: var(--muted) !important;
+}
+
+.text-foreground {
+  color: var(--foreground) !important;
+}
+
+.text-popover-foreground {
+  color: var(--popover-foreground) !important;
+}
+
+.text-muted-foreground {
+  color: var(--muted-foreground) !important;
 }
 
 :root[data-vault-marimo-theme="light"][data-vault-marimo-palette="oceano"] {

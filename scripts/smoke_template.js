@@ -141,6 +141,13 @@ requireCondition(
   "Marimo must load the vault CSS palette for light and dark notebook themes.",
 );
 requireCondition(
+  marimoCss.includes('color-scheme: dark') &&
+    marimoCss.includes('[role="combobox"]') &&
+    marimoCss.includes('marimo-table td') &&
+    marimoCss.includes('.text-muted-foreground'),
+  "Marimo exported notebooks must harden table and select colors for accessible dark/light themes.",
+);
+requireCondition(
   notebooksExportScript.includes("VAULT_MARIMO_THEME_SELECTOR") &&
     notebooksExportScript.includes("aretw0/vault-seed") &&
     notebooksExportScript.includes("data-vault-marimo-theme-selector") &&
