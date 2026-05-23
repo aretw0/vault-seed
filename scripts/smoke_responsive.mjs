@@ -211,6 +211,40 @@ async function assertVisibleContent(page, target, label) {
   }
 }
 
+async function assertPresentationSizing(page, target, viewport, label, externalNetworkAvailable) {
+  if (!target.path.endsWith("vault-seed-slides.html") || viewport.width < 1024) {
+    return;
+  }
+
+  if (externalNetworkAvailable) {
+    await page.waitForSelector("marimo-carousel", {
+      state: "visible",
+      timeout: 30000,
+    });
+  }
+
+  const carouselBox = await page
+    .locator("marimo-carousel")
+    .first()
+    .boundingBox()
+    .catch(() => null);
+  if (!carouselBox) {
+    if (externalNetworkAvailable) {
+      fail(`${label}: presentation carousel is not visible`);
+    }
+    return;
+  }
+
+  const maxExpectedWidth = Math.min(1152, viewport.width - 96);
+  if (carouselBox.width > maxExpectedWidth + 2) {
+    fail(
+      `${label}: presentation carousel too wide (${Math.round(
+        carouselBox.width,
+      )}px > ${maxExpectedWidth}px)`,
+    );
+  }
+}
+
 async function run() {
   if (!existsSync(distDir)) {
     throw new Error("dist/ does not exist. Run pnpm run site:responsive.");
@@ -262,6 +296,13 @@ async function run() {
 
         await assertVisibleContent(page, target, label);
         await assertNoHorizontalOverflow(page, label);
+        await assertPresentationSizing(
+          page,
+          target,
+          viewport,
+          label,
+          externalNetworkAvailable,
+        );
       }
 
       await context.close();

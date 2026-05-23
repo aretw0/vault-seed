@@ -661,6 +661,20 @@ iframe {
   background: var(--muted);
 }
 
+marimo-carousel {
+  display: block;
+  width: min(100%, 72rem) !important;
+  max-width: min(72rem, calc(100vw - clamp(2rem, 10vw, 12rem))) !important;
+  margin-inline: auto !important;
+  padding-inline: clamp(0.75rem, 2vw, 2rem);
+}
+
+marimo-carousel .markdown,
+marimo-carousel .prose {
+  max-width: 64rem;
+  margin-inline: auto;
+}
+
 @media (max-width: 44rem) {
   body {
     font-size: 0.95rem;
@@ -684,7 +698,9 @@ iframe {
   }
 
   marimo-carousel {
+    width: 100% !important;
     max-width: calc(100vw - 1rem) !important;
+    padding-inline: 0;
   }
 
   .vault-marimo-theme-selector {
