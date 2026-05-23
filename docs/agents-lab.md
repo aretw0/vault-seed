@@ -1,13 +1,18 @@
 # Agents Lab
 
-`agents-lab` e o laboratorio de agentes usado para curar capacidades que podem
-apoiar o desenvolvimento do `vault-seed`, especialmente skills, extensoes,
-tools e pesquisas operacionais sobre agentes.
+`agents-lab` e outro projeto do mesmo ecossistema, usado como laboratorio de
+agentes para curar capacidades que podem apoiar o desenvolvimento do
+`vault-seed`, especialmente skills, extensoes, tools e pesquisas operacionais
+sobre agentes.
 
-Ele nao faz parte do vault gerado para o usuario final. Referencias a esse
-projeto devem ficar em documentacao tecnica do template, specs, planos ou notas
-de manutencao. Notas em `99 - Meta e Anexos/` devem falar com o usuario final e
-evitar caminhos locais como `../../agents-lab`.
+Ele nao faz parte deste repositorio e tambem nao faz parte do vault gerado para
+o usuario final. Nesta maquina de desenvolvimento, o checkout local fica em
+`../../agents-lab`; essa localizacao e contexto de mantenedor, nao contrato do
+template.
+
+Referencias a esse projeto devem ficar em documentacao tecnica do template,
+specs, planos ou notas de manutencao. Notas em `99 - Meta e Anexos/` devem falar
+com o usuario final e evitar depender de caminhos locais.
 
 ## Relacao Com O Vault Seed
 
