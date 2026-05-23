@@ -13,7 +13,7 @@ const NOTEBOOK =
 const OUTPUT = process.env.VAULT_SLIDES_OUTPUT ||
   join(ROOT, "dist", "lab", "vault-seed-slides.html");
 const NAVIGATION_MARKER = "data-vault-marimo-navigation";
-const PRESENTATION_EXIT_MARKER = "data-vault-marimo-presentation-exit";
+const PRESENTATION_FULLSCREEN_MARKER = "data-vault-marimo-presentation-fullscreen";
 
 const navigationHtml = String.raw`
 <nav class="vault-marimo-navigation" data-vault-marimo-navigation aria-label="Navegação do vault">
@@ -22,20 +22,85 @@ const navigationHtml = String.raw`
 </nav>
 `;
 
-const presentationExitHtml = String.raw`
-<a class="vault-marimo-presentation-exit" data-vault-marimo-presentation-exit href="./" aria-label="Sair da apresentação e voltar para o Lab">Sair</a>
+const presentationFullscreenHtml = String.raw`
+<script data-vault-marimo-presentation-fullscreen>
+(() => {
+  const fullScreenPattern = /full\s*screen|fullscreen|tela cheia/i;
+  const closeLabel = "Fechar tela cheia";
+  const originalLabels = new WeakMap();
+
+  function candidates() {
+    return Array.from(document.querySelectorAll("button, [role='button']"));
+  }
+
+  function textOf(button) {
+    return [
+      button.textContent || "",
+      button.getAttribute("aria-label") || "",
+      button.getAttribute("title") || "",
+    ].join(" ");
+  }
+
+  function isFullscreenButton(button) {
+    return fullScreenPattern.test(textOf(button)) || originalLabels.has(button);
+  }
+
+  function setLabel(button, active) {
+    if (!originalLabels.has(button)) {
+      originalLabels.set(button, {
+        text: button.textContent || "",
+        aria: button.getAttribute("aria-label"),
+        title: button.getAttribute("title"),
+      });
+    }
+
+    const original = originalLabels.get(button);
+    if (active) {
+      if ((button.textContent || "").trim()) button.textContent = closeLabel;
+      button.setAttribute("aria-label", closeLabel);
+      button.setAttribute("title", closeLabel);
+      return;
+    }
+
+    if (original.text.trim()) button.textContent = original.text;
+    if (original.aria === null) button.removeAttribute("aria-label");
+    else button.setAttribute("aria-label", original.aria);
+    if (original.title === null) button.removeAttribute("title");
+    else button.setAttribute("title", original.title);
+  }
+
+  function sync() {
+    const active = Boolean(document.fullscreenElement);
+    candidates().filter(isFullscreenButton).forEach((button) => setLabel(button, active));
+  }
+
+  document.addEventListener("fullscreenchange", sync);
+  new MutationObserver(sync).observe(document.body, {
+    childList: true,
+    subtree: true,
+    characterData: true,
+  });
+  sync();
+})();
+</script>
+`;
+
+const presentationNavigationHtml = String.raw`
 <script>
 (() => {
-  const exit = document.querySelector("[data-vault-marimo-presentation-exit]");
-  if (!exit) return;
-  exit.addEventListener("click", async (event) => {
-    event.preventDefault();
-    if (document.fullscreenElement && document.exitFullscreen) {
-      try {
-        await document.exitFullscreen();
-      } catch {}
+  function isInteractive(target) {
+    if (!target || !target.closest) return false;
+    return Boolean(target.closest("a, button, input, select, textarea, [role='button'], [role='link']"));
+  }
+
+  document.addEventListener("click", (event) => {
+    if (isInteractive(event.target)) return;
+    const edge = Math.max(48, Math.min(96, window.innerWidth * 0.16));
+    if (event.clientX <= edge) {
+      window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowLeft", bubbles: true }));
+    } else if (event.clientX >= window.innerWidth - edge) {
+      window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
     }
-    window.location.href = exit.getAttribute("href") || "./";
   });
 })();
 </script>
@@ -52,15 +117,18 @@ function injectNotebookNavigation(htmlPath) {
   writeFileSync(htmlPath, html.replace("</body>", `${navigationHtml}\n</body>`));
 }
 
-function injectPresentationExit(htmlPath) {
+function injectPresentationFullscreen(htmlPath) {
   const html = readFileSync(htmlPath, "utf8");
-  if (html.includes(PRESENTATION_EXIT_MARKER)) {
+  if (html.includes(PRESENTATION_FULLSCREEN_MARKER)) {
     return;
   }
   if (!html.includes("</body>")) {
     throw new Error(`HTML exportado sem </body>: ${htmlPath}`);
   }
-  writeFileSync(htmlPath, html.replace("</body>", `${presentationExitHtml}\n</body>`));
+  writeFileSync(
+    htmlPath,
+    html.replace("</body>", `${presentationFullscreenHtml}\n${presentationNavigationHtml}\n</body>`),
+  );
 }
 
 const { data, outDir: sourceDataDir } = writeVaultData({ cwd: ROOT });
@@ -111,5 +179,5 @@ if (result.status !== 0) {
 }
 
 injectNotebookNavigation(OUTPUT);
-injectPresentationExit(OUTPUT);
+injectPresentationFullscreen(OUTPUT);
 console.log(`[notebooks:export:slides] ${OUTPUT}`);

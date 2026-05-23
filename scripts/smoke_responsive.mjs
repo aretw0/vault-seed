@@ -168,13 +168,11 @@ async function assertVisibleContent(page, target, label) {
       fail(`${label}: Marimo runtime marker is not present`);
     }
     if (target.path.endsWith("vault-seed-slides.html")) {
-      const hasExit = await page
-        .locator("[data-vault-marimo-presentation-exit]")
-        .first()
-        .isVisible()
-        .catch(() => false);
-      if (!hasExit) {
-        fail(`${label}: presentation exit control is not visible`);
+      const hasFullscreenEnhancer = await page
+        .locator("[data-vault-marimo-presentation-fullscreen]")
+        .count();
+      if (!hasFullscreenEnhancer) {
+        fail(`${label}: presentation fullscreen enhancer is not present`);
       }
     }
     return;

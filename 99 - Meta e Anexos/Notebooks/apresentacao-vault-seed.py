@@ -9,8 +9,20 @@ def _():
     import json
     import os
     import marimo as mo
+    from textwrap import dedent
 
-    return json, mo, os
+    return dedent, json, mo, os
+
+
+@app.cell
+def _(dedent, mo):
+    def slide(source):
+        return mo.vstack(
+            [mo.md(dedent(source).strip())],
+            align="stretch",
+        )
+
+    return (slide,)
 
 
 @app.cell
@@ -37,8 +49,8 @@ def _(json, os):
 
 
 @app.cell
-def _(data, mo, notes):
-    intro = mo.md(
+def _(data, notes, slide):
+    intro = slide(
         f"# vault-seed\n\n"
         f"Um vault local-first com site, automação e notebooks no mesmo repositório.\n\n"
         f"**{len(notes)} notas** no snapshot atual · gerado em `{data['generated'][:10]}`"
@@ -57,8 +69,8 @@ def _(notes):
 
 
 @app.cell
-def _(folder_counts, intro, mo, notes, status_counts, tag_counts):
-    tese = mo.md("""
+def _(folder_counts, intro, mo, notes, slide, status_counts, tag_counts):
+    tese = slide("""
     ## A tese
 
     O vault não é só uma pasta de Markdown. Ele é um sistema versionado para pensar, publicar, automatizar e analisar o próprio conhecimento.
@@ -66,7 +78,7 @@ def _(folder_counts, intro, mo, notes, status_counts, tag_counts):
     A stack fica visível e reaproveitável: Git, GitHub Actions, Astro, Obsidian, VS Code/Foam, Marimo e agentes de terminal.
     """)
 
-    stack = mo.md("""
+    stack = slide("""
     ## O que vem junto
 
     | Camada | Papel |
@@ -78,7 +90,7 @@ def _(folder_counts, intro, mo, notes, status_counts, tag_counts):
     | Agentes | edição assistida via arquivos, comandos e diff |
     """)
 
-    local_first = mo.md("""
+    local_first = slide("""
     ## Local-first
 
     O trabalho diário acontece no computador: notas, notebooks, scripts e commits. O site publicado é um artefato empacotado dessa base local.
@@ -86,7 +98,7 @@ def _(folder_counts, intro, mo, notes, status_counts, tag_counts):
     Isso reduz dependência de plataformas, facilita revisão por Git e deixa automações determinísticas.
     """)
 
-    lab = mo.md("""
+    lab = slide("""
     ## Lab
 
     O Lab usa Marimo para transformar o vault em dados exploráveis.
@@ -97,7 +109,7 @@ def _(folder_counts, intro, mo, notes, status_counts, tag_counts):
     - PDF em slides pode ser gerado sob demanda quando fizer parte de uma entrega.
     """)
 
-    snapshot = mo.md(
+    snapshot = slide(
         f"## Snapshot atual\n\n"
         f"| Métrica | Valor |\n"
         f"| --- | ---: |\n"
@@ -110,12 +122,12 @@ def _(folder_counts, intro, mo, notes, status_counts, tag_counts):
         f"- **{folder or 'raiz'}**: {count} notas"
         for folder, count in folder_counts.most_common(6)
     )
-    folders = mo.md(
+    folders = slide(
         f"## Onde o conhecimento está\n\n"
         f"{_top_folders}"
     )
 
-    governance = mo.md("""
+    governance = slide("""
     ## Governança
 
     Criar um notebook não publica esse notebook.
@@ -123,7 +135,7 @@ def _(folder_counts, intro, mo, notes, status_counts, tag_counts):
     A publicação passa pelo manifesto `.site/lab.notebooks.json`. Slides e outros formatos são artefatos gerados sob demanda, não entradas automáticas do site.
     """)
 
-    next_step = mo.md("""
+    next_step = slide("""
     ## Próximo passo
 
     A partir daqui, o vault-seed passa a ser uma base para:

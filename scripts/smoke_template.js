@@ -170,12 +170,13 @@ requireCondition(
 );
 requireCondition(
   presentationNotebook.includes("mo.carousel([") &&
+    presentationNotebook.includes("def slide(source):") &&
     presentationNotebook.includes('app = marimo.App(width="medium")') &&
     !presentationNotebook.includes("layout_file") &&
     !exists("99 - Meta e Anexos/Notebooks/layouts/apresentacao-vault-seed.slides.json") &&
     marimoCss.includes("overflow-x: hidden") &&
     marimoCss.includes("-webkit-overflow-scrolling: touch") &&
-    marimoCss.includes('[class*="carousel"]'),
+    marimoCss.includes("marimo-carousel"),
   "Marimo presentation notebooks must use the responsive carousel path instead of a fragile slides layout file.",
 );
 requireCondition(
@@ -192,12 +193,14 @@ requireCondition(
 requireCondition(
   notebooksExportScript.includes("data-vault-marimo-navigation") &&
     notebooksExportScript.includes('<a href="../">Vault</a>\n  <a href="./">Lab</a>') &&
-    notebooksExportScript.includes("data-vault-marimo-presentation-exit") &&
+    notebooksExportScript.includes("data-vault-marimo-presentation-fullscreen") &&
+    notebooksExportScript.includes("Fechar tela cheia") &&
     notebooksSlidesScript.includes("data-vault-marimo-navigation") &&
-    notebooksSlidesScript.includes("data-vault-marimo-presentation-exit") &&
-    marimoCss.includes(".vault-marimo-presentation-exit") &&
+    notebooksSlidesScript.includes("data-vault-marimo-presentation-fullscreen") &&
+    notebooksSlidesScript.includes("Fechar tela cheia") &&
+    !notebooksExportScript.includes("data-vault-marimo-presentation-exit") &&
     marimoCss.includes(".vault-marimo-navigation"),
-  "Marimo exported notebooks must include stable navigation back to the Lab and vault site, with an explicit presentation exit.",
+  "Marimo exported notebooks must include stable navigation and fullscreen labeling for presentations.",
 );
 requireCondition(
   astroConfig.includes("process.env.VAULT_THEME_SELECTOR ??=") &&

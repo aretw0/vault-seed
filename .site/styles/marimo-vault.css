@@ -69,24 +69,16 @@ body {
   overflow-x: hidden;
 }
 
-body * {
-  min-width: 0;
-}
-
 a {
   overflow-wrap: anywhere;
 }
 
-pre,
-code,
-[class*="max-w-2xl"] {
-  max-width: calc(100vw - 1rem) !important;
+.max-w-2xl {
+  max-width: calc(100vw - 3rem) !important;
 }
 
-div,
-span,
-pre,
-code {
+.whitespace-normal,
+.underline {
   overflow-wrap: anywhere;
 }
 
@@ -669,27 +661,6 @@ iframe {
   background: var(--muted);
 }
 
-.vault-marimo-presentation-exit {
-  position: fixed;
-  z-index: 10001;
-  top: 0.75rem;
-  right: 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  background: color-mix(in srgb, var(--card) 92%, transparent);
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--foreground) 12%, transparent);
-  color: var(--foreground);
-  font: inherit;
-  font-size: 0.78rem;
-  line-height: 1;
-  padding: 0.7rem 0.85rem;
-  text-decoration: none;
-}
-
-.vault-marimo-presentation-exit:hover {
-  background: var(--muted);
-}
-
 @media (max-width: 44rem) {
   body {
     font-size: 0.95rem;
@@ -712,9 +683,7 @@ iframe {
     font-size: 0.86rem;
   }
 
-  [data-testid*="carousel"],
-  [class*="carousel"],
-  [class*="Carousel"] {
+  marimo-carousel {
     max-width: calc(100vw - 1rem) !important;
   }
 
@@ -730,11 +699,6 @@ iframe {
   .vault-marimo-navigation {
     top: 0.75rem;
     left: 0.75rem;
-  }
-
-  .vault-marimo-presentation-exit {
-    top: 0.75rem;
-    right: 0.75rem;
   }
 
   .vault-marimo-theme-selector select {
