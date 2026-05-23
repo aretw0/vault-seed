@@ -40,6 +40,8 @@ jobs:
 
       - name: Smoke responsive site and Lab
         run: pnpm run site:responsive
+        env:
+          VAULT_RESPONSIVE_REQUIRE_EXTERNAL: "1"
 
       - name: Test CLI package
         run: pnpm --filter @dgk/cli test

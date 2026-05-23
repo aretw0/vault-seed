@@ -89,6 +89,8 @@ jobs:
 
       - name: Smoke responsive site and Lab
         run: node scripts/smoke_responsive.mjs
+        env:
+          VAULT_RESPONSIVE_REQUIRE_EXTERNAL: "1"
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0

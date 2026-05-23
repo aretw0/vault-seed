@@ -6,6 +6,7 @@ import { chromium } from "@playwright/test";
 
 const root = process.cwd();
 const distDir = join(root, "dist");
+const requireExternalNetwork = process.env.VAULT_RESPONSIVE_REQUIRE_EXTERNAL === "1";
 const errors = [];
 
 const viewports = [
@@ -49,6 +50,12 @@ const contentTypes = new Map([
 
 function fail(message) {
   errors.push(message);
+}
+
+function isExternalNetworkError(message) {
+  return /net::ERR_NETWORK_ACCESS_DENIED|net::ERR_INTERNET_DISCONNECTED|net::ERR_CONNECTION_REFUSED|net::ERR_CONNECTION_TIMED_OUT|Failed to fetch|pyodide\.asm\.js|Failed to load Pyodide|Error bootstrapping TypeError: Failed to fetch dynamically imported module/i.test(
+    message,
+  );
 }
 
 async function resolveDistPath(urlPath) {
@@ -121,7 +128,23 @@ async function waitForNotebook(page) {
     state: "attached",
     timeout: 30000,
   });
-  await page.waitForTimeout(1500);
+  await page.waitForTimeout(3000);
+}
+
+async function browserCanReachExternalNetwork(browser) {
+  const page = await browser.newPage();
+
+  try {
+    const response = await page.goto(
+      "https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.asm.js",
+      { waitUntil: "domcontentloaded", timeout: 20000 },
+    );
+    return Boolean(response?.ok());
+  } catch {
+    return false;
+  } finally {
+    await page.close();
+  }
 }
 
 async function assertNoHorizontalOverflow(page, label) {
@@ -195,8 +218,15 @@ async function run() {
 
   const server = await createStaticServer();
   const browser = await chromium.launch();
+  const externalNetworkAvailable = await browserCanReachExternalNetwork(browser);
   const consoleErrors = [];
   const pageErrors = [];
+
+  if (!externalNetworkAvailable && requireExternalNetwork) {
+    fail(
+      "browser external network unavailable, but VAULT_RESPONSIVE_REQUIRE_EXTERNAL=1. Pyodide hydration cannot be verified.",
+    );
+  }
 
   try {
     for (const viewport of viewports) {
@@ -243,19 +273,14 @@ async function run() {
 
   for (const message of consoleErrors) {
     if (
-      !/favicon|ResizeObserver loop completed|net::ERR_NETWORK_ACCESS_DENIED|pyodide\.asm\.js|Failed to load Pyodide|Error bootstrapping TypeError: Failed to fetch dynamically imported module/i.test(
-        message,
-      )
+      !/favicon|ResizeObserver loop completed/i.test(message) &&
+      (externalNetworkAvailable || !isExternalNetworkError(message))
     ) {
       fail(`console error: ${message}`);
     }
   }
   for (const message of pageErrors) {
-    if (
-      !/Failed to fetch|pyodide\.asm\.js|Failed to fetch dynamically imported module/i.test(
-        message,
-      )
-    ) {
+    if (externalNetworkAvailable || !isExternalNetworkError(message)) {
       fail(`page error: ${message}`);
     }
   }
@@ -269,7 +294,8 @@ async function run() {
   }
 
   console.log(
-    `Responsive smoke passed: ${pages.length} pages across ${viewports.length} viewports.`,
+    `Responsive smoke passed: ${pages.length} pages across ${viewports.length} viewports. ` +
+      `externalNetwork=${externalNetworkAvailable ? "verified" : "unavailable-partial"}.`,
   );
 }
 

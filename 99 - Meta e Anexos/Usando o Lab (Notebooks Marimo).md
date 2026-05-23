@@ -120,6 +120,16 @@ pnpm run site:dev:lab
 
 Para desenvolver notebooks com Python rodando no seu computador, use `pnpm run notebooks:dev`.
 
+O HTML WebAssembly do Marimo carrega Pyodide no navegador. Em ambientes normais, como devcontainer, navegador local e GitHub Actions, isso exige acesso externo aos arquivos do Pyodide. Em sandboxes de agentes ou máquinas com política de rede restrita, a página pode carregar a estrutura do notebook sem hidratar o Python; nesse caso, trate o resultado como uma prévia parcial.
+
+Para validar a publicação localmente em navegador real, use:
+
+```bash
+pnpm run site:responsive
+```
+
+Esse smoke test informa se a rede externa do navegador foi verificada. No CI e no deploy, a validação exige essa rede e falha se Pyodide não puder ser carregado.
+
 ## Visualizações, Código E Slides
 
 O editor local do Marimo tem controles de visualização que ajudam durante a criação do notebook. A versão publicada em `/lab/` é diferente: ela é um HTML WebAssembly exportado para leitura e interação no navegador.

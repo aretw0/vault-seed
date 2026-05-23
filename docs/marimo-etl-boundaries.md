@@ -18,6 +18,21 @@ local, um runner de CI ou um backend.
 | `marimo run` | servidor Python | app interno com backend | GitHub Pages sem servidor |
 | `marimo export html-wasm` | navegador via Pyodide | publicação estática, demos, análise leve sobre snapshots | dependências nativas, browser automation, secrets locais, processos longos |
 
+## Rede E Pyodide
+
+O export WebAssembly depende de arquivos externos do Pyodide carregados pelo
+navegador. Por isso, o smoke responsivo verifica se o Chromium consegue acessar
+essa dependência antes de avaliar os notebooks.
+
+Em CI e deploy, `VAULT_RESPONSIVE_REQUIRE_EXTERNAL=1` torna essa verificação
+obrigatória. Se a rede externa estiver bloqueada, o job falha porque a hidratação
+real do Marimo não foi validada.
+
+Em sandboxes de agentes ou ambientes locais restritos, o mesmo script pode rodar
+em modo parcial e relatar `externalNetwork=unavailable-partial`. Isso valida
+rotas, layout e presença dos artefatos, mas não substitui a validação completa
+em devcontainer, navegador local ou GitHub Actions.
+
 ## ETL
 
 O kit de ingestão deve ficar em scripts ou módulos Python/Node versionados. O
