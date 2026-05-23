@@ -192,9 +192,12 @@ requireCondition(
 requireCondition(
   notebooksExportScript.includes("data-vault-marimo-navigation") &&
     notebooksExportScript.includes('<a href="../">Vault</a>\n  <a href="./">Lab</a>') &&
+    notebooksExportScript.includes("data-vault-marimo-presentation-exit") &&
     notebooksSlidesScript.includes("data-vault-marimo-navigation") &&
+    notebooksSlidesScript.includes("data-vault-marimo-presentation-exit") &&
+    marimoCss.includes(".vault-marimo-presentation-exit") &&
     marimoCss.includes(".vault-marimo-navigation"),
-  "Marimo exported notebooks must include stable navigation back to the Lab and vault site.",
+  "Marimo exported notebooks must include stable navigation back to the Lab and vault site, with an explicit presentation exit.",
 );
 requireCondition(
   astroConfig.includes("process.env.VAULT_THEME_SELECTOR ??=") &&

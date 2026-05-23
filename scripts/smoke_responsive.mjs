@@ -167,6 +167,16 @@ async function assertVisibleContent(page, target, label) {
     if (!hasNotebookContent) {
       fail(`${label}: Marimo runtime marker is not present`);
     }
+    if (target.path.endsWith("vault-seed-slides.html")) {
+      const hasExit = await page
+        .locator("[data-vault-marimo-presentation-exit]")
+        .first()
+        .isVisible()
+        .catch(() => false);
+      if (!hasExit) {
+        fail(`${label}: presentation exit control is not visible`);
+      }
+    }
     return;
   }
 

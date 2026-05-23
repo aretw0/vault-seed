@@ -19,6 +19,7 @@ const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
 const packageJson = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"));
 const THEME_SELECTOR_MARKER = "data-vault-marimo-theme-selector";
 const NAVIGATION_MARKER = "data-vault-marimo-navigation";
+const PRESENTATION_EXIT_MARKER = "data-vault-marimo-presentation-exit";
 const themeSelectorMode = process.env.VAULT_MARIMO_THEME_SELECTOR;
 const isVaultSeedRepo = String(packageJson.repository?.url ?? "").includes("aretw0/vault-seed");
 const shouldInjectThemeSelector =
@@ -131,6 +132,25 @@ const themeSelectorHtml = String.raw`
 </script>
 `;
 
+const presentationExitHtml = String.raw`
+<a class="vault-marimo-presentation-exit" data-vault-marimo-presentation-exit href="./" aria-label="Sair da apresentação e voltar para o Lab">Sair</a>
+<script>
+(() => {
+  const exit = document.querySelector("[data-vault-marimo-presentation-exit]");
+  if (!exit) return;
+  exit.addEventListener("click", async (event) => {
+    event.preventDefault();
+    if (document.fullscreenElement && document.exitFullscreen) {
+      try {
+        await document.exitFullscreen();
+      } catch {}
+    }
+    window.location.href = exit.getAttribute("href") || "./";
+  });
+})();
+</script>
+`;
+
 function injectNotebookNavigation(htmlPath) {
   const html = readFileSync(htmlPath, "utf8");
   if (html.includes(NAVIGATION_MARKER)) {
@@ -151,6 +171,17 @@ function injectThemeSelector(htmlPath) {
     throw new Error(`HTML exportado sem </body>: ${htmlPath}`);
   }
   writeFileSync(htmlPath, html.replace("</body>", `${themeSelectorHtml}\n</body>`));
+}
+
+function injectPresentationExit(htmlPath) {
+  const html = readFileSync(htmlPath, "utf8");
+  if (html.includes(PRESENTATION_EXIT_MARKER)) {
+    return;
+  }
+  if (!html.includes("</body>")) {
+    throw new Error(`HTML exportado sem </body>: ${htmlPath}`);
+  }
+  writeFileSync(htmlPath, html.replace("</body>", `${presentationExitHtml}\n</body>`));
 }
 
 function copyVaultDataForWasm() {
@@ -194,6 +225,9 @@ for (const notebook of manifest.filter((entry) => entry.publish)) {
     process.exit(result.status ?? 1);
   }
   injectNotebookNavigation(output);
+  if (notebook.output === "vault-seed-slides.html") {
+    injectPresentationExit(output);
+  }
   if (shouldInjectThemeSelector) {
     injectThemeSelector(output);
   }
