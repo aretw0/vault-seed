@@ -12,5 +12,12 @@
     "output": "graph.html",
     "description": "notas órfãs, links quebrados, densidade por pasta",
     "publish": true
+  },
+  {
+    "title": "Apresentação",
+    "source": "99 - Meta e Anexos/Notebooks/apresentacao-vault-seed.py",
+    "output": "vault-seed-slides.html",
+    "description": "visão em slides do vault-seed e do Lab",
+    "publish": true
   }
 ]
