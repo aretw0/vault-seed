@@ -120,6 +120,20 @@ pnpm run site:dev:lab
 
 Para desenvolver notebooks com Python rodando no seu computador, use `pnpm run notebooks:dev`.
 
+## Visualizações, Código E Slides
+
+O editor local do Marimo tem controles de visualização que ajudam durante a criação do notebook. A versão publicada em `/lab/` é diferente: ela é um HTML WebAssembly exportado para leitura e interação no navegador.
+
+No Lab publicado, o export usa `marimo export html-wasm` em modo `run`. Esse modo entrega uma página interativa, sem depender de servidor Python, mas não leva todos os controles do editor local. O seletor de visualização do editor, incluindo apresentação em slides, não deve ser tratado como parte garantida do HTML publicado.
+
+Para compartilhar um notebook como apresentação, use o fluxo próprio de exportação para PDF em slides quando fizer sentido:
+
+```bash
+uv run --no-project --with-requirements requirements.txt marimo export pdf CAMINHO_DO_NOTEBOOK.py -o apresentacao.pdf --as=slides --raster-server=live
+```
+
+Esse caminho gera um artefato de apresentação. Para o site `/lab/`, continue usando o HTML WebAssembly como experiência interativa principal.
+
 ## Modos De Execução
 
 O Lab tem três modos com limites diferentes:

@@ -56,6 +56,13 @@ const themeSelectorHtml = String.raw`
     target.classList.toggle("light-theme", resolved === "light");
   }
 
+  function syncMarimoConfig(resolved) {
+    const mountConfig = window.__MARIMO_MOUNT_CONFIG__;
+    if (mountConfig?.config?.display) {
+      mountConfig.config.display.theme = resolved;
+    }
+  }
+
   function applyTheme(choice, paletteChoice) {
     const selected = ["system", "light", "dark"].includes(choice) ? choice : "system";
     const palette = palettes.includes(paletteChoice) ? paletteChoice : "verde-jardim";
@@ -66,6 +73,7 @@ const themeSelectorHtml = String.raw`
     root.dataset.vaultMarimoTheme = resolved;
     setClass(root, resolved);
     setClass(document.body, resolved);
+    syncMarimoConfig(resolved);
 
     document.querySelectorAll("[data-vault-marimo-theme-option]").forEach((button) => {
       const active = button.dataset.vaultMarimoThemeOption === selected;
@@ -86,6 +94,7 @@ const themeSelectorHtml = String.raw`
         const next = button.dataset.vaultMarimoThemeOption || "system";
         localStorage.setItem(themeStorageKey, next);
         applyTheme(next, localStorage.getItem(paletteStorageKey) || "verde-jardim");
+        window.location.reload();
       });
     });
 
@@ -94,6 +103,7 @@ const themeSelectorHtml = String.raw`
         const next = select.value || "verde-jardim";
         localStorage.setItem(paletteStorageKey, next);
         applyTheme(localStorage.getItem(themeStorageKey) || "system", next);
+        window.location.reload();
       });
     });
 
@@ -105,11 +115,7 @@ const themeSelectorHtml = String.raw`
     });
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init, { once: true });
-  } else {
-    init();
-  }
+  init();
 })();
 </script>
 `;

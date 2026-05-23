@@ -142,18 +142,24 @@ requireCondition(
 );
 requireCondition(
   marimoCss.includes('color-scheme: dark') &&
+    marimoCss.includes("--color-background: var(--background)") &&
+    marimoCss.includes("--gdg-bg-cell: var(--background)") &&
     marimoCss.includes('[role="combobox"]') &&
-    marimoCss.includes('marimo-table td') &&
+    marimoCss.includes("marimo-table tr:nth-child(even)") &&
+    marimoCss.includes('[role="option"][aria-selected="true"]') &&
     marimoCss.includes('.text-muted-foreground'),
-  "Marimo exported notebooks must harden table and select colors for accessible dark/light themes.",
+  "Marimo exported notebooks must harden table, data-grid, and select colors for accessible dark/light themes.",
 );
 requireCondition(
   notebooksExportScript.includes("VAULT_MARIMO_THEME_SELECTOR") &&
     notebooksExportScript.includes("aretw0/vault-seed") &&
     notebooksExportScript.includes("data-vault-marimo-theme-selector") &&
     notebooksExportScript.includes("data-vault-marimo-palette-option") &&
+    notebooksExportScript.includes("syncMarimoConfig(resolved)") &&
+    notebooksExportScript.includes("window.location.reload()") &&
+    !notebooksExportScript.includes('document.addEventListener("DOMContentLoaded", init') &&
     marimoCss.includes(".vault-marimo-theme-selector"),
-  "Marimo palette selector must be gated to vault-seed demo exports, while keeping theme CSS available.",
+  "Marimo palette selector must be gated to vault-seed demo exports and apply theme before the WASM app boots.",
 );
 requireCondition(
   astroConfig.includes("process.env.VAULT_THEME_SELECTOR ??=") &&

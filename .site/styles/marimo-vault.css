@@ -76,75 +76,137 @@ body {
   color-scheme: dark;
 }
 
+:root[data-vault-marimo-theme],
+:root[data-vault-marimo-theme] .light,
+:root[data-vault-marimo-theme] .light-theme,
+:root[data-vault-marimo-theme] .dark,
+:root[data-vault-marimo-theme] .dark-theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --gdg-bg-cell: var(--background);
+  --gdg-bg-cell-medium: var(--muted);
+  --gdg-bg-header: var(--muted);
+  --gdg-bg-header-has-focus: var(--accent);
+  --gdg-bg-bubble: var(--accent);
+  --gdg-text-dark: var(--foreground);
+  --gdg-text-medium: var(--muted-foreground);
+  --gdg-text-light: var(--muted-foreground);
+  --gdg-text-group-header: var(--foreground);
+  --gdg-border-color: var(--border);
+  --gdg-accent-color: var(--primary);
+  --gdg-accent-light: var(--accent);
+  --gdg-link-color: var(--primary);
+}
+
 .markdown h1,
 .markdown h2,
 .markdown h3 {
   color: var(--primary);
 }
 
-marimo-table,
-marimo-table table,
-table {
+:root[data-vault-marimo-theme] marimo-table,
+:root[data-vault-marimo-theme] marimo-table table,
+:root[data-vault-marimo-theme] table {
   --border: var(--border);
-  background: var(--background);
-  color: var(--foreground);
-}
-
-marimo-table th,
-table th {
-  background: var(--background);
-  color: var(--muted-foreground);
-}
-
-marimo-table td,
-marimo-table caption,
-table td,
-table caption {
-  color: var(--foreground);
-}
-
-marimo-table tr,
-table tr {
-  border-color: var(--border);
-}
-
-select,
-option,
-[role="combobox"],
-[role="listbox"],
-[role="option"] {
-  background-color: var(--popover);
-  color: var(--popover-foreground);
-  border-color: var(--border);
-}
-
-[role="option"]:focus,
-[role="option"][data-highlighted] {
-  background-color: var(--accent);
-  color: var(--accent-foreground);
-}
-
-.bg-background {
-  background-color: var(--background) !important;
-}
-
-.bg-popover {
-  background-color: var(--popover) !important;
-}
-
-.bg-muted {
-  background-color: var(--muted) !important;
-}
-
-.text-foreground {
+  background: var(--background) !important;
   color: var(--foreground) !important;
 }
 
-.text-popover-foreground {
+:root[data-vault-marimo-theme] thead,
+:root[data-vault-marimo-theme] tbody,
+:root[data-vault-marimo-theme] tr,
+:root[data-vault-marimo-theme] marimo-table th,
+:root[data-vault-marimo-theme] table th {
+  background: var(--background) !important;
+  color: var(--muted-foreground) !important;
+}
+
+:root[data-vault-marimo-theme] marimo-table tr:nth-child(even),
+:root[data-vault-marimo-theme] table tr:nth-child(even) {
+  background: var(--muted) !important;
+}
+
+:root[data-vault-marimo-theme] marimo-table td,
+:root[data-vault-marimo-theme] marimo-table caption,
+:root[data-vault-marimo-theme] table td,
+:root[data-vault-marimo-theme] table caption {
+  background: inherit !important;
+  color: var(--foreground) !important;
+}
+
+:root[data-vault-marimo-theme] marimo-table tr,
+:root[data-vault-marimo-theme] table tr,
+:root[data-vault-marimo-theme] marimo-table td,
+:root[data-vault-marimo-theme] table td,
+:root[data-vault-marimo-theme] marimo-table th,
+:root[data-vault-marimo-theme] table th {
+  border-color: var(--border) !important;
+}
+
+:root[data-vault-marimo-theme] select,
+:root[data-vault-marimo-theme] option,
+:root[data-vault-marimo-theme] [role="combobox"],
+:root[data-vault-marimo-theme] [role="listbox"],
+:root[data-vault-marimo-theme] [role="option"] {
+  background-color: var(--popover) !important;
+  color: var(--popover-foreground) !important;
+  border-color: var(--border) !important;
+}
+
+:root[data-vault-marimo-theme] [role="option"]:focus,
+:root[data-vault-marimo-theme] [role="option"][data-highlighted],
+:root[data-vault-marimo-theme] [role="option"][aria-selected="true"] {
+  background-color: var(--accent) !important;
+  color: var(--accent-foreground) !important;
+}
+
+:root[data-vault-marimo-theme] .bg-background,
+:root[data-vault-marimo-theme] .bg-\(--background\) {
+  background-color: var(--background) !important;
+}
+
+:root[data-vault-marimo-theme] .bg-card {
+  background-color: var(--card) !important;
+}
+
+:root[data-vault-marimo-theme] .bg-popover {
+  background-color: var(--popover) !important;
+}
+
+:root[data-vault-marimo-theme] .bg-muted {
+  background-color: var(--muted) !important;
+}
+
+:root[data-vault-marimo-theme] .border,
+:root[data-vault-marimo-theme] .border-border,
+:root[data-vault-marimo-theme] .border-input {
+  border-color: var(--border) !important;
+}
+
+:root[data-vault-marimo-theme] .text-foreground {
+  color: var(--foreground) !important;
+}
+
+:root[data-vault-marimo-theme] .text-popover-foreground {
   color: var(--popover-foreground) !important;
 }
 
-.text-muted-foreground {
+:root[data-vault-marimo-theme] .text-muted-foreground {
   color: var(--muted-foreground) !important;
 }
 
