@@ -58,12 +58,70 @@ const { data: datasetData } = buildLabDatasets({
 });
 console.log(`[notebooks:etl] ${datasetData.datasetCount} dataset(s)`);
 
-const navigationHtml = String.raw`
+function escapeHtml(value) {
+	return String(value)
+		.replaceAll("&", "&amp;")
+		.replaceAll("<", "&lt;")
+		.replaceAll(">", "&gt;")
+		.replaceAll('"', "&quot;");
+}
+
+function labNavigationHtml(currentOutput) {
+	if (currentOutput === "vault-seed-slides.html") {
+		return String.raw`
 <nav class="vault-marimo-navigation" data-vault-marimo-navigation aria-label="Navegação do vault">
   <a href="../">Vault</a>
   <a href="./">Lab</a>
 </nav>
 `;
+	}
+
+	const notebookLinks = manifest
+		.filter((entry) => entry.publish)
+		.map((entry) => {
+			const active = entry.output === currentOutput;
+			return `<a href="./${escapeHtml(entry.output)}"${active ? ' aria-current="page"' : ""}>${escapeHtml(entry.title)}</a>`;
+		})
+		.join("\n      ");
+
+	return String.raw`
+<div class="vault-marimo-navigation" data-vault-marimo-navigation>
+  <header class="vault-lab-topbar" aria-label="Navegação principal do Lab">
+    <button class="vault-lab-sidebar-toggle" type="button" data-vault-lab-sidebar-toggle aria-expanded="true" aria-controls="vault-lab-sidebar">Menu</button>
+    <a class="vault-lab-brand" href="../">Vault</a>
+    <a class="vault-lab-section" href="./">Lab</a>
+  </header>
+  <aside class="vault-lab-sidebar" id="vault-lab-sidebar" aria-label="Notebooks publicados">
+    <div class="vault-lab-sidebar__title">Notebooks</div>
+    <nav class="vault-lab-notebook-list">
+      ${notebookLinks}
+    </nav>
+  </aside>
+</div>
+<script data-vault-marimo-navigation-script>
+(() => {
+  const root = document.documentElement;
+  const key = "vault-seed:lab-sidebar-collapsed";
+  const toggle = document.querySelector("[data-vault-lab-sidebar-toggle]");
+  root.dataset.vaultMarimoShell = "lab";
+
+  function apply(collapsed) {
+    root.dataset.vaultLabSidebar = collapsed ? "collapsed" : "expanded";
+    toggle?.setAttribute("aria-expanded", String(!collapsed));
+  }
+
+  const saved = localStorage.getItem(key);
+  apply(saved === "1");
+
+  toggle?.addEventListener("click", () => {
+    const collapsed = root.dataset.vaultLabSidebar !== "collapsed";
+    localStorage.setItem(key, collapsed ? "1" : "0");
+    apply(collapsed);
+  });
+})();
+</script>
+`;
+}
 
 const themeSelectorHtml = String.raw`
 <div class="vault-marimo-theme-selector" data-vault-marimo-theme-selector role="group" aria-label="Tema do notebook">
@@ -220,7 +278,7 @@ const presentationFullscreenHtml = String.raw`
 </script>
 `;
 
-function injectNotebookNavigation(htmlPath) {
+function injectNotebookNavigation(htmlPath, currentOutput) {
 	const html = readFileSync(htmlPath, "utf8");
 	if (html.includes(NAVIGATION_MARKER)) {
 		return;
@@ -230,7 +288,7 @@ function injectNotebookNavigation(htmlPath) {
 	}
 	writeFileSync(
 		htmlPath,
-		html.replace("</body>", `${navigationHtml}\n</body>`),
+		html.replace("</body>", `${labNavigationHtml(currentOutput)}\n</body>`),
 	);
 }
 
@@ -341,7 +399,7 @@ for (const notebook of manifest.filter((entry) => entry.publish)) {
 		}
 	}
 
-	injectNotebookNavigation(output);
+	injectNotebookNavigation(output, notebook.output);
 	if (notebook.output === "vault-seed-slides.html") {
 		injectPresentationFullscreen(output);
 	}
