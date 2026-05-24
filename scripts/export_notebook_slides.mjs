@@ -23,13 +23,6 @@ const navigationHtml = String.raw`
 `;
 
 const presentationFullscreenHtml = String.raw`
-<button
-  type="button"
-  class="vault-marimo-presentation-fullscreen-toggle"
-  data-vault-marimo-fullscreen-button
-  aria-label="Abrir em tela cheia"
-  title="Abrir em tela cheia"
->⛶</button>
 <script data-vault-marimo-presentation-fullscreen>
 (() => {
   const fullScreenPattern = /full\s*screen|fullscreen|tela cheia/i;
@@ -38,7 +31,7 @@ const presentationFullscreenHtml = String.raw`
   const enterLabel = "Abrir em tela cheia";
   const exitLabel = "Fechar tela cheia";
   const originalLabels = new WeakMap();
-  document.documentElement.dataset.vaultMarimoPresentation = "carousel";
+  document.documentElement.dataset.vaultMarimoPresentation = "slides";
 
   function candidates() {
     return Array.from(document.querySelectorAll("button, [role='button'], [role='menuitem']"));
@@ -65,19 +58,12 @@ const presentationFullscreenHtml = String.raw`
       });
     }
 
-    const original = originalLabels.get(button);
     button.dataset.vaultMarimoFullscreenButton = "true";
     const icon = active ? exitIcon : enterIcon;
     const label = active ? exitLabel : enterLabel;
     if ((button.textContent || "").trim() !== icon) button.textContent = icon;
     button.setAttribute("aria-label", label);
     button.setAttribute("title", label);
-
-    if (active) {
-      return;
-    }
-
-    button.dataset.vaultMarimoOriginalText = original.text.trim() ? original.text : "";
   }
 
   function sync() {
@@ -85,15 +71,6 @@ const presentationFullscreenHtml = String.raw`
     candidates().filter(isFullscreenButton).forEach((button) => setLabel(button, active));
   }
 
-  document.querySelectorAll("[data-vault-marimo-fullscreen-button]").forEach((button) => {
-    button.addEventListener("click", () => {
-      if (document.fullscreenElement) {
-        document.exitFullscreen();
-      } else {
-        document.documentElement.requestFullscreen();
-      }
-    });
-  });
   document.addEventListener("fullscreenchange", sync);
   new MutationObserver(sync).observe(document.body, {
     childList: true,
@@ -101,27 +78,6 @@ const presentationFullscreenHtml = String.raw`
     characterData: true,
   });
   sync();
-})();
-</script>
-`;
-
-const presentationNavigationHtml = String.raw`
-<script>
-(() => {
-  function isInteractive(target) {
-    if (!target || !target.closest) return false;
-    return Boolean(target.closest("a, button, input, select, textarea, [role='button'], [role='link']"));
-  }
-
-  document.addEventListener("click", (event) => {
-    if (isInteractive(event.target)) return;
-    const edge = Math.max(48, Math.min(96, window.innerWidth * 0.16));
-    if (event.clientX <= edge) {
-      window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowLeft", bubbles: true }));
-    } else if (event.clientX >= window.innerWidth - edge) {
-      window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
-    }
-  });
 })();
 </script>
 `;
@@ -147,7 +103,7 @@ function injectPresentationFullscreen(htmlPath) {
   }
   writeFileSync(
     htmlPath,
-    html.replace("</body>", `${presentationFullscreenHtml}\n${presentationNavigationHtml}\n</body>`),
+    html.replace("</body>", `${presentationFullscreenHtml}\n</body>`),
   );
 }
 
