@@ -185,6 +185,10 @@ const shouldRenderThemeSelect = themeSelectorMode === '1' || (themeSelectorMode 
 			color: var(--sl-color-black);
 		}
 
+		:global(:root:not([data-has-sidebar]):not([data-has-toc])) .vault-focus-toggle {
+			display: none;
+		}
+
 		.vault-theme-demo select {
 			max-width: 8.25rem;
 			border: 1px solid var(--sl-color-hairline);
