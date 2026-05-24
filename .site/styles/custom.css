@@ -42,6 +42,127 @@
   font-weight: 500;
 }
 
+/* Curated UI primitives for pages generated from the vault.
+ * These intentionally stay small and class-based so a generated vault can use
+ * the same blocks from Astro pages or from Markdown with inline HTML. */
+.vault-lead {
+  max-width: 68ch;
+  color: var(--sl-color-gray-2);
+  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.15rem);
+  line-height: 1.7;
+}
+
+.vault-card-grid {
+  display: grid;
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+
+@media (min-width: 44rem) {
+  .vault-card-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  }
+}
+
+.vault-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 0.85rem;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--sl-color-accent) 7%, transparent),
+      transparent 38%
+    ),
+    var(--sl-color-bg-nav);
+  box-shadow: 0 1rem 2.5rem color-mix(in srgb, var(--sl-color-black) 10%, transparent);
+  padding: clamp(1rem, 0.85rem + 0.75vw, 1.35rem);
+}
+
+.vault-card > :first-child {
+  margin-block-start: 0;
+}
+
+.vault-card > :last-child {
+  margin-block-end: 0;
+}
+
+.vault-card__eyebrow {
+  color: var(--sl-color-text-accent);
+  font-size: var(--sl-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.vault-card__title {
+  color: var(--sl-color-white);
+  font-size: clamp(1.1rem, 1rem + 0.35vw, 1.35rem);
+  line-height: 1.2;
+  margin: 0;
+}
+
+.vault-card__body {
+  color: var(--sl-color-gray-2);
+  line-height: 1.65;
+  margin: 0;
+}
+
+.vault-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-block-start: auto;
+}
+
+.vault-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.25rem;
+  border: 1px solid color-mix(in srgb, var(--sl-color-accent) 42%, var(--sl-color-hairline));
+  border-radius: 999px;
+  background: var(--sl-color-accent);
+  color: var(--sl-color-black);
+  font-size: var(--sl-text-sm);
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.55rem 0.9rem;
+  text-decoration: none;
+}
+
+.vault-button:hover {
+  filter: brightness(1.05);
+}
+
+.vault-button--secondary {
+  background: transparent;
+  color: var(--sl-color-text-accent);
+}
+
+.vault-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 999px;
+  color: var(--sl-color-gray-3);
+  font-size: var(--sl-text-xs);
+  font-weight: 650;
+  line-height: 1;
+  padding: 0.45rem 0.65rem;
+}
+
+.vault-status[data-state='available'] {
+  border-color: color-mix(in srgb, var(--sl-color-accent) 36%, var(--sl-color-hairline));
+  color: var(--sl-color-text-accent);
+}
+
 /* Mermaid toggle block */
 .mermaid-block {
   margin: 1rem 0;
