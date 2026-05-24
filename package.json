@@ -8,7 +8,7 @@
     "url": "https://github.com/aretw0/vault-seed.git"
   },
   "scripts": {
-    "test": "node --test scripts/audience_boundary.test.js scripts/deploy_site_workflow.test.js scripts/devcontainer_contract.test.js scripts/prepare_lab_datasets.test.mjs scripts/release_package_smoke.test.js scripts/validate_onboarding.test.js",
+    "test": "node --test scripts/audience_boundary.test.js scripts/deploy_site_workflow.test.js scripts/devcontainer_contract.test.js scripts/notebook_export_runtime_helpers.test.mjs scripts/prepare_lab_datasets.test.mjs scripts/release_package_smoke.test.js scripts/validate_onboarding.test.js",
     "format": "prettier --write \"**/*.md\"",
     "format:check": "prettier --check .",
     "lint:main": "markdownlint --config .markdownlint.json \"10 - Diário/**/*.md\" \"20 - Projetos/**/*.md\" \"30 - Áreas/**/*.md\" \"40 - Recursos/**/*.md\" \"50 - Arquivo/**/*.md\" \"99 - Meta e Anexos/**/*.md\"",
