@@ -593,7 +593,7 @@ iframe {
   position: fixed;
   z-index: 10000;
   top: 0.75rem;
-  right: 3.75rem;
+  right: 0.75rem;
   display: flex;
   gap: 0.25rem;
   padding: 0.25rem;
@@ -721,7 +721,7 @@ iframe {
 
 :root[data-vault-marimo-presentation="slides"] .vault-marimo-theme-selector {
   top: 0.75rem;
-  right: 3.75rem;
+  right: 0.75rem;
   bottom: auto;
 }
 
@@ -754,10 +754,10 @@ iframe {
 
   .vault-marimo-theme-selector {
     top: 0.75rem;
-    right: 3.5rem;
+    right: 0.75rem;
     bottom: auto;
     left: auto;
-    max-width: calc(100vw - 7rem);
+    max-width: calc(100vw - 1.5rem);
     flex-wrap: wrap;
     justify-content: flex-end;
   }
