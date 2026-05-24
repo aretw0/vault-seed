@@ -1,33 +1,59 @@
 #!/usr/bin/env node
-import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import {
+	copyFileSync,
+	mkdtempSync,
+	mkdirSync,
+	readFileSync,
+	rmSync,
+	writeFileSync,
+} from "node:fs";
+import { basename, dirname, join } from "node:path";
+import { tmpdir } from "node:os";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { uvEnv } from "./uv_env.mjs";
 import { writeVaultData } from "./generate_vault_data.mjs";
 import { buildLabDatasets } from "./prepare_lab_datasets.mjs";
+import { replaceImportAndInjectRuntimeHelpers } from "./notebook_export_runtime_helpers.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const args = new Set(process.argv.slice(2));
 const manifestPath = join(ROOT, ".site", "lab.notebooks.json");
 const notebooksPath = process.env.VAULT_NOTEBOOKS_PATH || "lab";
 const outputRoot = args.has("--public")
-  ? join(ROOT, "public")
-  : process.env.VAULT_NOTEBOOKS_OUTPUT_DIR || join(ROOT, "dist");
+	? join(ROOT, "public")
+	: process.env.VAULT_NOTEBOOKS_OUTPUT_DIR || join(ROOT, "dist");
 const outDir = join(outputRoot, notebooksPath);
+const notebookRuntimeHelperPath = join(
+	ROOT,
+	"99 - Meta e Anexos",
+	"Notebooks",
+	"_lab_notebook_runtime.py",
+);
 const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
-const packageJson = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"));
+const packageJson = JSON.parse(
+	readFileSync(join(ROOT, "package.json"), "utf8"),
+);
 const THEME_SELECTOR_MARKER = "data-vault-marimo-theme-selector";
 const NAVIGATION_MARKER = "data-vault-marimo-navigation";
-const PRESENTATION_FULLSCREEN_MARKER = "data-vault-marimo-presentation-fullscreen";
+const PRESENTATION_FULLSCREEN_MARKER =
+	"data-vault-marimo-presentation-fullscreen";
 const themeSelectorMode = process.env.VAULT_MARIMO_THEME_SELECTOR;
-const isVaultSeedRepo = String(packageJson.repository?.url ?? "").includes("aretw0/vault-seed");
+const isVaultSeedRepo = String(packageJson.repository?.url ?? "").includes(
+	"aretw0/vault-seed",
+);
 const shouldInjectThemeSelector =
-  themeSelectorMode === "1" || (themeSelectorMode !== "0" && isVaultSeedRepo);
+	themeSelectorMode === "1" || (themeSelectorMode !== "0" && isVaultSeedRepo);
 
-const { data, outDir: sourceDataDir } = writeVaultData({ cwd: ROOT, notebooksPath });
+const { data, outDir: sourceDataDir } = writeVaultData({
+	cwd: ROOT,
+	notebooksPath,
+});
 console.log(`[notebooks:data] ${data.noteCount} notas`);
-const { data: datasetData } = buildLabDatasets({ cwd: ROOT, targetRoot: outDir });
+const { data: datasetData } = buildLabDatasets({
+	cwd: ROOT,
+	targetRoot: outDir,
+});
 console.log(`[notebooks:etl] ${datasetData.datasetCount} dataset(s)`);
 
 const navigationHtml = String.raw`
@@ -237,86 +263,130 @@ const presentationNavigationHtml = String.raw`
 `;
 
 function injectNotebookNavigation(htmlPath) {
-  const html = readFileSync(htmlPath, "utf8");
-  if (html.includes(NAVIGATION_MARKER)) {
-    return;
-  }
-  if (!html.includes("</body>")) {
-    throw new Error(`HTML exportado sem </body>: ${htmlPath}`);
-  }
-  writeFileSync(htmlPath, html.replace("</body>", `${navigationHtml}\n</body>`));
+	const html = readFileSync(htmlPath, "utf8");
+	if (html.includes(NAVIGATION_MARKER)) {
+		return;
+	}
+	if (!html.includes("</body>")) {
+		throw new Error(`HTML exportado sem </body>: ${htmlPath}`);
+	}
+	writeFileSync(
+		htmlPath,
+		html.replace("</body>", `${navigationHtml}\n</body>`),
+	);
 }
 
 function injectThemeSelector(htmlPath) {
-  const html = readFileSync(htmlPath, "utf8");
-  if (html.includes(THEME_SELECTOR_MARKER)) {
-    return;
-  }
-  if (!html.includes("</body>")) {
-    throw new Error(`HTML exportado sem </body>: ${htmlPath}`);
-  }
-  writeFileSync(htmlPath, html.replace("</body>", `${themeSelectorHtml}\n</body>`));
+	const html = readFileSync(htmlPath, "utf8");
+	if (html.includes(THEME_SELECTOR_MARKER)) {
+		return;
+	}
+	if (!html.includes("</body>")) {
+		throw new Error(`HTML exportado sem </body>: ${htmlPath}`);
+	}
+	writeFileSync(
+		htmlPath,
+		html.replace("</body>", `${themeSelectorHtml}\n</body>`),
+	);
 }
 
 function injectPresentationFullscreen(htmlPath) {
-  const html = readFileSync(htmlPath, "utf8");
-  if (html.includes(PRESENTATION_FULLSCREEN_MARKER)) {
-    return;
-  }
-  if (!html.includes("</body>")) {
-    throw new Error(`HTML exportado sem </body>: ${htmlPath}`);
-  }
-  writeFileSync(
-    htmlPath,
-    html.replace("</body>", `${presentationFullscreenHtml}\n${presentationNavigationHtml}\n</body>`),
-  );
+	const html = readFileSync(htmlPath, "utf8");
+	if (html.includes(PRESENTATION_FULLSCREEN_MARKER)) {
+		return;
+	}
+	if (!html.includes("</body>")) {
+		throw new Error(`HTML exportado sem </body>: ${htmlPath}`);
+	}
+	writeFileSync(
+		htmlPath,
+		html.replace(
+			"</body>",
+			`${presentationFullscreenHtml}\n${presentationNavigationHtml}\n</body>`,
+		),
+	);
 }
 
 function copyVaultDataForWasm() {
-  const source = join(sourceDataDir, "vault-data.json");
-  mkdirSync(outDir, { recursive: true });
-  mkdirSync(join(outDir, "assets"), { recursive: true });
-  copyFileSync(source, join(outDir, "vault-data.json"));
-  copyFileSync(source, join(outDir, "assets", "vault-data.json"));
+	const source = join(sourceDataDir, "vault-data.json");
+	mkdirSync(outDir, { recursive: true });
+	mkdirSync(join(outDir, "assets"), { recursive: true });
+	copyFileSync(source, join(outDir, "vault-data.json"));
+	copyFileSync(source, join(outDir, "assets", "vault-data.json"));
+}
+
+function prepareNotebookSourceForExport(source) {
+	const sourceCode = readFileSync(source, "utf8");
+	const runtimeHelperSource = readFileSync(notebookRuntimeHelperPath, "utf8");
+	const transformedSource = replaceImportAndInjectRuntimeHelpers(sourceCode, {
+		runtimeHelperSource,
+	});
+	const tmpDir = mkdtempSync(join(tmpdir(), "vault-seed-lab-notebook-"));
+	const exportSource = join(tmpDir, basename(source));
+	writeFileSync(exportSource, `${transformedSource}\n`, "utf8");
+
+	return {
+		source: exportSource,
+		cleanup: () => rmSync(tmpDir, { recursive: true, force: true }),
+	};
 }
 
 mkdirSync(outDir, { recursive: true });
 copyVaultDataForWasm();
 
 for (const notebook of manifest.filter((entry) => entry.publish)) {
-  const source = join(ROOT, notebook.source);
-  const output = join(outDir, notebook.output);
-  mkdirSync(dirname(output), { recursive: true });
-  console.log(`export notebook: ${notebook.source} -> ${outputRoot.replace(ROOT, "").replace(/^[\\/]/, "")}/${notebooksPath}/${notebook.output}`);
-  const result = spawnSync("uv", [
-    "run",
-    "--no-project",
-    "--with-requirements",
-    "requirements.txt",
-    "marimo",
-    "export",
-    "html-wasm",
-    source,
-    "--output",
-    output,
-  ], {
-    cwd: ROOT,
-    env: uvEnv(),
-    stdio: "inherit",
-  });
-  if (result.error) {
-    console.error(`[notebooks:export] não foi possível iniciar o uv/Marimo: ${result.error.message}`);
-    console.error("[notebooks:export] instale uv e rode novamente: https://docs.astral.sh/uv/getting-started/installation/");
-    process.exit(1);
-  }
-  if (result.status !== 0) {
-    process.exit(result.status ?? 1);
-  }
-  injectNotebookNavigation(output);
-  if (notebook.output === "vault-seed-slides.html") {
-    injectPresentationFullscreen(output);
-  }
-  if (shouldInjectThemeSelector) {
-    injectThemeSelector(output);
-  }
+	const source = join(ROOT, notebook.source);
+	const output = join(outDir, notebook.output);
+	const prepared = prepareNotebookSourceForExport(source);
+	mkdirSync(dirname(output), { recursive: true });
+	console.log(
+		`export notebook: ${notebook.source} -> ${outputRoot.replace(ROOT, "").replace(/^[\\/]/, "")}/${notebooksPath}/${notebook.output}`,
+	);
+
+	try {
+		const result = spawnSync(
+			"uv",
+			[
+				"run",
+				"--no-project",
+				"--with-requirements",
+				"requirements.txt",
+				"marimo",
+				"export",
+				"html-wasm",
+				prepared.source,
+				"--output",
+				output,
+			],
+			{
+				cwd: ROOT,
+				env: uvEnv(),
+				stdio: "inherit",
+			},
+		);
+		if (result.error) {
+			console.error(
+				`[notebooks:export] não foi possível iniciar o uv/Marimo: ${result.error.message}`,
+			);
+			console.error(
+				"[notebooks:export] instale uv e rode novamente: https://docs.astral.sh/uv/getting-started/installation/",
+			);
+			process.exit(1);
+		}
+		if (result.status !== 0) {
+			process.exit(result.status ?? 1);
+		}
+	} finally {
+		if (prepared.cleanup) {
+			prepared.cleanup();
+		}
+	}
+
+	injectNotebookNavigation(output);
+	if (notebook.output === "vault-seed-slides.html") {
+		injectPresentationFullscreen(output);
+	}
+	if (shouldInjectThemeSelector) {
+		injectThemeSelector(output);
+	}
 }
