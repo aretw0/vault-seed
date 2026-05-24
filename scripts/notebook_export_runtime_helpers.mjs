@@ -1,28 +1,59 @@
 const LAB_RUNTIME_IMPORT_PREFIX = "_lab_notebook_runtime";
 const LAB_RUNTIME_HELPER_EXPORT_NAMES = [
+	"is_pyodide_runtime",
+	"lab_runtime_context",
+	"require_local_runtime",
 	"normalize_dataset_path",
 	"dataset_candidate_paths",
 	"read_lab_json",
 	"load_lab_manifest",
 ];
 
-function parseRuntimeImportNames(sourceCode, runtimeImportPrefix) {
+function collectRuntimeImports(sourceCode, runtimeImportPrefix) {
 	const importPrefix = `from ${runtimeImportPrefix} import`;
-	const runtimeImportLines = sourceCode
-		.split(/\r?\n/)
-		.filter((line) => line.trimStart().startsWith(importPrefix));
+	const lines = sourceCode.split(/\r?\n/);
+	const statements = [];
+	const removeIndexes = new Set();
 
+	for (let index = 0; index < lines.length; index += 1) {
+		const line = lines[index];
+		const trimmed = line.trimStart();
+		if (!trimmed.startsWith(importPrefix)) {
+			continue;
+		}
+
+		let statement = trimmed;
+		removeIndexes.add(index);
+
+		if (trimmed.includes("(") && !trimmed.includes(")")) {
+			while (index + 1 < lines.length) {
+				index += 1;
+				removeIndexes.add(index);
+				statement += `\n${lines[index].trim()}`;
+				if (lines[index].includes(")")) {
+					break;
+				}
+			}
+		}
+
+		statements.push(statement);
+	}
+
+	return { lines, removeIndexes, statements };
+}
+
+function parseRuntimeImportNames(importStatements, runtimeImportPrefix) {
 	const importNameRegex = new RegExp(
-		`^\\s*from\\s+${runtimeImportPrefix}\\s+import\\s+(.*)$`,
+		`^\\s*from\\s+${runtimeImportPrefix}\\s+import\\s+([\\s\\S]*)$`,
 	);
 	const parsedImportNames = [];
-	for (const line of runtimeImportLines) {
-		const match = line.match(importNameRegex);
+	for (const statement of importStatements) {
+		const match = statement.match(importNameRegex);
 		if (!match) {
 			continue;
 		}
 
-		const names = match[1].split(",");
+		const names = match[1].replace(/[()]/g, "").replace(/\n/g, ",").split(",");
 		for (const rawName of names) {
 			const name = rawName.replace(/\s+as\s+\w+$/i, "").trim();
 			if (!name || parsedImportNames.includes(name)) {
@@ -37,15 +68,11 @@ function parseRuntimeImportNames(sourceCode, runtimeImportPrefix) {
 
 function buildRuntimeHelperCell(runtimeHelperSource, helperExportNames) {
 	return `@app.cell
-
-def _lab_notebook_runtime_helpers():
-    import json
-    import os
-
+def _():
 ${runtimeHelperSource
-	.split(/\r?\n/)
-	.map((line) => `    ${line}`)
-	.join("\n")}
+		.split(/\r?\n/)
+		.map((line) => `    ${line}`)
+		.join("\n")}
 
     return ${helperExportNames.join(", ")}
 `;
@@ -63,9 +90,13 @@ export function replaceImportAndInjectRuntimeHelpers(
 		throw new Error("runtimeHelperSource is required");
 	}
 
-	const importPrefix = `from ${runtimeImportPrefix} import`;
+	const runtimeImports = collectRuntimeImports(sourceCode, runtimeImportPrefix);
+	if (!runtimeImports.statements.length) {
+		return sourceCode;
+	}
+
 	const parsedImportNames = parseRuntimeImportNames(
-		sourceCode,
+		runtimeImports.statements,
 		runtimeImportPrefix,
 	);
 	if (!parsedImportNames.length) {
@@ -79,14 +110,11 @@ export function replaceImportAndInjectRuntimeHelpers(
 		return sourceCode;
 	}
 
-	const cleanedLines = sourceCode
-		.split(/\r?\n/)
-		.filter((line) => !line.trimStart().startsWith(importPrefix));
+	const cleanedLines = runtimeImports.lines.filter(
+		(_line, index) => !runtimeImports.removeIndexes.has(index),
+	);
 
-	const helperLines = buildRuntimeHelperCell(
-		runtimeHelperSource,
-		helperExportNames,
-	)
+	const helperLines = buildRuntimeHelperCell(runtimeHelperSource, helperExportNames)
 		.replace(/^\n/, "")
 		.split(/\r?\n/);
 

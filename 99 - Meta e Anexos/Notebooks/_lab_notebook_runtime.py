@@ -1,5 +1,36 @@
-import json
-import os
+def is_pyodide_runtime() -> bool:
+    """Detecta se o notebook está rodando empacotado no Pyodide/WASM."""
+    try:
+        import pyodide  # type: ignore  # noqa: F401
+    except ImportError:
+        return False
+    return True
+
+
+def lab_runtime_context(notebooks_path: str = "lab"):
+    """Descreve o modo atual do notebook para células com fallback local."""
+    import os as _os
+
+    packaged = is_pyodide_runtime()
+    resolved_notebooks_path = _os.environ.get("VAULT_NOTEBOOKS_PATH", notebooks_path)
+    return {
+        "runtime": "pyodide" if packaged else "local",
+        "isPackaged": packaged,
+        "isLocal": not packaged,
+        "canRunLocalEtl": not packaged,
+        "notebooksPath": resolved_notebooks_path,
+        "cwd": "" if packaged else _os.getcwd(),
+    }
+
+
+def require_local_runtime(operation: str = "esta operação"):
+    """Bloqueia operações que não devem rodar no HTML empacotado."""
+    context = lab_runtime_context()
+    if not context["isLocal"]:
+        raise RuntimeError(
+            f"{operation} só pode rodar no modo local do notebook, antes do export."
+        )
+    return context
 
 
 def normalize_dataset_path(path_or_url: str) -> str:
@@ -34,12 +65,14 @@ def dataset_candidate_paths(path_or_url: str):
 
 
 def _read_lab_json_runtime(candidates):
+    import json as _json
+
     from pyodide.http import open_url  # type: ignore
 
     last_error = None
     for candidate in candidates:
         try:
-            return json.loads(open_url(candidate).read())
+            return _json.loads(open_url(candidate).read())
         except Exception as exc:
             last_error = exc
             continue
@@ -52,13 +85,16 @@ def _read_lab_json_runtime(candidates):
 
 
 def _read_lab_json_local(candidates, notebooks_path: str):
-    _notebooks_path = os.environ.get("VAULT_NOTEBOOKS_PATH", notebooks_path)
+    import json as _json
+    import os as _os
+
+    _notebooks_path = _os.environ.get("VAULT_NOTEBOOKS_PATH", notebooks_path)
     last_error = None
     for candidate in candidates:
-        candidate_path = os.path.join(os.getcwd(), "public", _notebooks_path, candidate)
+        candidate_path = _os.path.join(_os.getcwd(), "public", _notebooks_path, candidate)
         try:
             with open(candidate_path, encoding="utf-8") as f:
-                return json.load(f)
+                return _json.load(f)
         except Exception as exc:
             last_error = exc
             continue
@@ -80,9 +116,10 @@ def read_lab_json(path_or_url: str, notebooks_path: str = "lab"):
         raise RuntimeError("Não foi possível carregar o recurso de datasets.")
 
     if normalized.startswith(("http://", "https://")):
+        import json as _json
         from urllib.request import urlopen
 
-        return json.loads(urlopen(normalized, timeout=15).read())
+        return _json.loads(urlopen(normalized, timeout=15).read())
 
     candidates = dataset_candidate_paths(normalized)
     try:

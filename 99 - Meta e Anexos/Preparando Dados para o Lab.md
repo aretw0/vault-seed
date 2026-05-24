@@ -132,21 +132,59 @@ preparados; scripts locais ou CI produzem esses arquivos antes do empacotamento.
 
 ## Como o notebook lê
 
-No notebook, leia primeiro o manifesto:
+Notebooks publicados devem usar o runtime compartilhado do Lab em vez de repetir
+lógica de caminhos em cada arquivo:
 
 ```python
-import json
-from urllib.request import urlopen
+from _lab_notebook_runtime import load_lab_manifest, read_lab_json
 
-datasets = json.loads(urlopen("./assets/datasets/manifest.json").read())
+manifest = load_lab_manifest()
+datasets = {dataset["id"]: dataset for dataset in manifest["datasets"]}
+snapshot = read_lab_json(datasets["perfil-do-vault"]["assetPath"])
 ```
 
-Para um dataset local, use `assetPath`:
+O helper normaliza caminhos como `assets/datasets/...`, tenta as rotas que o
+Marimo WebAssembly costuma resolver (`datasets/...` e `assets/datasets/...`) e
+mantém fallback local para CI e execução fora do navegador.
+
+O mesmo runtime expõe sinais para notebooks que precisam funcionar nos dois
+modos:
 
 ```python
-dataset = datasets["datasets"][0]
-conteudo = urlopen(f"./{dataset['assetPath']}").read()
+from _lab_notebook_runtime import lab_runtime_context, require_local_runtime
+
+context = lab_runtime_context()
+if context["isLocal"]:
+    require_local_runtime("coleta com Playwright ou OCR")
+    # rode aqui operações que não devem ir para o HTML publicado
 ```
 
-Para um dataset remoto, use `url` e trate CORS, tamanho da resposta e tempo de
-carregamento como parte do contrato da fonte.
+Use `lab_runtime_context()` para decidir se a célula está rodando localmente ou
+empacotada em Pyodide/WASM. Use `require_local_runtime()` como trava explícita
+para coletas com Playwright, OCR, APIs com credenciais, arquivos privados ou
+qualquer operação que não deve executar no navegador de quem visita o site.
+
+Para um dataset remoto, use `url` e trate CORS, tamanho da resposta, tempo de
+carregamento e privacidade como parte do contrato da fonte. O notebook ETL deixa
+fontes remotas como opt-in: por padrão ele só usa snapshots empacotados.
+
+## Kitchen sink ETL soberano
+
+O exemplo `/lab/etl.html` consolida uma curadoria de capacidades mínimas de ETL:
+scraping, arquivos, OCR, APIs com credenciais, transformação, carga e
+visualização.
+
+No template, a divisão de responsabilidade é:
+
+- **notebook local** é a bancada de trabalho e pode acionar operações que exigem
+  segredos, navegador real, binários do sistema ou alto custo de processamento;
+- **datasets do Lab** publicam snapshots pequenos, verificáveis e servíveis pelo
+  site;
+- **notebook empacotado** demonstra transformação, auditoria, visualização e
+  exportação leve em JSON/CSV, sem esconder a lógica da pessoa dona do vault.
+
+Essa fronteira evita drift de stack: a interface de análise continua sendo o
+Marimo, mas as partes não empacotáveis ficam guardadas por detecção de runtime e
+produzem snapshots portáveis. Assim o usuário final tem ferramentas mínimas de
+soberania digital para trazer dados da própria realidade a um formato
+versionável, inspecionável e independente de plataformas externas.

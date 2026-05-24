@@ -32,9 +32,7 @@ test("notebook runtime helpers are injected after marimo app creation", () => {
 	const transformed = transformEtcDemo();
 	const appIndex = transformed.indexOf("app = marimo.App");
 	const helperCellIndex = transformed.indexOf("@app.cell");
-	const helperDefinitionIndex = transformed.indexOf(
-		"def _lab_notebook_runtime_helpers():",
-	);
+	const helperDefinitionIndex = transformed.indexOf("def _():");
 
 	assert.notEqual(appIndex, -1, "transformed notebook should keep app setup");
 	assert.notEqual(
@@ -55,6 +53,21 @@ test("notebook runtime helpers are injected after marimo app creation", () => {
 		helperCellIndex < helperDefinitionIndex,
 		"helper definition should be inside the injected marimo cell",
 	);
+	assert.doesNotMatch(
+		transformed,
+		/@app\.cell\n\n/,
+		"injected helper cell should remain parseable Python",
+	);
+	assert.match(
+		transformed.slice(helperDefinitionIndex),
+		/def lab_runtime_context\(/,
+		"runtime context helper should be bundled into the injected cell",
+	);
+	assert.doesNotMatch(
+		transformed,
+		/import json\n\s+import os\n\n\s+import json/,
+		"wrapper should not duplicate imports already present in runtime helper source",
+	);
 });
 
 test("notebook runtime helper import is removed from exported source", () => {
@@ -67,7 +80,12 @@ test("notebook runtime helper import is removed from exported source", () => {
 	);
 	assert.match(
 		transformed,
-		/return load_lab_manifest, read_lab_json/,
+		/return lab_runtime_context, load_lab_manifest, read_lab_json/,
 		"injected helper cell should return the helpers imported by the notebook",
+	);
+	assert.doesNotMatch(
+		transformed,
+		/^\s+lab_runtime_context,\s*$/m,
+		"multiline helper import members must also be removed from exported source",
 	);
 });
