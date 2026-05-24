@@ -163,6 +163,22 @@
   color: var(--sl-color-text-accent);
 }
 
+@media (min-width: 50rem) {
+  :root[data-vault-focus='content'] .sidebar,
+  :root[data-vault-focus='content'] .right-sidebar-container {
+    display: none;
+  }
+
+  :root[data-vault-focus='content'] .main-pane {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  :root[data-vault-focus='content'] .content-panel > .sl-container {
+    max-width: min(100%, calc(var(--sl-content-width) + 8rem));
+  }
+}
+
 /* Mermaid toggle block */
 .mermaid-block {
   margin: 1rem 0;

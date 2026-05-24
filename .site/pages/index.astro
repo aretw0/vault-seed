@@ -37,4 +37,52 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     },
   }}
 >
+  <section class="vault-home-section" aria-labelledby="vault-home-framework">
+    <p class="vault-lead">
+      O vault-seed é um framework tímido: ele não tenta prever o uso final do seu espaço,
+      mas entrega uma base coerente de navegação, publicação, blocos visuais e Lab para que
+      você não precise começar do zero.
+    </p>
+
+    <div class="vault-card-grid">
+      <article class="vault-card">
+        <span class="vault-card__eyebrow">Site pessoal</span>
+        <h2 class="vault-card__title" id="vault-home-framework">Cartão de visita ou jardim digital</h2>
+        <p class="vault-card__body">
+          Publique notas selecionadas com busca, sidebar, metadados e paletas consistentes.
+        </p>
+        <div class="vault-actions">
+          <a class="vault-button" href={`${base}/meta-e-anexos/publicando-seu-vault-como-site/`}>Publicar</a>
+        </div>
+      </article>
+
+      <article class="vault-card">
+        <span class="vault-card__eyebrow">Conhecimento coletivo</span>
+        <h2 class="vault-card__title">Documentação viva para times</h2>
+        <p class="vault-card__body">
+          Use Git, PRs e notas Markdown para manter decisões, recursos e guias em um lugar auditável.
+        </p>
+        <div class="vault-actions">
+          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/convencoes-e-boas-praticas/`}>Convenções</a>
+        </div>
+      </article>
+
+      <article class="vault-card">
+        <span class="vault-card__eyebrow">Lab</span>
+        <h2 class="vault-card__title">Notebooks junto do vault</h2>
+        <p class="vault-card__body">
+          Explore o grafo, publicação e dados preparados sem separar análise, documentação e origem.
+        </p>
+        <div class="vault-actions">
+          <a class="vault-button vault-button--secondary" href={`${base}/lab/`}>Abrir Lab</a>
+        </div>
+      </article>
+    </div>
+  </section>
 </StarlightPage>
+
+<style>
+  .vault-home-section {
+    margin-block: clamp(2rem, 4vw, 4rem);
+  }
+</style>
