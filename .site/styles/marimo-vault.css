@@ -593,7 +593,7 @@ iframe {
   position: fixed;
   z-index: 10000;
   top: 0.75rem;
-  right: 0.75rem;
+  right: 3.75rem;
   display: flex;
   gap: 0.25rem;
   padding: 0.25rem;
@@ -666,7 +666,7 @@ iframe {
 }
 
 :root[data-vault-marimo-presentation="slides"] {
-  --vault-marimo-slide-padding-block: clamp(3rem, 8vh, 6rem);
+  --vault-marimo-slide-padding-block: clamp(2.5rem, 6vh, 4.5rem);
   --vault-marimo-slide-padding-inline: clamp(3rem, 9vw, 8rem);
   scrollbar-gutter: auto;
 }
@@ -683,9 +683,19 @@ iframe {
   overflow: hidden;
 }
 
+:root[data-vault-marimo-presentation="slides"] .reveal,
+:root[data-vault-marimo-presentation="slides"] .reveal .slides,
+:root[data-vault-marimo-presentation="slides"] .reveal .slides section,
+:root[data-vault-marimo-presentation="slides"] .reveal .slides section > div:has(> .mo-slide-content) {
+  overflow: hidden !important;
+}
+
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content {
   box-sizing: border-box;
-  min-height: 100dvh;
+  min-height: 0 !important;
+  max-height: 100%;
+  margin: auto !important;
+  overflow: visible !important;
   padding-block: var(--vault-marimo-slide-padding-block) !important;
   padding-inline: var(--vault-marimo-slide-padding-inline) !important;
 }
@@ -710,9 +720,9 @@ iframe {
 }
 
 :root[data-vault-marimo-presentation="slides"] .vault-marimo-theme-selector {
-  top: auto;
-  right: 1rem;
-  bottom: 1rem;
+  top: 0.75rem;
+  right: 3.75rem;
+  bottom: auto;
 }
 
 @media (max-width: 44rem) {
@@ -738,15 +748,16 @@ iframe {
   }
 
   :root[data-vault-marimo-presentation="slides"] {
-    --vault-marimo-slide-padding-block: clamp(2.75rem, 7vh, 4rem);
+    --vault-marimo-slide-padding-block: clamp(2.5rem, 6vh, 3.5rem);
     --vault-marimo-slide-padding-inline: clamp(1.25rem, 6vw, 2.5rem);
   }
 
   .vault-marimo-theme-selector {
-    top: auto;
-    right: 0.75rem;
-    bottom: 0.75rem;
-    left: 0.75rem;
+    top: 0.75rem;
+    right: 3.5rem;
+    bottom: auto;
+    left: auto;
+    max-width: calc(100vw - 7rem);
     flex-wrap: wrap;
     justify-content: flex-end;
   }
