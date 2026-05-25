@@ -21,6 +21,7 @@ test("deploy-site workflow keeps GitHub Pages deploy gated by build and smoke", 
   assert.match(workflow, /permissions:\n\s+contents: read\n\s+pages: write\n\s+id-token: write/);
   assert.match(workflow, /concurrency:\n\s+group: pages\n\s+cancel-in-progress: true/);
   assert.match(workflow, /build:\n\s+name: Build Astro site\n\s+runs-on: ubuntu-latest\n\s+timeout-minutes: 15/);
+  assert.match(workflow, /"docs\/\*\*"/);
   assert.match(workflow, /run: pnpm --filter @dgk\/astro-plugins build/);
   assert.match(workflow, /run: pnpm run site:build/);
   assert.match(workflow, /uses: astral-sh\/setup-uv@[0-9a-f]{40}/);

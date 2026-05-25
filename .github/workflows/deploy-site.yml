@@ -14,6 +14,7 @@ on:
       - "99 - Meta e Anexos/**"
       - "99 - Meta e Anexos/Notebooks/**"
       - "requirements.txt"
+      - "docs/**"
       - ".site/**"
       - "astro.config.mjs"
       - "packages/astro-plugins/**"
