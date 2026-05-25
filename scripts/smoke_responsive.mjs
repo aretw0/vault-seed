@@ -7,6 +7,7 @@ import { chromium } from "@playwright/test";
 const root = process.cwd();
 const distDir = join(root, "dist");
 const requireExternalNetwork = process.env.VAULT_RESPONSIVE_REQUIRE_EXTERNAL === "1";
+const notebooksPath = process.env.VAULT_NOTEBOOKS_PATH || "lab";
 const errors = [];
 
 const viewports = [
@@ -24,11 +25,11 @@ const pages = [
     label: "lab-doc",
     type: "site",
   },
-  { path: "/lab/publishing.html", label: "notebook-publicacao", type: "notebook" },
-  { path: "/lab/graph.html", label: "notebook-grafo", type: "notebook" },
-  { path: "/lab/etl.html", label: "notebook-etl", type: "notebook" },
+  { path: `/${notebooksPath}/publishing.html`, label: "notebook-publicacao", type: "notebook" },
+  { path: `/${notebooksPath}/graph.html`, label: "notebook-grafo", type: "notebook" },
+  { path: `/${notebooksPath}/etl.html`, label: "notebook-etl", type: "notebook" },
   {
-    path: "/lab/vault-seed-slides.html",
+    path: `/${notebooksPath}/vault-seed-slides.html`,
     label: "notebook-apresentacao",
     type: "notebook",
   },

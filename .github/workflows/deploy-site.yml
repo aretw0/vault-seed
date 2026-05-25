@@ -96,6 +96,7 @@ jobs:
       - name: Smoke responsive site and Lab
         run: node scripts/smoke_responsive.mjs
         env:
+          VAULT_NOTEBOOKS_PATH: ${{ vars.VAULT_NOTEBOOKS_PATH || 'lab' }}
           VAULT_RESPONSIVE_REQUIRE_EXTERNAL: "1"
 
       - name: Upload Pages artifact

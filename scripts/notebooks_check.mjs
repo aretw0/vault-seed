@@ -7,6 +7,7 @@ import { buildLabDatasets } from "./prepare_lab_datasets.mjs";
 import { uvEnv } from "./uv_env.mjs";
 
 const NOTEBOOKS_DIR = "99 - Meta e Anexos/Notebooks";
+const NOTEBOOKS_PATH = process.env.VAULT_NOTEBOOKS_PATH || "lab";
 
 function run(label, args) {
   console.log(`[notebooks:check] ${label}`);
@@ -32,7 +33,7 @@ run("estrutura e formatação", ["check", NOTEBOOKS_DIR, "--strict", "--ignore-s
 run("execução de sessão", ["export", "session", NOTEBOOKS_DIR, "--force-overwrite", "--no-continue-on-error"]);
 
 const mojibakeFiles = globSync([
-  "public/lab/vault-data.json",
+  `public/${NOTEBOOKS_PATH}/vault-data.json`,
   "99 - Meta e Anexos/Notebooks/**/__marimo__/session/*.json",
 ])
   .filter((file) => /(?:\\u00c3|Ã)/.test(readFileSync(file, "utf8")));

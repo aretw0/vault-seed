@@ -67,11 +67,13 @@ function escapeHtml(value) {
 }
 
 function labNavigationHtml(currentOutput) {
+	const labIndexHref = notebooksPath === "lab" ? "./" : "../lab/";
+
 	if (currentOutput === "vault-seed-slides.html") {
 		return String.raw`
 <nav class="vault-marimo-navigation" data-vault-marimo-navigation aria-label="Navegação do vault">
   <a href="../">Vault</a>
-  <a href="./">Lab</a>
+  <a href="${labIndexHref}">Lab</a>
 </nav>
 `;
 	}
@@ -89,7 +91,7 @@ function labNavigationHtml(currentOutput) {
   <header class="vault-lab-topbar" aria-label="Navegação principal do Lab">
     <button class="vault-lab-sidebar-toggle" type="button" data-vault-lab-sidebar-toggle aria-expanded="true" aria-controls="vault-lab-sidebar">Menu</button>
     <a class="vault-lab-brand" href="../">Vault</a>
-    <a class="vault-lab-section" href="./">Lab</a>
+    <a class="vault-lab-section" href="${labIndexHref}">Lab</a>
   </header>
   <aside class="vault-lab-sidebar" id="vault-lab-sidebar" aria-label="Notebooks publicados">
     <div class="vault-lab-sidebar__title">Notebooks</div>

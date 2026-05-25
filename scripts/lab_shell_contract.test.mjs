@@ -23,11 +23,19 @@ test("published Lab pages keep the vault shell contract", () => {
   const exportNotebooks = read("scripts/export_notebooks.mjs");
   const labIndex = read(".site/pages/lab/index.astro");
   const marimoCss = read(".site/styles/marimo-vault.css");
+  const responsiveSmoke = read("scripts/smoke_responsive.mjs");
+  const notebooksCheck = read("scripts/notebooks_check.mjs");
+
+  assert.match(responsiveSmoke, /process\.env\.VAULT_NOTEBOOKS_PATH \|\| "lab"/);
+  assert.match(responsiveSmoke, /`\/\$\{notebooksPath\}\/etl\.html`/);
+  assert.match(notebooksCheck, /process\.env\.VAULT_NOTEBOOKS_PATH \|\| "lab"/);
+  assert.match(notebooksCheck, /`public\/\$\{NOTEBOOKS_PATH\}\/vault-data\.json`/);
 
   assert.match(exportNotebooks, /data-vault-marimo-navigation/);
   assert.match(exportNotebooks, /vault-lab-topbar/);
   assert.match(exportNotebooks, /vault-lab-sidebar/);
   assert.match(exportNotebooks, /vault-seed:lab-sidebar-collapsed/);
+  assert.match(exportNotebooks, /notebooksPath === "lab" \? "\.\/" : "\.\.\/lab\/"/);
   assert.match(exportNotebooks, /data-vault-marimo-theme-selector/);
 
   assert.match(labIndex, /vault-card-grid/);
