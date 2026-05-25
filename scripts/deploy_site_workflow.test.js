@@ -36,6 +36,7 @@ test("deploy-site workflow keeps GitHub Pages deploy gated by build and smoke", 
     "notebooks must be exported before site:check so smoke_site validates published notebook HTML",
   );
   assert.match(workflow, /VAULT_NOTEBOOKS_PATH: \$\{\{ vars\.VAULT_NOTEBOOKS_PATH \|\| 'lab' \}\}/);
+  assert.match(workflow, /VAULT_SITE_REQUIRE_NOTEBOOKS: "1"/);
   assert.match(packageJson.scripts["notebooks:data"], /generate_vault_data\.mjs/);
   assert.match(packageJson.scripts["notebooks:dev"], /notebooks_dev\.mjs/);
   assert.match(packageJson.scripts["notebooks:export"], /export_notebooks\.mjs/);

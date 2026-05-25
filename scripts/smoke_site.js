@@ -22,6 +22,7 @@ const labManifest = JSON.parse(
   fs.readFileSync(path.join(root, ".site", "lab.notebooks.json"), "utf8"),
 );
 const notebooksPath = process.env.VAULT_NOTEBOOKS_PATH || "lab";
+const requirePublishedNotebooks = process.env.VAULT_SITE_REQUIRE_NOTEBOOKS === "1";
 const hasTechnicalDocs = fs.existsSync(path.join(root, "docs", "INDEX.md"));
 const marimoNotebookPaths = new Set(
   labManifest
@@ -136,11 +137,13 @@ if (hasTechnicalDocs) {
   );
 }
 
-for (const relPath of marimoNotebookPaths) {
-  requireCondition(
-    fs.existsSync(path.join(distDir, relPath)),
-    `dist/${relPath} missing — published notebook was not exported before site smoke.`,
-  );
+if (requirePublishedNotebooks) {
+  for (const relPath of marimoNotebookPaths) {
+    requireCondition(
+      fs.existsSync(path.join(distDir, relPath)),
+      `dist/${relPath} missing — published notebook was not exported before site smoke.`,
+    );
+  }
 }
 
 // ── 4. collect content pages ──────────────────────────────────────────────────

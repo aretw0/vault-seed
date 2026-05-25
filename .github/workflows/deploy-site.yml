@@ -88,6 +88,7 @@ jobs:
         env:
           ASTRO_BASE: ${{ steps.pages-url.outputs.base }}
           VAULT_NOTEBOOKS_PATH: ${{ vars.VAULT_NOTEBOOKS_PATH || 'lab' }}
+          VAULT_SITE_REQUIRE_NOTEBOOKS: "1"
 
       - name: Install Playwright browser
         run: pnpm exec playwright install chromium
