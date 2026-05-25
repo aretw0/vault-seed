@@ -595,12 +595,34 @@ iframe {
   top: 0.75rem;
   right: 0.75rem;
   display: flex;
-  gap: 0.25rem;
-  padding: 0.25rem;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+}
+
+.vault-marimo-theme-toggle,
+.vault-marimo-theme-panel {
   border: 1px solid var(--border);
   border-radius: 0.5rem;
   background: color-mix(in srgb, var(--card) 92%, transparent);
   box-shadow: 0 8px 24px color-mix(in srgb, var(--foreground) 12%, transparent);
+}
+
+.vault-marimo-theme-toggle {
+  padding: 0.55rem 0.7rem !important;
+}
+
+.vault-marimo-theme-panel {
+  display: none;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.25rem;
+  max-width: calc(100vw - 1.5rem);
+  padding: 0.25rem;
+}
+
+:root[data-vault-marimo-theme-panel="open"] .vault-marimo-theme-panel {
+  display: flex;
 }
 
 .vault-marimo-theme-selector button {
@@ -842,7 +864,6 @@ iframe {
     bottom: auto;
     left: auto;
     max-width: calc(100vw - 1.5rem);
-    flex-wrap: wrap;
     justify-content: flex-end;
   }
 

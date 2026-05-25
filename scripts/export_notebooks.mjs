@@ -124,15 +124,18 @@ function labNavigationHtml(currentOutput) {
 }
 
 const themeSelectorHtml = String.raw`
-<div class="vault-marimo-theme-selector" data-vault-marimo-theme-selector role="group" aria-label="Tema do notebook">
-  <select data-vault-marimo-palette-option aria-label="Paleta do notebook">
-    <option value="verde-jardim">Verde jardim</option>
-    <option value="oceano">Oceano</option>
-    <option value="terracota">Terracota</option>
-  </select>
-  <button type="button" data-vault-marimo-theme-option="system" aria-pressed="true">Sistema</button>
-  <button type="button" data-vault-marimo-theme-option="light" aria-pressed="false">Claro</button>
-  <button type="button" data-vault-marimo-theme-option="dark" aria-pressed="false">Escuro</button>
+<div class="vault-marimo-theme-selector" data-vault-marimo-theme-selector>
+  <button class="vault-marimo-theme-toggle" type="button" data-vault-marimo-theme-toggle aria-expanded="false" aria-controls="vault-marimo-theme-panel">Tema</button>
+  <div class="vault-marimo-theme-panel" id="vault-marimo-theme-panel" data-vault-marimo-theme-panel role="group" aria-label="Tema do notebook">
+    <select data-vault-marimo-palette-option aria-label="Paleta do notebook">
+      <option value="verde-jardim">Verde jardim</option>
+      <option value="oceano">Oceano</option>
+      <option value="terracota">Terracota</option>
+    </select>
+    <button type="button" data-vault-marimo-theme-option="system" aria-pressed="true">Sistema</button>
+    <button type="button" data-vault-marimo-theme-option="light" aria-pressed="false">Claro</button>
+    <button type="button" data-vault-marimo-theme-option="dark" aria-pressed="false">Escuro</button>
+  </div>
 </div>
 <script>
 (() => {
@@ -141,6 +144,7 @@ const themeSelectorHtml = String.raw`
   const root = document.documentElement;
   const media = window.matchMedia("(prefers-color-scheme: dark)");
   const palettes = ["verde-jardim", "oceano", "terracota"];
+  const panelStorageKey = "vault-seed:marimo-theme-panel";
 
   function resolveTheme(choice) {
     return choice === "system" ? (media.matches ? "dark" : "light") : choice;
@@ -182,10 +186,26 @@ const themeSelectorHtml = String.raw`
     });
   }
 
+  function applyPanel(open) {
+    root.dataset.vaultMarimoThemePanel = open ? "open" : "closed";
+    document.querySelectorAll("[data-vault-marimo-theme-toggle]").forEach((button) => {
+      button.setAttribute("aria-expanded", String(open));
+    });
+  }
+
   function init() {
     const savedTheme = localStorage.getItem(themeStorageKey) || "system";
     const savedPalette = localStorage.getItem(paletteStorageKey) || "verde-jardim";
     applyTheme(savedTheme, savedPalette);
+    applyPanel(localStorage.getItem(panelStorageKey) === "open");
+
+    document.querySelectorAll("[data-vault-marimo-theme-toggle]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const open = root.dataset.vaultMarimoThemePanel !== "open";
+        localStorage.setItem(panelStorageKey, open ? "open" : "closed");
+        applyPanel(open);
+      });
+    });
 
     document.querySelectorAll("[data-vault-marimo-theme-option]").forEach((button) => {
       button.addEventListener("click", () => {
