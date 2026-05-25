@@ -19,6 +19,17 @@ test("Astro and Marimo share theme storage keys", () => {
   assert.match(exportNotebooks, /legacyPaletteStorageKey = "vault-seed:marimo-palette"/);
 });
 
+test("Lab slide documentation matches the native Marimo layout contract", () => {
+  const slideNotebook = read("99 - Meta e Anexos/Notebooks/apresentacao-vault-seed.py");
+  const labGuide = read("99 - Meta e Anexos/Usando o Lab (Notebooks Marimo).md");
+
+  assert.match(slideNotebook, /layout_file="layouts\/apresentacao-vault-seed\.slides\.json"/);
+  assert.match(labGuide, /layout_file/);
+  assert.match(labGuide, /apresentacao-vault-seed\.slides\.json/);
+  assert.doesNotMatch(labGuide, /mo\.carousel/);
+  assert.doesNotMatch(labGuide, /Slides não entram automaticamente/);
+});
+
 test("published Lab pages keep the vault shell contract", () => {
   const exportNotebooks = read("scripts/export_notebooks.mjs");
   const labIndex = read(".site/pages/lab/index.astro");

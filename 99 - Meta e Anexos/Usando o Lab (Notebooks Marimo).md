@@ -9,7 +9,7 @@ tags:
   - meta/automacao
 status: published
 created: 2026-05-22
-updated: 2026-05-23
+updated: 2026-05-25
 category: guia
 audience: todos
 related:
@@ -136,7 +136,7 @@ O editor local do Marimo tem controles de visualização que ajudam durante a cr
 
 No Lab publicado, o export usa `marimo export html-wasm` em modo `run`. Esse modo entrega uma página interativa, sem depender de servidor Python, mas não leva todos os controles do editor local.
 
-Para apresentações publicadas no navegador, este vault usa `mo.carousel` dentro do próprio notebook. Isso mantém a apresentação empacotada como HTML WebAssembly e evita depender de um `layout_file` de slides, que é mais sensível em navegadores móveis.
+Para apresentações publicadas no navegador, este vault usa o layout nativo de slides do Marimo via `layout_file`. O arquivo de layout fica em `99 - Meta e Anexos/Notebooks/layouts/apresentacao-vault-seed.slides.json`, versionado junto do notebook, e é copiado temporariamente durante o export para manter o HTML WebAssembly self-contained.
 
 O Marimo também exporta notebooks para outros formatos. Os caminhos mais úteis aqui são:
 
@@ -151,7 +151,7 @@ O Marimo também exporta notebooks para outros formatos. Os caminhos mais úteis
 | Script | `marimo export script` | gerar um Python plano |
 | Session | `marimo export session` | validar execução sem navegador |
 
-O vault já tem um notebook de apresentação em `99 - Meta e Anexos/Notebooks/apresentacao-vault-seed.py`. Ele usa `mo.carousel` para criar uma navegação de apresentação dentro do HTML publicado.
+O vault já tem um notebook de apresentação em `99 - Meta e Anexos/Notebooks/apresentacao-vault-seed.py`. Ele declara `layout_file="layouts/apresentacao-vault-seed.slides.json"` para criar a navegação de apresentação no HTML publicado.
 
 Para exportá-lo como HTML WebAssembly de apresentação:
 
@@ -159,7 +159,7 @@ Para exportá-lo como HTML WebAssembly de apresentação:
 pnpm run notebooks:export:slides
 ```
 
-O HTML é gerado em `dist/lab/vault-seed-slides.html`. Esse arquivo é um artefato local de build, não uma nota do vault.
+Por padrão, o HTML é gerado em `dist/lab/vault-seed-slides.html`. Se você configurar `VAULT_NOTEBOOKS_PATH`, ele segue esse segmento, por exemplo `dist/notebooks/vault-seed-slides.html`. Esse arquivo é um artefato local de build, não uma nota do vault.
 
 Para gerar um PDF de apresentação quando o ambiente suportar Playwright/WebPDF, use o fluxo próprio de PDF em slides:
 
@@ -175,7 +175,7 @@ uv run --with playwright playwright install chromium
 
 Esse caminho gera um artefato de apresentação estático, mas é mais sensível ao ambiente local. Em Windows, o caminho PDF pode esbarrar na combinação `nbconvert` + Playwright + event loop assíncrono; nesse caso, prefira a apresentação em HTML WebAssembly ou rode o PDF em Linux/WSL/CI.
 
-Para o site `/lab/`, continue usando o HTML WebAssembly como experiência interativa principal. Slides não entram automaticamente em `.site/lab.notebooks.json`; publique ou distribua esse artefato conscientemente quando ele fizer parte de uma entrega.
+Para o site `/lab/`, continue usando o HTML WebAssembly como experiência interativa principal. Slides só entram no Lab publicado quando há uma entrada consciente em `.site/lab.notebooks.json` com `publish: true`, como acontece com a apresentação demonstrativa do `vault-seed`.
 
 ## Modos De Execução
 
