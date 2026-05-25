@@ -25,10 +25,12 @@ const labManifest = JSON.parse(
 const notebooksPath = resolveNotebooksPath();
 const requirePublishedNotebooks = process.env.VAULT_SITE_REQUIRE_NOTEBOOKS === "1";
 const hasTechnicalDocs = fs.existsSync(path.join(root, "docs", "INDEX.md"));
+const publishedNotebookEntries = labManifest.filter((entry) => entry.publish);
 const marimoNotebookPaths = new Set(
-  labManifest
-    .filter((entry) => entry.publish)
-    .map((entry) => `${notebooksPath}/${entry.output}`),
+  publishedNotebookEntries.map((entry) => `${notebooksPath}/${entry.output}`),
+);
+const defaultMarimoNotebookPaths = new Set(
+  publishedNotebookEntries.map((entry) => `lab/${entry.output}`),
 );
 const errors = [];
 const warnings = [];
@@ -147,8 +149,8 @@ if (requirePublishedNotebooks) {
   }
 }
 
-if (notebooksPath !== "lab") {
-  for (const entry of labManifest.filter((item) => item.publish)) {
+if (requirePublishedNotebooks && notebooksPath !== "lab") {
+  for (const entry of publishedNotebookEntries) {
     requireCondition(
       !fs.existsSync(path.join(distDir, "lab", entry.output)),
       `dist/lab/${entry.output} exists while VAULT_NOTEBOOKS_PATH=${notebooksPath} — remove stale default notebook exports from the deploy artifact.`,
@@ -199,7 +201,7 @@ const internalHrefPattern = /<a\s[^>]*href="(\/[^"#?][^"]*?)"/g;
 const hasMarkdownContent = /class="[^"]*sl-markdown-content[^"]*"/;
 
 function isMarimoNotebook(relPath) {
-  return marimoNotebookPaths.has(relPath);
+  return marimoNotebookPaths.has(relPath) || defaultMarimoNotebookPaths.has(relPath);
 }
 
 function hasMarimoRuntime(content) {
