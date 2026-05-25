@@ -174,15 +174,15 @@ requireCondition(
   "Marimo exported notebooks must harden table, data-grid, and select colors for accessible dark/light themes.",
 );
 requireCondition(
-  presentationNotebook.includes("mo.carousel([") &&
-    presentationNotebook.includes("def slide(source):") &&
-    presentationNotebook.includes('app = marimo.App(width="medium")') &&
-    !presentationNotebook.includes("layout_file") &&
-    !exists("99 - Meta e Anexos/Notebooks/layouts/apresentacao-vault-seed.slides.json") &&
+  presentationNotebook.includes('app = marimo.App(\n    width="medium",\n    layout_file="layouts/apresentacao-vault-seed.slides.json",\n)') &&
+    exists("99 - Meta e Anexos/Notebooks/layouts/apresentacao-vault-seed.slides.json") &&
+    !presentationNotebook.includes("mo.carousel") &&
+    !presentationNotebook.includes("def slide(source):") &&
+    notebooksExportScript.includes("cpSync(sourceLayoutsDir") &&
     marimoCss.includes("overflow-x: hidden") &&
     marimoCss.includes("-webkit-overflow-scrolling: touch") &&
-    marimoCss.includes("marimo-carousel"),
-  "Marimo presentation notebooks must use the responsive carousel path instead of a fragile slides layout file.",
+    marimoCss.includes("data-vault-marimo-presentation"),
+  "Marimo presentation notebook must use the native slides layout and export its layout file with the notebook source.",
 );
 requireCondition(
   notebooksExportScript.includes("VAULT_MARIMO_THEME_SELECTOR") &&
@@ -197,13 +197,13 @@ requireCondition(
 );
 requireCondition(
   notebooksExportScript.includes("data-vault-marimo-navigation") &&
-    notebooksExportScript.includes('<a href="../">Vault</a>\n  <a href="./">Lab</a>') &&
+    notebooksExportScript.includes('href="${labIndexHref}"') &&
     notebooksExportScript.includes("data-vault-marimo-presentation-fullscreen") &&
-    notebooksExportScript.includes("vault-marimo-presentation-fullscreen-toggle") &&
+    notebooksExportScript.includes("vaultMarimoFullscreenButton") &&
     notebooksExportScript.includes("Fechar tela cheia") &&
     notebooksSlidesScript.includes("data-vault-marimo-navigation") &&
     notebooksSlidesScript.includes("data-vault-marimo-presentation-fullscreen") &&
-    notebooksSlidesScript.includes("vault-marimo-presentation-fullscreen-toggle") &&
+    notebooksSlidesScript.includes("vaultMarimoFullscreenButton") &&
     notebooksSlidesScript.includes("Fechar tela cheia") &&
     !notebooksExportScript.includes("data-vault-marimo-presentation-exit") &&
     marimoCss.includes(".vault-marimo-navigation"),
@@ -216,7 +216,8 @@ requireCondition(
     labDatasetsManifest.some((entry) => entry.id === "perfil-do-vault" && entry.source === "dados/lab/perfil-do-vault.json") &&
     labDatasetsManifest.some((entry) => entry.id === "json-remoto-opcional" && entry.runtimeUrl) &&
     labNotebooksManifest.some((entry) => entry.source === "99 - Meta e Anexos/Notebooks/etl-demo.py" && entry.publish === true) &&
-    etlNotebook.includes("assets/datasets/manifest.json") &&
+    etlNotebook.includes("load_lab_manifest") &&
+    etlNotebook.includes("read_lab_json") &&
     etlNotebook.includes("Carregar exemplo remoto no navegador"),
   "Lab ETL demo must keep local snapshot generation, dataset manifest packaging, and a published notebook example wired together.",
 );
