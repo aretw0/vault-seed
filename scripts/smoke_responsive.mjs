@@ -219,30 +219,31 @@ async function assertPresentationSizing(page, target, viewport, label, externalN
     return;
   }
 
+  const slideSelector = ".mo-slide-content";
   if (externalNetworkAvailable) {
-    await page.waitForSelector("marimo-carousel", {
+    await page.waitForSelector(slideSelector, {
       state: "visible",
       timeout: 30000,
     });
   }
 
-  const carouselBox = await page
-    .locator("marimo-carousel")
+  const slideBox = await page
+    .locator(slideSelector)
     .first()
     .boundingBox()
     .catch(() => null);
-  if (!carouselBox) {
+  if (!slideBox) {
     if (externalNetworkAvailable) {
-      fail(`${label}: presentation carousel is not visible`);
+      fail(`${label}: presentation slide content is not visible`);
     }
     return;
   }
 
   const maxExpectedWidth = Math.min(1248, viewport.width - 48);
-  if (carouselBox.width > maxExpectedWidth + 2) {
+  if (slideBox.width > maxExpectedWidth + 2) {
     fail(
-      `${label}: presentation carousel too wide (${Math.round(
-        carouselBox.width,
+      `${label}: presentation slide content too wide (${Math.round(
+        slideBox.width,
       )}px > ${maxExpectedWidth}px)`,
     );
   }
