@@ -78,15 +78,16 @@ jobs:
           VAULT_THEME_SELECTOR: ${{ github.repository == 'aretw0/vault-seed' && '1' || '0' }}
           VAULT_NOTEBOOKS_PATH: ${{ vars.VAULT_NOTEBOOKS_PATH || 'lab' }}
 
-      - name: Check site
-        run: pnpm run site:check
-        env:
-          ASTRO_BASE: ${{ steps.pages-url.outputs.base }}
-
       - name: Export analysis notebooks
         env:
           VAULT_NOTEBOOKS_PATH: ${{ vars.VAULT_NOTEBOOKS_PATH || 'lab' }}
         run: pnpm run notebooks:export
+
+      - name: Check site
+        run: pnpm run site:check
+        env:
+          ASTRO_BASE: ${{ steps.pages-url.outputs.base }}
+          VAULT_NOTEBOOKS_PATH: ${{ vars.VAULT_NOTEBOOKS_PATH || 'lab' }}
 
       - name: Install Playwright browser
         run: pnpm exec playwright install chromium

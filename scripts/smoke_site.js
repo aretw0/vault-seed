@@ -21,11 +21,12 @@ const distDir = path.join(root, "dist");
 const labManifest = JSON.parse(
   fs.readFileSync(path.join(root, ".site", "lab.notebooks.json"), "utf8"),
 );
+const notebooksPath = process.env.VAULT_NOTEBOOKS_PATH || "lab";
 const hasTechnicalDocs = fs.existsSync(path.join(root, "docs", "INDEX.md"));
 const marimoNotebookPaths = new Set(
   labManifest
     .filter((entry) => entry.publish)
-    .map((entry) => `lab/${entry.output}`),
+    .map((entry) => `${notebooksPath}/${entry.output}`),
 );
 const errors = [];
 const warnings = [];
@@ -132,6 +133,13 @@ if (hasTechnicalDocs) {
   requireCondition(
     !fs.existsSync(path.join(distDir, "docs", "superpowers")),
     "dist/docs/superpowers/ exists — internal planning artifacts leaked into technical docs.",
+  );
+}
+
+for (const relPath of marimoNotebookPaths) {
+  requireCondition(
+    fs.existsSync(path.join(distDir, relPath)),
+    `dist/${relPath} missing — published notebook was not exported before site smoke.`,
   );
 }
 

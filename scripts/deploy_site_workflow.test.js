@@ -31,6 +31,11 @@ test("deploy-site workflow keeps GitHub Pages deploy gated by build and smoke", 
   assert.match(workflow, /version: "0\.11\.11"/);
   assert.doesNotMatch(workflow, /uv pip install --system/);
   assert.match(workflow, /run: pnpm run notebooks:export/);
+  assert.ok(
+    workflow.indexOf("run: pnpm run notebooks:export") < workflow.indexOf("run: pnpm run site:check"),
+    "notebooks must be exported before site:check so smoke_site validates published notebook HTML",
+  );
+  assert.match(workflow, /VAULT_NOTEBOOKS_PATH: \$\{\{ vars\.VAULT_NOTEBOOKS_PATH \|\| 'lab' \}\}/);
   assert.match(packageJson.scripts["notebooks:data"], /generate_vault_data\.mjs/);
   assert.match(packageJson.scripts["notebooks:dev"], /notebooks_dev\.mjs/);
   assert.match(packageJson.scripts["notebooks:export"], /export_notebooks\.mjs/);
