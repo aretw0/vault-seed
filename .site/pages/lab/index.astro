@@ -3,7 +3,14 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import manifest from '../../lab.notebooks.json';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const notebooksPath = import.meta.env.VAULT_NOTEBOOKS_PATH ?? 'lab';
+function resolveNotebooksPath(value: unknown): string {
+  const normalized = String(value || 'lab').trim().replace(/\\/g, '/').replace(/^\/+|\/+$/g, '');
+  if (!/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(normalized)) {
+    throw new Error(`VAULT_NOTEBOOKS_PATH inválido: ${String(value)}`);
+  }
+  return normalized;
+}
+const notebooksPath = resolveNotebooksPath(import.meta.env.VAULT_NOTEBOOKS_PATH);
 
 const notebooks = manifest
   .filter((notebook) => notebook.publish)

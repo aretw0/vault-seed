@@ -14,6 +14,7 @@ import { tmpdir } from "node:os";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { uvEnv } from "./uv_env.mjs";
+import { resolveNotebooksPath } from "./notebook_path.mjs";
 import { writeVaultData } from "./generate_vault_data.mjs";
 import { buildLabDatasets } from "./prepare_lab_datasets.mjs";
 import { replaceImportAndInjectRuntimeHelpers } from "./notebook_export_runtime_helpers.mjs";
@@ -21,7 +22,7 @@ import { replaceImportAndInjectRuntimeHelpers } from "./notebook_export_runtime_
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const args = new Set(process.argv.slice(2));
 const manifestPath = join(ROOT, ".site", "lab.notebooks.json");
-const notebooksPath = process.env.VAULT_NOTEBOOKS_PATH || "lab";
+const notebooksPath = resolveNotebooksPath();
 const outputRoot = args.has("--public")
 	? join(ROOT, "public")
 	: process.env.VAULT_NOTEBOOKS_OUTPUT_DIR || join(ROOT, "dist");

@@ -3,11 +3,12 @@ import { readFile, stat } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { extname, join, normalize, relative, resolve } from "node:path";
 import { chromium } from "@playwright/test";
+import { resolveNotebooksPath } from "./notebook_path.mjs";
 
 const root = process.cwd();
 const distDir = join(root, "dist");
 const requireExternalNetwork = process.env.VAULT_RESPONSIVE_REQUIRE_EXTERNAL === "1";
-const notebooksPath = process.env.VAULT_NOTEBOOKS_PATH || "lab";
+const notebooksPath = resolveNotebooksPath();
 const errors = [];
 
 const viewports = [

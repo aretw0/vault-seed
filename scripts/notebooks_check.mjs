@@ -4,10 +4,11 @@ import { readFileSync } from "node:fs";
 import { globSync } from "glob";
 import { writeVaultData } from "./generate_vault_data.mjs";
 import { buildLabDatasets } from "./prepare_lab_datasets.mjs";
+import { resolveNotebooksPath } from "./notebook_path.mjs";
 import { uvEnv } from "./uv_env.mjs";
 
 const NOTEBOOKS_DIR = "99 - Meta e Anexos/Notebooks";
-const NOTEBOOKS_PATH = process.env.VAULT_NOTEBOOKS_PATH || "lab";
+const NOTEBOOKS_PATH = resolveNotebooksPath();
 
 function run(label, args) {
   console.log(`[notebooks:check] ${label}`);

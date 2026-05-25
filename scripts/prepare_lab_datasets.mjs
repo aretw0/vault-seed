@@ -3,10 +3,11 @@ import { copyFileSync, existsSync, mkdirSync, readFileSync, statSync, writeFileS
 import { createHash } from "node:crypto";
 import { basename, dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
+import { resolveNotebooksPath } from "./notebook_path.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const MANIFEST_PATH = join(ROOT, ".site", "lab.datasets.json");
-const notebooksPath = process.env.VAULT_NOTEBOOKS_PATH || "lab";
+const notebooksPath = resolveNotebooksPath();
 const outputRoot = process.env.VAULT_NOTEBOOKS_OUTPUT_DIR || join(ROOT, "public");
 const outDir = join(outputRoot, notebooksPath);
 const DATASET_ROOT = "datasets";

@@ -15,13 +15,14 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
+const { resolveNotebooksPath } = require("./notebook_path.cjs");
 
 const root = process.cwd();
 const distDir = path.join(root, "dist");
 const labManifest = JSON.parse(
   fs.readFileSync(path.join(root, ".site", "lab.notebooks.json"), "utf8"),
 );
-const notebooksPath = process.env.VAULT_NOTEBOOKS_PATH || "lab";
+const notebooksPath = resolveNotebooksPath();
 const requirePublishedNotebooks = process.env.VAULT_SITE_REQUIRE_NOTEBOOKS === "1";
 const hasTechnicalDocs = fs.existsSync(path.join(root, "docs", "INDEX.md"));
 const marimoNotebookPaths = new Set(

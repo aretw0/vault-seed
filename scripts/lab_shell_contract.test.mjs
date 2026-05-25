@@ -26,9 +26,9 @@ test("published Lab pages keep the vault shell contract", () => {
   const responsiveSmoke = read("scripts/smoke_responsive.mjs");
   const notebooksCheck = read("scripts/notebooks_check.mjs");
 
-  assert.match(responsiveSmoke, /process\.env\.VAULT_NOTEBOOKS_PATH \|\| "lab"/);
+  assert.match(responsiveSmoke, /resolveNotebooksPath\(\)/);
   assert.match(responsiveSmoke, /`\/\$\{notebooksPath\}\/etl\.html`/);
-  assert.match(notebooksCheck, /process\.env\.VAULT_NOTEBOOKS_PATH \|\| "lab"/);
+  assert.match(notebooksCheck, /resolveNotebooksPath\(\)/);
   assert.match(notebooksCheck, /`public\/\$\{NOTEBOOKS_PATH\}\/vault-data\.json`/);
 
   assert.match(exportNotebooks, /data-vault-marimo-navigation/);
@@ -38,6 +38,7 @@ test("published Lab pages keep the vault shell contract", () => {
   assert.match(exportNotebooks, /notebooksPath === "lab" \? "\.\/" : "\.\.\/lab\/"/);
   assert.match(exportNotebooks, /data-vault-marimo-theme-selector/);
 
+  assert.match(labIndex, /resolveNotebooksPath/);
   assert.match(labIndex, /vault-card-grid/);
   assert.match(labIndex, /vault-card/);
   assert.match(labIndex, /vault-button/);
