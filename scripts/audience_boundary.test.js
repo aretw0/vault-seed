@@ -38,3 +38,18 @@ test("GitHub-facing entrypoints use markdown links instead of vault-only wikilin
     assert.doesNotMatch(read(file), /\[\[/, `${file} should render cleanly on GitHub`);
   }
 });
+
+test("public positioning avoids inflated framework language", () => {
+  for (const file of [
+    "README.md",
+    "README.template.md",
+    ".site/pages/index.astro",
+    "99 - Meta e Anexos/Identidade Visual e Blocos de Interface.md",
+  ]) {
+    assert.doesNotMatch(
+      read(file),
+      /framework\s+t[ií]mido|\bframework\b/i,
+      `${file} should describe vault-seed as a base/template, not a framework`,
+    );
+  }
+});

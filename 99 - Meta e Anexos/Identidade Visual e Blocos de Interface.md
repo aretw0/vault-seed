@@ -3,7 +3,7 @@ title: Identidade Visual e Blocos de Interface
 aliases:
   - UI do Vault
   - Blocos de Interface
-  - Framework Visual
+  - Base Visual
   - Design do Vault Seed
 tags:
   - meta/site
@@ -22,7 +22,7 @@ related:
 
 # Identidade Visual e Blocos de Interface
 
-O vault-seed é um framework tímido. Ele não tenta impor uma marca, uma tese
+O vault-seed é uma base flexível. Ele não tenta impor uma marca, uma tese
 editorial ou um produto final. Ele entrega contratos pequenos para que um vault
 possa virar site pessoal, blog simples, documentação coletiva ou cartão de
 visita sem perder coerência visual.
@@ -51,7 +51,7 @@ transformar o vault em uma aplicação acoplada ao tema.
 
 ### Sem drift entre documentação e interface
 
-Se a home, o Lab e os guias falam do mesmo framework, eles devem usar os mesmos
+Se a home, o Lab e os guias falam da mesma base, eles devem usar os mesmos
 nomes e os mesmos blocos. Quando um bloco muda, a mudança deve aparecer no CSS
 compartilhado em `.site/styles/custom.css`, não copiada página por página.
 
@@ -91,7 +91,7 @@ Use HTML simples quando uma página precisar de uma composição visual estável
 No Obsidian e no GitHub isso continua sendo HTML comum dentro do Markdown. No
 site, as classes recebem a camada visual curada.
 
-## Como evoluir sem quebrar o framework
+## Como evoluir sem quebrar a base
 
 Antes de criar um novo bloco, pergunte:
 

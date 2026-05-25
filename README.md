@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/github/license/aretw0/vault-seed.svg?color=red)](LICENSE.md)
 [![Release](https://img.shields.io/github/release/aretw0/vault-seed.svg?branch=main)](https://github.com/aretw0/vault-seed/releases)
 
-Esta "semente" (seed) de cofre (vault) é um framework tímido para conhecimento local-first: arquivos puros, estrutura inicial, automações básicas, publicação Astro e um Lab Marimo opcional sem impor o uso final do vault.
+Esta "semente" (seed) de cofre (vault) é uma base flexível para conhecimento local-first: arquivos puros, estrutura inicial, automações básicas, publicação Astro e um Lab Marimo opcional sem impor o uso final do vault.
 
 > Template original: [https://github.com/aretw0/vault-seed](https://github.com/aretw0/vault-seed)
 

@@ -1,6 +1,6 @@
 # {{REPO_NAME}}
 
-Esta é uma "semente" (seed) de cofre (vault): um framework tímido para conhecimento local-first com arquivos puros, estrutura inicial, publicação Astro e Lab Marimo opcional, sem impor o uso final do seu espaço.
+Esta é uma "semente" (seed) de cofre (vault): uma base flexível para conhecimento local-first com arquivos puros, estrutura inicial, publicação Astro e Lab Marimo opcional, sem impor o uso final do seu espaço.
 
 > Template original: [https://github.com/aretw0/vault-seed](https://github.com/aretw0/vault-seed)
 
