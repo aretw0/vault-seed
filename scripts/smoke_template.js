@@ -129,6 +129,12 @@ requireCondition(
   "notebooks:export must copy vault-data.json to both notebook root and assets/ for WASM runtime fetches.",
 );
 requireCondition(
+  notebooksExportScript.includes("isNotebookExportFresh") &&
+    notebooksExportScript.includes("skip notebook:") &&
+    notebooksExportScript.includes('"--force"'),
+  "notebooks:export must skip fresh notebook HTML and force overwrite only when an export is stale.",
+);
+requireCondition(
   templatePkg.dependencies?.["@dgk/astro-plugins"] === "workspace:^",
   "Generated vaults must use the local workspace @dgk/astro-plugins package until it is published.",
 );

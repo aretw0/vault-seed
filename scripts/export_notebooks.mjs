@@ -5,8 +5,10 @@ import {
 	existsSync,
 	mkdtempSync,
 	mkdirSync,
+	readdirSync,
 	readFileSync,
 	rmSync,
+	statSync,
 	writeFileSync,
 } from "node:fs";
 import { basename, dirname, join } from "node:path";
@@ -20,6 +22,7 @@ import { buildLabDatasets } from "./prepare_lab_datasets.mjs";
 import { replaceImportAndInjectRuntimeHelpers } from "./notebook_export_runtime_helpers.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
+const SCRIPT_PATH = fileURLToPath(import.meta.url);
 const args = new Set(process.argv.slice(2));
 const manifestPath = join(ROOT, ".site", "lab.notebooks.json");
 const notebooksPath = resolveNotebooksPath();
@@ -374,6 +377,43 @@ function removeObsoleteDefaultNotebookExports() {
 	rmSync(join(staleLabDir, "datasets"), { recursive: true, force: true });
 }
 
+function listFilesRecursive(dir) {
+	if (!existsSync(dir)) return [];
+
+	const files = [];
+	for (const entry of readdirSync(dir, { withFileTypes: true })) {
+		const fullPath = join(dir, entry.name);
+		if (entry.isDirectory()) {
+			files.push(...listFilesRecursive(fullPath));
+		} else if (entry.isFile()) {
+			files.push(fullPath);
+		}
+	}
+	return files;
+}
+
+function notebookExportDependencies(source) {
+	return [
+		source,
+		notebookRuntimeHelperPath,
+		manifestPath,
+		SCRIPT_PATH,
+		join(ROOT, "pyproject.toml"),
+		join(ROOT, ".site", "styles", "marimo-vault.css"),
+		...listFilesRecursive(join(dirname(source), "layouts")),
+	];
+}
+
+function isNotebookExportFresh(output, source) {
+	if (!existsSync(output)) return false;
+
+	const outputMtime = statSync(output).mtimeMs;
+	return notebookExportDependencies(source).every((dependency) => {
+		if (!existsSync(dependency)) return true;
+		return statSync(dependency).mtimeMs <= outputMtime;
+	});
+}
+
 function prepareNotebookSourceForExport(source) {
 	const sourceCode = readFileSync(source, "utf8");
 	const runtimeHelperSource = readFileSync(notebookRuntimeHelperPath, "utf8");
@@ -401,11 +441,16 @@ copyVaultDataForWasm();
 for (const notebook of manifest.filter((entry) => entry.publish)) {
 	const source = join(ROOT, notebook.source);
 	const output = join(outDir, notebook.output);
-	const prepared = prepareNotebookSourceForExport(source);
 	mkdirSync(dirname(output), { recursive: true });
-	console.log(
-		`export notebook: ${notebook.source} -> ${outputRoot.replace(ROOT, "").replace(/^[\\/]/, "")}/${notebooksPath}/${notebook.output}`,
-	);
+	const outputLabel = `${outputRoot.replace(ROOT, "").replaceAll("\\", "/").replace(/^\//, "")}/${notebooksPath}/${notebook.output}`;
+
+	if (isNotebookExportFresh(output, source)) {
+		console.log(`skip notebook: ${notebook.source} -> ${outputLabel} (sem mudanças)`);
+		continue;
+	}
+
+	const prepared = prepareNotebookSourceForExport(source);
+	console.log(`export notebook: ${notebook.source} -> ${outputLabel}`);
 
 	try {
 		const result = spawnSync(
@@ -421,6 +466,7 @@ for (const notebook of manifest.filter((entry) => entry.publish)) {
 				prepared.source,
 				"--output",
 				output,
+				"--force",
 			],
 			{
 				cwd: ROOT,
