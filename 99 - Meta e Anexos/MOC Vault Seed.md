@@ -19,6 +19,7 @@ related:
   - "[[Exploracao Guiada do Vault]]"
   - "[[Depois da Recepcao do Template]]"
   - "[[Evoluindo seu Vault com Links, Tags e MOCs]]"
+  - "[[Identidade Visual e Blocos de Interface]]"
 ---
 
 # MOC Vault Seed
@@ -33,6 +34,7 @@ Este mapa mostra o vault como exemplo de organização. Use-o para entender quai
 - [[Depois da Recepcao do Template]]
 - [[Configurando o Obsidian Git]]
 - [[Publicando seu Vault como Site]]
+- [[Identidade Visual e Blocos de Interface]]
 - [[Usando o Lab (Notebooks Marimo)]]
 - [[Preparando Dados para o Lab]]
 
@@ -54,6 +56,7 @@ Este mapa mostra o vault como exemplo de organização. Use-o para entender quai
 - [[Plugins Essenciais e Recomendados]]
 - [[Usando o Git e o GitHub para Sincronizar seu Vault]]
 - [[Publicando seu Vault como Site]]
+- [[Identidade Visual e Blocos de Interface]]
 - [[Usando o Lab (Notebooks Marimo)]]
 - [[Preparando Dados para o Lab]]
 - [[Conhecendo o Agents Lab]]

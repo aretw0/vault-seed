@@ -13,6 +13,7 @@ updated: 2026-05-22
 category: guia
 audience: todos
 related:
+  - "[[Identidade Visual e Blocos de Interface]]"
   - "[[Usando o Lab (Notebooks Marimo)]]"
   - "[[O Ciclo de Vida do Conhecimento (Versionamento para Jardineiros Digitais)]]"
 ---
@@ -57,4 +58,8 @@ Faça commit e push para `main`. O histórico Git continua sendo o registro da m
 ## Relação Com O Lab
 
 A página `/lab/` faz parte do site. Os notebooks interativos aparecem ali depois do deploy, porque são exportados pelo workflow e não pelo preview local do Astro.
+
+## Identidade Visual
+
+O site usa blocos pequenos e reaproveitáveis para evitar drift entre a home, os guias e o Lab. Veja [[Identidade Visual e Blocos de Interface]] para os princípios e as classes básicas disponíveis.
 

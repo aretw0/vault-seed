@@ -3,13 +3,13 @@
 [![License](https://img.shields.io/github/license/aretw0/vault-seed.svg?color=red)](LICENSE.md)
 [![Release](https://img.shields.io/github/release/aretw0/vault-seed.svg?branch=main)](https://github.com/aretw0/vault-seed/releases)
 
-Esta "semente" (seed) de cofre (vault) ajuda a criar um vault de conhecimento em Obsidian e Visual Studio Code (Foam) com estrutura inicial, automações básicas e documentação de uso.
+Esta "semente" (seed) de cofre (vault) é um framework tímido para conhecimento local-first: arquivos puros, estrutura inicial, automações básicas, publicação Astro e um Lab Marimo opcional sem impor o uso final do vault.
 
 > Template original: [https://github.com/aretw0/vault-seed](https://github.com/aretw0/vault-seed)
 
 ## Para Quem Quer Criar Um Vault
 
-Use este repositório como template quando você quer começar um vault versionado sem montar toda a estrutura do zero. O conteúdo principal para usuários está nas notas dentro do vault, especialmente em `99 - Meta e Anexos/`.
+Use este repositório como template quando você quer começar um vault versionado sem montar toda a estrutura do zero. Ele pode virar site pessoal, blog simples, documentação coletiva ou cartão de visita. O conteúdo principal para usuários está nas notas dentro do vault, especialmente em `99 - Meta e Anexos/`.
 
 ## Pré-requisitos
 

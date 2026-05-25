@@ -1,6 +1,6 @@
 # {{REPO_NAME}}
 
-Esta é uma "semente" (seed) de cofre (vault) com foco no Obsidian e Visual Studio Code (Foam), projetada para equilibrar estrutura e flexibilidade, permitindo que seu cofre de conhecimento cresça organicamente.
+Esta é uma "semente" (seed) de cofre (vault): um framework tímido para conhecimento local-first com arquivos puros, estrutura inicial, publicação Astro e Lab Marimo opcional, sem impor o uso final do seu espaço.
 
 > Template original: [https://github.com/aretw0/vault-seed](https://github.com/aretw0/vault-seed)
 
@@ -13,7 +13,7 @@ Esta é uma "semente" (seed) de cofre (vault) com foco no Obsidian e Visual Stud
 | Devcontainer (VS Code + Docker) | [[Configurando com Devcontainer]] |
 | Usar com agentes de IA | [[Usando com Agentes de IA]] |
 
-Os guias detalhados estão em `99 - Meta e Anexos/`.
+Os guias detalhados estão em `99 - Meta e Anexos/`. Para entender a camada visual do site publicado, veja `[[Identidade Visual e Blocos de Interface]]`.
 
 ## Pré-requisitos
 
