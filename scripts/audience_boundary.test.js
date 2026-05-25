@@ -32,6 +32,7 @@ test("technical docs index states user versus template-maintainer entrypoints", 
 test("GitHub-facing entrypoints use markdown links instead of vault-only wikilinks", () => {
   for (const file of [
     "README.md",
+    "README.template.md",
     "docs/gerenciando-segredos-com-git.md",
     "docs/organizacao-do-projeto.md",
   ]) {
