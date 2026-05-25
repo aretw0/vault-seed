@@ -1,30 +1,46 @@
 ---
-created: {{date}}
+title: "Plano: {{title}}"
+created: "{{date}}"
+updated: "{{date}}"
 tags:
-  - plano
-  - MOC
-status: a-fazer
-responsavel: 
-projeto_pai: 
-prazo: 
+  - tipo/plano
+status: draft
+category: plano
+audience: pessoal
+responsavel: ""
+projeto_pai: ""
+prazo: ""
+related: []
 ---
 
 # Plano: {{title}}
 
-## 🎯 Objetivo
-- *Qual é o resultado final desejado? O que queremos alcançar com este plano?*
+## Resultado desejado
 
-## ✅ Resultados Esperados
-- *Liste os entregáveis concretos. O que define o sucesso deste plano?*
+> Descreva o estado concreto que torna este plano concluído.
+
+## Escopo
+
+### Inclui
+
 -
 
-## 📝 Passos da Ação
-- [ ] Passo 1
-- [ ] Passo 2
-- [ ] Passo 3
+### Não inclui
 
-## 🔗 Recursos e Notas Relacionadas
 -
 
-## 🤔 Anotações e Decisões
+## Passos
+
+- [ ] Primeiro passo verificável
+- [ ] Segundo passo verificável
+- [ ] Revisar e registrar decisão final
+
+## Riscos e dependências
+
 -
+
+## Critério de conclusão
+
+- [ ] Entregável existe
+- [ ] Próximo responsável está claro
+- [ ] Links e anexos relevantes foram conectados

@@ -1,19 +1,45 @@
 ---
-created: {{date}}
+title: "Prompt: {{title}}"
+created: "{{date}}"
+updated: "{{date}}"
 tags:
-  - ai
-  - prompts
-ai model:
+  - tipo/prompt
+  - ai/prompts
+status: draft
+category: prompt
+audience: pessoal
+modelo: ""
+related: []
 ---
 
 # Prompt: {{title}}
 
-## 🎯 Objetivo do Prompt
+## Objetivo
 
+> Qual resultado este prompt precisa produzir?
 
+## Contexto fornecido
 
-## ⚙️ System Instructions / Configuração Inicial
+-
 
+## Instruções
 
+```text
+Cole ou escreva o prompt aqui.
+```
 
-## 💬 Conteúdo do Prompt Enviado
+## Critérios de boa resposta
+
+-
+-
+-
+
+## Resultado obtido
+
+- Data:
+- Modelo/ferramenta:
+- Observações:
+
+## Ajustes para a próxima versão
+
+- [ ]

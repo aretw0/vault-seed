@@ -1,33 +1,32 @@
-<%*
-// ⚠️ Este template requer o plugin "Templater" para funcionar corretamente.
-// Certifique-se de que ele está instalado e configurado para rodar em novos arquivos.
-let now = tp.date.now("YYYY-MM-DD");
-let friendlyDate = tp.date.now("dddd, D [de] MMMM [de] YYYY");
--%>
-# <% friendlyDate %>
+---
+title: "{{date}}"
+created: "{{date}}"
+tags:
+  - tipo/diario
+status: draft
+category: diario
+audience: pessoal
+---
+
+# {{date}}
 
 > [!note] Foco do dia
 > Qual é a prioridade principal hoje?
 
-## 📝 Log Rápido
+## Log rápido
+
 - [ ]
 
-## 🧠 Fleeting Notes
-<!-- Anote ideias rápidas aqui para processar depois -->
+## Ideias soltas
 
----
-## 🔍 Revisão do Dia
-- [ ] Processar Inbox
-- [ ] Atualizar status dos projetos
+-
 
-### 🧹 Pendências Anteriores
-> [!warning] Tarefas não concluídas de dias anteriores (`10 - Diário`)
-```dataview
-TASK
-FROM "10 - Diário"
-WHERE !completed AND file.day < this.file.day
-```
+## Revisão do dia
 
-## 🔮 Próximos Passos
-> [!info]
-> O que ficou pendente para amanhã?
+- O que avançou?
+- O que travou?
+- O que precisa voltar para a entrada, projeto ou área correta?
+
+## Próximos passos
+
+- [ ]

@@ -15,10 +15,11 @@ audience: iniciante
 related:
   - "[[Guia do Jardineiro Digital]]"
   - "[[Plugins Essenciais e Recomendados]]"
+  - "[[MOC Vault Seed]]"
 ---
 # Guia: Usando o Plugin Templates
 
-O plugin nativo (core) "Templates" do Obsidian permite criar modelos de notas que podem ser inseridos rapidamente, economizando tempo e garantindo consistência em seu vault.
+O plugin nativo (core) "Templates" do Obsidian permite inserir modelos simples de notas, economizando tempo sem exigir automação pesada. Os modelos em `90 - Modelos` usam variáveis básicas como `{{date}}` e `{{title}}`, então funcionam bem como ponto de partida para qualquer vault.
 
 ## 1. Como Habilitar o Plugin
 
@@ -51,19 +52,26 @@ Após ativar, nas opções do plugin (`Configurações > Opções de plugins > T
 
 **Dica:** Você pode definir um atalho de teclado (hotkey) para o comando de inserção em `Configurações > Atalhos` para acesso ainda mais rápido.
 
----
+## Modelos Incluídos
 
-## Exemplo Prático: O Template de Documentação de Prompt
+| Modelo | Quando usar |
+|---|---|
+| `Template - Nota Diaria.md` | Captura diária simples, revisão e próximos passos. |
+| `Template - Nota Conceitual.md` | Conceitos, ideias, referências e conexões. |
+| `Template - MOC.md` | Mapas de conteúdo para organizar um território de notas. |
+| `Template - Plano de Ação.md` | Projetos curtos, entregáveis e critérios de conclusão. |
+| `Template - Dashboard.md` | Painéis pessoais com blocos Dataview opcionais. |
+| `Template - Prompt.md` | Registro de prompts, contexto, resultado e ajustes. |
 
-Este vault já inclui um template para documentar prompts de IA, localizado em `90 - Modelos/Template - Documentação de Prompt.md`. Ele foi construído usando os mesmos princípios descritos acima.
+## Exemplo Prático: O Template de Prompt
 
-Para usá-lo:
+Para documentar um prompt de IA:
 
-1.  Crie uma nova nota para documentar seu prompt (ex: `Prompt - Resumo de Artigo.md`).
-2.  Use a Paleta de Comandos para inserir o template `Template - Documentação de Prompt`.
-3.  O template será aplicado, e você poderá preencher as seções (Objetivo, Prompt Enviado, Resultado, etc.).
+1. Crie uma nova nota, por exemplo `Prompt - Resumo de Artigo.md`.
+2. Use a Paleta de Comandos para inserir `Template - Prompt`.
+3. Preencha objetivo, contexto, prompt enviado, critérios de boa resposta e ajustes para a próxima versão.
 
-Este é um ótimo exemplo de como os templates podem estruturar e padronizar a captura de conhecimento.
+Esse padrão mantém prompts auditáveis sem prender o vault a um fornecedor específico.
 
 ---
 Voltar para o [[Guia do Jardineiro Digital]]
