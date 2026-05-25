@@ -147,6 +147,15 @@ if (requirePublishedNotebooks) {
   }
 }
 
+if (notebooksPath !== "lab") {
+  for (const entry of labManifest.filter((item) => item.publish)) {
+    requireCondition(
+      !fs.existsSync(path.join(distDir, "lab", entry.output)),
+      `dist/lab/${entry.output} exists while VAULT_NOTEBOOKS_PATH=${notebooksPath} — remove stale default notebook exports from the deploy artifact.`,
+    );
+  }
+}
+
 // ── 4. collect content pages ──────────────────────────────────────────────────
 
 const allHtml = listHtmlFiles(distDir);

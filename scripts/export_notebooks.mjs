@@ -355,6 +355,25 @@ function copyVaultDataForWasm() {
 	copyFileSync(source, join(outDir, "assets", "vault-data.json"));
 }
 
+function removeObsoleteDefaultNotebookExports() {
+	if (notebooksPath === "lab" || outputRoot === join(ROOT, "public")) return;
+
+	const staleLabDir = join(outputRoot, "lab");
+	for (const notebook of manifest.filter((entry) => entry.publish)) {
+		rmSync(join(staleLabDir, notebook.output), { force: true });
+	}
+	for (const generatedPath of [
+		"vault-data.json",
+		join("assets", "vault-data.json"),
+		join("datasets", "manifest.json"),
+		join("assets", "datasets", "manifest.json"),
+	]) {
+		rmSync(join(staleLabDir, generatedPath), { force: true });
+	}
+	rmSync(join(staleLabDir, "assets"), { recursive: true, force: true });
+	rmSync(join(staleLabDir, "datasets"), { recursive: true, force: true });
+}
+
 function prepareNotebookSourceForExport(source) {
 	const sourceCode = readFileSync(source, "utf8");
 	const runtimeHelperSource = readFileSync(notebookRuntimeHelperPath, "utf8");
@@ -376,6 +395,7 @@ function prepareNotebookSourceForExport(source) {
 }
 
 mkdirSync(outDir, { recursive: true });
+removeObsoleteDefaultNotebookExports();
 copyVaultDataForWasm();
 
 for (const notebook of manifest.filter((entry) => entry.publish)) {
