@@ -44,6 +44,7 @@ test("public positioning avoids inflated framework language", () => {
   for (const file of [
     "README.md",
     "README.template.md",
+    ".github/PULL_REQUEST_TEMPLATE/feat-technical-enhancement.md",
     ".site/pages/index.astro",
     "99 - Meta e Anexos/Identidade Visual e Blocos de Interface.md",
   ]) {
