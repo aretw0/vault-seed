@@ -168,7 +168,7 @@ export const collections = {
           id: '404',
           data: {
             title: 'Página não encontrada',
-            draft: false,
+            draft: true,
             head: [],
             editUrl: false,
             template: 'doc',
