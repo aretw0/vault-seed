@@ -6,6 +6,22 @@ import { globSync } from "glob";
 import matter from "gray-matter";
 
 const WIKILINK_RE = /\[\[([^\]|]+?)(?:\|[^\]]+?)?\]\]/g;
+
+function resolveNotebooksPath(value = process.env.VAULT_NOTEBOOKS_PATH || "lab") {
+  const normalized = String(value || "lab")
+    .trim()
+    .replaceAll(String.fromCharCode(92), "/")
+    .replace(/^\/+|\/+$/g, "");
+
+  if (!/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(normalized)) {
+    throw new Error(
+      `VAULT_NOTEBOOKS_PATH inválido: ${value}. Use um único segmento de URL, como "lab", "notebooks" ou "studio".`,
+    );
+  }
+
+  return normalized;
+}
+
 const VAULT_FOLDERS = [
   "00 - Entrada",
   "10 - Diário",
@@ -84,10 +100,10 @@ export function buildVaultData({ cwd = process.cwd() } = {}) {
 
 export function writeVaultData({
   cwd = process.cwd(),
-  notebooksPath = process.env.VAULT_NOTEBOOKS_PATH || "lab",
+  notebooksPath = resolveNotebooksPath(),
 } = {}) {
   const data = buildVaultData({ cwd });
-  const outDir = join(cwd, "public", notebooksPath);
+  const outDir = join(cwd, "public", resolveNotebooksPath(notebooksPath));
   mkdirSync(outDir, { recursive: true });
   writeFileSync(join(outDir, "vault-data.json"), JSON.stringify(data, null, 2), "utf-8");
   return { data, outDir };

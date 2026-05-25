@@ -1,5 +1,8 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const os = require("node:os");
+const path = require("node:path");
 const { resolveNotebooksPath } = require("./notebook_path.cjs");
 
 async function loadEsmResolver() {
@@ -21,4 +24,14 @@ test("resolveNotebooksPath rejects traversal and nested paths", async () => {
       assert.throws(() => resolver(value), /VAULT_NOTEBOOKS_PATH inválido/);
     }
   }
+});
+
+test("writeVaultData validates custom notebook output path", async () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "vault-data-path-"));
+  const { writeVaultData } = await import("./generate_vault_data.mjs");
+
+  assert.throws(
+    () => writeVaultData({ cwd: tmp, notebooksPath: "bad/path" }),
+    /VAULT_NOTEBOOKS_PATH inválido/,
+  );
 });
