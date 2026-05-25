@@ -139,8 +139,10 @@ const themeSelectorHtml = String.raw`
 </div>
 <script>
 (() => {
-  const themeStorageKey = "vault-seed:marimo-theme";
-  const paletteStorageKey = "vault-seed:marimo-palette";
+  const themeStorageKey = "vault-seed:mode";
+  const paletteStorageKey = "vault-seed:palette";
+  const legacyThemeStorageKey = "vault-seed:marimo-theme";
+  const legacyPaletteStorageKey = "vault-seed:marimo-palette";
   const root = document.documentElement;
   const media = window.matchMedia("(prefers-color-scheme: dark)");
   const palettes = ["verde-jardim", "oceano", "terracota"];
@@ -194,8 +196,8 @@ const themeSelectorHtml = String.raw`
   }
 
   function init() {
-    const savedTheme = localStorage.getItem(themeStorageKey) || "system";
-    const savedPalette = localStorage.getItem(paletteStorageKey) || "verde-jardim";
+    const savedTheme = localStorage.getItem(themeStorageKey) || localStorage.getItem(legacyThemeStorageKey) || "system";
+    const savedPalette = localStorage.getItem(paletteStorageKey) || localStorage.getItem(legacyPaletteStorageKey) || "verde-jardim";
     applyTheme(savedTheme, savedPalette);
     applyPanel(localStorage.getItem(panelStorageKey) === "open");
 
@@ -211,7 +213,8 @@ const themeSelectorHtml = String.raw`
       button.addEventListener("click", () => {
         const next = button.dataset.vaultMarimoThemeOption || "system";
         localStorage.setItem(themeStorageKey, next);
-        applyTheme(next, localStorage.getItem(paletteStorageKey) || "verde-jardim");
+        localStorage.setItem(legacyThemeStorageKey, next);
+        applyTheme(next, localStorage.getItem(paletteStorageKey) || localStorage.getItem(legacyPaletteStorageKey) || "verde-jardim");
         window.location.reload();
       });
     });
@@ -220,15 +223,16 @@ const themeSelectorHtml = String.raw`
       select.addEventListener("change", () => {
         const next = select.value || "verde-jardim";
         localStorage.setItem(paletteStorageKey, next);
-        applyTheme(localStorage.getItem(themeStorageKey) || "system", next);
+        localStorage.setItem(legacyPaletteStorageKey, next);
+        applyTheme(localStorage.getItem(themeStorageKey) || localStorage.getItem(legacyThemeStorageKey) || "system", next);
         window.location.reload();
       });
     });
 
     media.addEventListener("change", () => {
       applyTheme(
-        localStorage.getItem(themeStorageKey) || "system",
-        localStorage.getItem(paletteStorageKey) || "verde-jardim"
+        localStorage.getItem(themeStorageKey) || localStorage.getItem(legacyThemeStorageKey) || "system",
+        localStorage.getItem(paletteStorageKey) || localStorage.getItem(legacyPaletteStorageKey) || "verde-jardim"
       );
     });
   }
