@@ -21,6 +21,7 @@ const distDir = path.join(root, "dist");
 const labManifest = JSON.parse(
   fs.readFileSync(path.join(root, ".site", "lab.notebooks.json"), "utf8"),
 );
+const hasTechnicalDocs = fs.existsSync(path.join(root, "docs", "INDEX.md"));
 const marimoNotebookPaths = new Set(
   labManifest
     .filter((entry) => entry.publish)
@@ -120,6 +121,13 @@ for (const slug of REQUIRED_DIST_PATHS) {
   requireCondition(
     fs.existsSync(path.join(distDir, slug, "index.html")),
     `dist/${slug}/index.html missing — template-contract page not built. Check status:published and slugify output.`,
+  );
+}
+
+if (hasTechnicalDocs) {
+  requireCondition(
+    fs.existsSync(path.join(distDir, "docs", "index.html")),
+    "dist/docs/index.html missing — template technical docs route (/docs/) was not built.",
   );
 }
 
@@ -295,6 +303,13 @@ if (fs.existsSync(mocHtmlPath)) {
     mocHtml.includes("mermaid.esm.min.mjs"),
     "Mermaid CDN script not found in page head — check head[] config in astro.config.mjs.",
   );
+
+  if (hasTechnicalDocs) {
+    requireCondition(
+      /href="[^"]*\/docs\/"/.test(mocHtml),
+      "Header/sidebar has no link to /docs/ even though docs/INDEX.md exists.",
+    );
+  }
 }
 
 // ── 7. Mermaid code blocks present in diagram pages ──────────────────────────

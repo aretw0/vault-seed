@@ -4,6 +4,7 @@ import { join, basename } from 'node:path';
 import { globSync } from 'glob';
 import matter from 'gray-matter';
 import { slugify } from '@dgk/astro-plugins';
+import { readTechnicalDocEntries } from './technical-docs.js';
 import { VAULT_FOLDERS } from './vault-config.js';
 
 export interface VaultEntry {
@@ -27,6 +28,10 @@ export async function collectVaultEntries(): Promise<VaultEntry[]> {
     const slug = slugify(file.replace(/\\/g, '/').replace(/\.md$/, ''));
     const title = (data.title as string | undefined) ?? basename(file, '.md');
     entries.push({ slug, title, data });
+  }
+
+  for (const entry of readTechnicalDocEntries()) {
+    entries.push({ slug: entry.slug, title: entry.title, data: entry.data });
   }
 
   return entries;

@@ -4,6 +4,8 @@ import LanguageSelect from 'virtual:starlight/components/LanguageSelect';
 import Search from 'virtual:starlight/components/Search';
 import SiteTitle from 'virtual:starlight/components/SiteTitle';
 import SocialIcons from 'virtual:starlight/components/SocialIcons';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 
 const shouldRenderSearch =
 	config.pagefind || config.components.Search !== '@astrojs/starlight/components/Search.astro';
@@ -11,12 +13,15 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const themeSelectorMode = import.meta.env.VAULT_THEME_SELECTOR;
 const isVaultSeedRepo = import.meta.env.GITHUB_REPOSITORY === 'aretw0/vault-seed';
 const shouldRenderThemeSelect = themeSelectorMode === '1' || (themeSelectorMode !== '0' && isVaultSeedRepo);
+const shouldRenderTechnicalDocs =
+	import.meta.env.VAULT_SEED_TECHNICAL_DOCS !== '0' && existsSync(join(process.cwd(), 'docs', 'INDEX.md'));
 ---
 
 <div class="header">
 	<div class="title-wrapper sl-flex">
 		<SiteTitle />
 		<a class="lab-link" href={`${base}/lab/`}>Lab</a>
+		{shouldRenderTechnicalDocs && <a class="lab-link" href={`${base}/docs/`}>Docs</a>}
 	</div>
 	<div class="sl-flex print:hidden">
 		{shouldRenderSearch && <Search />}

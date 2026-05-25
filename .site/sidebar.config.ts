@@ -31,4 +31,6 @@ export const sidebarSections: SidebarSection[] = [
   { label: 'Conceitos de PKM', tag: 'conceito/pkm' },
   { label: 'Ferramentas',      tag: 'recurso/ferramenta' },
   { label: 'Meta',             directory: 'meta-e-anexos' },
+  // Only appears in the original template repository: generated vaults remove docs/.
+  { label: 'Docs técnicas',    directory: 'docs', collapsed: true },
 ];

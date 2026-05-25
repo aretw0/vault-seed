@@ -10,7 +10,10 @@ test("deploy-site workflow keeps GitHub Pages deploy gated by build and smoke", 
   const workflow = read(".github/workflows/deploy-site.yml");
   const packageJson = JSON.parse(read("package.json"));
 
-  assert.equal(packageJson.scripts["site:build"], "pnpm --filter @dgk/astro-plugins build && astro build");
+  assert.equal(
+    packageJson.scripts["site:build"],
+    "node scripts/clean_site_dist.mjs && pnpm --filter @dgk/astro-plugins build && astro build",
+  );
   assert.equal(packageJson.scripts["site:check"], "node scripts/smoke_site.js");
   assert.match(workflow, /name: Deploy Site/);
   assert.match(workflow, /push:\n\s+branches: \[main\]/);

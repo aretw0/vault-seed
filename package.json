@@ -22,7 +22,7 @@
     "validate:mermaid": "node scripts/check_mermaid.js",
     "actions:pins": "node scripts/check_github_action_pins.mjs",
     "site:dev": "astro dev",
-    "site:build": "pnpm --filter @dgk/astro-plugins build && astro build",
+    "site:build": "node scripts/clean_site_dist.mjs && pnpm --filter @dgk/astro-plugins build && astro build",
     "site:preview": "astro preview",
     "site:check": "node scripts/smoke_site.js",
     "site:responsive": "pnpm run site:build && pnpm run notebooks:export && node scripts/smoke_responsive.mjs",

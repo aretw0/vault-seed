@@ -7,6 +7,7 @@ import { pathToFileURL } from 'node:url';
 import { globSync } from 'glob';
 import matter from 'gray-matter';
 import { slugify } from '@dgk/astro-plugins';
+import { readTechnicalDocEntries } from './integrations/technical-docs.js';
 
 const VAULT_FOLDERS = [
   '00 - Entrada', '10 - Diário', '20 - Projetos',
@@ -66,6 +67,8 @@ export const collections = {
     loader: {
       name: 'vault-loader',
       load: async ({ store, logger, renderMarkdown }: { store: any; logger: any; renderMarkdown: any }) => {
+        store.clear();
+
         const patterns = VAULT_FOLDERS.map(f => `${f}/**/*.md`);
         const files = globSync(patterns, { cwd: process.cwd() });
         let count = 0;
@@ -126,6 +129,56 @@ export const collections = {
           });
           count++;
         }
+
+        for (const entry of readTechnicalDocEntries()) {
+          const safeData: Record<string, unknown> = {};
+          for (const [k, v] of Object.entries(entry.data)) {
+            safeData[k] = v instanceof Date ? v.toISOString().slice(0, 10) : v;
+          }
+
+          const body = entry.content.replace(/^\s*#(?!#)[^\n]*\n?/, '').trimStart();
+          const rendered = await renderMarkdown(body, {
+            fileURL: pathToFileURL(entry.fullPath),
+          });
+
+          store.set({
+            id: entry.slug,
+            data: {
+              ...safeData,
+              title: entry.title,
+              draft: false,
+              head: [],
+              editUrl: true,
+              template: 'doc',
+              pagefind: true,
+              sidebar: { hidden: false, attrs: {}, ...(safeData.sidebar as object ?? {}) },
+            },
+            body,
+            filePath: `.site/content/docs/${entry.slug}.md`,
+            rendered,
+          });
+          count++;
+        }
+
+        const notFoundBody = 'A página solicitada não existe ou não está publicada.';
+        const notFoundRendered = await renderMarkdown(notFoundBody, {
+          fileURL: pathToFileURL(join(process.cwd(), '404.md')),
+        });
+        store.set({
+          id: '404',
+          data: {
+            title: 'Página não encontrada',
+            draft: false,
+            head: [],
+            editUrl: false,
+            template: 'doc',
+            pagefind: false,
+            sidebar: { hidden: true, attrs: {} },
+          },
+          body: notFoundBody,
+          filePath: '.site/content/docs/404.md',
+          rendered: notFoundRendered,
+        });
 
         logger.info(`Vault loader: ${count} published notes loaded`);
       },
