@@ -29,16 +29,43 @@ function titleFromMarkdown(content: string, file: string): string {
   return heading || basename(file, '.md');
 }
 
+function siteBase(): string {
+  return (process.env.ASTRO_BASE ?? '').replace(/\/$/, '');
+}
+
+function absoluteSitePath(slug: string, hash = ''): string {
+  return `${siteBase()}/${slug}/${hash}`.replace(/\/\//g, '/');
+}
+
 function slugFromTechnicalDoc(file: string): string {
   const normalized = file.replace(/\\/g, '/');
   if (normalized === TECHNICAL_DOCS_INDEX) return TECHNICAL_DOCS_ROOT;
   return slugify(normalized.replace(/\.md$/, ''));
 }
 
+function stripRelativePrefix(target: string): string {
+  return target.replace(/^(\.\/|\.\.\/)+/, '');
+}
+
+function slugFromMarkdownTarget(target: string): string {
+  const decoded = decodeURIComponent(stripRelativePrefix(target));
+  const normalized = decoded.replace(/\\/g, '/').replace(/\.md$/, '');
+
+  if (normalized.startsWith(`${TECHNICAL_DOCS_ROOT}/`)) {
+    return slugify(normalized);
+  }
+
+  if (normalized.includes('/')) {
+    return slugify(normalized);
+  }
+
+  return `${TECHNICAL_DOCS_ROOT}/${slugify(normalized)}`;
+}
+
 export function normalizeTechnicalDocLinks(content: string): string {
   return content.replace(
-    /\]\((?!https?:|mailto:|#|\/)([^)\s?#]+)\.md(#[^)]+)?\)/g,
-    (_match, target: string, hash = '') => `](./${target}/${hash})`,
+    /\]\((?!https?:|mailto:|#|\/)([^)\s?#]+\.md)(#[^)]+)?\)/g,
+    (_match, target: string, hash = '') => `](${absoluteSitePath(slugFromMarkdownTarget(target), hash)})`,
   );
 }
 

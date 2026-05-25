@@ -223,6 +223,14 @@ for (const htmlFile of contentPages) {
     );
   }
 
+  const rawMarkdownLinks = [...content.matchAll(/<a\s[^>]*href="([^"]+)"/g)]
+    .map(([, href]) => href)
+    .filter((href) => !/^(https?:|mailto:|#)/.test(href) && /\.md(?:[#?]|$)/.test(href));
+  requireCondition(
+    rawMarkdownLinks.length === 0,
+    `${rel}: contains raw .md link(s) — markdown source links should resolve to published routes: ${rawMarkdownLinks.join(", ")}`,
+  );
+
   // 5b. Page must have Starlight's markdown content wrapper.
   requireCondition(
     hasMarkdownContent.test(content),
