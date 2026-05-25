@@ -129,6 +129,10 @@ if (hasTechnicalDocs) {
     fs.existsSync(path.join(distDir, "docs", "index.html")),
     "dist/docs/index.html missing — template technical docs route (/docs/) was not built.",
   );
+  requireCondition(
+    !fs.existsSync(path.join(distDir, "docs", "superpowers")),
+    "dist/docs/superpowers/ exists — internal planning artifacts leaked into technical docs.",
+  );
 }
 
 // ── 4. collect content pages ──────────────────────────────────────────────────
