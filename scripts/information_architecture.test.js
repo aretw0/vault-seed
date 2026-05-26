@@ -12,6 +12,10 @@ async function loadVaultFoldersRuntime() {
   return import("../.site/lib/vault-folders.mjs");
 }
 
+async function loadAuditRuntime() {
+  return import("../.site/lib/information-architecture-audit.mjs");
+}
+
 test("vault folder contract is shared from data to runtime", async () => {
   const { PUBLISHED_VAULT_FOLDERS, VAULT_FOLDERS } = await loadVaultFoldersRuntime();
 
@@ -35,23 +39,26 @@ test("sidebar intent sections are backed by the shared information architecture"
   );
 });
 
-test("information architecture audit exposes a machine-readable report", () => {
-  const output = execFileSync(process.execPath, ["scripts/audit_information_architecture.mjs", "--json"], {
+test("information architecture audit exposes a reusable machine-readable report", async () => {
+  const { buildInformationArchitectureReport } = await loadAuditRuntime();
+  const moduleReport = buildInformationArchitectureReport();
+  const cliOutput = execFileSync(process.execPath, ["scripts/audit_information_architecture.mjs", "--json"], {
     encoding: "utf8",
   });
-  const report = JSON.parse(output);
+  const cliReport = JSON.parse(cliOutput);
 
-  assert.equal(report.errors.length, 0);
-  assert.ok(report.notesEvaluated > 0);
+  assert.deepEqual(cliReport, moduleReport);
+  assert.equal(moduleReport.errors.length, 0);
+  assert.ok(moduleReport.notesEvaluated > 0);
   assert.deepEqual(
-    report.intentDistribution.map(({ intent }) => intent),
+    moduleReport.intentDistribution.map(({ intent }) => intent),
     configuredSidebarSections
       .filter((section) => Object.hasOwn(section, "intent"))
       .map((section) => section.intent)
       .sort((a, b) => a.localeCompare(b, "pt")),
   );
-  assert.ok(report.promotionCandidates.every((note) => note.file && note.title));
-  assert.ok(report.thinPublishedResources.every((note) => Number.isInteger(note.words)));
+  assert.ok(moduleReport.promotionCandidates.every((note) => note.file && note.title));
+  assert.ok(moduleReport.thinPublishedResources.every((note) => Number.isInteger(note.words)));
 });
 
 test("information architecture vocabulary normalizes aliases", async () => {

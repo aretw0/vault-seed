@@ -67,6 +67,7 @@ const labNotebooksManifest = readJson(".site/lab.notebooks.json");
 const labDatasetsScript = read("scripts/prepare_lab_datasets.mjs");
 const labEtlDemoScript = read("scripts/lab_etl_demo.mjs");
 const iaAuditScript = read("scripts/audit_information_architecture.mjs");
+const informationArchitectureAuditRuntime = read(".site/lib/information-architecture-audit.mjs");
 const headerComponent = read(".site/components/Header.astro");
 const explorePage = read(".site/pages/explorar/index.astro");
 const exploreDataEndpoint = read(".site/pages/explorar/dados.json.ts");
@@ -94,10 +95,11 @@ requireCondition(
     templatePkg.scripts?.["site:audit:sidebar"] === "node scripts/audit_sidebar.js" &&
     informationArchitecture.includes('"intents"') &&
     informationArchitectureRuntime.includes("export function deriveNoteIntents") &&
-    iaAuditScript.includes("loadInformationArchitecture") &&
-    iaAuditScript.includes("deriveNoteIntents") &&
-    iaAuditScript.includes("promotionCandidates") &&
-    iaAuditScript.includes("nota publicada sem category"),
+    iaAuditScript.includes("buildInformationArchitectureReport") &&
+    informationArchitectureAuditRuntime.includes("loadInformationArchitecture") &&
+    informationArchitectureAuditRuntime.includes("deriveNoteIntents") &&
+    informationArchitectureAuditRuntime.includes("promotionCandidates") &&
+    informationArchitectureAuditRuntime.includes("nota publicada sem category"),
   "The template must expose deterministic information-architecture and sidebar audits for published notes.",
 );
 requireCondition(exists("pnpm-lock.yaml"), "pnpm-lock.yaml must exist.");
