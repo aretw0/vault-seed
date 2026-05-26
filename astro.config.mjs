@@ -1,4 +1,5 @@
 // astro.config.mjs
+import { createRequire } from 'node:module';
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import remarkDirective from 'remark-directive';
@@ -8,8 +9,15 @@ import { copyVaultAttachments } from './.site/integrations/copy-vault-attachment
 import { generateVaultJson } from './.site/integrations/generate-vault-json.js';
 import { sidebarSections } from './.site/sidebar.config.js';
 
+const require = createRequire(import.meta.url);
+const {
+  deriveNoteIntents,
+  loadInformationArchitecture,
+} = require('./.site/lib/information-architecture.cjs');
+
 const site = process.env.ASTRO_SITE;
 const base = process.env.ASTRO_BASE ?? '/';
+const informationArchitecture = loadInformationArchitecture();
 
 // Title: explicit env var → repo name from GitHub context → cwd basename
 const repoName = process.env.GITHUB_REPOSITORY?.split('/')[1]
@@ -24,9 +32,19 @@ const vaultEntries = await collectVaultEntries();
 const publishedSlugs = new Set(vaultEntries.map(e => e.slug));
 
 // Build sidebar from .site/sidebar.config.ts.
+// Intent sections are backed by .site/information-architecture.json so the
+// sidebar, exploration page, and audits share the same vocabulary.
 // Directory sections use Starlight autogenerate (respects sidebar.order from frontmatter).
 // Tag/property sections produce explicit { slug } items sorted by sidebar.order then title.
 // Sections with no matching entries are omitted automatically.
+function sortSidebarEntries(entries) {
+  return [...entries].sort((a, b) => {
+    const ao = (a.data.sidebar?.order) ?? 999;
+    const bo = (b.data.sidebar?.order) ?? 999;
+    return ao !== bo ? ao - bo : a.title.localeCompare(b.title, 'pt');
+  });
+}
+
 function buildSidebarItems(entries) {
   return sidebarSections
     .map(section => {
@@ -40,6 +58,17 @@ function buildSidebarItems(entries) {
         };
       }
       const matched = entries.filter(e => {
+        if ('intent' in section) {
+          if (!e.folder) return false;
+          return deriveNoteIntents(
+            {
+              folder: e.folder ?? '',
+              tags: Array.isArray(e.data.tags) ? e.data.tags : [],
+              category: String(e.data.category ?? ''),
+            },
+            informationArchitecture,
+          ).includes(section.intent);
+        }
         if ('tag' in section) {
           const tags = e.data.tags;
           return Array.isArray(tags) && tags.includes(section.tag);
@@ -47,13 +76,7 @@ function buildSidebarItems(entries) {
         return e.data[section.property] === section.value;
       });
       if (matched.length === 0) return null;
-      const items = matched
-        .sort((a, b) => {
-          const ao = (a.data.sidebar?.order) ?? 999;
-          const bo = (b.data.sidebar?.order) ?? 999;
-          return ao !== bo ? ao - bo : a.title.localeCompare(b.title, 'pt');
-        })
-        .map(e => ({ slug: e.slug }));
+      const items = sortSidebarEntries(matched).map(e => ({ slug: e.slug }));
       return { label: section.label, collapsed: section.collapsed, items };
     })
     .filter(Boolean);

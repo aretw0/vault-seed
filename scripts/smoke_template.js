@@ -71,6 +71,8 @@ const explorePage = read(".site/pages/explorar/index.astro");
 const exploreDataEndpoint = read(".site/pages/explorar/dados.json.ts");
 const exploreDataLib = read(".site/lib/vault-explore.ts");
 const astroConfig = read("astro.config.mjs");
+const sidebarConfig = read(".site/sidebar.config.ts");
+const informationArchitecture = read(".site/information-architecture.json");
 const pyproject = read("pyproject.toml");
 const marimoCss = read(".site/styles/marimo-vault.css");
 const themeRuntimeCss = read(".site/styles/theme-runtime.css");
@@ -85,6 +87,7 @@ requireCondition(
 requireCondition(
   pkg.scripts?.["audit:ia"] === "node scripts/audit_information_architecture.mjs" &&
     templatePkg.scripts?.["audit:ia"] === "node scripts/audit_information_architecture.mjs" &&
+    informationArchitecture.includes('"intents"') &&
     iaAuditScript.includes("loadInformationArchitecture") &&
     iaAuditScript.includes("deriveNoteIntents") &&
     iaAuditScript.includes("promotionCandidates") &&
@@ -279,6 +282,15 @@ requireCondition(
     customCss.includes('.vault-resource-list') &&
     customCss.includes('.vault-graph-cloud'),
   "Astro must expose a static exploration surface with filters, metrics, graph data, and reusable UI primitives.",
+);
+requireCondition(
+  sidebarConfig.includes("intent: 'comecar'") &&
+    sidebarConfig.includes("intent: 'organizar'") &&
+    sidebarConfig.includes("intent: 'explorar'") &&
+    astroConfig.includes("deriveNoteIntents") &&
+    astroConfig.includes("informationArchitecture") &&
+    astroConfig.includes("if (!e.folder) return false"),
+  "Published sidebar must use the shared information-architecture intents without leaking technical docs into intent sections.",
 );
 requireCondition(
   (() => {

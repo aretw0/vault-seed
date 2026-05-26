@@ -100,7 +100,7 @@ Local pode:
 - [ ] Classificar notas como `guide`, `concept`, `reference`, `workflow` ou `technical`.
 - [ ] Sugerir promoções de notas conceituais para `40 - Recursos`.
 - [ ] Reduzir repetição entre onboarding, recursos e docs técnicas.
-- [ ] Reorganizar sidebar por intenção sem depender somente da pasta física.
+- [x] Reorganizar sidebar por intenção sem depender somente da pasta física.
 
 ### 5. Lab/Marimo como bancada exemplar
 

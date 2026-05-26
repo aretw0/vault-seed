@@ -11,6 +11,8 @@ export interface VaultEntry {
   slug: string;
   title: string;
   data: Record<string, unknown>;
+  sourcePath?: string;
+  folder?: string;
 }
 
 /** Returns all published vault entries with their full frontmatter data. */
@@ -25,9 +27,16 @@ export async function collectVaultEntries(): Promise<VaultEntry[]> {
     if (data.status !== 'published') continue;
 
     // Normalize to forward slashes before slugifying (glob may return OS-native separators).
-    const slug = slugify(file.replace(/\\/g, '/').replace(/\.md$/, ''));
+    const normalizedFile = file.replace(/\\/g, '/');
+    const slug = slugify(normalizedFile.replace(/\.md$/, ''));
     const title = (data.title as string | undefined) ?? basename(file, '.md');
-    entries.push({ slug, title, data });
+    entries.push({
+      slug,
+      title,
+      data,
+      sourcePath: normalizedFile,
+      folder: normalizedFile.split('/')[0] ?? '',
+    });
   }
 
   for (const entry of readTechnicalDocEntries()) {
