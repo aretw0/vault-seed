@@ -136,9 +136,12 @@ async function main() {
 
   console.log(`\n${BOLD}Sidebar Audit${RESET}  (${sortedEntries.length} published vault notes)\n`);
 
+  const emptyContentSections = [];
+
   for (const { label, type, entries: sectionEntries } of resolvedSections.values()) {
     const isEmpty = sectionEntries.length === 0;
     const isTechnicalDocsSection = type === 'directory:docs';
+    if (isEmpty && !isTechnicalDocsSection) emptyContentSections.push(label);
     const marker = isEmpty
       ? isTechnicalDocsSection ? `${CYAN}i${RESET}` : `${RED}✗${RESET}`
       : `${GREEN}✔${RESET}`;
@@ -201,7 +204,13 @@ async function main() {
     console.log(`  ${YELLOW}${orphans.length} orphan(s)${RESET} — not linked from sidebar`);
   if (duplicates.length > 0)
     console.log(`  ${MAGENTA}${duplicates.length} note(s)${RESET} appear in multiple sections`);
+  if (emptyContentSections.length > 0)
+    console.log(`  ${RED}${emptyContentSections.length} empty content section(s)${RESET}: ${emptyContentSections.join(', ')}`);
   console.log();
+
+  if (orphans.length > 0 || emptyContentSections.length > 0) {
+    process.exitCode = 1;
+  }
 }
 
 main().catch(error => {

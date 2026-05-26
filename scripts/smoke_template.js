@@ -89,13 +89,15 @@ requireCondition(
 requireCondition(
   pkg.scripts?.["audit:ia"] === "node scripts/audit_information_architecture.mjs" &&
     templatePkg.scripts?.["audit:ia"] === "node scripts/audit_information_architecture.mjs" &&
+    pkg.scripts?.["site:audit:sidebar"] === "node scripts/audit_sidebar.js" &&
+    templatePkg.scripts?.["site:audit:sidebar"] === "node scripts/audit_sidebar.js" &&
     informationArchitecture.includes('"intents"') &&
     informationArchitectureRuntime.includes("export function deriveNoteIntents") &&
     iaAuditScript.includes("loadInformationArchitecture") &&
     iaAuditScript.includes("deriveNoteIntents") &&
     iaAuditScript.includes("promotionCandidates") &&
     iaAuditScript.includes("nota publicada sem category"),
-  "The template must expose a deterministic information-architecture audit for published notes.",
+  "The template must expose deterministic information-architecture and sidebar audits for published notes.",
 );
 requireCondition(exists("pnpm-lock.yaml"), "pnpm-lock.yaml must exist.");
 requireCondition(
@@ -111,6 +113,16 @@ requireCondition(
     /\bstandard-version\b|CHANGELOG\.md|VERSION/.test(script),
   ),
   "package.template.json scripts must not reference release-only changelog or version tooling.",
+);
+requireCondition(
+  templatePkg.scripts?.test?.includes("scripts/*.test.mjs") &&
+    templatePkg.scripts?.test?.includes("scripts/*.test.cjs") &&
+    templatePkg.scripts?.validate?.includes("audit:ia") &&
+    templatePkg.scripts?.validate?.includes("site:audit:sidebar") &&
+    templatePkg.scripts?.validate?.includes("validate:pt-text") &&
+    templatePkg.scripts?.validate?.includes("validate:theme") &&
+    templatePkg.scripts?.validate?.includes("validate:mermaid"),
+  "package.template.json must keep generated-vault validation aligned with JS, MJS, CJS tests and content audits.",
 );
 requireCondition(
   templatePkg.scripts?.["notebooks:data"] === "node scripts/generate_vault_data.mjs" &&

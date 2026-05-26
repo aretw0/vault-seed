@@ -8,7 +8,7 @@
     "url": "https://github.com/{{REPO_NAME}}.git"
   },
   "scripts": {
-    "test": "node --test scripts/*.test.js",
+    "test": "node --test scripts/*.test.js scripts/*.test.mjs scripts/*.test.cjs",
     "format": "prettier --write \"**/*.md\"",
     "format:check": "prettier --check .",
     "lint:main": "markdownlint --config .markdownlint.json \"10 - Diário/**/*.md\" \"20 - Projetos/**/*.md\" \"30 - Áreas/**/*.md\" \"40 - Recursos/**/*.md\" \"50 - Arquivo/**/*.md\" \"99 - Meta e Anexos/**/*.md\"",
@@ -17,11 +17,15 @@
     "lint": "pnpm run lint:main && pnpm run lint:templates",
     "smoke:template": "node scripts/smoke_template.js",
     "validate:onboarding": "node scripts/validate_onboarding.js",
+    "validate:pt-text": "node scripts/check_pt_text.js",
+    "validate:theme": "node scripts/check_theme.js",
+    "validate:mermaid": "node scripts/check_mermaid.js",
     "site:dev": "astro dev",
     "site:build": "pnpm --filter @dgk/astro-plugins build && astro build",
     "site:preview": "astro preview",
     "site:check": "node scripts/smoke_site.js",
     "site:responsive": "pnpm run site:build && pnpm run notebooks:export && node scripts/smoke_responsive.mjs",
+    "site:audit:sidebar": "node scripts/audit_sidebar.js",
     "audit:ia": "node scripts/audit_information_architecture.mjs",
     "notebooks:data": "node scripts/generate_vault_data.mjs",
     "notebooks:etl:demo": "node scripts/lab_etl_demo.mjs",
@@ -34,7 +38,7 @@
     "notebooks:export:public": "node scripts/export_notebooks.mjs --public",
     "notebooks:export:slides": "node scripts/export_notebook_slides.mjs",
     "site:dev:lab": "pnpm run notebooks:export:public && astro dev",
-    "validate": "pnpm run lint && pnpm run test && pnpm run validate:onboarding"
+    "validate": "pnpm run lint && pnpm run audit:ia && pnpm run site:audit:sidebar && pnpm run test && pnpm run validate:onboarding && pnpm run validate:pt-text && pnpm run validate:theme && pnpm run validate:mermaid"
   },
   "keywords": [],
   "author": "",
