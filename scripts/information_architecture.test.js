@@ -1,6 +1,7 @@
 const assert = require("node:assert/strict");
 const { test } = require("node:test");
 const { folders: configuredVaultFolders } = require("../.site/vault-folders.json");
+const configuredSidebarSections = require("../.site/sidebar.sections.json");
 
 async function loadRuntime() {
   return import("../.site/lib/information-architecture.mjs");
@@ -16,6 +17,21 @@ test("vault folder contract is shared from data to runtime", async () => {
   assert.deepEqual(VAULT_FOLDERS, configuredVaultFolders);
   assert.equal(VAULT_FOLDERS.includes("99 - Meta e Anexos"), true);
   assert.equal(PUBLISHED_VAULT_FOLDERS.includes("90 - Modelos"), false);
+});
+
+test("sidebar intent sections are backed by the shared information architecture", async () => {
+  const { loadInformationArchitecture } = await loadRuntime();
+  const ia = loadInformationArchitecture();
+  const configuredIntents = configuredSidebarSections
+    .filter((section) => Object.hasOwn(section, "intent"))
+    .map((section) => section.intent);
+
+  assert.deepEqual(configuredIntents, Object.keys(ia.intents));
+  assert.equal(
+    configuredSidebarSections.some((section) => section.directory === "docs"),
+    true,
+    "technical docs must remain an explicit sidebar section instead of leaking into intent sections",
+  );
 });
 
 test("information architecture vocabulary normalizes aliases", async () => {

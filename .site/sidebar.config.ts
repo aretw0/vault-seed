@@ -1,6 +1,7 @@
 // .site/sidebar.config.ts
 //
 // Defines the published site's left-hand navigation.
+import sidebarSectionsConfig from './sidebar.sections.json';
 // Sections are independent of the vault's physical folder structure: a note
 // can appear in a section because it matches an information-architecture
 // intent, tag, property, or directory.
@@ -34,13 +35,4 @@ export type SidebarSection =
   | { label: string; tag: string; collapsed?: boolean }
   | { label: string; property: string; value: unknown; collapsed?: boolean };
 
-export const sidebarSections: SidebarSection[] = [
-  { label: 'Começar',      intent: 'comecar' },
-  { label: 'Organizar',    intent: 'organizar' },
-  { label: 'Explorar',     intent: 'explorar' },
-  { label: 'Publicar',     intent: 'publicar', collapsed: true },
-  { label: 'Automatizar',  intent: 'automatizar', collapsed: true },
-  { label: 'Manter',       intent: 'manter', collapsed: true },
-  // Only appears in the original template repository: generated vaults remove docs/.
-  { label: 'Docs técnicas', directory: 'docs', collapsed: true },
-];
+export const sidebarSections = sidebarSectionsConfig as SidebarSection[];

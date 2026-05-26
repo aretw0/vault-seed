@@ -1,0 +1,9 @@
+[
+  { "label": "Começar", "intent": "comecar" },
+  { "label": "Organizar", "intent": "organizar" },
+  { "label": "Explorar", "intent": "explorar" },
+  { "label": "Publicar", "intent": "publicar", "collapsed": true },
+  { "label": "Automatizar", "intent": "automatizar", "collapsed": true },
+  { "label": "Manter", "intent": "manter", "collapsed": true },
+  { "label": "Docs técnicas", "directory": "docs", "collapsed": true }
+]

@@ -72,6 +72,7 @@ const exploreDataEndpoint = read(".site/pages/explorar/dados.json.ts");
 const exploreDataLib = read(".site/lib/vault-explore.ts");
 const astroConfig = read("astro.config.mjs");
 const sidebarConfig = read(".site/sidebar.config.ts");
+const sidebarSectionsConfig = read(".site/sidebar.sections.json");
 const informationArchitecture = read(".site/information-architecture.json");
 const informationArchitectureRuntime = read(".site/lib/information-architecture.mjs");
 const pyproject = read("pyproject.toml");
@@ -288,9 +289,10 @@ requireCondition(
   "Astro must expose a static exploration surface with filters, metrics, graph data, and reusable UI primitives.",
 );
 requireCondition(
-  sidebarConfig.includes("intent: 'comecar'") &&
-    sidebarConfig.includes("intent: 'organizar'") &&
-    sidebarConfig.includes("intent: 'explorar'") &&
+  sidebarConfig.includes('sidebar.sections.json') &&
+    sidebarSectionsConfig.includes('"intent": "comecar"') &&
+    sidebarSectionsConfig.includes('"intent": "organizar"') &&
+    sidebarSectionsConfig.includes('"intent": "explorar"') &&
     astroConfig.includes("deriveNoteIntents") &&
     astroConfig.includes("informationArchitecture") &&
     astroConfig.includes("if (!e.folder) return false"),
