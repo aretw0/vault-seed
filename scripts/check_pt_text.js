@@ -13,12 +13,7 @@
 const fs   = require('node:fs');
 const path = require('node:path');
 const { globSync } = require('glob');
-
-const VAULT_FOLDERS = [
-  '00 - Entrada', '10 - Diário', '20 - Projetos',
-  '30 - Áreas', '40 - Recursos', '50 - Arquivo',
-  '90 - Modelos', '99 - Meta e Anexos',
-];
+const { folders: VAULT_FOLDERS } = require('../.site/vault-folders.json');
 
 // ── accent rules ─────────────────────────────────────────────────────────────
 // Each entry: [regex, suggestion]

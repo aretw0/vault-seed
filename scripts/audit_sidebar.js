@@ -12,6 +12,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { globSync } = require('glob');
 const matter = require('gray-matter');
+const { folders: VAULT_FOLDERS } = require('../.site/vault-folders.json');
 
 // ── slugify (mirrors packages/astro-plugins/src/slugify.ts) ──────────────────
 
@@ -36,12 +37,6 @@ function slugify(input) {
 
 // ── config (mirrors .site/sidebar.config.ts) ─────────────────────────────────
 // IMPORTANT: keep in sync with sidebarSections in .site/sidebar.config.ts
-
-const VAULT_FOLDERS = [
-  '00 - Entrada', '10 - Diário', '20 - Projetos',
-  '30 - Áreas', '40 - Recursos', '50 - Arquivo',
-  '90 - Modelos', '99 - Meta e Anexos',
-];
 
 /** @type {Array<{label:string} & ({directory:string}|{tag:string}|{property:string,value:unknown})>} */
 const sidebarSections = [

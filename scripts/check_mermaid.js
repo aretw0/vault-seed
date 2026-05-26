@@ -19,12 +19,7 @@
 const fs   = require('fs');
 const path = require('path');
 const { globSync } = require('glob');
-
-const VAULT_FOLDERS = [
-  '00 - Entrada', '10 - Diário', '20 - Projetos',
-  '30 - Áreas', '40 - Recursos', '50 - Arquivo',
-  '90 - Modelos', '99 - Meta e Anexos',
-];
+const { folders: VAULT_FOLDERS } = require('../.site/vault-folders.json');
 
 // All compared lowercase against the first token of the diagram declaration
 const VALID_DIAGRAM_TYPES = new Set([
