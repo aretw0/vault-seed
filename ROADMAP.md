@@ -68,29 +68,29 @@ Local pode:
 ### 1. Fundação Astro-first
 
 - [ ] Definir frontmatter mínimo para navegação por intenção.
-- [ ] Criar página de exploração pública do vault em Astro.
-- [ ] Gerar JSON estático para exploração do site.
-- [ ] Adicionar filtros por pasta, tag, status e tipo.
-- [ ] Exibir métricas de acervo no site.
-- [ ] Verificar responsividade e acessibilidade da nova superfície.
+- [x] Criar página de exploração pública do vault em Astro.
+- [x] Gerar JSON estático para exploração do site.
+- [x] Adicionar filtros por pasta, tag, categoria e público.
+- [x] Exibir métricas de acervo no site.
+- [x] Verificar responsividade e acessibilidade básica da nova superfície.
 
 ### 2. Primitives visuais do site
 
-- [ ] Consolidar `vault-section-header`.
-- [ ] Consolidar `vault-filter`.
-- [ ] Consolidar `vault-metric`.
-- [ ] Consolidar `vault-resource-list`.
-- [ ] Consolidar `vault-empty-state`.
+- [x] Consolidar `vault-section-header`.
+- [x] Consolidar `vault-filter`.
+- [x] Consolidar `vault-metric`.
+- [x] Consolidar `vault-resource-list`.
+- [x] Consolidar `vault-empty-state`.
 - [ ] Documentar primitives em uma nota publicada enxuta.
 - [ ] Cobrir primitives estruturais com smoke/contrato.
 
 ### 3. Graph e timeline em Astro
 
-- [ ] Gerar dataset estático de links internos, tags e MOCs.
-- [ ] Criar graph view leve e explicável.
+- [x] Gerar dataset estático inicial de links internos e tags.
+- [x] Criar graph view leve e explicável.
 - [ ] Adicionar filtros de graph por pasta/tag/status.
 - [ ] Destacar hubs e notas órfãs.
-- [ ] Criar timeline simples de publicação/alteração quando houver metadados.
+- [x] Criar timeline simples de publicação/alteração quando houver metadados.
 - [ ] Garantir fallback sem JavaScript avançado quando possível.
 
 ### 4. Arquitetura de informação

@@ -107,6 +107,8 @@ requireCondition(
 // vault loader crash, etc.).
 
 const REQUIRED_DIST_PATHS = [
+  // Astro-first exploration surface
+  "explorar",
   // Onboarding guides — required by validate_onboarding.js
   "meta-e-anexos/guia-do-jardineiro-digital",
   "meta-e-anexos/seus-primeiros-passos",
@@ -126,6 +128,19 @@ for (const slug of REQUIRED_DIST_PATHS) {
   requireCondition(
     fs.existsSync(path.join(distDir, slug, "index.html")),
     `dist/${slug}/index.html missing — template-contract page not built. Check status:published and slugify output.`,
+  );
+}
+
+const exploreDataPath = path.join(distDir, "explorar", "dados.json");
+requireCondition(
+  fs.existsSync(exploreDataPath),
+  "dist/explorar/dados.json missing — Astro exploration data endpoint was not built.",
+);
+if (fs.existsSync(exploreDataPath)) {
+  const exploreData = JSON.parse(fs.readFileSync(exploreDataPath, "utf8"));
+  requireCondition(
+    exploreData.metrics?.notes > 0 && Array.isArray(exploreData.graph?.nodes),
+    "dist/explorar/dados.json must expose metrics and graph nodes for the Astro exploration surface.",
   );
 }
 

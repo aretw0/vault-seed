@@ -66,6 +66,9 @@ const labNotebooksManifest = readJson(".site/lab.notebooks.json");
 const labDatasetsScript = read("scripts/prepare_lab_datasets.mjs");
 const labEtlDemoScript = read("scripts/lab_etl_demo.mjs");
 const headerComponent = read(".site/components/Header.astro");
+const explorePage = read(".site/pages/explorar/index.astro");
+const exploreDataEndpoint = read(".site/pages/explorar/dados.json.ts");
+const exploreDataLib = read(".site/lib/vault-explore.ts");
 const astroConfig = read("astro.config.mjs");
 const pyproject = read("pyproject.toml");
 const marimoCss = read(".site/styles/marimo-vault.css");
@@ -249,6 +252,20 @@ requireCondition(
     customCss.includes(".vault-meta-badges") &&
     customCss.includes(".vault-badge--tag"),
   "Published notes must render frontmatter tag/property badges.",
+);
+requireCondition(
+  headerComponent.includes('/explorar/') &&
+    explorePage.includes('buildVaultExploreData') &&
+    explorePage.includes('data-vault-explore-search') &&
+    explorePage.includes('vault-metric-grid') &&
+    explorePage.includes('vault-graph-cloud') &&
+    exploreDataEndpoint.includes('buildVaultExploreData') &&
+    exploreDataLib.includes('graph:') &&
+    exploreDataLib.includes('orphanCandidates') &&
+    customCss.includes('.vault-filter-panel') &&
+    customCss.includes('.vault-resource-list') &&
+    customCss.includes('.vault-graph-cloud'),
+  "Astro must expose a static exploration surface with filters, metrics, graph data, and reusable UI primitives.",
 );
 requireCondition(
   (() => {

@@ -29,8 +29,8 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
           variant: 'primary',
         },
         {
-          text: 'Ver o Vault',
-          link: `${base}/meta-e-anexos/moc-vault-seed/`,
+          text: 'Explorar',
+          link: `${base}/explorar/`,
           icon: 'open-book',
         },
       ],
@@ -79,14 +79,27 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       </article>
 
       <article class="vault-card">
+        <span class="vault-card__eyebrow">Exploração</span>
+        <h2 class="vault-card__title">Mapa público do conhecimento</h2>
+        <p class="vault-card__body">
+          Filtre notas, encontre hubs, acompanhe atualizações e veja o grafo leve do site.
+        </p>
+        <div class="vault-actions">
+          <a class="vault-button vault-button--secondary" href={`${base}/explorar/`}>Explorar</a>
+        </div>
+      </article>
+
+      <article class="vault-card">
         <span class="vault-card__eyebrow">Lab</span>
         <h2 class="vault-card__title">Notebooks junto do vault</h2>
         <p class="vault-card__body">
-          Explore o grafo, publicação e dados preparados sem separar análise, documentação e origem.
+          Use Marimo para extract local, transformação e análises que não pertencem ao site estático.
         </p>
         <div class="vault-actions">
           <a class="vault-button vault-button--secondary" href={`${base}/lab/`}>Abrir Lab</a>
         </div>
+      </article>
+    </div>
       </article>
     </div>
   </section>
