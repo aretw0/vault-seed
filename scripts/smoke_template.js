@@ -256,9 +256,10 @@ requireCondition(
     const removed = match ? match[1].split(/\s+/) : [];
     return !removed.includes("packages") &&
       !removed.includes("pnpm-workspace.yaml") &&
-      removed.includes("packages/cli");
+      removed.includes("packages/cli") &&
+      removed.includes("ROADMAP.md");
   })(),
-  "initialize.yml must keep pnpm-workspace.yaml and packages/astro-plugins, removing only packages/cli.",
+  "initialize.yml must keep pnpm-workspace.yaml and packages/astro-plugins, removing packages/cli and template-only ROADMAP.md.",
 );
 for (const [name, specifier] of Object.entries({
   ...(templatePkg.dependencies || {}),
