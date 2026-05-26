@@ -25,6 +25,11 @@ test("deploy-site workflow keeps GitHub Pages deploy gated by build and smoke", 
   assert.match(workflow, /"pnpm-lock\.yaml"/);
   assert.match(workflow, /"scripts\/\*\*"/);
   assert.match(workflow, /"docs\/\*\*"/);
+  assert.match(workflow, /run: pnpm run validate/);
+  assert.ok(
+    workflow.indexOf("run: pnpm run validate") < workflow.indexOf("run: pnpm run site:build"),
+    "deploy must run the canonical vault validation before building Pages artifacts",
+  );
   assert.match(workflow, /run: pnpm --filter @dgk\/astro-plugins build/);
   assert.match(workflow, /run: pnpm run site:build/);
   assert.match(workflow, /uses: astral-sh\/setup-uv@[0-9a-f]{40}/);
