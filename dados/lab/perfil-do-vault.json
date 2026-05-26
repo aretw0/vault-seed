@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "source": "scripts/lab_etl_demo.mjs",
-  "noteCount": 50,
-  "totalWords": 16535,
-  "averageWords": 331,
+  "noteCount": 51,
+  "totalWords": 16952,
+  "averageWords": 332,
   "folders": [
     {
       "name": "99 - Meta e Anexos",
-      "count": 29
+      "count": 30
     },
     {
       "name": "40 - Recursos",
@@ -21,7 +21,7 @@
   "statuses": [
     {
       "name": "published",
-      "count": 44
+      "count": 45
     },
     {
       "name": "draft",
@@ -35,11 +35,15 @@
     },
     {
       "name": "meta/workflow",
-      "count": 8
+      "count": 9
     },
     {
       "name": "iniciante",
       "count": 6
+    },
+    {
+      "name": "meta/organizacao",
+      "count": 5
     },
     {
       "name": "conceito/pkm",
@@ -55,10 +59,6 @@
     },
     {
       "name": "meta/onboarding",
-      "count": 4
-    },
-    {
-      "name": "meta/organizacao",
       "count": 4
     },
     {

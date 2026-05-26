@@ -81,7 +81,7 @@ Astro, Marimo, scripts e CI voltem a divergir.
 - [x] Publicar `curadoria-ia.json` como dataset do Lab.
 - [x] Mostrar sinais editoriais em `/explorar/` usando o mesmo contrato.
 - [ ] Transformar candidatas a promoção e recursos curtos em decisões editoriais pequenas.
-- [ ] Documentar a rotina de curadoria como prática recorrente do template.
+- [x] Documentar a rotina de curadoria como prática recorrente do template.
 
 ## Roadmap de evolução
 

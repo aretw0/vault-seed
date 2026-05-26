@@ -82,6 +82,7 @@ const marimoCss = read(".site/styles/marimo-vault.css");
 const themeRuntimeCss = read(".site/styles/theme-runtime.css");
 const vaultLoader = read(".site/content.config.ts");
 const customCss = read(".site/styles/custom.css");
+const curationRoutineGuide = read("99 - Meta e Anexos/Rotina de Curadoria Editorial.md");
 
 requireCondition(
   typeof pkg.packageManager === "string" &&
@@ -295,6 +296,15 @@ requireCondition(
     customCss.includes(".vault-badge--tag"),
   "Published notes must render frontmatter tag/property badges.",
 );
+requireCondition(
+  curationRoutineGuide.includes("pnpm run validate") &&
+    curationRoutineGuide.includes("pnpm run audit:ia") &&
+    curationRoutineGuide.includes("/explorar/") &&
+    curationRoutineGuide.includes("curadoria-ia.json") &&
+    curationRoutineGuide.includes("decisão humana"),
+  "The generated vault must document the recurring editorial curation routine across validation, Astro, and Lab.",
+);
+
 requireCondition(
   headerComponent.includes('/explorar/') &&
     explorePage.includes('buildVaultExploreData') &&

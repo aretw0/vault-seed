@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "source": ".site/lib/information-architecture-audit.mjs",
-  "notesEvaluated": 44,
+  "notesEvaluated": 45,
   "errors": [],
   "warnings": [
     "Possíveis promoções de 99 - Meta e Anexos para 40 - Recursos: Automatizando a Inicialização do Vault; O Ciclo de Vida do Conhecimento (Versionamento para Jardineiros Digitais)",
     "Recursos publicados ainda muito curtos: Daily Note; Filosofia e Conceitos Fundamentais; Links; O que é o método PARA; O que é o método Zettelkasten; O que são MOCs (Mapas de Conteúdo); Obsidian; Tags; Templater; VS Code",
-    "Distribuição por intenção: Automatizar=6, Começar=9, Explorar=9, Manter=12, Organizar=21, Publicar=3"
+    "Distribuição por intenção: Automatizar=6, Começar=9, Explorar=10, Manter=12, Organizar=22, Publicar=4"
   ],
   "promotionCandidates": [
     {
@@ -123,7 +123,7 @@
     {
       "intent": "explorar",
       "label": "Explorar",
-      "count": 9
+      "count": 10
     },
     {
       "intent": "manter",
@@ -133,12 +133,12 @@
     {
       "intent": "organizar",
       "label": "Organizar",
-      "count": 21
+      "count": 22
     },
     {
       "intent": "publicar",
       "label": "Publicar",
-      "count": 3
+      "count": 4
     }
   ]
 }
