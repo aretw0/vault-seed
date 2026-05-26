@@ -74,12 +74,17 @@ test("published Lab pages keep the vault shell contract", () => {
   assert.match(exportNotebooks, /return sidebarMedia\.matches/);
   assert.match(exportNotebooks, /notebooksPath === "lab" \? "\.\/" : "\.\.\/lab\/"/);
   assert.match(exportNotebooks, /data-vault-marimo-theme-selector/);
+  assert.match(exportNotebooks, /data-vault-marimo-presentation-mobile-fallback/);
+  assert.match(exportNotebooks, /vault-seed-slides-lite\.html/);
 
   assert.match(labIndex, /resolveNotebooksPath/);
   assert.match(labIndex, /vault-card-grid/);
   assert.match(labIndex, /vault-card/);
   assert.match(labIndex, /vault-button/);
   assert.match(labIndex, /vault-status/);
+
+  assert.match(marimoCss, /made it as a small pull-tab|small pull-tab|Marimo's own fixed badge/);
+  assert.match(marimoCss, /print\\:hidden/);
 
   for (const palette of ["oceano", "terracota"]) {
     assert.match(marimoCss, new RegExp(`data-vault-marimo-palette="${palette}"`));

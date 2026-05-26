@@ -44,6 +44,8 @@ const THEME_SELECTOR_MARKER = "data-vault-marimo-theme-selector";
 const NAVIGATION_MARKER = "data-vault-marimo-navigation";
 const PRESENTATION_FULLSCREEN_MARKER =
 	"data-vault-marimo-presentation-fullscreen";
+const PRESENTATION_MOBILE_FALLBACK_MARKER =
+	"data-vault-marimo-presentation-mobile-fallback";
 const themeSelectorMode = process.env.VAULT_MARIMO_THEME_SELECTOR;
 const isVaultSeedRepo = String(packageJson.repository?.url ?? "").includes(
 	"aretw0/vault-seed",
@@ -319,6 +321,57 @@ const presentationFullscreenHtml = String.raw`
 </script>
 `;
 
+const presentationMobileFallbackRedirectHtml = String.raw`
+<script data-vault-marimo-presentation-mobile-fallback>
+(() => {
+  const isFirefox = /Firefox\/\d+|FxiOS/i.test(navigator.userAgent);
+  const isMobileViewport = window.matchMedia("(max-width: 44rem), (pointer: coarse)").matches;
+  if (isFirefox && isMobileViewport && !location.pathname.endsWith("vault-seed-slides-lite.html")) {
+    location.replace("./vault-seed-slides-lite.html");
+  }
+})();
+</script>
+`;
+
+function presentationLiteHtml() {
+	return String.raw`<!doctype html>
+<html lang="pt-BR" data-vault-marimo-theme="light" data-vault-marimo-palette="verde-jardim">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vault Seed — slides leves</title>
+  <style>
+${readFileSync(join(ROOT, ".site", "styles", "marimo-vault.css"), "utf8")}
+    body { margin: 0; }
+    .vault-lite-slides { max-width: min(56rem, calc(100vw - 2rem)); margin: 0 auto; padding: clamp(1rem, 4vw, 3rem) 1rem 4rem; }
+    .vault-lite-nav { display: flex; gap: .75rem; flex-wrap: wrap; margin-block-end: 1.5rem; }
+    .vault-lite-slide { border: 1px solid var(--border); border-radius: 1rem; background: var(--card); padding: clamp(1rem, 3vw, 2rem); margin-block: 1rem; box-shadow: 0 .75rem 2rem color-mix(in srgb, var(--foreground) 8%, transparent); }
+    .vault-lite-slide h1, .vault-lite-slide h2 { color: var(--primary); margin-block-start: 0; }
+    .vault-lite-slide table { width: 100%; border-collapse: collapse; }
+    .vault-lite-slide th, .vault-lite-slide td { border: 1px solid var(--border); padding: .5rem; text-align: left; }
+  </style>
+</head>
+<body>
+  <main class="vault-lite-slides">
+    <nav class="vault-lite-nav" aria-label="Navegação dos slides leves">
+      <a href="../">Vault</a>
+      <a href="./">Lab</a>
+      <a href="./vault-seed-slides.html">Abrir versão interativa</a>
+    </nav>
+
+    <section class="vault-lite-slide"><h1>vault-seed</h1><p>Um vault local-first com site, automação e notebooks no mesmo repositório.</p></section>
+    <section class="vault-lite-slide"><h2>A tese</h2><p>O vault não é só uma pasta de Markdown. Ele é um sistema versionado para pensar, publicar, automatizar e analisar o próprio conhecimento.</p></section>
+    <section class="vault-lite-slide"><h2>O que vem junto</h2><table><tr><th>Camada</th><th>Papel</th></tr><tr><td>Notas Markdown</td><td>conhecimento editável localmente</td></tr><tr><td>Astro/Starlight</td><td>site publicado a partir do vault</td></tr><tr><td>GitHub Actions</td><td>validação e publicação automática</td></tr><tr><td>Marimo</td><td>Lab interativo para leitura e análise</td></tr><tr><td>Agentes</td><td>edição assistida via arquivos, comandos e diff</td></tr></table></section>
+    <section class="vault-lite-slide"><h2>Local-first</h2><p>O trabalho diário acontece no computador: notas, notebooks, scripts e commits. O site publicado é um artefato empacotado dessa base local.</p></section>
+    <section class="vault-lite-slide"><h2>Lab</h2><ul><li>localmente: Python roda no computador;</li><li>publicado: HTML WebAssembly roda no navegador;</li><li>layouts nativos do Marimo permitem modos vertical, grid e slides.</li></ul></section>
+    <section class="vault-lite-slide"><h2>Governança</h2><p>Criar um notebook não publica esse notebook. A publicação passa pelo manifesto <code>.site/lab.notebooks.json</code>.</p></section>
+    <section class="vault-lite-slide"><h2>Próximo passo</h2><p>Distribuir um vault pronto para uso, publicar documentação viva, criar notebooks de análise e separar ETL local de visualização empacotada.</p></section>
+  </main>
+</body>
+</html>
+`;
+}
+
 function injectNotebookNavigation(htmlPath, currentOutput) {
 	const html = readFileSync(htmlPath, "utf8");
 	if (html.includes(NAVIGATION_MARKER)) {
@@ -358,6 +411,28 @@ function injectPresentationFullscreen(htmlPath) {
 	writeFileSync(
 		htmlPath,
 		html.replace("</body>", `${presentationFullscreenHtml}\n</body>`),
+	);
+}
+
+function injectPresentationMobileFallback(htmlPath) {
+	const html = readFileSync(htmlPath, "utf8");
+	if (html.includes(PRESENTATION_MOBILE_FALLBACK_MARKER)) {
+		return;
+	}
+	if (!html.includes("<head>")) {
+		throw new Error(`HTML exportado sem <head>: ${htmlPath}`);
+	}
+	writeFileSync(
+		htmlPath,
+		html.replace("<head>", `<head>\n${presentationMobileFallbackRedirectHtml}`),
+	);
+}
+
+function writePresentationLiteFallback() {
+	writeFileSync(
+		join(outDir, "vault-seed-slides-lite.html"),
+		presentationLiteHtml(),
+		"utf8",
 	);
 }
 
@@ -505,6 +580,8 @@ for (const notebook of manifest.filter((entry) => entry.publish)) {
 
 	injectNotebookNavigation(output, notebook.output);
 	if (notebook.output === "vault-seed-slides.html") {
+		writePresentationLiteFallback();
+		injectPresentationMobileFallback(output);
 		injectPresentationFullscreen(output);
 	}
 	if (shouldInjectThemeSelector) {

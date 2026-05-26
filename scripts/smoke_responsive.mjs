@@ -36,6 +36,11 @@ const pages = [
     label: "notebook-apresentacao",
     type: "notebook",
   },
+  {
+    path: `/${notebooksPath}/vault-seed-slides-lite.html`,
+    label: "notebook-apresentacao-lite",
+    type: "site",
+  },
 ];
 
 const contentTypes = new Map([
@@ -335,6 +340,22 @@ async function assertLabShellLayout(page, target, viewport, label) {
   }
 }
 
+async function assertMarimoBadgeDoesNotCoverContent(page, target, viewport, label) {
+  if (target.type !== "notebook") return;
+
+  const badge = await page
+    .locator('a:has-text("made with marimo")')
+    .first()
+    .boundingBox()
+    .catch(() => null);
+  if (!badge) return;
+
+  const visibleHeight = Math.max(0, viewport.height - badge.y);
+  if (visibleHeight > 10) {
+    fail(`${label}: Marimo attribution badge covers ${Math.round(visibleHeight)}px of the viewport`);
+  }
+}
+
 async function run() {
   if (!existsSync(distDir)) {
     throw new Error("dist/ does not exist. Run pnpm run site:responsive.");
@@ -394,6 +415,7 @@ async function run() {
           externalNetworkAvailable,
         );
         await assertLabShellLayout(page, target, viewport, label);
+        await assertMarimoBadgeDoesNotCoverContent(page, target, viewport, label);
       }
 
       await context.close();

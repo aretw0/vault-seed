@@ -171,6 +171,10 @@ if (requirePublishedNotebooks) {
       `dist/${relPath} missing — published notebook was not exported before site smoke.`,
     );
   }
+  requireCondition(
+    fs.existsSync(path.join(distDir, notebooksPath, "vault-seed-slides-lite.html")),
+    `dist/${notebooksPath}/vault-seed-slides-lite.html missing — mobile-safe slide fallback was not exported.`,
+  );
 }
 
 if (requirePublishedNotebooks && notebooksPath !== "lab") {
@@ -193,7 +197,7 @@ const contentPages = allHtml.filter((f) => {
     !rel.endsWith("404.html") &&
     rel !== "index.html" &&
     !rel.startsWith("_") &&
-    !isMarimoNotebook(rel)
+    !isNotebookArtifact(rel)
   );
 });
 
@@ -226,6 +230,10 @@ const hasMarkdownContent = /class="[^"]*sl-markdown-content[^"]*"/;
 
 function isMarimoNotebook(relPath) {
   return marimoNotebookPaths.has(relPath) || defaultMarimoNotebookPaths.has(relPath);
+}
+
+function isNotebookArtifact(relPath) {
+  return isMarimoNotebook(relPath) || /(^|\/)vault-seed-slides-lite\.html$/.test(relPath);
 }
 
 function hasMarimoRuntime(content) {
