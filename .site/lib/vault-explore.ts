@@ -10,6 +10,7 @@ import {
   loadInformationArchitecture,
   normalizeVocabularyValue,
 } from './information-architecture.mjs';
+import { buildInformationArchitectureReport } from './information-architecture-audit.mjs';
 import { VAULT_FOLDERS } from './vault-folders.mjs';
 
 const WIKILINK_RE = /\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|[^\]]+)?\]\]/g;
@@ -60,6 +61,15 @@ export type ExploreData = {
       hubs: Array<{ id: string; title: string; folder: string; degree: number }>;
       orphans: Array<{ id: string; title: string; folder: string }>;
     };
+  };
+  editorial: {
+    notesEvaluated: number;
+    errorCount: number;
+    warningCount: number;
+    warnings: string[];
+    promotionCandidates: Array<{ file: string; title: string; folder: string; category: string; audience: string; words: number }>;
+    thinPublishedResources: Array<{ file: string; title: string; folder: string; category: string; audience: string; words: number }>;
+    intentDistribution: Array<{ intent: string; label: string; count: number }>;
   };
   notes: ExploreNote[];
 };
@@ -257,6 +267,8 @@ export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData
     .slice(0, 12)
     .map(({ id, title, folder }) => ({ id, title, folder }));
 
+  const editorialReport = buildInformationArchitectureReport({ root: cwd });
+
   return {
     generated: new Date().toISOString(),
     metrics: {
@@ -281,6 +293,15 @@ export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData
         hubs: hubInsights,
         orphans: orphanInsights,
       },
+    },
+    editorial: {
+      notesEvaluated: editorialReport.notesEvaluated,
+      errorCount: editorialReport.errors.length,
+      warningCount: editorialReport.warnings.length,
+      warnings: editorialReport.warnings,
+      promotionCandidates: editorialReport.promotionCandidates,
+      thinPublishedResources: editorialReport.thinPublishedResources,
+      intentDistribution: editorialReport.intentDistribution,
     },
     notes,
   };

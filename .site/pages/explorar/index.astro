@@ -10,6 +10,10 @@ const orphanNodes = explore.graph.insights.orphans.slice(0, 8);
 const recentNotes = [...explore.notes]
   .sort((a, b) => String(b.updated ?? b.created ?? '').localeCompare(String(a.updated ?? a.created ?? '')))
   .slice(0, 8);
+const noteHrefByPath = new Map(explore.notes.map((note) => [note.path, note.href]));
+const promotionCandidates = explore.editorial.promotionCandidates.slice(0, 6);
+const thinResources = explore.editorial.thinPublishedResources.slice(0, 8);
+const editorialWarnings = explore.editorial.warnings.filter((warning) => !warning.startsWith('Distribuição por intenção'));
 const exploreJson = JSON.stringify(explore).replace(/</g, '\\u003c');
 ---
 
@@ -43,6 +47,10 @@ const exploreJson = JSON.stringify(explore).replace(/</g, '\\u003c');
       <article class="vault-metric">
         <span class="vault-metric__value">{explore.metrics.hubs}</span>
         <span class="vault-metric__label">hubs candidatos</span>
+      </article>
+      <article class="vault-metric">
+        <span class="vault-metric__value">{editorialWarnings.length}</span>
+        <span class="vault-metric__label">sinais editoriais</span>
       </article>
     </div>
 
@@ -172,6 +180,65 @@ const exploreJson = JSON.stringify(explore).replace(/</g, '\\u003c');
           ))}
         </ol>
       </article>
+    </section>
+
+    <section class="vault-graph-preview" aria-labelledby="vault-editorial-title">
+      <div class="vault-section-header">
+        <div>
+          <span class="vault-card__eyebrow">Curadoria editorial</span>
+          <h2 id="vault-editorial-title">Estado da arquitetura de informação</h2>
+        </div>
+        <span class="vault-status">{explore.editorial.notesEvaluated} notas auditadas · {editorialWarnings.length} sinais</span>
+      </div>
+
+      <div class="vault-insight-grid">
+        <article class="vault-card">
+          <span class="vault-card__eyebrow">Avisos</span>
+          <h3 class="vault-card__title">Sinais para próxima curadoria</h3>
+          <ul class="vault-compact-list">
+            {editorialWarnings.map((warning) => <li><span>{warning}</span></li>)}
+          </ul>
+        </article>
+
+        <article class="vault-card">
+          <span class="vault-card__eyebrow">Promoções</span>
+          <h3 class="vault-card__title">Notas candidatas a virar recurso</h3>
+          {promotionCandidates.length ? (
+            <ul class="vault-compact-list">
+              {promotionCandidates.map((note) => (
+                <li>
+                  {noteHrefByPath.has(note.file) ? <a href={`${base}${noteHrefByPath.get(note.file)}`}>{note.title}</a> : <span>{note.title}</span>}
+                  <span>{note.words} palavras</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p class="vault-card__body">Nenhuma promoção candidata no recorte atual.</p>
+          )}
+        </article>
+
+        <article class="vault-card">
+          <span class="vault-card__eyebrow">Recursos curtos</span>
+          <h3 class="vault-card__title">Notas que pedem expansão ou reclassificação</h3>
+          {thinResources.length ? (
+            <ul class="vault-compact-list">
+              {thinResources.map((note) => (
+                <li>
+                  {noteHrefByPath.has(note.file) ? <a href={`${base}${noteHrefByPath.get(note.file)}`}>{note.title}</a> : <span>{note.title}</span>}
+                  <span>{note.words} palavras</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p class="vault-card__body">Nenhum recurso curto no recorte atual.</p>
+          )}
+        </article>
+      </div>
+      <p class="vault-card__body">
+        Estes sinais vêm do mesmo contrato usado por CI, deploy e Lab. Eles não substituem decisão humana,
+        mas tornam visível onde a curadoria acumula mais retorno: conteúdo curto, notas conceituais fora de
+        recursos e distribuição por intenção.
+      </p>
     </section>
 
     <section class="vault-graph-preview" aria-labelledby="vault-graph-title">

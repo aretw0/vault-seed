@@ -142,8 +142,11 @@ if (fs.existsSync(exploreDataPath)) {
     exploreData.metrics?.notes > 0 &&
       Array.isArray(exploreData.graph?.nodes) &&
       Array.isArray(exploreData.graph?.insights?.hubs) &&
-      Array.isArray(exploreData.graph?.insights?.orphans),
-    "dist/explorar/dados.json must expose metrics, graph nodes, and graph insights for the Astro exploration surface.",
+      Array.isArray(exploreData.graph?.insights?.orphans) &&
+      exploreData.editorial?.notesEvaluated > 0 &&
+      Array.isArray(exploreData.editorial?.promotionCandidates) &&
+      Array.isArray(exploreData.editorial?.thinPublishedResources),
+    "dist/explorar/dados.json must expose metrics, graph insights, and editorial curation signals for the Astro exploration surface.",
   );
 }
 

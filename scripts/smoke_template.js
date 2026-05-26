@@ -303,10 +303,14 @@ requireCondition(
     explorePage.includes('vault-metric-grid') &&
     explorePage.includes('vault-graph-cloud') &&
     explorePage.includes('orphanNodes') &&
+    explorePage.includes('Curadoria editorial') &&
+    explorePage.includes('promotionCandidates') &&
     exploreDataEndpoint.includes('buildVaultExploreData') &&
     exploreDataLib.includes('loadInformationArchitecture') &&
     exploreDataLib.includes('deriveNoteIntents') &&
     exploreDataLib.includes('graph:') &&
+    exploreDataLib.includes('editorial:') &&
+    exploreDataLib.includes('buildInformationArchitectureReport') &&
     exploreDataLib.includes('orphanCandidates') &&
     exploreDataLib.includes('insights') &&
     customCss.includes('.vault-filter-panel') &&
