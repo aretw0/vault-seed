@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "source": "scripts/lab_etl_demo.mjs",
-  "noteCount": 48,
-  "totalWords": 15865,
-  "averageWords": 331,
+  "noteCount": 50,
+  "totalWords": 16473,
+  "averageWords": 329,
   "folders": [
     {
       "name": "99 - Meta e Anexos",
-      "count": 28
+      "count": 29
     },
     {
       "name": "40 - Recursos",
@@ -15,21 +15,17 @@
     },
     {
       "name": "90 - Modelos",
-      "count": 5
+      "count": 6
     }
   ],
   "statuses": [
     {
       "name": "published",
-      "count": 43
+      "count": 44
     },
     {
-      "name": "sem status",
-      "count": 4
-    },
-    {
-      "name": "a-fazer",
-      "count": 1
+      "name": "draft",
+      "count": 6
     }
   ],
   "tags": [
@@ -92,7 +88,7 @@
         "meta/notebooks",
         "meta/automacao"
       ],
-      "words": 2087
+      "words": 2109
     },
     {
       "title": "Preparando seu Computador para o Vault",
@@ -116,6 +112,16 @@
         "obsidian/canvas"
       ],
       "words": 700
+    },
+    {
+      "title": "Preparando Dados para o Lab",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "tags": [
+        "meta/notebooks",
+        "meta/dados"
+      ],
+      "words": 669
     },
     {
       "title": "Usando o Git e o GitHub para Sincronizar seu Vault",
@@ -182,19 +188,6 @@
         "meta/sincronizacao"
       ],
       "words": 525
-    },
-    {
-      "title": "Evoluindo seu Vault com Links, Tags e MOCs",
-      "folder": "99 - Meta e Anexos",
-      "status": "published",
-      "tags": [
-        "meta/organizacao",
-        "meta/workflow",
-        "obsidian/dataview",
-        "obsidian/bases",
-        "obsidian/moc"
-      ],
-      "words": 494
     }
   ]
 }

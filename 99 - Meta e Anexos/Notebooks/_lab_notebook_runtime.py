@@ -13,11 +13,20 @@ def lab_runtime_context(notebooks_path: str = "lab"):
 
     packaged = is_pyodide_runtime()
     resolved_notebooks_path = _os.environ.get("VAULT_NOTEBOOKS_PATH", notebooks_path)
+    local_capabilities = {
+        "filesystem": not packaged,
+        "secrets": not packaged,
+        "subprocess": not packaged,
+        "headlessBrowser": not packaged,
+        "ocr": not packaged,
+        "binaryFormats": not packaged,
+    }
     return {
         "runtime": "pyodide" if packaged else "local",
         "isPackaged": packaged,
         "isLocal": not packaged,
         "canRunLocalEtl": not packaged,
+        "capabilities": local_capabilities,
         "notebooksPath": resolved_notebooks_path,
         "cwd": "" if packaged else _os.getcwd(),
     }
@@ -182,6 +191,16 @@ def local_vault_path(relative_path: str):
     return target
 
 
+def _local_write_result(relative_path: str, target: str):
+    import os as _os
+
+    return {
+        "path": target,
+        "relativePath": _safe_relative_path(relative_path),
+        "bytes": _os.path.getsize(target),
+    }
+
+
 def write_local_json_snapshot(relative_path: str, payload, *, indent: int = 2):
     """Escreve um snapshot JSON versionável no vault local.
 
@@ -196,8 +215,173 @@ def write_local_json_snapshot(relative_path: str, payload, *, indent: int = 2):
     with open(target, "w", encoding="utf-8") as f:
         _json.dump(payload, f, ensure_ascii=False, indent=indent)
         f.write("\n")
+    return _local_write_result(relative_path, target)
+
+
+def write_local_dataframe_snapshot(dataframe, relative_path: str, *, format: str = None):
+    """Escreve DataFrame local como CSV, JSON ou Parquet.
+
+    Parquet é opcional: só funciona quando `pyarrow` ou engine compatível estiver
+    instalado no ambiente local. O HTML publicado deve consumir snapshots já
+    gerados, não tentar escrever arquivos.
+    """
+    import os as _os
+
+    target = local_vault_path(relative_path)
+    _os.makedirs(_os.path.dirname(target), exist_ok=True)
+    resolved_format = (format or _os.path.splitext(target)[1].lstrip(".")).lower()
+
+    if resolved_format == "csv":
+        dataframe.to_csv(target, index=False)
+    elif resolved_format == "json":
+        dataframe.to_json(target, orient="records", force_ascii=False, indent=2)
+        with open(target, "a", encoding="utf-8") as f:
+            f.write("\n")
+    elif resolved_format == "parquet":
+        dataframe.to_parquet(target, index=False)
+    else:
+        raise RuntimeError("Formato de snapshot tabular suportado: csv, json ou parquet.")
+
+    return _local_write_result(relative_path, target)
+
+
+def get_local_secret(name: str, default=None, *, required: bool = False):
+    """Lê segredo do ambiente local sem expor credenciais no HTML publicado."""
+    import os as _os
+
+    require_local_runtime(f"ler segredo local {name}")
+    value = _os.environ.get(name, default)
+    if required and not value:
+        raise RuntimeError(f"Segredo local ausente: {name}")
+    return value
+
+
+def clean_lab_text(text, *, lower: bool = False) -> str:
+    """Normaliza texto bruto vindo de scraping, OCR, arquivos ou APIs."""
+    import re as _re
+
+    cleaned = _re.sub(r"[\n\x0c\r]+", " ", str(text or ""))
+    cleaned = _re.sub(r"\s+", " ", cleaned).strip()
+    return cleaned.lower() if lower else cleaned
+
+
+def fingerprint_data(payload) -> str:
+    """Calcula fingerprint SHA-256 estável para payloads JSON-serializáveis."""
+    import hashlib as _hashlib
+    import json as _json
+
+    encoded = _json.dumps(payload, ensure_ascii=False, sort_keys=True).encode("utf-8")
+    return _hashlib.sha256(encoded).hexdigest()
+
+
+def read_local_text_file(relative_path: str, *, encoding: str = "utf-8"):
+    """Lê arquivo de texto local dentro do vault."""
+    with open(local_vault_path(relative_path), encoding=encoding) as f:
+        return f.read()
+
+
+def read_local_bytes_file(relative_path: str):
+    """Lê arquivo binário local dentro do vault."""
+    with open(local_vault_path(relative_path), "rb") as f:
+        return f.read()
+
+
+def fetch_local_url_text(url: str, *, timeout: int = 20, user_agent: str = "vault-seed-lab/1.0"):
+    """Extrai HTML/texto de uma URL no ambiente local usando biblioteca padrão."""
+    import re as _re
+    from html.parser import HTMLParser as _HTMLParser
+    from urllib.request import Request as _Request
+    from urllib.request import urlopen as _urlopen
+
+    require_local_runtime("extrair página web localmente")
+
+    class _TextParser(_HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self._title = []
+            self._chunks = []
+            self._in_title = False
+            self._ignored = 0
+
+        def handle_starttag(self, tag, attrs):
+            if tag in {"script", "style", "noscript"}:
+                self._ignored += 1
+            if tag == "title":
+                self._in_title = True
+
+        def handle_endtag(self, tag):
+            if tag in {"script", "style", "noscript"} and self._ignored:
+                self._ignored -= 1
+            if tag == "title":
+                self._in_title = False
+
+        def handle_data(self, data):
+            if self._ignored:
+                return
+            if self._in_title:
+                self._title.append(data)
+            self._chunks.append(data)
+
+    request = _Request(url, headers={"User-Agent": user_agent})
+    with _urlopen(request, timeout=timeout) as response:
+        html = response.read().decode(response.headers.get_content_charset() or "utf-8", "replace")
+
+    parser = _TextParser()
+    parser.feed(html)
+    text = clean_lab_text(" ".join(parser._chunks))
     return {
-        "path": target,
-        "relativePath": _safe_relative_path(relative_path),
-        "bytes": _os.path.getsize(target),
+        "url": url,
+        "title": clean_lab_text(" ".join(parser._title)) or None,
+        "text": text,
+        "textPreview": text[:500],
+        "links": _re.findall(r"href=[\"']([^\"']+)", html)[:50],
     }
+
+
+async def scrape_local_page_text(url: str, *, wait_until: str = "networkidle"):
+    """Extrai página dinâmica localmente com Playwright, quando instalado."""
+    require_local_runtime("extrair página dinâmica com Playwright")
+    try:
+        from playwright.async_api import async_playwright as _async_playwright
+    except ImportError as exc:
+        raise RuntimeError(
+            "Playwright não está instalado. Instale apenas no ambiente local quando precisar de scraping dinâmico."
+        ) from exc
+
+    async with _async_playwright() as playwright:
+        browser = await playwright.chromium.launch(headless=True)
+        page = await browser.new_page()
+        await page.goto(url, wait_until=wait_until)
+        title = await page.title()
+        text = await page.inner_text("body")
+        await browser.close()
+
+    cleaned = clean_lab_text(text)
+    return {"url": url, "title": title, "text": cleaned, "textPreview": cleaned[:500]}
+
+
+def extract_local_image_text(image_input, *, languages: str = "por+eng"):
+    """Executa OCR local em caminho, bytes, objeto PIL ou URL de imagem."""
+    from io import BytesIO as _BytesIO
+    from urllib.request import urlopen as _urlopen
+
+    require_local_runtime("executar OCR local")
+    try:
+        import pytesseract as _pytesseract
+        from PIL import Image as _Image
+    except ImportError as exc:
+        raise RuntimeError(
+            "OCR local requer pillow e pytesseract instalados, além do binário tesseract."
+        ) from exc
+
+    if isinstance(image_input, str) and image_input.startswith(("http://", "https://")):
+        with _urlopen(image_input, timeout=20) as response:
+            image = _Image.open(_BytesIO(response.read()))
+    elif isinstance(image_input, str):
+        image = _Image.open(local_vault_path(image_input))
+    elif isinstance(image_input, bytes):
+        image = _Image.open(_BytesIO(image_input))
+    else:
+        image = image_input
+
+    return clean_lab_text(_pytesseract.image_to_string(image, lang=languages))

@@ -97,6 +97,7 @@ requireCondition(
   templatePkg.scripts?.["notebooks:data"] === "node scripts/generate_vault_data.mjs" &&
     templatePkg.scripts?.["notebooks:etl:demo"] === "node scripts/lab_etl_demo.mjs" &&
     templatePkg.scripts?.["notebooks:etl"] === "pnpm run notebooks:etl:demo && node scripts/prepare_lab_datasets.mjs" &&
+    templatePkg.scripts?.["notebooks:extract:local"] === "pnpm run notebooks:etl" &&
     templatePkg.scripts?.["notebooks:dev"] === "node scripts/notebooks_dev.mjs" &&
     templatePkg.scripts?.["notebooks:check"] === "node scripts/notebooks_check.mjs" &&
     templatePkg.scripts?.["notebooks:pair"] === "node scripts/notebooks_pair.mjs" &&
@@ -218,6 +219,7 @@ requireCondition(
 requireCondition(
   pkg.scripts?.["notebooks:etl:demo"] === "node scripts/lab_etl_demo.mjs" &&
     pkg.scripts?.["notebooks:etl"]?.includes("notebooks:etl:demo") &&
+    pkg.scripts?.["notebooks:extract:local"] === "pnpm run notebooks:etl" &&
     labEtlDemoScript.includes("dados\", \"lab\", \"perfil-do-vault.json") &&
     labDatasetsManifest.some((entry) => entry.id === "perfil-do-vault" && entry.source === "dados/lab/perfil-do-vault.json") &&
     labDatasetsManifest.some((entry) => entry.id === "json-remoto-opcional" && entry.runtimeUrl) &&
@@ -225,6 +227,10 @@ requireCondition(
     etlNotebook.includes("load_lab_manifest") &&
     etlNotebook.includes("read_lab_dataset") &&
     etlNotebook.includes("write_local_json_snapshot") &&
+    etlNotebook.includes("write_local_dataframe_snapshot") &&
+    etlNotebook.includes("fetch_local_url_text") &&
+    etlNotebook.includes("extract_local_image_text") &&
+    etlNotebook.includes("Primitivas locais vs publicadas") &&
     etlNotebook.includes("Carregar exemplo remoto no navegador"),
   "Lab ETL demo must keep local snapshot generation, dataset manifest packaging, and a published notebook example wired together.",
 );

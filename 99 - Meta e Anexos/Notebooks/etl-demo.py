@@ -14,10 +14,18 @@ def _():
 @app.cell
 def _():
     from _lab_notebook_runtime import (
+        clean_lab_text,
+        extract_local_image_text,
+        fetch_local_url_text,
+        fingerprint_data,
+        get_local_secret,
         lab_runtime_context,
         load_lab_manifest,
         read_lab_dataset,
         read_lab_json,
+        read_local_text_file,
+        scrape_local_page_text,
+        write_local_dataframe_snapshot,
         write_local_json_snapshot,
     )
 
@@ -29,12 +37,20 @@ def _():
         dataset for dataset in manifest["datasets"] if dataset["kind"] == "runtime"
     ]
     return (
+        clean_lab_text,
+        extract_local_image_text,
+        fetch_local_url_text,
+        fingerprint_data,
+        get_local_secret,
         manifest,
         read_lab_dataset,
         read_lab_json,
+        read_local_text_file,
         runtime_context,
         runtime_sources,
+        scrape_local_page_text,
         snapshot,
+        write_local_dataframe_snapshot,
         write_local_json_snapshot,
     )
 
@@ -60,18 +76,14 @@ def _(manifest, mo, runtime_context, snapshot):
 
 
 @app.cell
-def _():
-    import hashlib
+def _(clean_lab_text, fingerprint_data):
     import json
-    import re
 
     class DataTransformer:
         """Transformações pequenas, auditáveis e compatíveis com Pyodide."""
 
         def clean_text(self, text):
-            text = str(text or "")
-            text = re.sub(r"\s+", " ", text).strip()
-            return text
+            return clean_lab_text(text)
 
         def note_records(self, snapshot):
             records = []
@@ -120,10 +132,7 @@ def _():
         """Carga local: serializa resultados para cópia, versionamento ou CI."""
 
         def fingerprint(self, data):
-            payload = json.dumps(data, ensure_ascii=False, sort_keys=True).encode(
-                "utf-8"
-            )
-            return hashlib.sha256(payload).hexdigest()
+            return fingerprint_data(data)
 
         def to_json(self, records):
             return json.dumps(records, ensure_ascii=False, indent=2)
@@ -172,6 +181,15 @@ def _(mo, runtime_context):
         {"sinal": "isLocal", "valor": str(runtime_context["isLocal"])},
         {"sinal": "isPackaged", "valor": str(runtime_context["isPackaged"])},
         {"sinal": "canRunLocalEtl", "valor": str(runtime_context["canRunLocalEtl"])},
+        {
+            "sinal": "localCapabilities",
+            "valor": ", ".join(
+                name
+                for name, enabled in runtime_context["capabilities"].items()
+                if enabled
+            )
+            or "nenhuma",
+        },
         {"sinal": "notebooksPath", "valor": runtime_context["notebooksPath"]},
     ]
     mo.md(
@@ -191,9 +209,93 @@ def _(mo, pd, runtime_rows):
 
 
 @app.cell
+def _(mo, pd):
+    primitives = pd.DataFrame(
+        [
+            {
+                "primitiva": "read_lab_dataset",
+                "empacotado": "lê JSON publicado pelo manifesto",
+                "local": "lê o mesmo snapshot em public/<lab>/assets",
+                "fronteira": "segura para notebook publicado",
+            },
+            {
+                "primitiva": "write_local_json_snapshot",
+                "empacotado": "bloqueada",
+                "local": "grava extract versionável no vault",
+                "fronteira": "extract que toca filesystem fica local",
+            },
+            {
+                "primitiva": "write_local_dataframe_snapshot",
+                "empacotado": "bloqueada",
+                "local": "grava CSV/JSON; Parquet se houver engine local",
+                "fronteira": "formato pesado vira artefato local/CLI",
+            },
+            {
+                "primitiva": "read_local_text_file / read_local_bytes_file",
+                "empacotado": "bloqueada",
+                "local": "lê arquivos privados do vault",
+                "fronteira": "nada privado entra no HTML sem snapshot explícito",
+            },
+            {
+                "primitiva": "fetch_local_url_text",
+                "empacotado": "bloqueada",
+                "local": "coleta HTML/texto com biblioteca padrão",
+                "fronteira": "scraping simples sem dependência nova",
+            },
+            {
+                "primitiva": "scrape_local_page_text",
+                "empacotado": "bloqueada",
+                "local": "usa Playwright quando a página exige navegador",
+                "fronteira": "dependência opcional de CLI/local",
+            },
+            {
+                "primitiva": "extract_local_image_text",
+                "empacotado": "bloqueada",
+                "local": "usa OCR local quando pillow/pytesseract/tesseract existem",
+                "fronteira": "binário externo fica fora do pacote publicado",
+            },
+            {
+                "primitiva": "get_local_secret",
+                "empacotado": "bloqueada",
+                "local": "lê variável de ambiente sem vazar token",
+                "fronteira": "credencial nunca é exportada para HTML",
+            },
+            {
+                "primitiva": "clean_lab_text / fingerprint_data",
+                "empacotado": "roda no Pyodide",
+                "local": "roda igual",
+                "fronteira": "transformação pura fica no notebook",
+            },
+        ]
+    )
+    mo.md(
+        "## Primitivas locais vs publicadas\n\n"
+        "A regra é: transformação pura e leitura de snapshots ficam no notebook; "
+        "filesystem, segredos, navegador headless, OCR e formatos pesados ficam "
+        "atrás de helpers locais ou scripts CLI. Assim o HTML publicado continua "
+        "leve, reprodutível e sem credenciais."
+    )
+    mo.ui.table(primitives)
+    return primitives,
+
+
+@app.cell
 def _(mo, runtime_context):
+    run_file_probe = mo.ui.checkbox(label="Ler README local", value=False)
+    run_static_web_probe = mo.ui.checkbox(
+        label="Extrair texto de URL localmente",
+        value=False,
+    )
+    static_web_url = mo.ui.text(
+        label="URL para extract local",
+        value="https://example.com",
+    )
     run_local_extract = mo.ui.checkbox(
         label="Executar extract local demonstrativo",
+        value=False,
+    )
+    run_tabular_snapshot = mo.ui.checkbox(
+        label="Gravar tabela CSV local",
         value=False,
     )
     status = "disponível" if runtime_context["isLocal"] else "bloqueado no HTML publicado"
@@ -204,7 +306,82 @@ def _(mo, runtime_context):
         "pessoa e grave um snapshot JSON versionável. Depois, o site publicado lê o "
         "snapshot empacotado pelo manifesto, sem duplicar a interface do notebook."
     )
-    return run_local_extract,
+    mo.hstack(
+        [
+            run_file_probe,
+            run_static_web_probe,
+            static_web_url,
+            run_tabular_snapshot,
+        ]
+    )
+    return (
+        run_file_probe,
+        run_local_extract,
+        run_static_web_probe,
+        run_tabular_snapshot,
+        static_web_url,
+    )
+
+
+@app.cell
+def _(
+    fetch_local_url_text,
+    get_local_secret,
+    mo,
+    read_local_text_file,
+    run_file_probe,
+    run_static_web_probe,
+    runtime_context,
+    static_web_url,
+):
+    local_probe_rows = []
+    if runtime_context["isLocal"]:
+        token_present = bool(get_local_secret("LAB_DEMO_TOKEN"))
+        local_probe_rows.append(
+            {
+                "probe": "segredo local",
+                "resultado": "LAB_DEMO_TOKEN configurado" if token_present else "sem LAB_DEMO_TOKEN",
+            }
+        )
+    else:
+        local_probe_rows.append(
+            {
+                "probe": "segredo local",
+                "resultado": "bloqueado no HTML publicado",
+            }
+        )
+
+    if run_file_probe.value and runtime_context["isLocal"]:
+        _readme = read_local_text_file("README.md")
+        local_probe_rows.append(
+            {"probe": "arquivo local", "resultado": f"README.md com {len(_readme)} caracteres"}
+        )
+    elif run_file_probe.value:
+        local_probe_rows.append(
+            {"probe": "arquivo local", "resultado": "bloqueado no HTML publicado"}
+        )
+
+    if run_static_web_probe.value and runtime_context["isLocal"]:
+        _page = fetch_local_url_text(static_web_url.value)
+        local_probe_rows.append(
+            {
+                "probe": "web estática local",
+                "resultado": f"{_page.get('title') or 'sem título'} — {len(_page['text'])} caracteres",
+            }
+        )
+    elif run_static_web_probe.value:
+        local_probe_rows.append(
+            {"probe": "web estática local", "resultado": "bloqueado no HTML publicado"}
+        )
+
+    mo.md(
+        "### Probes locais opcionais\n\n"
+        "Estas ações só rodam quando a pessoa marca explicitamente no modo local. "
+        "No HTML publicado, os helpers bloqueiam filesystem, rede de coleta local "
+        "e segredos."
+    )
+    mo.ui.table(local_probe_rows)
+    return local_probe_rows,
 
 
 @app.cell
@@ -218,13 +395,13 @@ def _(mo, run_local_extract, runtime_context, snapshot, write_local_json_snapsho
             "totalWords": snapshot["totalWords"],
             "largestNotes": snapshot.get("largestNotes", [])[:5],
         }
-        result = write_local_json_snapshot(
+        _result = write_local_json_snapshot(
             "dados/lab/perfil-do-vault.extract-preview.json",
             payload,
         )
         _message = (
-            f"Snapshot local escrito em `{result['relativePath']}` "
-            f"({result['bytes']} bytes)."
+            f"Snapshot local escrito em `{_result['relativePath']}` "
+            f"({_result['bytes']} bytes)."
         )
     elif run_local_extract.value:
         _message = "Extract local bloqueado: o HTML publicado não tem acesso ao filesystem."
@@ -319,6 +496,32 @@ def _(dimensions_df, mo, notes_df):
     )
     mo.ui.table(dimensions_df)
     mo.ui.table(notes_df)
+    return
+
+
+@app.cell
+def _(
+    mo,
+    notes_df,
+    run_tabular_snapshot,
+    runtime_context,
+    write_local_dataframe_snapshot,
+):
+    if run_tabular_snapshot.value and runtime_context["isLocal"]:
+        _result = write_local_dataframe_snapshot(
+            notes_df,
+            "dados/lab/perfil-do-vault.largest-notes.csv",
+        )
+        _message = (
+            f"Tabela local escrita em `{_result['relativePath']}` "
+            f"({_result['bytes']} bytes)."
+        )
+    elif run_tabular_snapshot.value:
+        _message = "Carga tabular bloqueada: o HTML publicado não escreve arquivos."
+    else:
+        _message = "Carga tabular local não executada nesta sessão."
+
+    mo.md(_message)
     return
 
 

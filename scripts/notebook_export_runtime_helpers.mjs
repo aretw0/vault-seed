@@ -11,6 +11,15 @@ const LAB_RUNTIME_HELPER_EXPORT_NAMES = [
 	"read_lab_dataset",
 	"local_vault_path",
 	"write_local_json_snapshot",
+	"write_local_dataframe_snapshot",
+	"get_local_secret",
+	"clean_lab_text",
+	"fingerprint_data",
+	"read_local_text_file",
+	"read_local_bytes_file",
+	"fetch_local_url_text",
+	"scrape_local_page_text",
+	"extract_local_image_text",
 ];
 
 function collectRuntimeImports(sourceCode, runtimeImportPrefix) {

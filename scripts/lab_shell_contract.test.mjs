@@ -36,9 +36,16 @@ test("Lab ETL demo uses shared local/published runtime primitives", () => {
 
   assert.match(runtime, /def read_lab_dataset/);
   assert.match(runtime, /def write_local_json_snapshot/);
+  assert.match(runtime, /def write_local_dataframe_snapshot/);
+  assert.match(runtime, /def get_local_secret/);
+  assert.match(runtime, /def fetch_local_url_text/);
+  assert.match(runtime, /async def scrape_local_page_text/);
+  assert.match(runtime, /def extract_local_image_text/);
   assert.match(runtime, /def local_vault_path/);
   assert.match(etlDemo, /read_lab_dataset\("perfil-do-vault", manifest\)/);
   assert.match(etlDemo, /write_local_json_snapshot/);
+  assert.match(etlDemo, /write_local_dataframe_snapshot/);
+  assert.match(etlDemo, /Primitivas locais vs publicadas/);
   assert.match(etlDemo, /Extract local, carga publicada/);
 });
 
