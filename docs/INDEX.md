@@ -37,15 +37,13 @@ Para preparar um computador de usuario final, use
 
 ## Como evitar drift
 
-Use estes comandos antes de abrir uma Proposta de Melhoria:
+Use este comando antes de abrir uma Proposta de Melhoria:
 
 ```bash
-pnpm run lint
-pnpm run validate:onboarding
-pnpm run smoke:template
+pnpm run validate
 ```
 
-O primeiro comando valida o estilo Markdown. O segundo verifica se os arquivos
-essenciais de onboarding existem e se os wikilinks do vault apontam para notas
-reais. O smoke protege regras de template, como `pnpm`, actions pinadas por SHA
-e ausencia de plugins instalados versionados.
+Ele é a régua canônica do template: valida actions pinadas, lint Markdown,
+audit de arquitetura de informação, audit da sidebar, testes, onboarding,
+português, contraste dos temas, Mermaid e smokes de template. Para mudanças de
+UI ou Lab, rode também `pnpm run site:responsive`.

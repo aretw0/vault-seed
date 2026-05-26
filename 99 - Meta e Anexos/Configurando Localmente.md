@@ -157,7 +157,10 @@ Depois rode a validação completa:
 pnpm run validate
 ```
 
-Resultado esperado: `Template smoke passed.`
+Resultado esperado: todos os checks terminam sem erro. A auditoria editorial
+pode mostrar avisos sobre notas curtas ou possíveis promoções de pasta; esses
+avisos orientam curadoria futura, mas não bloqueiam quando o comando termina
+com sucesso.
 
 ---
 

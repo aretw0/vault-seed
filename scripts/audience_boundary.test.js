@@ -40,6 +40,29 @@ test("GitHub-facing entrypoints use markdown links instead of vault-only wikilin
   }
 });
 
+test("quality documentation points to the canonical validation gate", () => {
+  const readme = read("README.md");
+  const generatedReadme = read("README.template.md");
+  const docsIndex = read("docs/INDEX.md");
+  const lintGuide = read("docs/guia-de-lint.md");
+  const localSetup = read("99 - Meta e Anexos/Configurando Localmente.md");
+
+  for (const [file, content] of [
+    ["README.md", readme],
+    ["README.template.md", generatedReadme],
+    ["docs/INDEX.md", docsIndex],
+    ["docs/guia-de-lint.md", lintGuide],
+  ]) {
+    assert.match(content, /pnpm run validate/, `${file} should point to the canonical validation gate`);
+  }
+
+  assert.match(readme, /auditoria da sidebar/);
+  assert.match(generatedReadme, /auditoria da arquitetura de informação/);
+  assert.match(docsIndex, /site:responsive/);
+  assert.match(lintGuide, /notas publicadas fora da navegação/);
+  assert.doesNotMatch(localSetup, /Template smoke passed/);
+});
+
 test("public positioning avoids inflated framework language", () => {
   for (const file of [
     "README.md",

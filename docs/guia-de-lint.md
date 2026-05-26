@@ -18,13 +18,15 @@ Adotamos uma abordagem de "lint gradual", que aplica diferentes níveis de rigor
 
 ## Como Funciona na Prática (CI/CD)
 
-O processo de lint é automatizado através de um workflow de Integração Contínua (CI) no GitHub Actions (`.github/workflows/ci.yml`). Toda vez que você envia uma alteração (`push`) ou abre uma Proposta de Melhoria (`pull request`), o workflow instala as dependências com `pnpm` e executa os seguintes passos:
+O processo de lint é automatizado através de um workflow de Integração Contínua (CI) no GitHub Actions (`.github/workflows/ci.yml`). Toda vez que você envia uma alteração (`push`) ou abre uma Proposta de Melhoria (`pull request`), o workflow instala as dependências com `pnpm` e executa a régua canônica:
 
-1.  **Lint do Vault Principal:** Verifica todas as notas nas pastas de conteúdo (`10` a `99`) usando as regras principais definidas em `.markdownlint.json`.
-2.  **Lint da Documentação:** Analisa os arquivos na pasta `docs/` com as regras mais flexíveis de `docs/.markdownlint.json`.
-3.  **Lint dos Templates:** Verifica os modelos na pasta `90 - Modelos/` com as regras de `90 - Modelos/.markdownlint.json`.
+```bash
+pnpm run validate
+```
 
-Se qualquer um desses passos encontrar um erro, o workflow falhará, impedindo que alterações fora do padrão sejam integradas. Isso serve como um "Rascunho Seguro" (Branch) que protege a qualidade do seu repositório principal.
+Essa régua inclui o lint do vault principal, lint dos modelos, auditoria de arquitetura de informação, auditoria da sidebar, testes dos scripts, validação de onboarding, revisão de português, contraste dos temas e Mermaid. No repositório original do template, a validação também cobre documentação técnica e smokes internos do template.
+
+Se qualquer etapa encontrar um erro, o workflow falhará, impedindo que alterações fora do padrão sejam integradas. Isso serve como um "Rascunho Seguro" (Branch) que protege a qualidade do seu repositório principal.
 
 ## Como Lidar com Erros de Lint
 
@@ -68,4 +70,4 @@ Antes de abrir uma Proposta de Melhoria, rode:
 pnpm run validate
 ```
 
-Esse comando combina lint, testes dos scripts e smokes de template. O objetivo é pegar problemas que afetam o usuário final, como links quebrados no onboarding, workflows chamando o gerenciador de pacotes errado ou plugins do Obsidian instalados sendo versionados por acidente.
+Esse comando combina lint, auditorias de arquitetura de informação e sidebar, testes dos scripts, validação de onboarding, revisão de português, contraste dos temas e Mermaid. O objetivo é pegar problemas que afetam o usuário final, como links quebrados no onboarding, notas publicadas fora da navegação, metadados incompletos ou diagramas que deixariam de renderizar.

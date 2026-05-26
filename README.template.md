@@ -52,3 +52,17 @@ No Obsidian, plugins de IA da comunidade podem usar esse prompt de duas formas:
 aponte o plugin para `AGENTS.md` quando ele aceitar arquivo de contexto, ou cole
 o conteúdo de `AGENTS.md` no campo de system prompt/instruções quando ele aceitar
 apenas texto.
+
+## Qualidade e Publicação
+
+Se você usa terminal ou CI, rode a validação canônica antes de publicar ou abrir
+uma proposta de melhoria:
+
+```bash
+pnpm run validate
+```
+
+Ela combina lint Markdown, auditoria da arquitetura de informação, auditoria da
+sidebar, testes dos scripts, validação do onboarding, revisão de português,
+contraste dos temas e Mermaid. O objetivo é manter o vault publicável, navegável
+e coerente sem depender de revisão manual em cada mudança.

@@ -84,9 +84,11 @@ Este template valida automaticamente o material de entrada para evitar drift:
 pnpm run validate
 ```
 
-Esse comando roda lint Markdown, testes dos scripts e smokes de template. Ele
-verifica se os arquivos essenciais de onboarding existem, se os wikilinks do
-vault apontam para notas reais e se as automacoes continuam usando `pnpm`.
+Esse comando roda a régua canônica de qualidade: lint Markdown, auditoria de
+arquitetura de informação, auditoria da sidebar, testes dos scripts, validação
+do onboarding, revisão de acentos em português, contraste dos temas, Mermaid e
+smokes de template. Ele verifica se o vault continua publicável, navegável e
+coerente antes de ir para o CI ou para o deploy do site.
 
 ## Para Contribuidores Do Template
 
