@@ -109,6 +109,7 @@ requireCondition(
 const REQUIRED_DIST_PATHS = [
   // Astro-first exploration surface
   "explorar",
+  "explorar/intencoes",
   // Onboarding guides — required by validate_onboarding.js
   "meta-e-anexos/guia-do-jardineiro-digital",
   "meta-e-anexos/seus-primeiros-passos",
@@ -144,6 +145,8 @@ if (fs.existsSync(exploreDataPath)) {
       Array.isArray(exploreData.graph?.insights?.hubs) &&
       Array.isArray(exploreData.graph?.insights?.orphans) &&
       exploreData.editorial?.notesEvaluated > 0 &&
+      Array.isArray(exploreData.editorial?.warnings) &&
+      Array.isArray(exploreData.editorial?.notices) &&
       Array.isArray(exploreData.editorial?.promotionCandidates) &&
       Array.isArray(exploreData.editorial?.thinPublishedResources),
     "dist/explorar/dados.json must expose metrics, graph insights, and editorial curation signals for the Astro exploration surface.",

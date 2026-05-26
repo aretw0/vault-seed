@@ -122,6 +122,7 @@ Astro, Marimo, scripts e CI voltem a divergir.
 - [ ] Reduzir repetição entre onboarding, recursos e docs técnicas.
 - [x] Reorganizar sidebar por intenção sem depender somente da pasta física.
 - [x] Expor relatório de curadoria editorial em JSON para Astro, Lab e scripts.
+- [x] Criar mapa público de hubs por intenção usando a taxonomia compartilhada.
 
 ### 5. Lab/Marimo como bancada exemplar
 

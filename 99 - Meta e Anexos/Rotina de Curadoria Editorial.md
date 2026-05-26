@@ -59,7 +59,9 @@ Rode esta rotina quando você:
    ```
 
    Depois revise `/explorar/`. A seção de curadoria mostra candidatas a promoção,
-   recursos curtos e avisos editoriais usando o mesmo contrato da validação.
+   recursos curtos e avisos editoriais usando o mesmo contrato da validação. Para
+   revisar a cobertura por intenção sem depender de JavaScript, use também
+   `/explorar/intencoes/`, que destaca hubs e notas principais por caminho editorial.
 
 4. **Use o Lab quando quiser investigar como dado:**
 

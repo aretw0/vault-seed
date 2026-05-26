@@ -70,6 +70,7 @@ const iaAuditScript = read("scripts/audit_information_architecture.mjs");
 const informationArchitectureAuditRuntime = read(".site/lib/information-architecture-audit.mjs");
 const headerComponent = read(".site/components/Header.astro");
 const explorePage = read(".site/pages/explorar/index.astro");
+const exploreIntentPage = read(".site/pages/explorar/intencoes.astro");
 const exploreDataEndpoint = read(".site/pages/explorar/dados.json.ts");
 const exploreDataLib = read(".site/lib/vault-explore.ts");
 const astroConfig = read("astro.config.mjs");
@@ -315,6 +316,11 @@ requireCondition(
     explorePage.includes('orphanNodes') &&
     explorePage.includes('Curadoria editorial') &&
     explorePage.includes('promotionCandidates') &&
+    explorePage.includes('/explorar/intencoes/') &&
+    exploreIntentPage.includes('Mapa por Intenção') &&
+    exploreIntentPage.includes('degreeBySlug') &&
+    exploreIntentPage.includes('Hubs desta intenção') &&
+    exploreIntentPage.includes('.site/information-architecture.json') &&
     exploreDataEndpoint.includes('buildVaultExploreData') &&
     exploreDataLib.includes('loadInformationArchitecture') &&
     exploreDataLib.includes('deriveNoteIntents') &&

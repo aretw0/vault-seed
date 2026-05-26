@@ -1,0 +1,105 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { buildVaultExploreData } from '../../lib/vault-explore';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const explore = buildVaultExploreData();
+const degreeBySlug = new Map(explore.graph.nodes.map((node) => [node.id, node.degree]));
+
+const intentSections = explore.facets.intents.map((intent) => {
+  const notes = explore.notes
+    .filter((note) => note.intents.includes(intent.name))
+    .map((note) => ({ ...note, degree: degreeBySlug.get(note.slug) ?? 0 }))
+    .sort((a, b) => b.degree - a.degree || b.words - a.words || a.title.localeCompare(b.title, 'pt'));
+  const primaryCount = notes.filter((note) => note.primaryIntent === intent.name).length;
+  const totalWords = notes.reduce((sum, note) => sum + note.words, 0);
+  const hubs = notes.filter((note) => note.degree >= 4).slice(0, 5);
+
+  return {
+    ...intent,
+    notes,
+    primaryCount,
+    totalWords,
+    hubs,
+  };
+});
+---
+
+<StarlightPage
+  frontmatter={{
+    title: 'Mapa por Intenção',
+    description: 'Veja como as notas publicadas se distribuem por intenção editorial e quais hubs sustentam cada caminho.',
+    template: 'doc',
+  }}
+>
+  <section class="vault-explorer" aria-labelledby="intent-map-title">
+    <p class="vault-lead">
+      Esta visão reorganiza o mesmo acervo de <a href={`${base}/explorar/`}>Explorar o Vault</a>
+      por intenção editorial. Ela é uma leitura estática e sem JavaScript obrigatório para entender
+      quais caminhos estão bem sustentados e quais dependem de nova curadoria.
+    </p>
+
+    <div class="vault-metric-grid" aria-label="Resumo por intenção editorial">
+      {intentSections.map((section) => (
+        <article class="vault-metric">
+          <span class="vault-metric__value">{section.count}</span>
+          <span class="vault-metric__label">{section.label}</span>
+        </article>
+      ))}
+    </div>
+
+    <div class="vault-insight-grid">
+      {intentSections.map((section) => (
+        <article class="vault-card" id={`intencao-${section.name}`}>
+          <span class="vault-card__eyebrow">Intenção editorial</span>
+          <h2 class="vault-card__title">{section.label}</h2>
+          <p class="vault-card__body">
+            {section.count} nota(s) relacionadas · {section.primaryCount} como intenção principal · {section.totalWords.toLocaleString('pt-BR')} palavras.
+          </p>
+
+          <h3>Hubs desta intenção</h3>
+          {section.hubs.length ? (
+            <ul class="vault-compact-list">
+              {section.hubs.map((note) => (
+                <li>
+                  <a href={`${base}${note.href}`}>{note.title}</a>
+                  <span>{note.degree} conexões</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p class="vault-card__body">Nenhum hub forte nesta intenção ainda.</p>
+          )}
+
+          <h3>Notas principais</h3>
+          <ul class="vault-compact-list">
+            {section.notes.slice(0, 8).map((note) => (
+              <li>
+                <a href={`${base}${note.href}`}>{note.title}</a>
+                <span>{note.words} palavras</span>
+              </li>
+            ))}
+          </ul>
+        </article>
+      ))}
+    </div>
+
+    <section class="vault-graph-preview" aria-labelledby="intent-map-contract-title">
+      <div class="vault-section-header">
+        <div>
+          <span class="vault-card__eyebrow">Contrato compartilhado</span>
+          <h2 id="intent-map-contract-title">Mesma taxonomia, outra leitura</h2>
+        </div>
+        <span class="vault-status">{explore.editorial.warningCount} avisos · {explore.editorial.notices.length} nota(s)</span>
+      </div>
+      <p class="vault-card__body">
+        As intenções vêm de <code>.site/information-architecture.json</code> e são reutilizadas pela sidebar,
+        por <code>/explorar/dados.json</code>, pela auditoria IA e pelo Lab. Esta página não cria uma nova
+        fonte de verdade: apenas deixa explícito o mapa de hubs por intenção para revisão editorial humana.
+      </p>
+      <p>
+        <a class="vault-button vault-button--secondary" href={`${base}/explorar/dados.json`}>Ver JSON estático</a>
+      </p>
+    </section>
+  </section>
+</StarlightPage>

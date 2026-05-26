@@ -22,6 +22,7 @@ const pages = [
   { path: "/", label: "home", type: "site" },
   { path: "/lab/", label: "lab-index", type: "site" },
   { path: "/explorar/", label: "explorar", type: "site" },
+  { path: "/explorar/intencoes/", label: "explorar-intencoes", type: "site" },
   {
     path: "/meta-e-anexos/usando-o-lab-notebooks-marimo/",
     label: "lab-doc",
