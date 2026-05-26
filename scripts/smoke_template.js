@@ -54,6 +54,7 @@ const pkg = readJson("package.json");
 const templatePkg = readJson("package.template.json");
 const templateLock = read("pnpm-lock.template.yaml");
 const initializeWorkflow = read(".github/workflows/initialize.yml");
+const ciWorkflow = read(".github/workflows/ci.yml");
 const gitignore = read(".gitignore");
 const notebooksDevScript = read("scripts/notebooks_dev.mjs");
 const notebooksCheckScript = read("scripts/notebooks_check.mjs");
@@ -123,6 +124,13 @@ requireCondition(
     templatePkg.scripts?.validate?.includes("validate:theme") &&
     templatePkg.scripts?.validate?.includes("validate:mermaid"),
   "package.template.json must keep generated-vault validation aligned with JS, MJS, CJS tests and content audits.",
+);
+requireCondition(
+  ciWorkflow.includes("pnpm run validate") &&
+    !ciWorkflow.includes("pnpm run lint:main") &&
+    !ciWorkflow.includes("pnpm run lint:templates") &&
+    !ciWorkflow.includes("pnpm run validate:onboarding"),
+  "ci.yml must run the canonical generated-vault validate script instead of duplicating an older partial gate.",
 );
 requireCondition(
   templatePkg.scripts?.["notebooks:data"] === "node scripts/generate_vault_data.mjs" &&

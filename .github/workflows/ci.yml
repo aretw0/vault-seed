@@ -39,17 +39,5 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
-      - name: Lint main vault
-        run: pnpm run lint:main
-
-      - name: Lint templates
-        run: pnpm run lint:templates
-
-      - name: Run script tests
-        run: pnpm run test
-
-      - name: Validate onboarding
-        run: pnpm run validate:onboarding
-
-      - name: Smoke template safety
-        run: pnpm run smoke:template
+      - name: Validate vault quality gates
+        run: pnpm run validate
