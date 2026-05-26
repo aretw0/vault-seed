@@ -17,13 +17,12 @@
     "comecar": {
       "label": "Começar",
       "description": "Primeiros passos, onboarding e configuração inicial.",
-      "tags": ["meta/onboarding", "vault/setup", "iniciante"],
-      "categories": ["guia", "moc"]
+      "tags": ["meta/onboarding", "vault/setup", "iniciante"]
     },
     "organizar": {
       "label": "Organizar",
       "description": "Métodos, links, tags, MOCs, PARA e práticas de PKM.",
-      "tags": ["meta/organizacao", "pkm/conceito", "pkm/pratica", "conceito/pkm", "obsidian/link", "obsidian/tag", "obsidian/moc", "recurso/metodo", "recurso/fundamentos"],
+      "tags": ["meta/organizacao", "pkm/conceito", "pkm/pratica", "conceito/pkm", "obsidian/link", "obsidian/tag", "obsidian/moc", "obsidian/templates", "recurso/metodo", "recurso/fundamentos"],
       "folders": ["40 - Recursos"]
     },
     "explorar": {
@@ -45,7 +44,7 @@
     "manter": {
       "label": "Manter",
       "description": "Setup, sincronização, Git, ambiente local e manutenção do vault.",
-      "tags": ["meta/setup", "meta/git", "meta/github", "meta/sincronizacao", "meta/devops", "meta/devenv", "meta/devcontainer", "meta/mobile", "meta/desktop"]
+      "tags": ["meta/setup", "meta/git", "meta/github", "meta/sincronizacao", "meta/devops", "meta/devenv", "meta/devcontainer", "meta/mobile", "meta/desktop", "meta/ferramentas", "meta/vscode", "meta/foam", "obsidian/plugin"]
     }
   }
 }

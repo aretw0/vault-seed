@@ -42,7 +42,7 @@ function normalizeAudience(value, ia) {
   return normalizeVocabularyValue(value, ia.audiences);
 }
 
-function deriveNoteIntents(note, ia) {
+function deriveNoteIntents(note, ia, options = {}) {
   const tags = new Set((note.tags || []).map((tag) => normalizeKey(tag)));
   const category = normalizeKey(note.category);
   const folder = note.folder || "";
@@ -57,7 +57,9 @@ function deriveNoteIntents(note, ia) {
     if (byTag || byCategory || byFolder) matches.push(key);
   }
 
-  return matches.length ? matches : ["organizar"];
+  const fallback = Object.hasOwn(options, "fallback") ? options.fallback : "organizar";
+  if (matches.length) return matches;
+  return fallback ? [fallback] : [];
 }
 
 function getIntentLabel(key, ia) {

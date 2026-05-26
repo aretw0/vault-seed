@@ -66,6 +66,8 @@ function audit(notes) {
   const promotionCandidates = [];
   const thinPublishedResources = [];
   const intentCounts = new Map();
+  const notesWithoutIntent = [];
+  const ambiguousIntentNotes = [];
 
   for (const note of notes) {
     if (!note.category) {
@@ -83,7 +85,14 @@ function audit(notes) {
     const intents = deriveNoteIntents(
       { ...note, category: note.categoryKey || note.category },
       IA,
+      { fallback: null },
     );
+    if (!intents.length) {
+      notesWithoutIntent.push(note);
+    }
+    if (intents.length > 3) {
+      ambiguousIntentNotes.push({ note, intents });
+    }
     for (const intent of intents) {
       intentCounts.set(intent, (intentCounts.get(intent) ?? 0) + 1);
     }
@@ -95,6 +104,14 @@ function audit(notes) {
     if (note.folder === RESOURCE_FOLDER && note.words < 140) {
       thinPublishedResources.push(note);
     }
+  }
+
+  if (notesWithoutIntent.length) {
+    errors.push(
+      `notas publicadas sem intenção derivada: ${notesWithoutIntent
+        .map((note) => note.title)
+        .join("; ")}.`,
+    );
   }
 
   const emptyIntents = Object.keys(IA.intents).filter((intent) => !intentCounts.has(intent));
@@ -116,6 +133,15 @@ function audit(notes) {
     warnings.push(
       `Recursos publicados ainda muito curtos: ${thinPublishedResources
         .map((note) => note.title)
+        .join("; ")}`,
+    );
+  }
+
+  if (ambiguousIntentNotes.length) {
+    warnings.push(
+      `Notas com muitas intenções derivadas: ${ambiguousIntentNotes
+        .slice(0, 8)
+        .map(({ note, intents }) => `${note.title} (${intents.map((intent) => getIntentLabel(intent, IA)).join(", ")})`)
         .join("; ")}`,
     );
   }
