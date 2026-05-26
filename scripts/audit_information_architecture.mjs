@@ -11,19 +11,10 @@ import {
   normalizeAudience,
   normalizeCategory,
 } from "../.site/lib/information-architecture.mjs";
+import { VAULT_FOLDERS } from "../.site/lib/vault-folders.mjs";
 
 const ROOT = process.cwd();
 const IA = loadInformationArchitecture(ROOT);
-const VAULT_FOLDERS = [
-  "00 - Entrada",
-  "10 - Diário",
-  "20 - Projetos",
-  "30 - Áreas",
-  "40 - Recursos",
-  "50 - Arquivo",
-  "90 - Modelos",
-  "99 - Meta e Anexos",
-];
 const TEMPLATE_META_FOLDER = "99 - Meta e Anexos";
 const RESOURCE_FOLDER = "40 - Recursos";
 

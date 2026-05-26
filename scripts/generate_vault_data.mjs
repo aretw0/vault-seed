@@ -4,6 +4,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { globSync } from "glob";
 import matter from "gray-matter";
+import { VAULT_FOLDERS } from "../.site/lib/vault-folders.mjs";
 
 const WIKILINK_RE = /\[\[([^\]|]+?)(?:\|[^\]]+?)?\]\]/g;
 
@@ -21,17 +22,6 @@ function resolveNotebooksPath(value = process.env.VAULT_NOTEBOOKS_PATH || "lab")
 
   return normalized;
 }
-
-const VAULT_FOLDERS = [
-  "00 - Entrada",
-  "10 - Diário",
-  "20 - Projetos",
-  "30 - Áreas",
-  "40 - Recursos",
-  "50 - Arquivo",
-  "90 - Modelos",
-  "99 - Meta e Anexos",
-];
 
 export function slugify(input) {
   return input

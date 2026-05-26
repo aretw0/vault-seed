@@ -8,12 +8,7 @@ import { globSync } from 'glob';
 import matter from 'gray-matter';
 import { slugify } from '@dgk/astro-plugins';
 import { readTechnicalDocEntries } from './integrations/technical-docs.js';
-
-const VAULT_FOLDERS = [
-  '00 - Entrada', '10 - Diário', '20 - Projetos',
-  '30 - Áreas', '40 - Recursos', '50 - Arquivo',
-  '90 - Modelos', '99 - Meta e Anexos',
-];
+import { VAULT_FOLDERS } from './lib/vault-folders.mjs';
 
 function escapeHtml(value: unknown): string {
   return String(value)
