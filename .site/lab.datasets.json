@@ -27,6 +27,15 @@
     "publish": true
   },
   {
+    "id": "outbox-publicacao",
+    "title": "Outbox de publicação",
+    "description": "Rascunhos candidatos a distribuição externa, derivados de frontmatter e revisados antes de publicar",
+    "source": "dados/lab/outbox-publicacao.json",
+    "output": "outbox-publicacao.json",
+    "format": "json",
+    "publish": true
+  },
+  {
     "id": "json-remoto-opcional",
     "title": "JSON remoto opcional",
     "description": "Exemplo de fonte que um notebook WASM pode carregar no navegador quando houver CORS e rede",

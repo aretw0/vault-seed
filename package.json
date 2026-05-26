@@ -8,7 +8,7 @@
     "url": "https://github.com/aretw0/vault-seed.git"
   },
   "scripts": {
-    "test": "node --test scripts/audience_boundary.test.js scripts/deploy_site_workflow.test.js scripts/devcontainer_contract.test.js scripts/feed_sources.test.mjs scripts/information_architecture.test.js scripts/lab_shell_contract.test.mjs scripts/notebook_export_runtime_helpers.test.mjs scripts/notebook_path.test.cjs scripts/prepare_lab_datasets.test.mjs scripts/release_package_smoke.test.js scripts/templates_contract.test.js scripts/validate_onboarding.test.js",
+    "test": "node --test scripts/audience_boundary.test.js scripts/deploy_site_workflow.test.js scripts/devcontainer_contract.test.js scripts/feed_sources.test.mjs scripts/information_architecture.test.js scripts/lab_shell_contract.test.mjs scripts/notebook_export_runtime_helpers.test.mjs scripts/notebook_path.test.cjs scripts/prepare_lab_datasets.test.mjs scripts/publication_outbox.test.mjs scripts/release_package_smoke.test.js scripts/templates_contract.test.js scripts/validate_onboarding.test.js",
     "format": "prettier --write \"**/*.md\"",
     "format:check": "prettier --check .",
     "lint:main": "markdownlint --config .markdownlint.json \"10 - Diário/**/*.md\" \"20 - Projetos/**/*.md\" \"30 - Áreas/**/*.md\" \"40 - Recursos/**/*.md\" \"50 - Arquivo/**/*.md\" \"99 - Meta e Anexos/**/*.md\"",
@@ -32,7 +32,8 @@
     "notebooks:data": "node scripts/generate_vault_data.mjs",
     "notebooks:etl:demo": "node scripts/lab_etl_demo.mjs",
     "feeds:opml": "node scripts/prepare_feed_sources.mjs",
-    "notebooks:etl": "pnpm run notebooks:etl:demo && pnpm run feeds:opml && node scripts/prepare_lab_datasets.mjs",
+    "outbox:prepare": "node scripts/prepare_publication_outbox.mjs",
+    "notebooks:etl": "pnpm run notebooks:etl:demo && pnpm run feeds:opml && pnpm run outbox:prepare && node scripts/prepare_lab_datasets.mjs",
     "notebooks:extract:local": "pnpm run notebooks:etl",
     "notebooks:extract:check": "uv run --no-project --with-requirements requirements.local-etl.txt python scripts/check_lab_extract_tools.py",
     "notebooks:extract:browser": "uv run --no-project --with-requirements requirements.local-etl.txt playwright install chromium",

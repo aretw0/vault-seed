@@ -136,6 +136,7 @@ Astro, Marimo, scripts e CI voltem a divergir.
 - [x] Consumir no Lab o relatório editorial produzido pela auditoria compartilhada.
 - [x] Adicionar primitivas locais para RSS/Atom como fonte de dados auditável.
 - [x] Criar notebook de análise de feeds e candidatas para inbox.
+- [x] Criar notebook de outbox para rascunhos por canal e revisão antes de publicar.
 - [ ] Mostrar no notebook quando uma tarefa pertence ao Astro, ao Lab ou à CLI.
 - [ ] Criar contrato para evitar dependências locais obrigatórias no notebook publicado.
 
@@ -147,6 +148,7 @@ Astro, Marimo, scripts e CI voltem a divergir.
 - [x] Gerar feed RSS do site publicado.
 - [x] Normalizar OPML de assinaturas como dataset do Lab.
 - [x] Documentar inbox soberana, proveniência e handoff com agentes.
+- [x] Gerar outbox local a partir de frontmatter antes de qualquer integração social.
 - [ ] Separar conectores locais opcionais por capacidade.
 - [ ] Garantir que tokens e artefatos privados nunca entrem no export publicado.
 

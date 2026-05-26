@@ -142,7 +142,8 @@ requireCondition(
   templatePkg.scripts?.["notebooks:data"] === "node scripts/generate_vault_data.mjs" &&
     templatePkg.scripts?.["notebooks:etl:demo"] === "node scripts/lab_etl_demo.mjs" &&
     templatePkg.scripts?.["feeds:opml"] === "node scripts/prepare_feed_sources.mjs" &&
-    templatePkg.scripts?.["notebooks:etl"] === "pnpm run notebooks:etl:demo && pnpm run feeds:opml && node scripts/prepare_lab_datasets.mjs" &&
+    templatePkg.scripts?.["outbox:prepare"] === "node scripts/prepare_publication_outbox.mjs" &&
+    templatePkg.scripts?.["notebooks:etl"] === "pnpm run notebooks:etl:demo && pnpm run feeds:opml && pnpm run outbox:prepare && node scripts/prepare_lab_datasets.mjs" &&
     templatePkg.scripts?.["notebooks:extract:local"] === "pnpm run notebooks:etl" &&
     templatePkg.scripts?.["notebooks:dev"] === "node scripts/notebooks_dev.mjs" &&
     templatePkg.scripts?.["notebooks:check"] === "node scripts/notebooks_check.mjs" &&
@@ -220,6 +221,8 @@ requireCondition(
   marimoCss.includes('color-scheme: dark') &&
     marimoCss.includes("--color-background: var(--background)") &&
     marimoCss.includes("--gdg-bg-cell: var(--background)") &&
+    marimoCss.includes("#vg-tooltip-element") &&
+    marimoCss.includes(".vega-embed") &&
     marimoCss.includes('[role="combobox"]') &&
     marimoCss.includes("marimo-table tr:nth-child(even)") &&
     marimoCss.includes('[role="option"][aria-selected="true"]') &&
@@ -227,7 +230,7 @@ requireCondition(
   "Marimo exported notebooks must harden table, data-grid, and select colors for accessible dark/light themes.",
 );
 requireCondition(
-  presentationNotebook.includes('app = marimo.App(\n    width="medium",\n    layout_file="layouts/apresentacao-vault-seed.slides.json",\n)') &&
+  /app = marimo\.App\(\r?\n    width="medium",\r?\n    layout_file="layouts\/apresentacao-vault-seed\.slides\.json",\r?\n\)/.test(presentationNotebook) &&
     exists("99 - Meta e Anexos/Notebooks/layouts/apresentacao-vault-seed.slides.json") &&
     !presentationNotebook.includes("mo.carousel") &&
     !presentationNotebook.includes("def slide(source):") &&
@@ -263,8 +266,10 @@ requireCondition(
   "Marimo exported notebooks must include stable navigation and fullscreen labeling for presentations.",
 );
 requireCondition(
-  pkg.scripts?.["notebooks:etl:demo"] === "node scripts/lab_etl_demo.mjs" &&
+    pkg.scripts?.["notebooks:etl:demo"] === "node scripts/lab_etl_demo.mjs" &&
     pkg.scripts?.["feeds:opml"] === "node scripts/prepare_feed_sources.mjs" &&
+    pkg.scripts?.["outbox:prepare"] === "node scripts/prepare_publication_outbox.mjs" &&
+    pkg.scripts?.["notebooks:etl"]?.includes("outbox:prepare") &&
     pkg.scripts?.["notebooks:etl"]?.includes("feeds:opml") &&
     pkg.scripts?.["notebooks:etl"]?.includes("notebooks:etl:demo") &&
     pkg.scripts?.["notebooks:extract:local"] === "pnpm run notebooks:etl" &&
@@ -273,9 +278,11 @@ requireCondition(
     labDatasetsManifest.some((entry) => entry.id === "perfil-do-vault" && entry.source === "dados/lab/perfil-do-vault.json") &&
     labDatasetsManifest.some((entry) => entry.id === "curadoria-ia" && entry.source === "dados/lab/curadoria-ia.json") &&
     labDatasetsManifest.some((entry) => entry.id === "feeds-assinados" && entry.source === "dados/lab/feeds-assinados.json") &&
+    labDatasetsManifest.some((entry) => entry.id === "outbox-publicacao" && entry.source === "dados/lab/outbox-publicacao.json") &&
     labDatasetsManifest.some((entry) => entry.id === "json-remoto-opcional" && entry.runtimeUrl) &&
     labNotebooksManifest.some((entry) => entry.source === "99 - Meta e Anexos/Notebooks/etl-demo.py" && entry.publish === true) &&
     labNotebooksManifest.some((entry) => entry.source === "99 - Meta e Anexos/Notebooks/analise-feeds.py" && entry.publish === true) &&
+    labNotebooksManifest.some((entry) => entry.source === "99 - Meta e Anexos/Notebooks/analise-outbox.py" && entry.publish === true) &&
     etlNotebook.includes("load_lab_manifest") &&
     etlNotebook.includes("read_lab_dataset") &&
     etlNotebook.includes("write_local_json_snapshot") &&

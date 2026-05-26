@@ -28,6 +28,13 @@
     "publish": true
   },
   {
+    "title": "Outbox",
+    "source": "99 - Meta e Anexos/Notebooks/analise-outbox.py",
+    "output": "outbox.html",
+    "description": "rascunhos por canal, política de publicação e checklist de revisão",
+    "publish": true
+  },
+  {
     "title": "Apresentação",
     "source": "99 - Meta e Anexos/Notebooks/apresentacao-vault-seed.py",
     "output": "vault-seed-slides.html",

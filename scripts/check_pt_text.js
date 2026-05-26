@@ -69,6 +69,9 @@ function stripNonProse(raw) {
   // Blank fenced code blocks (``` or ~~~, optionally indented or with lang)
   text = text.replace(/^([ \t]*)(```|~~~)[^\n]*\n[\s\S]*?\n\1\2\s*$/gm, m => '\n'.repeat(m.split('\n').length - 1));
 
+  // Blank inline code spans, commonly used for file paths and machine identifiers.
+  text = text.replace(/`[^`\n]+`/g, m => ' '.repeat(m.length));
+
   // Blank the tags: block in YAML frontmatter.
   // YAML frontmatter is between the first two --- lines.
   const fmMatch = text.match(/^---\n([\s\S]*?)\n---/);

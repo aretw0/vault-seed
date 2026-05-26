@@ -24,6 +24,7 @@ related:
   - "[[Coletando Dados Locais com Scraping e OCR]]"
   - "[[Publicando e Consumindo RSS no Vault]]"
   - "[[Inbox Soberana de Fontes]]"
+  - "[[Outbox Soberana de Publicação]]"
   - "[[Ecossistema aretw0 Agents Lab e Refarm]]"
 ---
 
@@ -45,6 +46,7 @@ Este mapa mostra o vault como exemplo de organização. Use-o para entender quai
 - [[Coletando Dados Locais com Scraping e OCR]]
 - [[Publicando e Consumindo RSS no Vault]]
 - [[Inbox Soberana de Fontes]]
+- [[Outbox Soberana de Publicação]]
 - [[Rotina de Curadoria Editorial]]
 
 ## Conceitos Que Sustentam o Vault
@@ -71,6 +73,7 @@ Este mapa mostra o vault como exemplo de organização. Use-o para entender quai
 - [[Coletando Dados Locais com Scraping e OCR]]
 - [[Publicando e Consumindo RSS no Vault]]
 - [[Inbox Soberana de Fontes]]
+- [[Outbox Soberana de Publicação]]
 - [[Rotina de Curadoria Editorial]]
 - [[Conhecendo o Agents Lab]]
 - [[Ecossistema aretw0 Agents Lab e Refarm]]

@@ -63,6 +63,7 @@ Após ativar, nas opções do plugin (`Configurações > Opções de plugins > T
 | `Template - Dashboard.md` | Painéis pessoais com blocos Dataview opcionais. |
 | `Template - Prompt.md` | Registro de prompts, contexto, resultado e ajustes. |
 | `Template - Item de Feed.md` | Triagem de itens RSS/Atom com proveniência antes de virar nota. |
+| `Template - Post Externo.md` | Rascunhos de outbox para adaptar notas canônicas a canais externos. |
 
 ## Exemplo Prático: O Template de Prompt
 

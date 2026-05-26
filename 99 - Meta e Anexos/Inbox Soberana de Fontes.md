@@ -17,6 +17,7 @@ related:
   - "[[Publicando e Consumindo RSS no Vault]]"
   - "[[Coletando Dados Locais com Scraping e OCR]]"
   - "[[Usando com Agentes de IA]]"
+  - "[[Outbox Soberana de Publicação]]"
 ---
 
 # Inbox Soberana de Fontes
@@ -86,4 +87,5 @@ Durante a revisão, escolha uma saída:
 - **descartar:** sai da inbox quando não há valor ou direito claro de uso.
 
 O objetivo não é transformar todo feed em conteúdo. O objetivo é manter um rastro
-auditável para aquilo que realmente alimenta o jardim digital.
+auditável para aquilo que realmente alimenta o jardim digital. Quando uma nota já
+estiver pronta para circular fora do vault, ela passa para a [[Outbox Soberana de Publicação]].

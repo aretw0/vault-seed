@@ -8,7 +8,7 @@ app = marimo.App(width="medium")
 def _():
     import marimo as mo
 
-    return mo
+    return (mo,)
 
 
 @app.cell
@@ -17,21 +17,25 @@ def _():
 
     manifest = load_lab_manifest()
     feeds = read_lab_dataset("feeds-assinados", manifest)
-    return feeds, manifest
+    return (feeds,)
 
 
 @app.cell
 def _(feeds, mo):
     mo.md(
-        f"# Radar de feeds\n\n"
-        f"Este notebook lê a lista OPML normalizada em `feeds-assinados.json` e "
-        f"transforma assinaturas RSS/Atom em uma superfície auditável para o Lab.\n\n"
-        f"- feeds assinados: **{feeds['subscriptionCount']}**\n"
-        f"- grupos OPML: **{len(feeds.get('groups', []))}**\n"
-        f"- fonte: `{feeds['source']}`\n"
-        f"- coletado em: `{feeds['collectedAt']}`\n"
-        f"- privacidade: `{feeds['privacy']}`\n"
-        f"- fingerprint: `{feeds['sha256']}`"
+        f"""
+        # Radar de feeds
+
+        Este notebook lê a lista OPML normalizada em `feeds-assinados.json` e
+        transforma assinaturas RSS/Atom em uma superfície auditável para o Lab.
+
+        - feeds assinados: **{feeds['subscriptionCount']}**
+        - grupos OPML: **{len(feeds.get('groups', []))}**
+        - fonte: `{feeds['source']}`
+        - coletado em: `{feeds['collectedAt']}`
+        - privacidade: `{feeds['privacy']}`
+        - fingerprint: `{feeds['sha256']}`
+        """
     )
     return
 
@@ -60,7 +64,7 @@ def _(feeds):
         )
 
     feeds_df = pd.DataFrame(rows)
-    return feeds_df, pd, urlparse
+    return feeds_df, pd
 
 
 @app.cell
@@ -101,7 +105,7 @@ def _(feeds_df, mo, pd):
     mo.md("## Cobertura editorial")
     mo.ui.table(domain_df)
     mo.ui.table(category_df)
-    return category_df, domain_df
+    return
 
 
 @app.cell
@@ -124,7 +128,7 @@ def _(feeds_df, mo, pd):
         "triagem: feed observado → evidência → decisão humana ou agente assistido."
     )
     mo.ui.table(candidates_df)
-    return candidates_df
+    return (candidates_df,)
 
 
 @app.cell

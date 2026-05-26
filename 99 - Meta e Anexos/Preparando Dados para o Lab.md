@@ -133,7 +133,9 @@ Esse script lê as notas Markdown no computador, calcula um perfil simples do
 vault e escreve `dados/lab/perfil-do-vault.json`. Ele também roda a auditoria
 compartilhada de arquitetura de informação e escreve
 `dados/lab/curadoria-ia.json`, um relatório JSON com notas avaliadas, avisos
-editoriais, candidatas a promoção e distribuição por intenção. Depois,
+editoriais, candidatas a promoção e distribuição por intenção. O mesmo fluxo
+normaliza OPML em `dados/lab/feeds-assinados.json` e gera a outbox a partir de
+frontmatter em `dados/lab/outbox-publicacao.json`. Depois,
 `prepare_lab_datasets.mjs` empacota esses arquivos em `public/lab/datasets/` e
 `public/lab/assets/datasets/`.
 

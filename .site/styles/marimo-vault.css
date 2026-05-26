@@ -275,6 +275,41 @@ iframe {
   color: var(--muted-foreground) !important;
 }
 
+:root[data-vault-marimo-theme] #vg-tooltip-element,
+:root[data-vault-marimo-theme] .vg-tooltip,
+:root[data-vault-marimo-theme] .vega-tooltip {
+  background: var(--popover) !important;
+  color: var(--popover-foreground) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: 0 0.75rem 2rem rgb(0 0 0 / 0.22) !important;
+}
+
+:root[data-vault-marimo-theme] #vg-tooltip-element table,
+:root[data-vault-marimo-theme] #vg-tooltip-element tr,
+:root[data-vault-marimo-theme] #vg-tooltip-element td,
+:root[data-vault-marimo-theme] .vg-tooltip table,
+:root[data-vault-marimo-theme] .vg-tooltip tr,
+:root[data-vault-marimo-theme] .vg-tooltip td,
+:root[data-vault-marimo-theme] .vega-tooltip table,
+:root[data-vault-marimo-theme] .vega-tooltip tr,
+:root[data-vault-marimo-theme] .vega-tooltip td {
+  background: var(--popover) !important;
+  color: var(--popover-foreground) !important;
+  border-color: var(--border) !important;
+}
+
+:root[data-vault-marimo-theme] .vega-embed svg text {
+  fill: var(--foreground) !important;
+}
+
+:root[data-vault-marimo-theme] .vega-embed svg g.role-axis path,
+:root[data-vault-marimo-theme] .vega-embed svg g.role-axis line,
+:root[data-vault-marimo-theme] .vega-embed svg g.role-legend path,
+:root[data-vault-marimo-theme] .vega-embed svg g.role-legend line {
+  stroke: var(--border) !important;
+}
+
 :root[data-vault-marimo-theme="light"][data-vault-marimo-palette="oceano"] {
   --background: #f5f7fa;
   --foreground: #0f1623;

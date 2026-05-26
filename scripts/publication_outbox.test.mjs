@@ -1,0 +1,55 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
+import { buildPublicationOutbox } from "./prepare_publication_outbox.mjs";
+
+test("buildPublicationOutbox extracts only explicit publication candidates", () => {
+  const cwd = mkdtempSync(join(tmpdir(), "vault-outbox-"));
+  mkdirSync(join(cwd, "00 - Entrada"), { recursive: true });
+  mkdirSync(join(cwd, "40 - Recursos"), { recursive: true });
+
+  writeFileSync(
+    join(cwd, "00 - Entrada", "Post.md"),
+    [
+      "---",
+      "title: Post de Teste",
+      "status: draft",
+      "outbox: true",
+      "publicationStatus: draft",
+      "canonical: https://example.com/post",
+      "source: dados/lab/snapshot.json",
+      "collectedAt: 2026-05-26T00:00:00.000Z",
+      "license: CC-BY-4.0",
+      "privacy: public",
+      "channels:",
+      "  - mastodon",
+      "  - rss",
+      "---",
+      "# Post de Teste",
+      "",
+      "Resumo auditável do post.",
+    ].join("\n"),
+    "utf8",
+  );
+  writeFileSync(
+    join(cwd, "40 - Recursos", "Nota normal.md"),
+    "---\ntitle: Nota normal\nstatus: published\n---\n# Nota normal\n",
+    "utf8",
+  );
+
+  const { data } = buildPublicationOutbox({
+    cwd,
+    outputPath: join(cwd, "dados", "lab", "outbox-publicacao.json"),
+    now: "2026-05-26T00:00:00.000Z",
+  });
+
+  assert.equal(data.kind, "publication-outbox");
+  assert.equal(data.itemCount, 1);
+  assert.equal(data.policy.humanReviewRequired, true);
+  assert.deepEqual(data.items[0].channels, ["mastodon", "rss"]);
+  assert.equal(data.items[0].license, "CC-BY-4.0");
+  assert.match(data.items[0].excerpt, /Resumo auditável/);
+  assert.ok(data.channels.some((channel) => channel.id === "site"));
+});

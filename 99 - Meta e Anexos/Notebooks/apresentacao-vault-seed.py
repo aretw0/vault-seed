@@ -53,9 +53,13 @@ def _(Counter, notes):
 @app.cell
 def _(data, mo, notes):
     mo.md(
-        f"# vault-seed\n\n"
-        f"Um vault local-first com site, automação e notebooks no mesmo repositório.\n\n"
-        f"**{len(notes)} notas** no snapshot atual · gerado em `{data['generated'][:10]}`"
+        f"""
+        # vault-seed
+
+        Um vault local-first com site, automação e notebooks no mesmo repositório.
+
+        **{len(notes)} notas** no snapshot atual · gerado em `{data['generated'][:10]}`
+        """
     )
     return
 
@@ -134,13 +138,16 @@ def _(dedent, mo):
 @app.cell
 def _(folder_counts, mo, notes, status_counts, tag_counts):
     mo.md(
-        f"## Snapshot atual\n\n"
-        f"| Métrica | Valor |\n"
-        f"| --- | ---: |\n"
-        f"| Notas no vault | {len(notes)} |\n"
-        f"| Pastas com notas | {len(folder_counts)} |\n"
-        f"| Status distintos | {len(status_counts)} |\n"
-        f"| Tags distintas | {len(tag_counts)} |"
+        f"""
+        ## Snapshot atual
+
+        | Métrica | Valor |
+        | --- | ---: |
+        | Notas no vault | {len(notes)} |
+        | Pastas com notas | {len(folder_counts)} |
+        | Status distintos | {len(status_counts)} |
+        | Tags distintas | {len(tag_counts)} |
+        """
     )
     return
 

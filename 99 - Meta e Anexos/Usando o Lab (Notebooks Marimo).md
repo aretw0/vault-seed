@@ -92,7 +92,7 @@ Os notebooks leem `vault-data.json` com `encoding="utf-8"` para preservar acento
 
 ## Tema Visual
 
-O Marimo carrega `.site/styles/marimo-vault.css` via `custom_css` em `pyproject.toml`. Esse arquivo aproxima os notebooks da paleta verde-jardim do site, em modo claro e escuro.
+O Marimo carrega `.site/styles/marimo-vault.css` via `custom_css` em `pyproject.toml`. Esse arquivo aproxima os notebooks da paleta verde-jardim do site, em modo claro e escuro. O contrato também cobre tabelas, seletores e tooltips de gráficos Altair/Vega para evitar popovers claros quebrando o modo escuro.
 
 A personalização atua sobre variáveis CSS usadas pelo Marimo, como `--background`, `--foreground`, `--primary`, `--accent`, `--border` e escalas `--slate-*`/`--grass-*`. A estrutura do editor continua sendo do Marimo; o vault controla a paleta e alguns detalhes de leitura, não substitui completamente o tema interno da ferramenta.
 
@@ -208,7 +208,7 @@ Essa separação mantém o site barato de hospedar, fácil de publicar e previs�
 
 O export do Lab copia `vault-data.json` para `/lab/vault-data.json` e `/lab/assets/vault-data.json`. O segundo caminho atende ao runtime WebAssembly do Marimo, que pode resolver arquivos relativos a partir da pasta de assets do pacote exportado.
 
-Datasets adicionais são declarados em `.site/lab.datasets.json` e preparados com `pnpm run notebooks:etl`. Veja [[Preparando Dados para o Lab]] para o contrato entre scripts de ingestão, snapshots publicados e notebooks. Para receitas práticas com scraping, OCR e APIs com token, veja [[Coletando Dados Locais com Scraping e OCR]]. Para usar feeds como fonte aberta de dados, veja [[Publicando e Consumindo RSS no Vault]].
+Datasets adicionais são declarados em `.site/lab.datasets.json` e preparados com `pnpm run notebooks:etl`. Veja [[Preparando Dados para o Lab]] para o contrato entre scripts de ingestão, snapshots publicados e notebooks. Para receitas práticas com scraping, OCR e APIs com token, veja [[Coletando Dados Locais com Scraping e OCR]]. Para usar feeds como fonte aberta de dados, veja [[Publicando e Consumindo RSS no Vault]]. Para revisar rascunhos antes de enviar a outros canais, veja [[Outbox Soberana de Publicação]].
 
 ## Criando Um Notebook
 

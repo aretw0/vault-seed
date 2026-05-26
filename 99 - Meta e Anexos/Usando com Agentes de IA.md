@@ -16,6 +16,7 @@ related:
   - "[[Automacoes no Obsidian]]"
   - "[[Conhecendo o Agents Lab]]"
   - "[[Inbox Soberana de Fontes]]"
+  - "[[Outbox Soberana de Publicação]]"
 ---
 # Usando com Agentes de IA
 
@@ -70,6 +71,10 @@ não faz parte do uso básico do vault.
 Para fontes externas, prefira um handoff estreito: o agente transforma um item
 em nota candidata na [[Inbox Soberana de Fontes]], preservando proveniência e
 mantendo `status: draft` até revisão humana.
+
+Para distribuição externa, use a [[Outbox Soberana de Publicação]]: o agente
+pode adaptar uma nota canônica para rascunhos por canal, mas não deve postar,
+chamar APIs sociais ou remover a revisão humana do fluxo.
 
 ## Dicas de uso
 

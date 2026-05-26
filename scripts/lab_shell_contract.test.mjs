@@ -83,6 +83,10 @@ test("published Lab pages keep the vault shell contract", () => {
   assert.match(labIndex, /vault-button/);
   assert.match(labIndex, /vault-status/);
 
+  assert.match(marimoCss, /#vg-tooltip-element/);
+  assert.match(marimoCss, /\.vega-embed svg text/);
+  assert.match(marimoCss, /var\(--popover-foreground\)/);
+
   for (const palette of ["oceano", "terracota"]) {
     assert.match(marimoCss, new RegExp(`data-vault-marimo-palette="${palette}"`));
   }

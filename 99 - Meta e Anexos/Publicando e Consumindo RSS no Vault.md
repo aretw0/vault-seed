@@ -19,6 +19,7 @@ related:
   - "[[Preparando Dados para o Lab]]"
   - "[[Coletando Dados Locais com Scraping e OCR]]"
   - "[[Inbox Soberana de Fontes]]"
+  - "[[Outbox Soberana de Publicação]]"
 ---
 
 # Publicando e Consumindo RSS no Vault
@@ -178,6 +179,7 @@ A partir daí, você pode:
 - comparar feeds diferentes;
 - transformar itens em notas de leitura;
 - criar entradas em `00 - Entrada/` usando [[Inbox Soberana de Fontes]];
+- promover notas revisadas para a [[Outbox Soberana de Publicação]];
 - cruzar feeds com tags e MOCs do vault;
 - gerar alertas ou dashboards locais.
 

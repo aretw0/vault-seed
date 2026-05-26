@@ -26,6 +26,7 @@ test("starter templates use the core Obsidian Templates contract", () => {
     "Template - Nota Conceitual.md",
     "Template - Nota Diaria.md",
     "Template - Plano de Ação.md",
+    "Template - Post Externo.md",
     "Template - Prompt.md",
   ]);
 
