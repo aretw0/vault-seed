@@ -1,10 +1,21 @@
 #!/usr/bin/env node
+import { createRequire } from "node:module";
 import { readFileSync } from "node:fs";
 import { basename, join } from "node:path";
 import { globSync } from "glob";
 import matter from "gray-matter";
 
+const require = createRequire(import.meta.url);
+const {
+  deriveNoteIntents,
+  getIntentLabel,
+  loadInformationArchitecture,
+  normalizeAudience,
+  normalizeCategory,
+} = require("../.site/lib/information-architecture.cjs");
+
 const ROOT = process.cwd();
+const IA = loadInformationArchitecture(ROOT);
 const VAULT_FOLDERS = [
   "00 - Entrada",
   "10 - Diário",
@@ -15,23 +26,6 @@ const VAULT_FOLDERS = [
   "90 - Modelos",
   "99 - Meta e Anexos",
 ];
-const ALLOWED_CATEGORIES = new Set([
-  "conceito",
-  "ferramenta",
-  "guia",
-  "moc",
-  "referencia",
-  "referência",
-  "workflow",
-]);
-const ALLOWED_AUDIENCES = new Set([
-  "iniciante",
-  "intermediario",
-  "intermediário",
-  "tecnico",
-  "técnico",
-  "todos",
-]);
 const TEMPLATE_META_FOLDER = "99 - Meta e Anexos";
 const RESOURCE_FOLDER = "40 - Recursos";
 
@@ -44,15 +38,20 @@ function normalizeList(value) {
 function readNotes() {
   return globSync(VAULT_FOLDERS.map((folder) => `${folder}/**/*.md`), { cwd: ROOT })
     .map((file) => {
+      const normalizedFile = file.replace(/\\/g, "/");
       const raw = readFileSync(join(ROOT, file), "utf8");
       const { data, content } = matter(raw);
+      const category = data.category ? String(data.category) : "";
+      const audience = data.audience ? String(data.audience) : "";
       return {
-        file: file.replace(/\\/g, "/"),
+        file: normalizedFile,
         title: data.title ? String(data.title) : basename(file, ".md"),
-        folder: file.replace(/\\/g, "/").split("/")[0] ?? "",
+        folder: normalizedFile.split("/")[0] ?? "",
         status: data.status ? String(data.status) : "",
-        category: data.category ? String(data.category) : "",
-        audience: data.audience ? String(data.audience) : "",
+        category,
+        categoryKey: normalizeCategory(category, IA),
+        audience,
+        audienceKey: normalizeAudience(audience, IA),
         tags: normalizeList(data.tags),
         words: content.split(/\s+/).filter(Boolean).length,
       };
@@ -66,27 +65,43 @@ function audit(notes) {
   const warnings = [];
   const promotionCandidates = [];
   const thinPublishedResources = [];
+  const intentCounts = new Map();
 
   for (const note of notes) {
     if (!note.category) {
       errors.push(`${note.file}: nota publicada sem category.`);
-    } else if (!ALLOWED_CATEGORIES.has(note.category)) {
+    } else if (!note.categoryKey) {
       errors.push(`${note.file}: category desconhecida (${note.category}).`);
     }
 
     if (!note.audience) {
       errors.push(`${note.file}: nota publicada sem audience.`);
-    } else if (!ALLOWED_AUDIENCES.has(note.audience)) {
+    } else if (!note.audienceKey) {
       errors.push(`${note.file}: audience desconhecido (${note.audience}).`);
     }
 
-    if (note.folder === TEMPLATE_META_FOLDER && note.category === "conceito") {
+    const intents = deriveNoteIntents(
+      { ...note, category: note.categoryKey || note.category },
+      IA,
+    );
+    for (const intent of intents) {
+      intentCounts.set(intent, (intentCounts.get(intent) ?? 0) + 1);
+    }
+
+    if (note.folder === TEMPLATE_META_FOLDER && note.categoryKey === "conceito") {
       promotionCandidates.push(note);
     }
 
     if (note.folder === RESOURCE_FOLDER && note.words < 140) {
       thinPublishedResources.push(note);
     }
+  }
+
+  const emptyIntents = Object.keys(IA.intents).filter((intent) => !intentCounts.has(intent));
+  if (emptyIntents.length) {
+    errors.push(
+      `intenção sem notas publicadas: ${emptyIntents.map((intent) => getIntentLabel(intent, IA)).join(", ")}.`,
+    );
   }
 
   if (promotionCandidates.length) {
@@ -104,6 +119,13 @@ function audit(notes) {
         .join("; ")}`,
     );
   }
+
+  warnings.push(
+    `Distribuição por intenção: ${Array.from(intentCounts.entries())
+      .sort((a, b) => a[0].localeCompare(b[0], "pt"))
+      .map(([intent, count]) => `${getIntentLabel(intent, IA)}=${count}`)
+      .join(", ")}`,
+  );
 
   return { errors, warnings, promotionCandidates, thinPublishedResources };
 }

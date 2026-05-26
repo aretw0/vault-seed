@@ -67,8 +67,9 @@ Local pode:
 
 ### 1. Fundação Astro-first
 
-- [x] Definir frontmatter mínimo para navegação por intenção.
+- [x] Definir taxonomia central para navegação por intenção.
 - [x] Criar página de exploração pública do vault em Astro.
+- [x] Conectar exploração Astro à taxonomia compartilhada de intenções.
 - [x] Gerar JSON estático para exploração do site.
 - [x] Adicionar filtros por pasta, tag, categoria e público.
 - [x] Exibir métricas de acervo no site.
@@ -95,7 +96,7 @@ Local pode:
 
 ### 4. Arquitetura de informação
 
-- [x] Auditar notas de `99 - Meta e Anexos`.
+- [x] Auditar notas de `99 - Meta e Anexos` com taxonomia compartilhada.
 - [ ] Classificar notas como `guide`, `concept`, `reference`, `workflow` ou `technical`.
 - [ ] Sugerir promoções de notas conceituais para `40 - Recursos`.
 - [ ] Reduzir repetição entre onboarding, recursos e docs técnicas.

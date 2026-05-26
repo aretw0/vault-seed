@@ -85,7 +85,8 @@ requireCondition(
 requireCondition(
   pkg.scripts?.["audit:ia"] === "node scripts/audit_information_architecture.mjs" &&
     templatePkg.scripts?.["audit:ia"] === "node scripts/audit_information_architecture.mjs" &&
-    iaAuditScript.includes("ALLOWED_CATEGORIES") &&
+    iaAuditScript.includes("loadInformationArchitecture") &&
+    iaAuditScript.includes("deriveNoteIntents") &&
     iaAuditScript.includes("promotionCandidates") &&
     iaAuditScript.includes("nota publicada sem category"),
   "The template must expose a deterministic information-architecture audit for published notes.",
@@ -266,9 +267,12 @@ requireCondition(
   headerComponent.includes('/explorar/') &&
     explorePage.includes('buildVaultExploreData') &&
     explorePage.includes('data-vault-explore-search') &&
+    explorePage.includes('data-vault-explore-intent') &&
     explorePage.includes('vault-metric-grid') &&
     explorePage.includes('vault-graph-cloud') &&
     exploreDataEndpoint.includes('buildVaultExploreData') &&
+    exploreDataLib.includes('loadInformationArchitecture') &&
+    exploreDataLib.includes('deriveNoteIntents') &&
     exploreDataLib.includes('graph:') &&
     exploreDataLib.includes('orphanCandidates') &&
     customCss.includes('.vault-filter-panel') &&
