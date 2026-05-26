@@ -31,6 +31,7 @@ const pages = [
   { path: `/${notebooksPath}/publishing.html`, label: "notebook-publicacao", type: "notebook" },
   { path: `/${notebooksPath}/graph.html`, label: "notebook-grafo", type: "notebook" },
   { path: `/${notebooksPath}/etl.html`, label: "notebook-etl", type: "notebook" },
+  { path: `/${notebooksPath}/feeds.html`, label: "notebook-feeds", type: "notebook" },
   {
     path: `/${notebooksPath}/vault-seed-slides.html`,
     label: "notebook-apresentacao",

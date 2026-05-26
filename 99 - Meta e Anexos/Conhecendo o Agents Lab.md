@@ -15,6 +15,7 @@ audience: tecnico
 related:
   - "[[Usando com Agentes de IA]]"
   - "[[Usando o Lab (Notebooks Marimo)]]"
+  - "[[Ecossistema aretw0 Agents Lab e Refarm]]"
 ---
 
 # Conhecendo o Agents Lab
@@ -47,7 +48,7 @@ antes de commitar.
 
 O `agents-lab` fica em outro repositório. Se alguma capacidade amadurecer lá,
 ela pode inspirar melhorias neste vault, mas não é uma dependência para usar o
-seu repositório de conhecimento.
+seu repositório de conhecimento. Veja também [[Ecossistema aretw0 Agents Lab e Refarm]] para a fronteira conceitual entre os projetos.
 
 ## Marimo E Agentes
 

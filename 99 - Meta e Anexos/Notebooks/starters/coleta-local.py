@@ -24,10 +24,10 @@ def _():
         clean_lab_text,
         extract_local_image_text,
         fetch_local_url_text,
-        fingerprint_data,
         get_local_secret,
         lab_runtime_context,
         read_local_text_file,
+        with_data_provenance,
         write_local_json_snapshot,
     )
 
@@ -37,9 +37,9 @@ def _():
         collect_context,
         extract_local_image_text,
         fetch_local_url_text,
-        fingerprint_data,
         get_local_secret,
         read_local_text_file,
+        with_data_provenance,
         write_local_json_snapshot,
     )
 
@@ -116,7 +116,7 @@ def _(
 
 
 @app.cell
-def _(clean_lab_text, fingerprint_data, raw_extracts):
+def _(clean_lab_text, raw_extracts, with_data_provenance):
     normalized_records = []
     for item in raw_extracts:
         normalized_records.append(
@@ -128,13 +128,15 @@ def _(clean_lab_text, fingerprint_data, raw_extracts):
             }
         )
 
-    snapshot_payload = {
-        "schemaVersion": 1,
-        "source": "Notebooks/starters/coleta-local.py",
-        "recordCount": len(normalized_records),
-        "records": normalized_records,
-    }
-    snapshot_payload["sha256"] = fingerprint_data(snapshot_payload)
+    snapshot_payload = with_data_provenance(
+        {
+            "recordCount": len(normalized_records),
+            "records": normalized_records,
+        },
+        source="Notebooks/starters/coleta-local.py",
+        license="verificar",
+        privacy="private-until-published",
+    )
     return normalized_records, snapshot_payload
 
 

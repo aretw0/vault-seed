@@ -274,6 +274,31 @@ def fingerprint_data(payload) -> str:
     return _hashlib.sha256(encoded).hexdigest()
 
 
+def with_data_provenance(
+    payload,
+    *,
+    source: str,
+    license: str = "verificar",
+    privacy: str = "private-until-published",
+    collected_at: str = None,
+):
+    """Adiciona metadados mínimos de proveniência a um snapshot do Lab."""
+    from datetime import datetime as _datetime
+    from datetime import timezone as _timezone
+
+    collected = collected_at or _datetime.now(_timezone.utc).isoformat().replace("+00:00", "Z")
+    enriched = {
+        "schemaVersion": 1,
+        "source": source,
+        "collectedAt": collected,
+        "license": license,
+        "privacy": privacy,
+        "data": payload,
+    }
+    enriched["sha256"] = fingerprint_data(enriched)
+    return enriched
+
+
 def read_local_text_file(relative_path: str, *, encoding: str = "utf-8"):
     """Lê arquivo de texto local dentro do vault."""
     with open(local_vault_path(relative_path), encoding=encoding) as f:

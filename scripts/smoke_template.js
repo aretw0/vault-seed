@@ -141,7 +141,8 @@ requireCondition(
 requireCondition(
   templatePkg.scripts?.["notebooks:data"] === "node scripts/generate_vault_data.mjs" &&
     templatePkg.scripts?.["notebooks:etl:demo"] === "node scripts/lab_etl_demo.mjs" &&
-    templatePkg.scripts?.["notebooks:etl"] === "pnpm run notebooks:etl:demo && node scripts/prepare_lab_datasets.mjs" &&
+    templatePkg.scripts?.["feeds:opml"] === "node scripts/prepare_feed_sources.mjs" &&
+    templatePkg.scripts?.["notebooks:etl"] === "pnpm run notebooks:etl:demo && pnpm run feeds:opml && node scripts/prepare_lab_datasets.mjs" &&
     templatePkg.scripts?.["notebooks:extract:local"] === "pnpm run notebooks:etl" &&
     templatePkg.scripts?.["notebooks:dev"] === "node scripts/notebooks_dev.mjs" &&
     templatePkg.scripts?.["notebooks:check"] === "node scripts/notebooks_check.mjs" &&
@@ -263,14 +264,18 @@ requireCondition(
 );
 requireCondition(
   pkg.scripts?.["notebooks:etl:demo"] === "node scripts/lab_etl_demo.mjs" &&
+    pkg.scripts?.["feeds:opml"] === "node scripts/prepare_feed_sources.mjs" &&
+    pkg.scripts?.["notebooks:etl"]?.includes("feeds:opml") &&
     pkg.scripts?.["notebooks:etl"]?.includes("notebooks:etl:demo") &&
     pkg.scripts?.["notebooks:extract:local"] === "pnpm run notebooks:etl" &&
     labEtlDemoScript.includes("dados\", \"lab\", \"perfil-do-vault.json") &&
     labEtlDemoScript.includes("dados\", \"lab\", \"curadoria-ia.json") &&
     labDatasetsManifest.some((entry) => entry.id === "perfil-do-vault" && entry.source === "dados/lab/perfil-do-vault.json") &&
     labDatasetsManifest.some((entry) => entry.id === "curadoria-ia" && entry.source === "dados/lab/curadoria-ia.json") &&
+    labDatasetsManifest.some((entry) => entry.id === "feeds-assinados" && entry.source === "dados/lab/feeds-assinados.json") &&
     labDatasetsManifest.some((entry) => entry.id === "json-remoto-opcional" && entry.runtimeUrl) &&
     labNotebooksManifest.some((entry) => entry.source === "99 - Meta e Anexos/Notebooks/etl-demo.py" && entry.publish === true) &&
+    labNotebooksManifest.some((entry) => entry.source === "99 - Meta e Anexos/Notebooks/analise-feeds.py" && entry.publish === true) &&
     etlNotebook.includes("load_lab_manifest") &&
     etlNotebook.includes("read_lab_dataset") &&
     etlNotebook.includes("write_local_json_snapshot") &&

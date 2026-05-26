@@ -15,6 +15,7 @@ related:
   - "[[Preparando seu Computador para o Vault]]"
   - "[[Automacoes no Obsidian]]"
   - "[[Conhecendo o Agents Lab]]"
+  - "[[Inbox Soberana de Fontes]]"
 ---
 # Usando com Agentes de IA
 
@@ -65,6 +66,10 @@ O `AGENTS.md` funciona como contexto para qualquer agente:
 Se quiser explorar um projeto do mesmo ecossistema dedicado a skills, tools e
 experimentos com agentes, veja [[Conhecendo o Agents Lab]]. Ele é opcional e
 não faz parte do uso básico do vault.
+
+Para fontes externas, prefira um handoff estreito: o agente transforma um item
+em nota candidata na [[Inbox Soberana de Fontes]], preservando proveniência e
+mantendo `status: draft` até revisão humana.
 
 ## Dicas de uso
 

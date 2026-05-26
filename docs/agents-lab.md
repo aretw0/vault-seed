@@ -43,3 +43,10 @@ Um backlog natural para `agents-lab` e uma skill/tool Marimo que:
 
 Essa integracao deve documentar explicitamente se esta operando so por arquivo
 ou se esta conectada ao runtime vivo do Marimo.
+
+## Refarm
+
+`refarm` pode servir como referencia de operacao e orquestracao no ecossistema,
+mas nao e dependencia do `vault-seed`. Qualquer padrao inspirado nele deve
+chegar aqui como contrato pequeno: arquivo, comando, validacao ou documentacao
+que funcione sem checkout local de outro repositorio.

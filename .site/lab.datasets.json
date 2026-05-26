@@ -18,6 +18,15 @@
     "publish": true
   },
   {
+    "id": "feeds-assinados",
+    "title": "Feeds assinados",
+    "description": "Lista OPML normalizada para auditoria de fontes abertas no Lab",
+    "source": "dados/lab/feeds-assinados.json",
+    "output": "feeds-assinados.json",
+    "format": "json",
+    "publish": true
+  },
+  {
     "id": "json-remoto-opcional",
     "title": "JSON remoto opcional",
     "description": "Exemplo de fonte que um notebook WASM pode carregar no navegador quando houver CORS e rede",

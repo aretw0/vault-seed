@@ -88,6 +88,10 @@ gha-creds-*.json
 .claude/settings.local.json
 .claude/worktrees/
 
+# Pi local agent/workflow state
+.pi/
+.workflows/
+
 # ===================================================================
 # Astro build output
 # ===================================================================

@@ -21,6 +21,13 @@
     "publish": true
   },
   {
+    "title": "Feeds",
+    "source": "99 - Meta e Anexos/Notebooks/analise-feeds.py",
+    "output": "feeds.html",
+    "description": "assinaturas RSS/Atom, domínios, categorias e inbox de fontes",
+    "publish": true
+  },
+  {
     "title": "Apresentação",
     "source": "99 - Meta e Anexos/Notebooks/apresentacao-vault-seed.py",
     "output": "vault-seed-slides.html",

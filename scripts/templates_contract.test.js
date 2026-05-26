@@ -21,6 +21,7 @@ test("starter templates use the core Obsidian Templates contract", () => {
   const files = templateFiles();
   assert.deepEqual(files, [
     "Template - Dashboard.md",
+    "Template - Item de Feed.md",
     "Template - MOC.md",
     "Template - Nota Conceitual.md",
     "Template - Nota Diaria.md",

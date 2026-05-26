@@ -23,6 +23,8 @@ related:
   - "[[Rotina de Curadoria Editorial]]"
   - "[[Coletando Dados Locais com Scraping e OCR]]"
   - "[[Publicando e Consumindo RSS no Vault]]"
+  - "[[Inbox Soberana de Fontes]]"
+  - "[[Ecossistema aretw0 Agents Lab e Refarm]]"
 ---
 
 # MOC Vault Seed
@@ -42,6 +44,7 @@ Este mapa mostra o vault como exemplo de organização. Use-o para entender quai
 - [[Preparando Dados para o Lab]]
 - [[Coletando Dados Locais com Scraping e OCR]]
 - [[Publicando e Consumindo RSS no Vault]]
+- [[Inbox Soberana de Fontes]]
 - [[Rotina de Curadoria Editorial]]
 
 ## Conceitos Que Sustentam o Vault
@@ -67,8 +70,10 @@ Este mapa mostra o vault como exemplo de organização. Use-o para entender quai
 - [[Preparando Dados para o Lab]]
 - [[Coletando Dados Locais com Scraping e OCR]]
 - [[Publicando e Consumindo RSS no Vault]]
+- [[Inbox Soberana de Fontes]]
 - [[Rotina de Curadoria Editorial]]
 - [[Conhecendo o Agents Lab]]
+- [[Ecossistema aretw0 Agents Lab e Refarm]]
 - [[Usando o Vault no Celular vs. Desktop]]
 
 ## Base Nativa

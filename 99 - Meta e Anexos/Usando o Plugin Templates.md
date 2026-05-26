@@ -62,6 +62,7 @@ Após ativar, nas opções do plugin (`Configurações > Opções de plugins > T
 | `Template - Plano de Ação.md` | Projetos curtos, entregáveis e critérios de conclusão. |
 | `Template - Dashboard.md` | Painéis pessoais com blocos Dataview opcionais. |
 | `Template - Prompt.md` | Registro de prompts, contexto, resultado e ajustes. |
+| `Template - Item de Feed.md` | Triagem de itens RSS/Atom com proveniência antes de virar nota. |
 
 ## Exemplo Prático: O Template de Prompt
 

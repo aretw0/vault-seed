@@ -18,6 +18,7 @@ related:
   - "[[Publicando seu Vault como Site]]"
   - "[[Preparando Dados para o Lab]]"
   - "[[Coletando Dados Locais com Scraping e OCR]]"
+  - "[[Inbox Soberana de Fontes]]"
 ---
 
 # Publicando e Consumindo RSS no Vault
@@ -73,6 +74,26 @@ ou, em GitHub Pages com base de repositório:
 ```text
 https://USUARIO.github.io/REPOSITORIO/rss.xml
 ```
+
+## OPML: Sua Lista De Assinaturas
+
+A lista inicial de feeds fica em:
+
+```text
+dados/fontes/feeds.opml
+```
+
+Ela é um OPML editável: você pode importar em leitores RSS ou exportar de outros
+leitores para dentro do vault. Para normalizar essa lista como dataset do Lab,
+rode:
+
+```bash
+pnpm run feeds:opml
+```
+
+O comando gera `dados/lab/feeds-assinados.json`, com `source`, `collectedAt`,
+`sha256`, `license` e `privacy`. Esse dataset é publicado pelo manifesto do Lab
+e alimenta o notebook `/lab/feeds.html`.
 
 ## Consumindo Feeds Como Dados
 
@@ -132,9 +153,13 @@ pnpm run notebooks:etl
 pnpm run notebooks:check
 ```
 
-## Analisando Um Feed No Lab
+## Analisando Feeds No Lab
 
-No notebook, leia o dataset já empacotado:
+O notebook publicado `/lab/feeds.html` lê a lista OPML normalizada, mostra
+domínios, categorias e candidatas para a inbox soberana.
+
+Para analisar um feed específico em um notebook próprio, leia o dataset já
+empacotado:
 
 ```python
 import pandas as pd
@@ -152,6 +177,7 @@ A partir daí, você pode:
 - listar domínios citados;
 - comparar feeds diferentes;
 - transformar itens em notas de leitura;
+- criar entradas em `00 - Entrada/` usando [[Inbox Soberana de Fontes]];
 - cruzar feeds com tags e MOCs do vault;
 - gerar alertas ou dashboards locais.
 

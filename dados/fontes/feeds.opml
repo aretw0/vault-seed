@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0">
+  <head>
+    <title>Feeds iniciais do vault</title>
+    <ownerName>vault-seed</ownerName>
+    <dateCreated>Tue, 26 May 2026 00:00:00 GMT</dateCreated>
+  </head>
+  <body>
+    <outline text="Jardim digital" title="Jardim digital">
+      <outline text="Feed deste vault" title="Feed deste vault" type="rss" xmlUrl="./rss.xml" htmlUrl="./" category="vault" />
+    </outline>
+    <outline text="Tecnologia" title="Tecnologia">
+      <outline text="GitHub Blog" title="GitHub Blog" type="rss" xmlUrl="https://github.blog/feed/" htmlUrl="https://github.blog/" category="tecnologia" />
+    </outline>
+  </body>
+</opml>
