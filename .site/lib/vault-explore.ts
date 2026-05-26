@@ -67,6 +67,7 @@ export type ExploreData = {
     errorCount: number;
     warningCount: number;
     warnings: string[];
+    notices: string[];
     promotionCandidates: Array<{ file: string; title: string; folder: string; category: string; audience: string; words: number }>;
     thinPublishedResources: Array<{ file: string; title: string; folder: string; category: string; audience: string; words: number }>;
     intentDistribution: Array<{ intent: string; label: string; count: number }>;
@@ -299,6 +300,7 @@ export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData
       errorCount: editorialReport.errors.length,
       warningCount: editorialReport.warnings.length,
       warnings: editorialReport.warnings,
+      notices: editorialReport.notices,
       promotionCandidates: editorialReport.promotionCandidates,
       thinPublishedResources: editorialReport.thinPublishedResources,
       intentDistribution: editorialReport.intentDistribution,

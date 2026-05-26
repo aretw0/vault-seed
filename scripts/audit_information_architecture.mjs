@@ -13,6 +13,9 @@ function runCli(argv = process.argv.slice(2)) {
     if (report.warnings.length) {
       for (const warning of report.warnings) console.warn(`[warn] ${warning}`);
     }
+    if (report.notices?.length) {
+      for (const notice of report.notices) console.log(`[info] ${notice}`);
+    }
   }
 
   if (report.errors.length) {

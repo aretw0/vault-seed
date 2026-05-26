@@ -49,6 +49,8 @@ test("information architecture audit exposes a reusable machine-readable report"
 
   assert.deepEqual(cliReport, moduleReport);
   assert.equal(moduleReport.errors.length, 0);
+  assert.equal(moduleReport.warnings.some((warning) => warning.startsWith("Distribuição por intenção")), false);
+  assert.equal(moduleReport.notices.some((notice) => notice.startsWith("Distribuição por intenção")), true);
   assert.ok(moduleReport.notesEvaluated > 0);
   assert.deepEqual(
     moduleReport.intentDistribution.map(({ intent }) => intent),

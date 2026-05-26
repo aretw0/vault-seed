@@ -13,7 +13,7 @@ const recentNotes = [...explore.notes]
 const noteHrefByPath = new Map(explore.notes.map((note) => [note.path, note.href]));
 const promotionCandidates = explore.editorial.promotionCandidates.slice(0, 6);
 const thinResources = explore.editorial.thinPublishedResources.slice(0, 8);
-const editorialWarnings = explore.editorial.warnings.filter((warning) => !warning.startsWith('Distribuição por intenção'));
+const editorialWarnings = explore.editorial.warnings;
 const exploreJson = JSON.stringify(explore).replace(/</g, '\\u003c');
 ---
 
@@ -195,9 +195,13 @@ const exploreJson = JSON.stringify(explore).replace(/</g, '\\u003c');
         <article class="vault-card">
           <span class="vault-card__eyebrow">Avisos</span>
           <h3 class="vault-card__title">Sinais para próxima curadoria</h3>
-          <ul class="vault-compact-list">
-            {editorialWarnings.map((warning) => <li><span>{warning}</span></li>)}
-          </ul>
+          {editorialWarnings.length ? (
+            <ul class="vault-compact-list">
+              {editorialWarnings.map((warning) => <li><span>{warning}</span></li>)}
+            </ul>
+          ) : (
+            <p class="vault-card__body">Nenhum aviso editorial pendente no recorte atual.</p>
+          )}
         </article>
 
         <article class="vault-card">

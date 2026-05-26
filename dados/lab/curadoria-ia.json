@@ -3,7 +3,8 @@
   "source": ".site/lib/information-architecture-audit.mjs",
   "notesEvaluated": 45,
   "errors": [],
-  "warnings": [
+  "warnings": [],
+  "notices": [
     "Distribuição por intenção: Automatizar=6, Começar=9, Explorar=10, Manter=12, Organizar=22, Publicar=4"
   ],
   "promotionCandidates": [],

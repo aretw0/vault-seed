@@ -60,6 +60,7 @@ export function readPublishedNotes({ root = process.cwd(), ia = loadInformationA
 export function auditInformationArchitecture(notes, ia = loadInformationArchitecture(process.cwd())) {
   const errors = [];
   const warnings = [];
+  const notices = [];
   const promotionCandidates = [];
   const thinPublishedResources = [];
   const intentCounts = new Map();
@@ -147,7 +148,7 @@ export function auditInformationArchitecture(notes, ia = loadInformationArchitec
     .sort((a, b) => a[0].localeCompare(b[0], "pt"))
     .map(([intent, count]) => ({ intent, label: getIntentLabel(intent, ia), count }));
 
-  warnings.push(
+  notices.push(
     `Distribuição por intenção: ${intentDistribution
       .map(({ label, count }) => `${label}=${count}`)
       .join(", ")}`,
@@ -156,6 +157,7 @@ export function auditInformationArchitecture(notes, ia = loadInformationArchitec
   return {
     errors,
     warnings,
+    notices,
     promotionCandidates: promotionCandidates.map(summarizeNote),
     thinPublishedResources: thinPublishedResources.map(summarizeNote),
     ambiguousIntentNotes: ambiguousIntentNotes.map(({ note, intents }) => ({
