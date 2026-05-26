@@ -9,8 +9,8 @@ tags:
   - meta/workflow
 status: published
 created: 2023-10-27
-updated: 2023-10-27
-category: conceito
+updated: 2026-05-26
+category: referencia
 audience: todos
 related:
   - "[[Guia do Jardineiro Digital]]"
