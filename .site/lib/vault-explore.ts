@@ -3,6 +3,13 @@ import { readFileSync } from 'node:fs';
 import { globSync } from 'glob';
 import matter from 'gray-matter';
 import { slugify } from '@dgk/astro-plugins';
+import {
+  deriveNoteIntents,
+  getIntentLabel,
+  getVocabularyLabel,
+  loadInformationArchitecture,
+  normalizeVocabularyValue,
+} from './information-architecture.mjs';
 
 const VAULT_FOLDERS = [
   '00 - Entrada',
@@ -66,48 +73,6 @@ export type ExploreData = {
   };
   notes: ExploreNote[];
 };
-
-function normalizeKey(value: unknown): string {
-  return String(value || '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .trim();
-}
-
-function loadInformationArchitecture(cwd: string): any {
-  return JSON.parse(readFileSync(join(cwd, '.site', 'information-architecture.json'), 'utf8'));
-}
-
-function normalizeVocabularyValue(value: unknown, vocabulary: Record<string, any>): string | null {
-  const normalized = normalizeKey(value);
-  for (const [key, entry] of Object.entries(vocabulary || {})) {
-    const aliases = [key, entry.label, ...(entry.aliases || [])];
-    if (aliases.some((alias) => normalizeKey(alias) === normalized)) return key;
-  }
-  return null;
-}
-
-function getVocabularyLabel(key: string, vocabulary: Record<string, any>): string {
-  return vocabulary?.[key]?.label || key || 'sem valor';
-}
-
-function getIntentLabel(key: string, ia: any): string {
-  return ia.intents?.[key]?.label || key;
-}
-
-function deriveNoteIntents(note: { folder: string; tags: string[]; category: string }, ia: any): string[] {
-  const tags = new Set(note.tags.map((tag) => normalizeKey(tag)));
-  const category = normalizeKey(note.category);
-  const matches: string[] = [];
-  for (const [key, intent] of Object.entries<any>(ia.intents || {})) {
-    const byTag = (intent.tags || []).some((tag: string) => tags.has(normalizeKey(tag)));
-    const byCategory = (intent.categories || []).some((candidate: string) => normalizeKey(candidate) === category);
-    const byFolder = (intent.folders || []).includes(note.folder);
-    if (byTag || byCategory || byFolder) matches.push(key);
-  }
-  return matches.length ? matches : ['organizar'];
-}
 
 function normalizeList(value: unknown): string[] {
   if (Array.isArray(value)) return value.map((item) => String(item).trim()).filter(Boolean);

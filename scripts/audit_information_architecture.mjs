@@ -1,18 +1,16 @@
 #!/usr/bin/env node
-import { createRequire } from "node:module";
 import { readFileSync } from "node:fs";
 import { basename, join } from "node:path";
 import { globSync } from "glob";
 import matter from "gray-matter";
 
-const require = createRequire(import.meta.url);
-const {
+import {
   deriveNoteIntents,
   getIntentLabel,
   loadInformationArchitecture,
   normalizeAudience,
   normalizeCategory,
-} = require("../.site/lib/information-architecture.cjs");
+} from "../.site/lib/information-architecture.mjs";
 
 const ROOT = process.cwd();
 const IA = loadInformationArchitecture(ROOT);

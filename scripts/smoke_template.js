@@ -73,6 +73,7 @@ const exploreDataLib = read(".site/lib/vault-explore.ts");
 const astroConfig = read("astro.config.mjs");
 const sidebarConfig = read(".site/sidebar.config.ts");
 const informationArchitecture = read(".site/information-architecture.json");
+const informationArchitectureRuntime = read(".site/lib/information-architecture.mjs");
 const pyproject = read("pyproject.toml");
 const marimoCss = read(".site/styles/marimo-vault.css");
 const themeRuntimeCss = read(".site/styles/theme-runtime.css");
@@ -88,6 +89,7 @@ requireCondition(
   pkg.scripts?.["audit:ia"] === "node scripts/audit_information_architecture.mjs" &&
     templatePkg.scripts?.["audit:ia"] === "node scripts/audit_information_architecture.mjs" &&
     informationArchitecture.includes('"intents"') &&
+    informationArchitectureRuntime.includes("export function deriveNoteIntents") &&
     iaAuditScript.includes("loadInformationArchitecture") &&
     iaAuditScript.includes("deriveNoteIntents") &&
     iaAuditScript.includes("promotionCandidates") &&

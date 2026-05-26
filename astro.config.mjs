@@ -1,5 +1,4 @@
 // astro.config.mjs
-import { createRequire } from 'node:module';
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import remarkDirective from 'remark-directive';
@@ -8,12 +7,10 @@ import { collectVaultEntries } from './.site/integrations/collect-published-slug
 import { copyVaultAttachments } from './.site/integrations/copy-vault-attachments.js';
 import { generateVaultJson } from './.site/integrations/generate-vault-json.js';
 import { sidebarSections } from './.site/sidebar.config.js';
-
-const require = createRequire(import.meta.url);
-const {
+import {
   deriveNoteIntents,
   loadInformationArchitecture,
-} = require('./.site/lib/information-architecture.cjs');
+} from './.site/lib/information-architecture.mjs';
 
 const site = process.env.ASTRO_SITE;
 const base = process.env.ASTRO_BASE ?? '/';
