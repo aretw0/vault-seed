@@ -15,6 +15,7 @@ audience: todos
 related:
   - "[[Identidade Visual e Blocos de Interface]]"
   - "[[Usando o Lab (Notebooks Marimo)]]"
+  - "[[Publicando e Consumindo RSS no Vault]]"
   - "[[O Ciclo de Vida do Conhecimento (Versionamento para Jardineiros Digitais)]]"
 ---
 
@@ -26,7 +27,7 @@ O vault já vem com um site Astro configurado para GitHub Pages. A mesma estrutu
 
 Notas com `status: published` no frontmatter entram no site. Notas em rascunho continuam no repositório, mas não aparecem na navegação pública.
 
-Anexos referenciados pelas notas publicadas são copiados para o build. O Lab também publica dados e notebooks quando o workflow de deploy roda.
+Anexos referenciados pelas notas publicadas são copiados para o build. O Lab também publica dados e notebooks quando o workflow de deploy roda. O site gera ainda um feed RSS em `/rss.xml` para que pessoas e leitores RSS acompanhem as notas publicadas sem depender de redes sociais.
 
 ## Como O Deploy Funciona
 
@@ -54,6 +55,12 @@ status: published
 ```
 
 Faça commit e push para `main`. O histórico Git continua sendo o registro da mudança, e o site mostra o estado publicado depois que o workflow terminar.
+
+## RSS
+
+O build gera `/rss.xml` com as notas publicadas mais recentes. Leitores RSS conseguem descobrir esse endereço automaticamente pelo `<link rel="alternate">` do site.
+
+Para usar RSS como fonte de dados no Lab ou divulgar melhor o feed do seu jardim digital, veja [[Publicando e Consumindo RSS no Vault]].
 
 ## Relação Com O Lab
 

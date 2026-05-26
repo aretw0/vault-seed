@@ -15,6 +15,7 @@ related:
   - "[[Usando o Lab (Notebooks Marimo)]]"
   - "[[Publicando seu Vault como Site]]"
   - "[[Coletando Dados Locais com Scraping e OCR]]"
+  - "[[Publicando e Consumindo RSS no Vault]]"
 ---
 
 # Preparando Dados para o Lab
@@ -108,7 +109,8 @@ pnpm run notebooks:extract:browser
 ```
 
 Receitas completas de scraping, OCR, APIs com token e snapshot local ficam em
-[[Coletando Dados Locais com Scraping e OCR]].
+[[Coletando Dados Locais com Scraping e OCR]]. Para feeds abertos, veja também
+[[Publicando e Consumindo RSS no Vault]].
 
 Os comandos do Lab também preparam os datasets automaticamente:
 

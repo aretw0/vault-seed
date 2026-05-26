@@ -286,6 +286,92 @@ def read_local_bytes_file(relative_path: str):
         return f.read()
 
 
+def _xml_child_text(element, names):
+    for name in names:
+        child = element.find(name)
+        if child is not None and child.text:
+            return clean_lab_text(child.text)
+    return None
+
+
+def _xml_atom_link(element):
+    for link in element.findall("{http://www.w3.org/2005/Atom}link"):
+        href = link.attrib.get("href")
+        rel = link.attrib.get("rel", "alternate")
+        if href and rel in {"alternate", ""}:
+            return href
+    link = element.find("{http://www.w3.org/2005/Atom}link")
+    return link.attrib.get("href") if link is not None else None
+
+
+def parse_feed_xml(xml_text: str, *, source_url: str = None, limit: int = 50):
+    """Converte RSS ou Atom em registros pequenos e versionáveis."""
+    import xml.etree.ElementTree as _ET
+
+    root = _ET.fromstring(xml_text)
+    items = []
+
+    channel = root.find("channel")
+    if channel is not None:
+        feed_title = _xml_child_text(channel, ["title"])
+        for item in channel.findall("item")[:limit]:
+            items.append(
+                {
+                    "title": _xml_child_text(item, ["title"]),
+                    "url": _xml_child_text(item, ["link"]),
+                    "published": _xml_child_text(item, ["pubDate", "date"]),
+                    "updated": _xml_child_text(item, ["updated"]),
+                    "summary": _xml_child_text(item, ["description", "summary"]),
+                    "guid": _xml_child_text(item, ["guid", "id"]),
+                }
+            )
+        return {
+            "schemaVersion": 1,
+            "kind": "feed",
+            "format": "rss",
+            "source": source_url,
+            "title": feed_title,
+            "itemCount": len(items),
+            "items": items,
+        }
+
+    atom = "{http://www.w3.org/2005/Atom}"
+    feed_title = _xml_child_text(root, [f"{atom}title", "title"])
+    for entry in root.findall(f"{atom}entry")[:limit]:
+        items.append(
+            {
+                "title": _xml_child_text(entry, [f"{atom}title", "title"]),
+                "url": _xml_atom_link(entry),
+                "published": _xml_child_text(entry, [f"{atom}published", "published"]),
+                "updated": _xml_child_text(entry, [f"{atom}updated", "updated"]),
+                "summary": _xml_child_text(entry, [f"{atom}summary", f"{atom}content", "summary"]),
+                "guid": _xml_child_text(entry, [f"{atom}id", "id"]),
+            }
+        )
+
+    return {
+        "schemaVersion": 1,
+        "kind": "feed",
+        "format": "atom",
+        "source": source_url,
+        "title": feed_title,
+        "itemCount": len(items),
+        "items": items,
+    }
+
+
+def fetch_local_feed(url: str, *, timeout: int = 20, user_agent: str = "vault-seed-lab/1.0", limit: int = 50):
+    """Baixa e normaliza um feed RSS/Atom no ambiente local."""
+    from urllib.request import Request as _Request
+    from urllib.request import urlopen as _urlopen
+
+    require_local_runtime("coletar feed RSS/Atom localmente")
+    request = _Request(url, headers={"User-Agent": user_agent})
+    with _urlopen(request, timeout=timeout) as response:
+        xml_text = response.read().decode(response.headers.get_content_charset() or "utf-8", "replace")
+    return parse_feed_xml(xml_text, source_url=url, limit=limit)
+
+
 def fetch_local_url_text(url: str, *, timeout: int = 20, user_agent: str = "vault-seed-lab/1.0"):
     """Extrai HTML/texto de uma URL no ambiente local usando biblioteca padrão."""
     import re as _re

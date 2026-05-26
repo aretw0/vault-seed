@@ -16,6 +16,7 @@ def _():
     from _lab_notebook_runtime import (
         clean_lab_text,
         extract_local_image_text,
+        fetch_local_feed,
         fetch_local_url_text,
         fingerprint_data,
         get_local_secret,
@@ -41,6 +42,7 @@ def _():
         clean_lab_text,
         curation,
         extract_local_image_text,
+        fetch_local_feed,
         fetch_local_url_text,
         fingerprint_data,
         get_local_secret,
@@ -245,6 +247,12 @@ def _(mo, pd):
                 "empacotado": "bloqueada",
                 "local": "coleta HTML/texto com biblioteca padrão",
                 "fronteira": "scraping simples sem dependência nova",
+            },
+            {
+                "primitiva": "fetch_local_feed",
+                "empacotado": "bloqueada",
+                "local": "normaliza RSS/Atom como registros JSON",
+                "fronteira": "assinaturas viram snapshots auditáveis",
             },
             {
                 "primitiva": "scrape_local_page_text",

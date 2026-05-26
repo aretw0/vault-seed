@@ -79,6 +79,7 @@ function buildSidebarItems(entries) {
     .filter(Boolean);
 }
 const sidebar = buildSidebarItems(vaultEntries);
+const rssHref = `${base.replace(/\/$/, '')}/rss.xml`;
 
 // Client-side Mermaid rendering with palette-aware theming, rendered/code toggle,
 // copy buttons, and fullscreen pan/zoom dialog.
@@ -376,6 +377,7 @@ export default defineConfig({
         : [],
       sidebar,
       head: [
+        { tag: 'link', attrs: { rel: 'alternate', type: 'application/rss+xml', title: `${vaultTitle} RSS`, href: rssHref } },
         { tag: 'script', attrs: { type: 'module' }, content: mermaidScript },
       ],
       customCss: [

@@ -153,6 +153,19 @@ if (fs.existsSync(exploreDataPath)) {
   );
 }
 
+const rssPath = path.join(distDir, "rss.xml");
+requireCondition(
+  fs.existsSync(rssPath),
+  "dist/rss.xml missing — RSS feed was not generated.",
+);
+if (fs.existsSync(rssPath)) {
+  const rss = fs.readFileSync(rssPath, "utf8");
+  requireCondition(
+    rss.includes("<rss") && rss.includes("<channel>") && rss.includes("<item>"),
+    "dist/rss.xml must be a non-empty RSS feed.",
+  );
+}
+
 if (hasTechnicalDocs) {
   requireCondition(
     fs.existsSync(path.join(distDir, "docs", "index.html")),

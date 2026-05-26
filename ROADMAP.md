@@ -16,6 +16,7 @@ Astro deve cuidar do que é leitura, descoberta e navegação:
 - hubs por intenção;
 - busca, filtros e cards;
 - visualizações leves baseadas em dados estáticos;
+- RSS/feed público para sindicação aberta;
 - graph/timeline publicados;
 - primitives visuais responsivas e acessíveis;
 - experiência rápida que não exige runtime Python.
@@ -40,6 +41,7 @@ Scripts locais devem cuidar do que envolve:
 - segredos;
 - Playwright/navegador headless;
 - OCR/binários externos;
+- RSS/Atom e outras fontes abertas externas;
 - APIs autenticadas;
 - formatos pesados ou opcionais, como Parquet;
 - geração determinística de snapshots e manifests.
@@ -132,6 +134,7 @@ Astro, Marimo, scripts e CI voltem a divergir.
 - [ ] Criar notebook Explorador Universal de datasets.
 - [ ] Replicar no Lab apenas primitives visuais que ajudem a coesão.
 - [x] Consumir no Lab o relatório editorial produzido pela auditoria compartilhada.
+- [x] Adicionar primitivas locais para RSS/Atom como fonte de dados auditável.
 - [ ] Mostrar no notebook quando uma tarefa pertence ao Astro, ao Lab ou à CLI.
 - [ ] Criar contrato para evitar dependências locais obrigatórias no notebook publicado.
 
@@ -139,8 +142,9 @@ Astro, Marimo, scripts e CI voltem a divergir.
 
 - [x] Manter pipeline determinístico de snapshots do Lab.
 - [x] Expor `notebooks:extract:local` como alias do fluxo local atual.
+- [x] Documentar Playwright/OCR/APIs como extras locais, não dependências padrão.
+- [x] Gerar feed RSS do site publicado.
 - [ ] Separar conectores locais opcionais por capacidade.
-- [ ] Documentar Playwright/OCR/APIs como extras locais, não dependências padrão.
 - [ ] Garantir que tokens e artefatos privados nunca entrem no export publicado.
 
 ## Critério de pronto

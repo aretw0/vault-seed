@@ -22,6 +22,7 @@ related:
   - "[[Identidade Visual e Blocos de Interface]]"
   - "[[Rotina de Curadoria Editorial]]"
   - "[[Coletando Dados Locais com Scraping e OCR]]"
+  - "[[Publicando e Consumindo RSS no Vault]]"
 ---
 
 # MOC Vault Seed
@@ -40,6 +41,7 @@ Este mapa mostra o vault como exemplo de organização. Use-o para entender quai
 - [[Usando o Lab (Notebooks Marimo)]]
 - [[Preparando Dados para o Lab]]
 - [[Coletando Dados Locais com Scraping e OCR]]
+- [[Publicando e Consumindo RSS no Vault]]
 - [[Rotina de Curadoria Editorial]]
 
 ## Conceitos Que Sustentam o Vault
@@ -64,6 +66,7 @@ Este mapa mostra o vault como exemplo de organização. Use-o para entender quai
 - [[Usando o Lab (Notebooks Marimo)]]
 - [[Preparando Dados para o Lab]]
 - [[Coletando Dados Locais com Scraping e OCR]]
+- [[Publicando e Consumindo RSS no Vault]]
 - [[Rotina de Curadoria Editorial]]
 - [[Conhecendo o Agents Lab]]
 - [[Usando o Vault no Celular vs. Desktop]]
