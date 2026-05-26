@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { readFileSync } from "node:fs";
 import { basename, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { globSync } from "glob";
 import matter from "gray-matter";
 
@@ -13,8 +14,6 @@ import {
 } from "../.site/lib/information-architecture.mjs";
 import { VAULT_FOLDERS } from "../.site/lib/vault-folders.mjs";
 
-const ROOT = process.cwd();
-const IA = loadInformationArchitecture(ROOT);
 const TEMPLATE_META_FOLDER = "99 - Meta e Anexos";
 const RESOURCE_FOLDER = "40 - Recursos";
 
@@ -24,11 +23,22 @@ function normalizeList(value) {
   return [];
 }
 
-function readNotes() {
-  return globSync(VAULT_FOLDERS.map((folder) => `${folder}/**/*.md`), { cwd: ROOT })
+function summarizeNote(note) {
+  return {
+    file: note.file,
+    title: note.title,
+    folder: note.folder,
+    category: note.categoryKey || note.category,
+    audience: note.audienceKey || note.audience,
+    words: note.words,
+  };
+}
+
+export function readPublishedNotes({ root = process.cwd(), ia = loadInformationArchitecture(root) } = {}) {
+  return globSync(VAULT_FOLDERS.map((folder) => `${folder}/**/*.md`), { cwd: root })
     .map((file) => {
       const normalizedFile = file.replace(/\\/g, "/");
-      const raw = readFileSync(join(ROOT, file), "utf8");
+      const raw = readFileSync(join(root, file), "utf8");
       const { data, content } = matter(raw);
       const category = data.category ? String(data.category) : "";
       const audience = data.audience ? String(data.audience) : "";
@@ -38,9 +48,9 @@ function readNotes() {
         folder: normalizedFile.split("/")[0] ?? "",
         status: data.status ? String(data.status) : "",
         category,
-        categoryKey: normalizeCategory(category, IA),
+        categoryKey: normalizeCategory(category, ia),
         audience,
-        audienceKey: normalizeAudience(audience, IA),
+        audienceKey: normalizeAudience(audience, ia),
         tags: normalizeList(data.tags),
         words: content.split(/\s+/).filter(Boolean).length,
       };
@@ -49,7 +59,7 @@ function readNotes() {
     .sort((a, b) => a.file.localeCompare(b.file, "pt"));
 }
 
-function audit(notes) {
+export function auditInformationArchitecture(notes, ia = loadInformationArchitecture(process.cwd())) {
   const errors = [];
   const warnings = [];
   const promotionCandidates = [];
@@ -73,7 +83,7 @@ function audit(notes) {
 
     const intents = deriveNoteIntents(
       { ...note, category: note.categoryKey || note.category },
-      IA,
+      ia,
       { fallback: null },
     );
     if (!intents.length) {
@@ -103,10 +113,10 @@ function audit(notes) {
     );
   }
 
-  const emptyIntents = Object.keys(IA.intents).filter((intent) => !intentCounts.has(intent));
+  const emptyIntents = Object.keys(ia.intents).filter((intent) => !intentCounts.has(intent));
   if (emptyIntents.length) {
     errors.push(
-      `intenção sem notas publicadas: ${emptyIntents.map((intent) => getIntentLabel(intent, IA)).join(", ")}.`,
+      `intenção sem notas publicadas: ${emptyIntents.map((intent) => getIntentLabel(intent, ia)).join(", ")}.`,
     );
   }
 
@@ -130,31 +140,71 @@ function audit(notes) {
     warnings.push(
       `Notas com muitas intenções derivadas: ${ambiguousIntentNotes
         .slice(0, 8)
-        .map(({ note, intents }) => `${note.title} (${intents.map((intent) => getIntentLabel(intent, IA)).join(", ")})`)
+        .map(({ note, intents }) => `${note.title} (${intents.map((intent) => getIntentLabel(intent, ia)).join(", ")})`)
         .join("; ")}`,
     );
   }
 
+  const intentDistribution = Array.from(intentCounts.entries())
+    .sort((a, b) => a[0].localeCompare(b[0], "pt"))
+    .map(([intent, count]) => ({ intent, label: getIntentLabel(intent, ia), count }));
+
   warnings.push(
-    `Distribuição por intenção: ${Array.from(intentCounts.entries())
-      .sort((a, b) => a[0].localeCompare(b[0], "pt"))
-      .map(([intent, count]) => `${getIntentLabel(intent, IA)}=${count}`)
+    `Distribuição por intenção: ${intentDistribution
+      .map(({ label, count }) => `${label}=${count}`)
       .join(", ")}`,
   );
 
-  return { errors, warnings, promotionCandidates, thinPublishedResources };
+  return {
+    errors,
+    warnings,
+    promotionCandidates: promotionCandidates.map(summarizeNote),
+    thinPublishedResources: thinPublishedResources.map(summarizeNote),
+    ambiguousIntentNotes: ambiguousIntentNotes.map(({ note, intents }) => ({
+      note: summarizeNote(note),
+      intents: intents.map((intent) => ({ intent, label: getIntentLabel(intent, ia) })),
+    })),
+    intentDistribution,
+  };
 }
 
-const notes = readNotes();
-const result = audit(notes);
+export function buildInformationArchitectureReport({ root = process.cwd() } = {}) {
+  const ia = loadInformationArchitecture(root);
+  const notes = readPublishedNotes({ root, ia });
+  const result = auditInformationArchitecture(notes, ia);
 
-console.log(`IA audit: ${notes.length} nota(s) publicada(s) avaliadas.`);
-if (result.warnings.length) {
-  for (const warning of result.warnings) console.warn(`[warn] ${warning}`);
+  return {
+    notesEvaluated: notes.length,
+    ...result,
+  };
 }
-if (result.errors.length) {
-  console.error("IA audit failed:");
-  for (const error of result.errors) console.error(`- ${error}`);
-  process.exit(1);
+
+function runCli(argv = process.argv.slice(2)) {
+  const json = argv.includes("--json");
+  const report = buildInformationArchitectureReport();
+
+  if (json) {
+    console.log(JSON.stringify(report, null, 2));
+  } else {
+    console.log(`IA audit: ${report.notesEvaluated} nota(s) publicada(s) avaliadas.`);
+    if (report.warnings.length) {
+      for (const warning of report.warnings) console.warn(`[warn] ${warning}`);
+    }
+  }
+
+  if (report.errors.length) {
+    if (!json) {
+      console.error("IA audit failed:");
+      for (const error of report.errors) console.error(`- ${error}`);
+    }
+    process.exit(1);
+  }
+
+  if (!json) {
+    console.log("IA audit passed.");
+  }
 }
-console.log("IA audit passed.");
+
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  runCli();
+}

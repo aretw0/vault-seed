@@ -1,4 +1,5 @@
 const assert = require("node:assert/strict");
+const { execFileSync } = require("node:child_process");
 const { test } = require("node:test");
 const { folders: configuredVaultFolders } = require("../.site/vault-folders.json");
 const configuredSidebarSections = require("../.site/sidebar.sections.json");
@@ -32,6 +33,25 @@ test("sidebar intent sections are backed by the shared information architecture"
     true,
     "technical docs must remain an explicit sidebar section instead of leaking into intent sections",
   );
+});
+
+test("information architecture audit exposes a machine-readable report", () => {
+  const output = execFileSync(process.execPath, ["scripts/audit_information_architecture.mjs", "--json"], {
+    encoding: "utf8",
+  });
+  const report = JSON.parse(output);
+
+  assert.equal(report.errors.length, 0);
+  assert.ok(report.notesEvaluated > 0);
+  assert.deepEqual(
+    report.intentDistribution.map(({ intent }) => intent),
+    configuredSidebarSections
+      .filter((section) => Object.hasOwn(section, "intent"))
+      .map((section) => section.intent)
+      .sort((a, b) => a.localeCompare(b, "pt")),
+  );
+  assert.ok(report.promotionCandidates.every((note) => note.file && note.title));
+  assert.ok(report.thinPublishedResources.every((note) => Number.isInteger(note.words)));
 });
 
 test("information architecture vocabulary normalizes aliases", async () => {
