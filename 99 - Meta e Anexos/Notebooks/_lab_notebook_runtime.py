@@ -133,3 +133,71 @@ def read_lab_json(path_or_url: str, notebooks_path: str = "lab"):
 def load_lab_manifest(notebooks_path: str = "lab"):
     """Carrega o manifesto de datasets do Lab."""
     return read_lab_json("datasets/manifest.json", notebooks_path)
+
+
+def get_lab_dataset(dataset_id: str, manifest=None, notebooks_path: str = "lab"):
+    """Busca uma entrada do manifesto por id."""
+    manifest = manifest or load_lab_manifest(notebooks_path)
+    for dataset in manifest.get("datasets", []):
+        if dataset.get("id") == dataset_id:
+            return dataset
+    raise KeyError(f"Dataset não declarado no manifesto do Lab: {dataset_id}")
+
+
+def read_lab_dataset(dataset_or_id, manifest=None, notebooks_path: str = "lab"):
+    """Lê um dataset declarado no manifesto, localmente ou no HTML publicado."""
+    dataset = (
+        get_lab_dataset(dataset_or_id, manifest, notebooks_path)
+        if isinstance(dataset_or_id, str)
+        else dataset_or_id
+    )
+    location = dataset.get("assetPath") or dataset.get("path") or dataset.get("url")
+    if not location:
+        raise RuntimeError(
+            f"Dataset {dataset.get('id', '<sem id>')} não possui assetPath, path ou url."
+        )
+    return read_lab_json(location, notebooks_path)
+
+
+def _safe_relative_path(relative_path: str) -> str:
+    import os as _os
+
+    value = str(relative_path or "").replace("\\", "/").strip().lstrip("/")
+    normalized = _os.path.normpath(value).replace("\\", "/")
+    if not value or normalized == "." or normalized.startswith("../") or normalized == "..":
+        raise RuntimeError("Caminho de snapshot local inválido.")
+    return normalized
+
+
+def local_vault_path(relative_path: str):
+    """Resolve um caminho seguro dentro do repositório local do vault."""
+    import os as _os
+
+    context = require_local_runtime("resolver caminho local do vault")
+    normalized = _safe_relative_path(relative_path)
+    root = _os.path.abspath(context["cwd"])
+    target = _os.path.abspath(_os.path.join(root, normalized))
+    if _os.path.commonpath([root, target]) != root:
+        raise RuntimeError("Caminho de snapshot local sai do vault.")
+    return target
+
+
+def write_local_json_snapshot(relative_path: str, payload, *, indent: int = 2):
+    """Escreve um snapshot JSON versionável no vault local.
+
+    Use para etapas de Extract que precisam de filesystem, binários, navegador,
+    rede autenticada ou outros recursos indisponíveis no HTML/WASM publicado.
+    """
+    import json as _json
+    import os as _os
+
+    target = local_vault_path(relative_path)
+    _os.makedirs(_os.path.dirname(target), exist_ok=True)
+    with open(target, "w", encoding="utf-8") as f:
+        _json.dump(payload, f, ensure_ascii=False, indent=indent)
+        f.write("\n")
+    return {
+        "path": target,
+        "relativePath": _safe_relative_path(relative_path),
+        "bytes": _os.path.getsize(target),
+    }

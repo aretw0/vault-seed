@@ -223,7 +223,8 @@ requireCondition(
     labDatasetsManifest.some((entry) => entry.id === "json-remoto-opcional" && entry.runtimeUrl) &&
     labNotebooksManifest.some((entry) => entry.source === "99 - Meta e Anexos/Notebooks/etl-demo.py" && entry.publish === true) &&
     etlNotebook.includes("load_lab_manifest") &&
-    etlNotebook.includes("read_lab_json") &&
+    etlNotebook.includes("read_lab_dataset") &&
+    etlNotebook.includes("write_local_json_snapshot") &&
     etlNotebook.includes("Carregar exemplo remoto no navegador"),
   "Lab ETL demo must keep local snapshot generation, dataset manifest packaging, and a published notebook example wired together.",
 );

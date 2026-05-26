@@ -30,6 +30,18 @@ test("Lab slide documentation matches the native Marimo layout contract", () => 
   assert.doesNotMatch(labGuide, /Slides não entram automaticamente/);
 });
 
+test("Lab ETL demo uses shared local/published runtime primitives", () => {
+  const runtime = read("99 - Meta e Anexos/Notebooks/_lab_notebook_runtime.py");
+  const etlDemo = read("99 - Meta e Anexos/Notebooks/etl-demo.py");
+
+  assert.match(runtime, /def read_lab_dataset/);
+  assert.match(runtime, /def write_local_json_snapshot/);
+  assert.match(runtime, /def local_vault_path/);
+  assert.match(etlDemo, /read_lab_dataset\("perfil-do-vault", manifest\)/);
+  assert.match(etlDemo, /write_local_json_snapshot/);
+  assert.match(etlDemo, /Extract local, carga publicada/);
+});
+
 test("published Lab pages keep the vault shell contract", () => {
   const exportNotebooks = read("scripts/export_notebooks.mjs");
   const labIndex = read(".site/pages/lab/index.astro");

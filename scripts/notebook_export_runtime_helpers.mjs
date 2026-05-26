@@ -7,6 +7,10 @@ const LAB_RUNTIME_HELPER_EXPORT_NAMES = [
 	"dataset_candidate_paths",
 	"read_lab_json",
 	"load_lab_manifest",
+	"get_lab_dataset",
+	"read_lab_dataset",
+	"local_vault_path",
+	"write_local_json_snapshot",
 ];
 
 function collectRuntimeImports(sourceCode, runtimeImportPrefix) {

@@ -13,17 +13,30 @@ def _():
 
 @app.cell
 def _():
-    from _lab_notebook_runtime import lab_runtime_context, load_lab_manifest, read_lab_json
+    from _lab_notebook_runtime import (
+        lab_runtime_context,
+        load_lab_manifest,
+        read_lab_dataset,
+        read_lab_json,
+        write_local_json_snapshot,
+    )
 
     runtime_context = lab_runtime_context()
     manifest = load_lab_manifest()
 
-    datasets = {dataset["id"]: dataset for dataset in manifest["datasets"]}
-    snapshot = read_lab_json(datasets["perfil-do-vault"]["assetPath"])
+    snapshot = read_lab_dataset("perfil-do-vault", manifest)
     runtime_sources = [
         dataset for dataset in manifest["datasets"] if dataset["kind"] == "runtime"
     ]
-    return manifest, read_lab_json, runtime_context, runtime_sources, snapshot
+    return (
+        manifest,
+        read_lab_dataset,
+        read_lab_json,
+        runtime_context,
+        runtime_sources,
+        snapshot,
+        write_local_json_snapshot,
+    )
 
 
 @app.cell
@@ -174,6 +187,51 @@ def _(mo, runtime_context):
 @app.cell
 def _(mo, pd, runtime_rows):
     mo.ui.table(pd.DataFrame(runtime_rows))
+    return
+
+
+@app.cell
+def _(mo, runtime_context):
+    run_local_extract = mo.ui.checkbox(
+        label="Executar extract local demonstrativo",
+        value=False,
+    )
+    status = "disponível" if runtime_context["isLocal"] else "bloqueado no HTML publicado"
+    mo.md(
+        "## Extract local, carga publicada\n\n"
+        f"Status da etapa local: **{status}**. A primitiva `write_local_json_snapshot` "
+        "permite que um notebook rode coleta local quando estiver no computador da "
+        "pessoa e grave um snapshot JSON versionável. Depois, o site publicado lê o "
+        "snapshot empacotado pelo manifesto, sem duplicar a interface do notebook."
+    )
+    return run_local_extract,
+
+
+@app.cell
+def _(mo, run_local_extract, runtime_context, snapshot, write_local_json_snapshot):
+    if run_local_extract.value and runtime_context["isLocal"]:
+        payload = {
+            "schemaVersion": 1,
+            "source": "etl-demo.py",
+            "kind": "extract-preview",
+            "noteCount": snapshot["noteCount"],
+            "totalWords": snapshot["totalWords"],
+            "largestNotes": snapshot.get("largestNotes", [])[:5],
+        }
+        result = write_local_json_snapshot(
+            "dados/lab/perfil-do-vault.extract-preview.json",
+            payload,
+        )
+        _message = (
+            f"Snapshot local escrito em `{result['relativePath']}` "
+            f"({result['bytes']} bytes)."
+        )
+    elif run_local_extract.value:
+        _message = "Extract local bloqueado: o HTML publicado não tem acesso ao filesystem."
+    else:
+        _message = "Extract local não executado nesta sessão."
+
+    mo.md(_message)
     return
 
 

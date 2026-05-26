@@ -80,7 +80,7 @@ test("notebook runtime helper import is removed from exported source", () => {
 	);
 	assert.match(
 		transformed,
-		/return lab_runtime_context, load_lab_manifest, read_lab_json/,
+		/return lab_runtime_context, load_lab_manifest, read_lab_dataset, read_lab_json, write_local_json_snapshot/,
 		"injected helper cell should return the helpers imported by the notebook",
 	);
 	assert.doesNotMatch(
