@@ -12,7 +12,6 @@
     "format": "prettier --write \"**/*.md\"",
     "format:check": "prettier --check .",
     "lint:main": "markdownlint --config .markdownlint.json \"10 - Diário/**/*.md\" \"20 - Projetos/**/*.md\" \"30 - Áreas/**/*.md\" \"40 - Recursos/**/*.md\" \"50 - Arquivo/**/*.md\" \"99 - Meta e Anexos/**/*.md\"",
-    "lint:docs": "markdownlint --config docs/.markdownlint.json \"docs/**/*.md\"",
     "lint:templates": "markdownlint --config \"90 - Modelos/.markdownlint.json\" \"90 - Modelos/**/*.md\"",
     "lint": "pnpm run lint:main && pnpm run lint:templates",
     "smoke:template": "node scripts/smoke_template.js",
