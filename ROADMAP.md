@@ -67,7 +67,7 @@ Local pode:
 
 ### 1. Fundação Astro-first
 
-- [ ] Definir frontmatter mínimo para navegação por intenção.
+- [x] Definir frontmatter mínimo para navegação por intenção.
 - [x] Criar página de exploração pública do vault em Astro.
 - [x] Gerar JSON estático para exploração do site.
 - [x] Adicionar filtros por pasta, tag, categoria e público.
@@ -95,7 +95,7 @@ Local pode:
 
 ### 4. Arquitetura de informação
 
-- [ ] Auditar notas de `99 - Meta e Anexos`.
+- [x] Auditar notas de `99 - Meta e Anexos`.
 - [ ] Classificar notas como `guide`, `concept`, `reference`, `workflow` ou `technical`.
 - [ ] Sugerir promoções de notas conceituais para `40 - Recursos`.
 - [ ] Reduzir repetição entre onboarding, recursos e docs técnicas.

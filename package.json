@@ -28,6 +28,7 @@
     "site:responsive": "pnpm run site:build && pnpm run notebooks:export && node scripts/smoke_responsive.mjs",
     "site:test": "node --test scripts/mermaid_render_contract.test.js scripts/mermaid_toggle.test.js",
     "site:audit:sidebar": "node scripts/audit_sidebar.js",
+    "audit:ia": "node scripts/audit_information_architecture.mjs",
     "notebooks:data": "node scripts/generate_vault_data.mjs",
     "notebooks:etl:demo": "node scripts/lab_etl_demo.mjs",
     "notebooks:etl": "pnpm run notebooks:etl:demo && node scripts/prepare_lab_datasets.mjs",
@@ -43,7 +44,7 @@
     "diagrams:check": "mdt check",
     "release:package:smoke": "node scripts/release_package_smoke.mjs",
     "release:package:smoke:json": "node scripts/release_package_smoke.mjs --json",
-    "validate": "pnpm run actions:pins && pnpm run lint && pnpm run test && pnpm run validate:onboarding && pnpm run validate:pt-text && pnpm run validate:theme && pnpm run validate:mermaid && pnpm run smoke:template && pnpm run release:package:smoke",
+    "validate": "pnpm run actions:pins && pnpm run lint && pnpm run audit:ia && pnpm run test && pnpm run validate:onboarding && pnpm run validate:pt-text && pnpm run validate:theme && pnpm run validate:mermaid && pnpm run smoke:template && pnpm run release:package:smoke",
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish"

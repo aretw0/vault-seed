@@ -1,6 +1,8 @@
 ---
 title: O que é o método Zettelkasten
 status: published
+category: conceito
+audience: iniciante
 tags:
   - conceito/pkm
   - recurso/metodo

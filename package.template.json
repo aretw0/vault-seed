@@ -22,6 +22,7 @@
     "site:preview": "astro preview",
     "site:check": "node scripts/smoke_site.js",
     "site:responsive": "pnpm run site:build && pnpm run notebooks:export && node scripts/smoke_responsive.mjs",
+    "audit:ia": "node scripts/audit_information_architecture.mjs",
     "notebooks:data": "node scripts/generate_vault_data.mjs",
     "notebooks:etl:demo": "node scripts/lab_etl_demo.mjs",
     "notebooks:etl": "pnpm run notebooks:etl:demo && node scripts/prepare_lab_datasets.mjs",

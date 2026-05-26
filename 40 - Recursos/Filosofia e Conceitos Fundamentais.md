@@ -1,6 +1,8 @@
 ---
 title: Filosofia e Conceitos Fundamentais
 status: published
+category: conceito
+audience: iniciante
 tags:
   - conceito/pkm
   - recurso/fundamentos

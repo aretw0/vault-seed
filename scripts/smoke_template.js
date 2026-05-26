@@ -65,6 +65,7 @@ const labDatasetsManifest = readJson(".site/lab.datasets.json");
 const labNotebooksManifest = readJson(".site/lab.notebooks.json");
 const labDatasetsScript = read("scripts/prepare_lab_datasets.mjs");
 const labEtlDemoScript = read("scripts/lab_etl_demo.mjs");
+const iaAuditScript = read("scripts/audit_information_architecture.mjs");
 const headerComponent = read(".site/components/Header.astro");
 const explorePage = read(".site/pages/explorar/index.astro");
 const exploreDataEndpoint = read(".site/pages/explorar/dados.json.ts");
@@ -80,6 +81,14 @@ requireCondition(
   typeof pkg.packageManager === "string" &&
     pkg.packageManager.startsWith("pnpm@"),
   "package.json must declare pnpm in packageManager.",
+);
+requireCondition(
+  pkg.scripts?.["audit:ia"] === "node scripts/audit_information_architecture.mjs" &&
+    templatePkg.scripts?.["audit:ia"] === "node scripts/audit_information_architecture.mjs" &&
+    iaAuditScript.includes("ALLOWED_CATEGORIES") &&
+    iaAuditScript.includes("promotionCandidates") &&
+    iaAuditScript.includes("nota publicada sem category"),
+  "The template must expose a deterministic information-architecture audit for published notes.",
 );
 requireCondition(exists("pnpm-lock.yaml"), "pnpm-lock.yaml must exist.");
 requireCondition(
