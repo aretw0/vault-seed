@@ -1,0 +1,9 @@
+-r requirements.txt
+
+# Dependências opcionais para coleta local antes da publicação do Lab.
+# Elas não devem ser exigidas pelo HTML/WASM publicado.
+playwright==1.60.0
+pillow==12.0.0
+pytesseract==0.3.13
+pyarrow==22.0.0
+requests==2.32.5

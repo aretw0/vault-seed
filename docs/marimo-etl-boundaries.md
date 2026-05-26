@@ -68,7 +68,9 @@ deve ser um artefato estável consumido pelo Lab.
 
 Essa stack pode incluir conectores para arquivos, páginas, OCR, APIs e outras
 fontes, desde que rode antes da publicação e produza artefatos estáveis para o
-Lab consumir.
+Lab consumir. As dependências opcionais dessa bancada ficam em
+`requirements.local-etl.txt` e podem ser diagnosticadas com
+`pnpm run notebooks:extract:check`.
 
 O Lab publicado não deve carregar detalhes de implementação dessa camada nem
 depender diretamente de ferramentas que só funcionam em ambiente local ou CI. O

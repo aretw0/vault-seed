@@ -14,6 +14,7 @@ audience: intermediário
 related:
   - "[[Usando o Lab (Notebooks Marimo)]]"
   - "[[Publicando seu Vault como Site]]"
+  - "[[Coletando Dados Locais com Scraping e OCR]]"
 ---
 
 # Preparando Dados para o Lab
@@ -93,6 +94,21 @@ antes do export. O Playwright faz parte da stack do vault porque também valida 
 renderização responsiva do site publicado; o contrato continua igual: ele deve
 produzir snapshots servíveis para o Lab, não virar dependência do notebook
 WebAssembly.
+
+Para diagnosticar as ferramentas opcionais de coleta local, use:
+
+```bash
+pnpm run notebooks:extract:check
+```
+
+Para instalar o Chromium usado pelo Playwright Python, use:
+
+```bash
+pnpm run notebooks:extract:browser
+```
+
+Receitas completas de scraping, OCR, APIs com token e snapshot local ficam em
+[[Coletando Dados Locais com Scraping e OCR]].
 
 Os comandos do Lab também preparam os datasets automaticamente:
 

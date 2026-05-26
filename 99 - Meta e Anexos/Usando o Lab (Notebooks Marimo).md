@@ -16,6 +16,7 @@ related:
   - "[[Publicando seu Vault como Site]]"
   - "[[O Ciclo de Vida do Conhecimento (Versionamento para Jardineiros Digitais)]]"
   - "[[Usando com Agentes de IA]]"
+  - "[[Coletando Dados Locais com Scraping e OCR]]"
 ---
 
 # Usando o Lab
@@ -42,7 +43,7 @@ Referências úteis: [Coming from Jupyter](https://docs.marimo.io/guides/coming_
 
 - Notebook de análise de publicação: visão de status, tags e distribuição por pasta.
 - Notebook de análise de grafo: visão de links, notas órfãs e links quebrados.
-- `99 - Meta e Anexos/Notebooks/starters/`: exemplos para copiar quando quiser criar um notebook próprio.
+- `99 - Meta e Anexos/Notebooks/starters/`: exemplos para copiar quando quiser criar um notebook próprio, incluindo `coleta-local.py` para scraping, OCR, segredos locais e snapshots.
 
 ## Rodando Localmente
 
@@ -206,7 +207,7 @@ Essa separação mantém o site barato de hospedar, fácil de publicar e previs�
 
 O export do Lab copia `vault-data.json` para `/lab/vault-data.json` e `/lab/assets/vault-data.json`. O segundo caminho atende ao runtime WebAssembly do Marimo, que pode resolver arquivos relativos a partir da pasta de assets do pacote exportado.
 
-Datasets adicionais são declarados em `.site/lab.datasets.json` e preparados com `pnpm run notebooks:etl`. Veja [[Preparando Dados para o Lab]] para o contrato entre scripts de ingestão, snapshots publicados e notebooks.
+Datasets adicionais são declarados em `.site/lab.datasets.json` e preparados com `pnpm run notebooks:etl`. Veja [[Preparando Dados para o Lab]] para o contrato entre scripts de ingestão, snapshots publicados e notebooks. Para receitas práticas com scraping, OCR e APIs com token, veja [[Coletando Dados Locais com Scraping e OCR]].
 
 ## Criando Um Notebook
 
