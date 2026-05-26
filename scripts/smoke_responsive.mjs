@@ -340,7 +340,11 @@ async function assertLabShellLayout(page, target, viewport, label) {
   }
 }
 
-async function assertMarimoBadgeDoesNotCoverContent(page, target, viewport, label) {
+function boxesOverlap(a, b) {
+  return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+}
+
+async function assertThemeSelectorDoesNotCoverMarimoBadge(page, target, viewport, label) {
   if (target.type !== "notebook") return;
 
   const badge = await page
@@ -348,11 +352,45 @@ async function assertMarimoBadgeDoesNotCoverContent(page, target, viewport, labe
     .first()
     .boundingBox()
     .catch(() => null);
-  if (!badge) return;
+  const selector = await page
+    .locator('[data-vault-marimo-theme-selector]')
+    .first()
+    .boundingBox()
+    .catch(() => null);
+  if (!badge || !selector) return;
 
-  const visibleHeight = Math.max(0, viewport.height - badge.y);
-  if (visibleHeight > 10) {
-    fail(`${label}: Marimo attribution badge covers ${Math.round(visibleHeight)}px of the viewport`);
+  const badgeBox = {
+    left: badge.x,
+    right: badge.x + badge.width,
+    top: badge.y,
+    bottom: badge.y + badge.height,
+  };
+  const selectorBox = {
+    left: selector.x,
+    right: selector.x + selector.width,
+    top: selector.y,
+    bottom: selector.y + selector.height,
+  };
+
+  if (boxesOverlap(selectorBox, badgeBox)) {
+    fail(`${label}: theme selector overlaps the Marimo attribution badge`);
+  }
+
+  if (viewport.width <= 704) {
+    await page.locator('[data-vault-marimo-theme-toggle]').first().click();
+    const openSelector = await page
+      .locator('[data-vault-marimo-theme-selector]')
+      .first()
+      .boundingBox();
+    const openSelectorBox = {
+      left: openSelector.x,
+      right: openSelector.x + openSelector.width,
+      top: openSelector.y,
+      bottom: openSelector.y + openSelector.height,
+    };
+    if (boxesOverlap(openSelectorBox, badgeBox)) {
+      fail(`${label}: expanded theme selector overlaps the Marimo attribution badge on mobile`);
+    }
   }
 }
 
@@ -376,6 +414,9 @@ async function run() {
   try {
     for (const viewport of viewports) {
       const context = await browser.newContext({ viewport });
+      await context.addInitScript(() => {
+        localStorage.removeItem("vault-seed:marimo-theme-panel");
+      });
       const page = await context.newPage();
 
       page.on("console", (message) => {
@@ -415,7 +456,7 @@ async function run() {
           externalNetworkAvailable,
         );
         await assertLabShellLayout(page, target, viewport, label);
-        await assertMarimoBadgeDoesNotCoverContent(page, target, viewport, label);
+        await assertThemeSelectorDoesNotCoverMarimoBadge(page, target, viewport, label);
       }
 
       await context.close();

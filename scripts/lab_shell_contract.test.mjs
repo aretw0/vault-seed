@@ -83,9 +83,6 @@ test("published Lab pages keep the vault shell contract", () => {
   assert.match(labIndex, /vault-button/);
   assert.match(labIndex, /vault-status/);
 
-  assert.match(marimoCss, /made it as a small pull-tab|small pull-tab|Marimo's own fixed badge/);
-  assert.match(marimoCss, /print\\:hidden/);
-
   for (const palette of ["oceano", "terracota"]) {
     assert.match(marimoCss, new RegExp(`data-vault-marimo-palette="${palette}"`));
   }

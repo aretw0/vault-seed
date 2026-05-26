@@ -618,6 +618,8 @@ iframe {
   justify-content: flex-end;
   gap: 0.25rem;
   max-width: calc(100vw - 1.5rem);
+  max-height: calc(100svh - 5rem);
+  overflow: auto;
   padding: 0.25rem;
 }
 
@@ -657,20 +659,6 @@ iframe {
 .vault-marimo-theme-selector button[aria-pressed="true"] {
   background: var(--primary);
   color: var(--primary-foreground);
-}
-
-/* Marimo's own fixed badge is useful attribution, but should not cover notebook content.
-   Keep it as a small pull-tab and let it expand only when the user intentionally hovers/focuses it. */
-:root[data-vault-marimo-theme] .fixed.bottom-0.right-0.z-50.print\:hidden {
-  transform: translateY(calc(100% - 0.35rem));
-  opacity: 0.24;
-  transition: transform 160ms ease, opacity 160ms ease;
-}
-
-:root[data-vault-marimo-theme] .fixed.bottom-0.right-0.z-50.print\:hidden:hover,
-:root[data-vault-marimo-theme] .fixed.bottom-0.right-0.z-50.print\:hidden:focus-within {
-  transform: translateY(0);
-  opacity: 1;
 }
 
 :root[data-vault-marimo-shell="lab"] {
