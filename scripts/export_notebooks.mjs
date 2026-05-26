@@ -116,8 +116,19 @@ function labNavigationHtml(currentOutput) {
     toggle?.setAttribute("aria-expanded", String(!collapsed));
   }
 
-  const saved = localStorage.getItem(key);
-  apply(saved === "1");
+  const sidebarMedia = window.matchMedia("(max-width: 44rem)");
+
+  function preferredCollapsed() {
+    const saved = localStorage.getItem(key);
+    if (saved !== null) return saved === "1";
+    return sidebarMedia.matches;
+  }
+
+  apply(preferredCollapsed());
+
+  sidebarMedia.addEventListener("change", () => {
+    if (localStorage.getItem(key) === null) apply(sidebarMedia.matches);
+  });
 
   toggle?.addEventListener("click", () => {
     const collapsed = root.dataset.vaultLabSidebar !== "collapsed";

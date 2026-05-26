@@ -274,6 +274,67 @@ async function assertPresentationSizing(page, target, viewport, label, externalN
   }
 }
 
+async function assertLabShellLayout(page, target, viewport, label) {
+  if (target.type !== "notebook" || target.path.endsWith("vault-seed-slides.html")) {
+    return;
+  }
+
+  await page.waitForSelector("[data-vault-marimo-navigation]", {
+    state: "attached",
+    timeout: 10000,
+  });
+
+  const layout = await page.evaluate(() => {
+    const root = document.documentElement;
+    const sidebar = document.querySelector(".vault-lab-sidebar");
+    const notebookRoot = document.querySelector("#root");
+    const topbar = document.querySelector(".vault-lab-topbar");
+    const sidebarBox = sidebar?.getBoundingClientRect();
+    const rootBox = notebookRoot?.getBoundingClientRect();
+    const topbarBox = topbar?.getBoundingClientRect();
+
+    return {
+      state: root.dataset.vaultLabSidebar ?? "",
+      sidebar: sidebarBox
+        ? { left: sidebarBox.left, right: sidebarBox.right, width: sidebarBox.width }
+        : null,
+      root: rootBox
+        ? {
+            left: rootBox.left,
+            top: rootBox.top,
+            paddingTop: Number.parseFloat(getComputedStyle(notebookRoot).paddingTop) || 0,
+          }
+        : null,
+      topbar: topbarBox ? { bottom: topbarBox.bottom } : null,
+    };
+  });
+
+  if (!layout.sidebar || !layout.root || !layout.topbar) {
+    fail(`${label}: Lab shell sidebar, topbar, or notebook root is missing`);
+    return;
+  }
+
+  if (viewport.width <= 704) {
+    if (layout.state !== "collapsed") {
+      fail(`${label}: Lab sidebar should default to collapsed on mobile, got ${layout.state}`);
+    }
+    if (layout.sidebar.right > 2) {
+      fail(`${label}: collapsed mobile Lab sidebar still overlaps viewport (${Math.round(layout.sidebar.right)}px visible)`);
+    }
+  } else {
+    if (layout.state !== "expanded") {
+      fail(`${label}: Lab sidebar should default to expanded on wider viewports, got ${layout.state}`);
+    }
+    if (layout.root.left < layout.sidebar.width - 2) {
+      fail(`${label}: notebook content overlaps expanded Lab sidebar`);
+    }
+  }
+
+  if (layout.root.paddingTop < layout.topbar.bottom - 2) {
+    fail(`${label}: notebook content padding does not clear fixed Lab topbar`);
+  }
+}
+
 async function run() {
   if (!existsSync(distDir)) {
     throw new Error("dist/ does not exist. Run pnpm run site:responsive.");
@@ -332,6 +393,7 @@ async function run() {
           label,
           externalNetworkAvailable,
         );
+        await assertLabShellLayout(page, target, viewport, label);
       }
 
       await context.close();

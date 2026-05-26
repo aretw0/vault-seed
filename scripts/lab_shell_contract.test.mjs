@@ -70,6 +70,8 @@ test("published Lab pages keep the vault shell contract", () => {
   assert.match(exportNotebooks, /vault-lab-topbar/);
   assert.match(exportNotebooks, /vault-lab-sidebar/);
   assert.match(exportNotebooks, /vault-seed:lab-sidebar-collapsed/);
+  assert.match(exportNotebooks, /matchMedia\("\(max-width: 44rem\)"\)/);
+  assert.match(exportNotebooks, /return sidebarMedia\.matches/);
   assert.match(exportNotebooks, /notebooksPath === "lab" \? "\.\/" : "\.\.\/lab\/"/);
   assert.match(exportNotebooks, /data-vault-marimo-theme-selector/);
 
