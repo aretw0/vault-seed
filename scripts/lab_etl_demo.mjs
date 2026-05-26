@@ -3,10 +3,12 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
+import { buildInformationArchitectureReport } from "../.site/lib/information-architecture-audit.mjs";
 import { buildVaultData } from "./generate_vault_data.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
-const OUTPUT = join(ROOT, "dados", "lab", "perfil-do-vault.json");
+const PROFILE_OUTPUT = join(ROOT, "dados", "lab", "perfil-do-vault.json");
+const CURATION_OUTPUT = join(ROOT, "dados", "lab", "curadoria-ia.json");
 
 function countWords(text) {
   return text
@@ -55,7 +57,7 @@ for (const entry of vault.notes) {
 
 notes.sort((a, b) => b.words - a.words || a.title.localeCompare(b.title, "pt"));
 
-const data = {
+const profileData = {
   schemaVersion: 1,
   source: "scripts/lab_etl_demo.mjs",
   noteCount: notes.length,
@@ -69,6 +71,14 @@ const data = {
   largestNotes: notes.slice(0, 10),
 };
 
+const curationData = {
+  schemaVersion: 1,
+  source: ".site/lib/information-architecture-audit.mjs",
+  ...buildInformationArchitectureReport({ root: ROOT }),
+};
+
 mkdirSync(join(ROOT, "dados", "lab"), { recursive: true });
-writeFileSync(OUTPUT, `${JSON.stringify(data, null, 2)}\n`, "utf8");
-console.log(`lab etl demo: ${notes.length} notas -> ${OUTPUT}`);
+writeFileSync(PROFILE_OUTPUT, `${JSON.stringify(profileData, null, 2)}\n`, "utf8");
+writeFileSync(CURATION_OUTPUT, `${JSON.stringify(curationData, null, 2)}\n`, "utf8");
+console.log(`lab etl demo: ${notes.length} notas -> ${PROFILE_OUTPUT}`);
+console.log(`lab etl demo: curadoria IA -> ${CURATION_OUTPUT}`);

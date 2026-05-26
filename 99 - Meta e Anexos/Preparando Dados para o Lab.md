@@ -112,11 +112,14 @@ pnpm run notebooks:etl:demo
 ```
 
 Esse script lê as notas Markdown no computador, calcula um perfil simples do
-vault e escreve `dados/lab/perfil-do-vault.json`. Depois,
-`prepare_lab_datasets.mjs` empacota esse arquivo em `public/lab/datasets/` e
+vault e escreve `dados/lab/perfil-do-vault.json`. Ele também roda a auditoria
+compartilhada de arquitetura de informação e escreve
+`dados/lab/curadoria-ia.json`, um relatório JSON com notas avaliadas, avisos
+editoriais, candidatas a promoção e distribuição por intenção. Depois,
+`prepare_lab_datasets.mjs` empacota esses arquivos em `public/lab/datasets/` e
 `public/lab/assets/datasets/`.
 
-O notebook `ETL`, publicado como `/lab/etl.html`, lê esse snapshot empacotado.
+O notebook `ETL`, publicado como `/lab/etl.html`, lê esses snapshots empacotados.
 Ele também mostra uma fonte remota opcional declarada no manifesto. Essa fonte
 não é baixada durante o preparo local; ela só é acessada no navegador quando a
 pessoa ativa o carregamento no notebook publicado.

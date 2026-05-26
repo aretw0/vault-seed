@@ -9,6 +9,15 @@
     "publish": true
   },
   {
+    "id": "curadoria-ia",
+    "title": "Curadoria da arquitetura de informação",
+    "description": "Relatório local da auditoria editorial compartilhada entre site, CI e Lab",
+    "source": "dados/lab/curadoria-ia.json",
+    "output": "curadoria-ia.json",
+    "format": "json",
+    "publish": true
+  },
+  {
     "id": "json-remoto-opcional",
     "title": "JSON remoto opcional",
     "description": "Exemplo de fonte que um notebook WASM pode carregar no navegador quando houver CORS e rede",

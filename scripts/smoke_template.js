@@ -264,7 +264,9 @@ requireCondition(
     pkg.scripts?.["notebooks:etl"]?.includes("notebooks:etl:demo") &&
     pkg.scripts?.["notebooks:extract:local"] === "pnpm run notebooks:etl" &&
     labEtlDemoScript.includes("dados\", \"lab\", \"perfil-do-vault.json") &&
+    labEtlDemoScript.includes("dados\", \"lab\", \"curadoria-ia.json") &&
     labDatasetsManifest.some((entry) => entry.id === "perfil-do-vault" && entry.source === "dados/lab/perfil-do-vault.json") &&
+    labDatasetsManifest.some((entry) => entry.id === "curadoria-ia" && entry.source === "dados/lab/curadoria-ia.json") &&
     labDatasetsManifest.some((entry) => entry.id === "json-remoto-opcional" && entry.runtimeUrl) &&
     labNotebooksManifest.some((entry) => entry.source === "99 - Meta e Anexos/Notebooks/etl-demo.py" && entry.publish === true) &&
     etlNotebook.includes("load_lab_manifest") &&

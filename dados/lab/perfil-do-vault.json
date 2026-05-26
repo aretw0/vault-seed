@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "source": "scripts/lab_etl_demo.mjs",
   "noteCount": 50,
-  "totalWords": 16473,
-  "averageWords": 329,
+  "totalWords": 16535,
+  "averageWords": 331,
   "folders": [
     {
       "name": "99 - Meta e Anexos",
@@ -121,7 +121,7 @@
         "meta/notebooks",
         "meta/dados"
       ],
-      "words": 669
+      "words": 697
     },
     {
       "title": "Usando o Git e o GitHub para Sincronizar seu Vault",

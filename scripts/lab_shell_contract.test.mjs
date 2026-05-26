@@ -43,10 +43,12 @@ test("Lab ETL demo uses shared local/published runtime primitives", () => {
   assert.match(runtime, /def extract_local_image_text/);
   assert.match(runtime, /def local_vault_path/);
   assert.match(etlDemo, /read_lab_dataset\("perfil-do-vault", manifest\)/);
+  assert.match(etlDemo, /read_lab_dataset\("curadoria-ia", manifest\)/);
   assert.match(etlDemo, /write_local_json_snapshot/);
   assert.match(etlDemo, /write_local_dataframe_snapshot/);
   assert.match(etlDemo, /Primitivas locais vs publicadas/);
   assert.match(etlDemo, /Extract local, carga publicada/);
+  assert.match(etlDemo, /avisos editoriais não bloqueantes/);
 });
 
 test("published Lab pages keep the vault shell contract", () => {

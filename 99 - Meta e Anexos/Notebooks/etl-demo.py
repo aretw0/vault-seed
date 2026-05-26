@@ -33,11 +33,13 @@ def _():
     manifest = load_lab_manifest()
 
     snapshot = read_lab_dataset("perfil-do-vault", manifest)
+    curation = read_lab_dataset("curadoria-ia", manifest)
     runtime_sources = [
         dataset for dataset in manifest["datasets"] if dataset["kind"] == "runtime"
     ]
     return (
         clean_lab_text,
+        curation,
         extract_local_image_text,
         fetch_local_url_text,
         fingerprint_data,
@@ -56,7 +58,7 @@ def _():
 
 
 @app.cell
-def _(manifest, mo, runtime_context, snapshot):
+def _(curation, manifest, mo, runtime_context, snapshot):
     mode = "local" if runtime_context["isLocal"] else "empacotado no navegador"
     mo.md(
         f"# ETL soberano para o Lab\n\n"
@@ -70,7 +72,9 @@ def _(manifest, mo, runtime_context, snapshot):
         f"- datasets no manifesto: **{manifest['datasetCount']}**\n"
         f"- notas no snapshot local: **{snapshot['noteCount']}**\n"
         f"- palavras estimadas: **{snapshot['totalWords']}**\n"
-        f"- média por nota: **{snapshot['averageWords']}**"
+        f"- média por nota: **{snapshot['averageWords']}**\n"
+        f"- notas auditadas pela IA editorial: **{curation['notesEvaluated']}**\n"
+        f"- avisos editoriais não bloqueantes: **{len(curation['warnings'])}**"
     )
     return
 
