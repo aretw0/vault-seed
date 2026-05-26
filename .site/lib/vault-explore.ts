@@ -59,6 +59,10 @@ export type ExploreData = {
   graph: {
     nodes: Array<{ id: string; title: string; folder: string; tags: string[]; degree: number }>;
     links: Array<{ source: string; target: string }>;
+    insights: {
+      hubs: Array<{ id: string; title: string; folder: string; degree: number }>;
+      orphans: Array<{ id: string; title: string; folder: string }>;
+    };
   };
   notes: ExploreNote[];
 };
@@ -280,6 +284,23 @@ export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData
   const notes = rawNotes
     .map(({ aliases: _aliases, rawTargets: _rawTargets, ...note }) => note)
     .sort((a, b) => a.title.localeCompare(b.title, 'pt'));
+  const graphNodes = notes.map((note) => ({
+    id: note.slug,
+    title: note.title,
+    folder: note.area,
+    tags: note.tags,
+    degree: degree.get(note.slug) ?? 0,
+  }));
+  const hubCandidates = graphNodes.filter((node) => node.degree >= 4);
+  const orphanCandidates = graphNodes.filter((node) => node.degree === 0);
+  const hubInsights = hubCandidates
+    .sort((a, b) => b.degree - a.degree || a.title.localeCompare(b.title, 'pt'))
+    .slice(0, 12)
+    .map(({ id, title, folder, degree }) => ({ id, title, folder, degree }));
+  const orphanInsights = orphanCandidates
+    .sort((a, b) => a.title.localeCompare(b.title, 'pt'))
+    .slice(0, 12)
+    .map(({ id, title, folder }) => ({ id, title, folder }));
 
   return {
     generated: new Date().toISOString(),
@@ -287,8 +308,8 @@ export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData
       notes: notes.length,
       tags: tags.size,
       links: links.length,
-      hubs: notes.filter((note) => (degree.get(note.slug) ?? 0) >= 4).length,
-      orphanCandidates: notes.filter((note) => (degree.get(note.slug) ?? 0) === 0).length,
+      hubs: hubCandidates.length,
+      orphanCandidates: orphanCandidates.length,
       totalWords: notes.reduce((sum, note) => sum + note.words, 0),
     },
     facets: {
@@ -299,14 +320,12 @@ export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData
       tags: topValues(tags),
     },
     graph: {
-      nodes: notes.map((note) => ({
-        id: note.slug,
-        title: note.title,
-        folder: note.area,
-        tags: note.tags,
-        degree: degree.get(note.slug) ?? 0,
-      })),
+      nodes: graphNodes,
       links: links.sort((a, b) => `${a.source}:${a.target}`.localeCompare(`${b.source}:${b.target}`, 'pt')),
+      insights: {
+        hubs: hubInsights,
+        orphans: orphanInsights,
+      },
     },
     notes,
   };

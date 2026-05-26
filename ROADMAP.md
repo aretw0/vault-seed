@@ -90,7 +90,7 @@ Local pode:
 - [x] Gerar dataset estático inicial de links internos e tags.
 - [x] Criar graph view leve e explicável.
 - [ ] Adicionar filtros de graph por pasta/tag/status.
-- [ ] Destacar hubs e notas órfãs.
+- [x] Destacar hubs e notas órfãs.
 - [x] Criar timeline simples de publicação/alteração quando houver metadados.
 - [ ] Garantir fallback sem JavaScript avançado quando possível.
 

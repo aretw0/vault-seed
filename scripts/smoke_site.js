@@ -139,8 +139,11 @@ requireCondition(
 if (fs.existsSync(exploreDataPath)) {
   const exploreData = JSON.parse(fs.readFileSync(exploreDataPath, "utf8"));
   requireCondition(
-    exploreData.metrics?.notes > 0 && Array.isArray(exploreData.graph?.nodes),
-    "dist/explorar/dados.json must expose metrics and graph nodes for the Astro exploration surface.",
+    exploreData.metrics?.notes > 0 &&
+      Array.isArray(exploreData.graph?.nodes) &&
+      Array.isArray(exploreData.graph?.insights?.hubs) &&
+      Array.isArray(exploreData.graph?.insights?.orphans),
+    "dist/explorar/dados.json must expose metrics, graph nodes, and graph insights for the Astro exploration surface.",
   );
 }
 

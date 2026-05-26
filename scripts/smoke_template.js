@@ -273,11 +273,13 @@ requireCondition(
     explorePage.includes('data-vault-explore-intent') &&
     explorePage.includes('vault-metric-grid') &&
     explorePage.includes('vault-graph-cloud') &&
+    explorePage.includes('orphanNodes') &&
     exploreDataEndpoint.includes('buildVaultExploreData') &&
     exploreDataLib.includes('loadInformationArchitecture') &&
     exploreDataLib.includes('deriveNoteIntents') &&
     exploreDataLib.includes('graph:') &&
     exploreDataLib.includes('orphanCandidates') &&
+    exploreDataLib.includes('insights') &&
     customCss.includes('.vault-filter-panel') &&
     customCss.includes('.vault-resource-list') &&
     customCss.includes('.vault-graph-cloud'),

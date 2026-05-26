@@ -5,9 +5,8 @@ import { buildVaultExploreData } from '../../lib/vault-explore';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const explore = buildVaultExploreData();
 const topTags = explore.facets.tags.slice(0, 12);
-const hubNodes = [...explore.graph.nodes]
-  .sort((a, b) => b.degree - a.degree || a.title.localeCompare(b.title, 'pt'))
-  .slice(0, 8);
+const hubNodes = explore.graph.insights.hubs.slice(0, 8);
+const orphanNodes = explore.graph.insights.orphans.slice(0, 8);
 const recentNotes = [...explore.notes]
   .sort((a, b) => String(b.updated ?? b.created ?? '').localeCompare(String(a.updated ?? a.created ?? '')))
   .slice(0, 8);
@@ -147,6 +146,18 @@ const exploreJson = JSON.stringify(explore).replace(/</g, '\\u003c');
         <ul class="vault-compact-list">
           {hubNodes.map((node) => <li><a href={`${base}/${node.id}/`}>{node.title}</a><span>{node.degree} conexões</span></li>)}
         </ul>
+      </article>
+
+      <article class="vault-card">
+        <span class="vault-card__eyebrow">Órfãs</span>
+        <h2 class="vault-card__title">Notas para conectar melhor</h2>
+        {orphanNodes.length ? (
+          <ul class="vault-compact-list">
+            {orphanNodes.map((node) => <li><a href={`${base}/${node.id}/`}>{node.title}</a><span>{node.folder}</span></li>)}
+          </ul>
+        ) : (
+          <p class="vault-card__body">Nenhuma candidata a órfã no recorte atual.</p>
+        )}
       </article>
 
       <article class="vault-card">
