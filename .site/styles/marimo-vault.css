@@ -697,8 +697,8 @@ iframe {
 }
 
 :root[data-vault-marimo-shell="lab"] {
-  --vault-lab-topbar-height: 3.25rem;
-  --vault-lab-content-gap: 2.25rem;
+  --vault-lab-topbar-height: 3.5rem;
+  --vault-lab-content-gap: 3.5rem;
   --vault-lab-content-offset: calc(var(--vault-lab-topbar-height) + var(--vault-lab-content-gap));
   --vault-lab-sidebar-width: 15.5rem;
 }
@@ -801,7 +801,38 @@ iframe {
   min-height: 100dvh;
   margin-left: var(--vault-lab-sidebar-width);
   padding-top: var(--vault-lab-content-offset) !important;
+  padding-bottom: 4rem !important;
   transition: margin-left 160ms ease, width 160ms ease;
+}
+
+.vault-lab-footer {
+  position: fixed;
+  z-index: 9998;
+  bottom: 0.75rem;
+  left: calc(var(--vault-lab-sidebar-width) + 0.75rem);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--card) 94%, transparent);
+  box-shadow: 0 0.75rem 2rem color-mix(in srgb, var(--foreground) 8%, transparent);
+  color: var(--muted-foreground);
+  font-size: 0.78rem;
+  line-height: 1;
+  padding: 0.45rem 0.7rem;
+  transition: left 160ms ease;
+}
+
+.vault-lab-footer a {
+  color: var(--primary);
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.vault-lab-footer a:hover {
+  text-decoration: underline;
+}
+
+:root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] .vault-lab-footer {
+  left: 0.75rem;
 }
 
 :root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] .vault-lab-sidebar {
@@ -923,11 +954,22 @@ iframe {
     transform: translateX(0);
   }
 
+  :root[data-vault-marimo-shell="lab"] {
+    --vault-lab-topbar-height: 3.75rem;
+    --vault-lab-content-gap: 4rem;
+  }
+
   :root[data-vault-marimo-shell="lab"] #root,
   :root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] #root {
     width: 100%;
     margin-left: 0;
-    padding-top: calc(var(--vault-lab-topbar-height) + 3.25rem) !important;
+    padding-top: calc(var(--vault-lab-topbar-height) + var(--vault-lab-content-gap) + env(safe-area-inset-top, 0px)) !important;
+  }
+
+  .vault-lab-footer,
+  :root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] .vault-lab-footer {
+    left: 0.75rem;
+    bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
   }
 
   :root[data-vault-marimo-shell="lab"] .vault-marimo-theme-selector {

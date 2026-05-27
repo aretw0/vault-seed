@@ -414,6 +414,7 @@ export default defineConfig({
       ],
       components: {
         Header: './.site/components/Header.astro',
+        MobileMenuFooter: './.site/components/MobileMenuFooter.astro',
         Footer: './.site/components/Footer.astro',
       },
     }),

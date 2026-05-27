@@ -70,8 +70,8 @@
 }
 
 .vault-card {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
   gap: 0.75rem;
   min-width: 0;
   min-height: var(--vault-card-min-height);
@@ -111,6 +111,7 @@
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: var(--vault-card-title-lines);
+  min-height: calc(var(--vault-card-title-lines) * 1lh);
   color: var(--sl-color-white);
   font-size: clamp(1.1rem, 1rem + 0.35vw, 1.35rem);
   line-height: 1.2;
@@ -122,6 +123,7 @@
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: var(--vault-card-body-lines);
+  min-height: calc(var(--vault-card-body-lines) * 1lh);
   color: var(--sl-color-gray-2);
   line-height: 1.65;
   margin: 0;
@@ -132,7 +134,7 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
-  margin-block-start: auto;
+  align-self: end;
 }
 
 .vault-button {
@@ -194,11 +196,16 @@
 .vault-metric-grid {
   display: grid;
   gap: 0.75rem;
+  grid-auto-rows: 1fr;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+  align-items: stretch;
   margin-block: 1.5rem;
 }
 
 .vault-metric {
+  display: grid;
+  grid-template-rows: auto minmax(2.6em, 1fr);
+  height: 100%;
   border: 1px solid var(--sl-color-hairline);
   border-radius: 0.85rem;
   background: var(--sl-color-bg-nav);
@@ -426,6 +433,7 @@
 
 .vault-graph-view svg {
   display: block;
+  overflow: visible;
   width: 100%;
   max-height: min(34rem, 70vh);
   border: 1px solid color-mix(in srgb, var(--sl-color-accent) 24%, var(--sl-color-hairline));
@@ -465,6 +473,20 @@
   stroke-width: 2.5px;
 }
 
+.vault-graph-view__label--full {
+  display: none;
+  font-size: 7px;
+  letter-spacing: -0.01em;
+}
+
+.vault-graph-view__nodes a:is(:hover, :focus-visible) .vault-graph-view__label--short {
+  display: none;
+}
+
+.vault-graph-view__nodes a:is(:hover, :focus-visible) .vault-graph-view__label--full {
+  display: block;
+}
+
 .vault-graph-view__nodes a:hover circle,
 .vault-graph-view__nodes a:focus-visible circle {
   fill: var(--sl-color-accent);
@@ -475,6 +497,7 @@
 .vault-graph-view__nodes a:hover text,
 .vault-graph-view__nodes a:focus-visible text {
   fill: var(--sl-color-white);
+  stroke-width: 3px;
 }
 
 .vault-graph-view figcaption {

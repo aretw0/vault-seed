@@ -69,6 +69,7 @@ const labEtlDemoScript = read("scripts/lab_etl_demo.mjs");
 const iaAuditScript = read("scripts/audit_information_architecture.mjs");
 const informationArchitectureAuditRuntime = read(".site/lib/information-architecture-audit.mjs");
 const headerComponent = read(".site/components/Header.astro");
+const mobileMenuFooterComponent = read(".site/components/MobileMenuFooter.astro");
 const homePage = read(".site/pages/index.astro");
 const graphViewComponent = read(".site/components/VaultGraphView.astro");
 const explorePage = read(".site/pages/explorar/index.astro");
@@ -256,6 +257,8 @@ requireCondition(
 );
 requireCondition(
   notebooksExportScript.includes("data-vault-marimo-navigation") &&
+    notebooksExportScript.includes("data-vault-lab-footer") &&
+    notebooksExportScript.includes("feito com <span aria-label=\"amor\">♥</span> por") &&
     notebooksExportScript.includes('href="${labIndexHref}"') &&
     notebooksExportScript.includes("data-vault-marimo-presentation-fullscreen") &&
     notebooksExportScript.includes("vaultMarimoFullscreenButton") &&
@@ -329,6 +332,8 @@ requireCondition(
     !homePage.includes('data-language="mermaid"') &&
     graphViewComponent.includes('vault-graph-view') &&
     graphViewComponent.includes('viewBox="0 0 200 200"') &&
+    graphViewComponent.includes('vault-graph-view__label--full') &&
+    customCss.includes('.vault-graph-view__label--full') &&
     explorePage.includes('buildVaultExploreData') &&
     explorePage.includes('VaultGraphView') &&
     explorePage.includes('data-vault-explore-search') &&
@@ -364,6 +369,8 @@ requireCondition(
     sidebarSectionsConfig.includes('"intent": "explorar"') &&
     astroConfig.includes("deriveNoteIntents") &&
     astroConfig.includes("informationArchitecture") &&
+    astroConfig.includes("MobileMenuFooter") &&
+    !mobileMenuFooterComponent.includes("ThemeSelect") &&
     astroConfig.includes("labSidebarSection") &&
     astroConfig.includes("labNotebooksManifest") &&
     astroConfig.includes("if (!e.folder) return false"),

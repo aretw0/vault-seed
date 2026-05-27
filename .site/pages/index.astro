@@ -38,10 +38,11 @@ function graphHeroHtml() {
     `<a href="${base}/${escapeHtml(node.id)}/" aria-label="${escapeHtml(node.title)}: ${node.degree} conexões">` +
     `<title>${escapeHtml(node.title)} · ${node.degree} conexões</title>` +
     `<circle cx="${node.x.toFixed(1)}" cy="${node.y.toFixed(1)}" r="${node.size.toFixed(1)}" style="--vault-node-weight:${node.weight.toFixed(2)}" />` +
-    `<text x="${node.x.toFixed(1)}" y="${(node.y + node.size + 8).toFixed(1)}" text-anchor="middle">${escapeHtml(truncateLabel(node.title))}</text>` +
+    `<text class="vault-graph-view__label vault-graph-view__label--short" x="${node.x.toFixed(1)}" y="${(node.y + node.size + 8).toFixed(1)}" text-anchor="middle">${escapeHtml(truncateLabel(node.title))}</text>` +
+    `<text class="vault-graph-view__label vault-graph-view__label--full" x="${node.x.toFixed(1)}" y="${(node.y + node.size + 8).toFixed(1)}" text-anchor="middle">${escapeHtml(node.title)}</text>` +
     `</a>`
   )).join('');
-  return `<figure class="vault-graph-view vault-graph-view--hero" aria-label="Graph view do vault"><svg viewBox="0 0 200 200" role="img"><title>Graph view do vault</title><g class="vault-graph-view__links" aria-hidden="true">${lines}</g><g class="vault-graph-view__nodes">${circles}</g></svg><figcaption>${positioned.length} hubs navegáveis · rótulos abreviados com título completo no foco</figcaption></figure>`;
+  return `<figure class="vault-graph-view vault-graph-view--hero" aria-label="Graph view do vault"><svg viewBox="0 0 200 200" role="img"><title>Graph view do vault</title><g class="vault-graph-view__links" aria-hidden="true">${lines}</g><g class="vault-graph-view__nodes">${circles}</g></svg><figcaption>${positioned.length} hubs navegáveis · rótulo completo ao passar o mouse ou focar</figcaption></figure>`;
 }
 const heroGraphHtml = graphHeroHtml();
 ---

@@ -54,7 +54,8 @@ const byId = new Map(positioned.map((node) => [node.id, node]));
         <a href={node.href} aria-label={`${node.title}: ${node.degree} conexões`}>
           <title>{node.title} · {node.degree} conexões</title>
           <circle cx={node.x} cy={node.y} r={node.size} style={`--vault-node-weight: ${node.weight}`} />
-          {showLabels && <text x={node.x} y={node.y + node.size + 8} text-anchor="middle">{truncateLabel(node.title)}</text>}
+          {showLabels && <text class="vault-graph-view__label vault-graph-view__label--short" x={node.x} y={node.y + node.size + 8} text-anchor="middle">{truncateLabel(node.title)}</text>}
+          {showLabels && <text class="vault-graph-view__label vault-graph-view__label--full" x={node.x} y={node.y + node.size + 8} text-anchor="middle">{node.title}</text>}
         </a>
       ))}
     </g>

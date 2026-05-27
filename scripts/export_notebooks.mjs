@@ -96,6 +96,9 @@ function labNavigationHtml(currentOutput) {
       ${notebookLinks}
     </nav>
   </aside>
+  <footer class="vault-lab-footer" lang="pt-BR" data-vault-lab-footer>
+    feito com <span aria-label="amor">♥</span> por <a href="https://github.com/aretw0">aretw0</a>
+  </footer>
 </div>
 <script data-vault-marimo-navigation-script>
 (() => {
@@ -334,12 +337,15 @@ function presentationLiteHtml() {
   <style>
 ${readFileSync(join(ROOT, ".site", "styles", "marimo-vault.css"), "utf8")}
     body { margin: 0; }
-    .vault-lite-slides { max-width: min(56rem, calc(100vw - 2rem)); margin: 0 auto; padding: clamp(1rem, 4vw, 3rem) 1rem 4rem; }
-    .vault-lite-nav { display: flex; gap: .75rem; flex-wrap: wrap; margin-block-end: 1.5rem; }
-    .vault-lite-slide { border: 1px solid var(--border); border-radius: 1rem; background: var(--card); padding: clamp(1rem, 3vw, 2rem); margin-block: 1rem; box-shadow: 0 .75rem 2rem color-mix(in srgb, var(--foreground) 8%, transparent); }
+    .vault-lite-slides { max-width: min(64rem, calc(100vw - 2rem)); margin: 0 auto; padding: clamp(1.5rem, 5vw, 4rem) 1rem 5rem; }
+    .vault-lite-nav { position: sticky; top: 0; z-index: 2; display: flex; gap: .75rem; flex-wrap: wrap; align-items: center; border-bottom: 1px solid var(--border); background: color-mix(in srgb, var(--card) 94%, transparent); margin: -1rem -1rem 1.5rem; padding: .75rem 1rem; }
+    .vault-lite-nav::after { content: "slides leves"; margin-left: auto; color: var(--muted-foreground); font-size: .8rem; font-weight: 700; text-transform: uppercase; }
+    .vault-lite-slide { min-height: min(70vh, 38rem); display: grid; align-content: center; border: 1px solid var(--border); border-radius: 1rem; background: var(--card); padding: clamp(1.25rem, 5vw, 4rem); margin-block: 1rem; box-shadow: 0 .75rem 2rem color-mix(in srgb, var(--foreground) 8%, transparent); }
     .vault-lite-slide h1, .vault-lite-slide h2 { color: var(--primary); margin-block-start: 0; }
     .vault-lite-slide table { width: 100%; border-collapse: collapse; }
     .vault-lite-slide th, .vault-lite-slide td { border: 1px solid var(--border); padding: .5rem; text-align: left; }
+    .vault-lite-footer { position: fixed; left: .75rem; bottom: .75rem; z-index: 3; border: 1px solid var(--border); border-radius: 999px; background: color-mix(in srgb, var(--card) 94%, transparent); color: var(--muted-foreground); font-size: .78rem; padding: .45rem .7rem; }
+    .vault-lite-footer a { color: var(--primary); font-weight: 700; text-decoration: none; }
   </style>
 </head>
 <body>
@@ -357,6 +363,7 @@ ${readFileSync(join(ROOT, ".site", "styles", "marimo-vault.css"), "utf8")}
     <section class="vault-lite-slide"><h2>Governança</h2><p>Criar um notebook não publica esse notebook. A publicação passa pelo manifesto <code>.site/lab.notebooks.json</code>.</p></section>
     <section class="vault-lite-slide"><h2>Próximo passo</h2><p>Distribuir um vault pronto para uso, publicar documentação viva, criar notebooks de análise e separar ETL local de visualização empacotada.</p></section>
   </main>
+  <footer class="vault-lite-footer" lang="pt-BR">feito com <span aria-label="amor">♥</span> por <a href="https://github.com/aretw0">aretw0</a></footer>
 </body>
 </html>
 `;

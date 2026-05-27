@@ -261,6 +261,38 @@ const shouldRenderTechnicalDocs =
 			padding: 0.3rem 0.45rem;
 		}
 
+		@media (max-width: 36rem) {
+			.header {
+				gap: 0.45rem;
+			}
+
+			.title-wrapper {
+				flex: 1 1 auto;
+				gap: 0.45rem;
+			}
+
+			.title-wrapper :global(.site-title span) {
+				position: relative;
+				display: inline-flex;
+				width: 2.35rem;
+				overflow: hidden;
+				color: transparent;
+				letter-spacing: -0.04em;
+			}
+
+			.title-wrapper :global(.site-title span)::before {
+				position: absolute;
+				inset: 0;
+				color: var(--sl-color-text-accent);
+				content: 'VS';
+				font-weight: 800;
+			}
+
+			.lab-link {
+				font-size: 0.78rem;
+			}
+		}
+
 		@media (min-width: 50rem) {
 			.vault-theme-mobile {
 				display: none;
