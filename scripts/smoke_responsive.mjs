@@ -326,9 +326,11 @@ async function assertLabShellLayout(page, target, viewport, label) {
     const sidebar = document.querySelector(".vault-lab-sidebar");
     const notebookRoot = document.querySelector("#root");
     const topbar = document.querySelector(".vault-lab-topbar");
+    const chromeWrapper = document.querySelector('#root [data-testid="chrome-wrapper"]');
     const sidebarBox = sidebar?.getBoundingClientRect();
     const rootBox = notebookRoot?.getBoundingClientRect();
     const topbarBox = topbar?.getBoundingClientRect();
+    const chromeBox = chromeWrapper?.getBoundingClientRect();
 
     return {
       state: root.dataset.vaultLabSidebar ?? "",
@@ -344,11 +346,12 @@ async function assertLabShellLayout(page, target, viewport, label) {
           }
         : null,
       topbar: topbarBox ? { bottom: topbarBox.bottom } : null,
+      chrome: chromeBox ? { left: chromeBox.left, top: chromeBox.top, width: chromeBox.width } : null,
     };
   });
 
-  if (!layout.sidebar || !layout.root || !layout.topbar) {
-    fail(`${label}: Lab shell sidebar, topbar, or notebook root is missing`);
+  if (!layout.sidebar || !layout.root || !layout.topbar || !layout.chrome) {
+    fail(`${label}: Lab shell sidebar, topbar, notebook root, or Marimo chrome wrapper is missing`);
     return;
   }
 
@@ -368,7 +371,7 @@ async function assertLabShellLayout(page, target, viewport, label) {
     }
   }
 
-  if (layout.root.contentTop < layout.topbar.bottom - 2) {
+  if (layout.root.contentTop < layout.topbar.bottom - 2 || layout.chrome.top < layout.topbar.bottom + 16) {
     fail(`${label}: notebook content starts under the Lab topbar`);
   }
 }

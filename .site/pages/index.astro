@@ -37,6 +37,7 @@ function graphHeroHtml() {
   const circles = positioned.map((node) => (
     `<a href="${base}/${escapeHtml(node.id)}/" aria-label="${escapeHtml(node.title)}: ${node.degree} conexões" data-vault-graph-node-label="${escapeHtml(node.title)}">` +
     `<title>${escapeHtml(node.title)} · ${node.degree} conexões</title>` +
+    `<rect class="vault-graph-view__hitbox" x="${(node.x - 44).toFixed(1)}" y="${(node.y - node.size - 14).toFixed(1)}" width="88" height="${(node.size + 34).toFixed(1)}" rx="10" />` +
     `<circle cx="${node.x.toFixed(1)}" cy="${node.y.toFixed(1)}" r="${node.size.toFixed(1)}" style="--vault-node-weight:${node.weight.toFixed(2)}" />` +
     `<text class="vault-graph-view__label vault-graph-view__label--short" x="${node.x.toFixed(1)}" y="${(node.y + node.size + 8).toFixed(1)}" text-anchor="middle">${escapeHtml(truncateLabel(node.title))}</text>` +
     `<text class="vault-graph-view__label vault-graph-view__label--full" x="${node.x.toFixed(1)}" y="${(node.y + node.size + 8).toFixed(1)}" text-anchor="middle">${escapeHtml(node.title)}</text>` +

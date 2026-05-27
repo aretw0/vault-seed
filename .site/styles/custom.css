@@ -469,6 +469,12 @@
   outline: none;
 }
 
+.vault-graph-view__hitbox {
+  fill: transparent;
+  pointer-events: all;
+  stroke: none;
+}
+
 .vault-graph-view__nodes circle {
   fill: color-mix(in srgb, var(--sl-color-accent) calc(40% * var(--vault-node-weight, 1)), var(--sl-color-bg-nav));
   stroke: var(--sl-color-accent);
@@ -483,8 +489,7 @@
   font-size: 6px;
   font-weight: 700;
   paint-order: stroke;
-  cursor: pointer;
-  pointer-events: auto;
+  pointer-events: none;
   stroke: var(--sl-color-bg);
   stroke-width: 2.5px;
 }

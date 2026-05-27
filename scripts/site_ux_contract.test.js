@@ -63,7 +63,10 @@ test('Graph previews show truncated labels while preserving full accessible titl
   assert.match(css, /overflow: visible/);
   assert.match(home, /node\.parentNode\?\.appendChild\(node\)/);
   assert.match(graph, /node\.parentNode\?\.appendChild\(node\)/);
-  assert.match(css, /\.vault-graph-view__nodes text[\s\S]*pointer-events: auto/);
+  assert.match(home, /vault-graph-view__hitbox/);
+  assert.match(graph, /vault-graph-view__hitbox/);
+  assert.match(css, /\.vault-graph-view__hitbox[\s\S]*pointer-events: all/);
+  assert.match(css, /\.vault-graph-view__nodes text[\s\S]*pointer-events: none/);
   assert.match(css, /\.vault-graph-view__label--full[\s\S]*opacity: 0;[\s\S]*visibility: hidden/);
   assert.match(css, /\.vault-graph-view__nodes a:is\(:hover, :focus-visible\) \.vault-graph-view__label--full[\s\S]*opacity: 1;[\s\S]*visibility: visible/);
 });
@@ -72,19 +75,26 @@ test('Marimo shell spacing remains topbar-aware and smoke-tested', () => {
   const css = read('.site/styles/marimo-vault.css');
   const smoke = read('scripts/smoke_responsive.mjs');
   const shellTest = read('scripts/lab_shell_contract.test.mjs');
+  const exportNotebooks = read('scripts/export_notebooks.mjs');
 
   assert.match(css, /--vault-lab-topbar-height: 3\.5rem/);
   assert.match(css, /--vault-lab-content-gap: 4\.75rem/);
   assert.match(css, /--vault-lab-content-offset: calc\(var\(--vault-lab-topbar-height\) \+ var\(--vault-lab-content-gap\)\)/);
   assert.match(css, /:root\[data-vault-marimo-shell="lab"\] #root/);
+  assert.match(css, /#root \[data-testid="chrome-wrapper"\]/);
+  assert.match(css, /\[class~="min-w-\[400px\]"\]/);
+  assert.match(css, /\[class~="fixed"\]\[class~="top-0"\]\[class~="right-0"\]/);
   assert.match(css, /position: sticky/);
   assert.match(css, /padding-top: var\(--vault-lab-content-gap\) !important/);
   assert.match(css, /padding-top: calc\(var\(--vault-lab-content-gap\) \+ env\(safe-area-inset-top, 0px\)\) !important/);
   assert.match(css, /--vault-lab-content-gap: 5rem/);
   assert.match(css, /\.vault-lab-footer/);
+  assert.match(exportNotebooks, /attachSelectorToTopbar/);
+  assert.match(exportNotebooks, /topbar\.appendChild\(selector\)/);
 
   assert.match(smoke, /document\.querySelector\("#root"\)/);
   assert.match(smoke, /document\.querySelector\("\.vault-lab-topbar"\)/);
+  assert.match(smoke, /data-testid="chrome-wrapper"/);
   assert.match(smoke, /paddingTop: Number\.parseFloat\(getComputedStyle\(notebookRoot\)\.paddingTop\)/);
   assert.match(smoke, /layout\.root\.contentTop < layout\.topbar\.bottom/);
   assert.match(smoke, /notebook content starts under the Lab topbar/);

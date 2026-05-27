@@ -625,14 +625,13 @@ iframe {
 }
 
 .vault-marimo-theme-selector {
-  position: fixed;
-  z-index: 10000;
-  top: 0.75rem;
-  right: 0.75rem;
+  position: relative;
+  z-index: 10001;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 0.35rem;
+  margin-left: auto;
 }
 
 .vault-marimo-theme-toggle,
@@ -648,12 +647,16 @@ iframe {
 }
 
 .vault-marimo-theme-panel {
+  position: absolute;
+  top: calc(100% + 0.45rem);
+  right: 0;
   display: none;
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 0.25rem;
+  width: max-content;
   max-width: calc(100vw - 1.5rem);
-  max-height: calc(100svh - 5rem);
+  max-height: calc(100svh - var(--vault-lab-topbar-height, 0px) - 1rem);
   overflow: auto;
   padding: 0.25rem;
 }
@@ -719,7 +722,7 @@ iframe {
   border-bottom: 1px solid var(--border);
   background: color-mix(in srgb, var(--card) 94%, transparent);
   box-shadow: 0 0.75rem 2rem color-mix(in srgb, var(--foreground) 10%, transparent);
-  padding: 0.5rem 21rem 0.5rem 0.75rem;
+  padding: 0.5rem 0.75rem;
 }
 
 .vault-lab-sidebar-toggle,
@@ -797,12 +800,34 @@ iframe {
 
 :root[data-vault-marimo-shell="lab"] #root {
   box-sizing: border-box;
+  position: relative;
   width: calc(100% - var(--vault-lab-sidebar-width));
   min-height: calc(100dvh - var(--vault-lab-topbar-height));
   margin-left: var(--vault-lab-sidebar-width);
   padding-top: var(--vault-lab-content-gap) !important;
+  padding-inline: clamp(1rem, 2.5vw, 2rem) !important;
   padding-bottom: 4rem !important;
   transition: margin-left 160ms ease, width 160ms ease;
+}
+
+:root[data-vault-marimo-shell="lab"] #root [data-testid="chrome-wrapper"] {
+  top: var(--vault-lab-content-gap) !important;
+  right: clamp(1rem, 2.5vw, 2rem) !important;
+  bottom: 4rem !important;
+  left: clamp(1rem, 2.5vw, 2rem) !important;
+}
+
+:root[data-vault-marimo-shell="lab"] #root [class~="min-w-[400px]"] {
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+:root[data-vault-marimo-shell="lab"] #root [class~="px-1"] {
+  padding-inline: 0 !important;
+}
+
+:root[data-vault-marimo-shell="lab"] #root [class~="fixed"][class~="top-0"][class~="right-0"] {
+  top: calc(var(--vault-lab-topbar-height) + 0.75rem) !important;
 }
 
 .vault-lab-footer {
@@ -933,16 +958,9 @@ iframe {
   }
 
   .vault-marimo-theme-selector {
-    top: 0.75rem;
-    right: 0.75rem;
-    bottom: auto;
-    left: auto;
+    inset: auto;
     max-width: calc(100vw - 1.5rem);
     justify-content: flex-end;
-  }
-
-  :root[data-vault-marimo-shell="lab"] .vault-lab-topbar {
-    padding-right: 6.5rem;
   }
 
   :root[data-vault-marimo-shell="lab"] .vault-lab-sidebar {
@@ -964,6 +982,15 @@ iframe {
     width: 100%;
     margin-left: 0;
     padding-top: calc(var(--vault-lab-content-gap) + env(safe-area-inset-top, 0px)) !important;
+    padding-inline: 1rem !important;
+  }
+
+  :root[data-vault-marimo-shell="lab"] #root [data-testid="chrome-wrapper"],
+  :root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] #root [data-testid="chrome-wrapper"] {
+    top: calc(var(--vault-lab-content-gap) + env(safe-area-inset-top, 0px)) !important;
+    right: 1rem !important;
+    bottom: 4rem !important;
+    left: 1rem !important;
   }
 
   .vault-lab-footer,
@@ -973,9 +1000,7 @@ iframe {
   }
 
   :root[data-vault-marimo-shell="lab"] .vault-marimo-theme-selector {
-    top: 0.5rem;
-    right: 0.75rem;
-    left: auto;
+    margin-left: auto;
   }
 
   .vault-marimo-theme-selector select {

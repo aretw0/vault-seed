@@ -161,6 +161,14 @@ const themeSelectorHtml = String.raw`
   const palettes = ["verde-jardim", "oceano", "terracota"];
   const panelStorageKey = "vault-seed:marimo-theme-panel";
 
+  function attachSelectorToTopbar() {
+    const selector = document.querySelector("[data-vault-marimo-theme-selector]");
+    const topbar = document.querySelector(".vault-lab-topbar");
+    if (selector && topbar && selector.parentElement !== topbar) {
+      topbar.appendChild(selector);
+    }
+  }
+
   function resolveTheme(choice) {
     return choice === "system" ? (media.matches ? "dark" : "light") : choice;
   }
@@ -209,6 +217,7 @@ const themeSelectorHtml = String.raw`
   }
 
   function init() {
+    attachSelectorToTopbar();
     const savedTheme = localStorage.getItem(themeStorageKey) || localStorage.getItem(legacyThemeStorageKey) || "system";
     const savedPalette = localStorage.getItem(paletteStorageKey) || localStorage.getItem(legacyPaletteStorageKey) || "verde-jardim";
     applyTheme(savedTheme, savedPalette);
