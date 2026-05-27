@@ -49,14 +49,7 @@ const shouldRenderTechnicalDocs =
 		<div class="sl-flex social-icons">
 			<SocialIcons />
 		</div>
-		<div class="vault-sidebar-toggles" aria-label="Recolher painéis laterais">
-			<button class="vault-sidebar-toggle" type="button" data-vault-sidebar-toggle="left" aria-pressed="false" title="Recolher navegação lateral">
-				Nav
-			</button>
-			<button class="vault-sidebar-toggle" type="button" data-vault-sidebar-toggle="right" aria-pressed="false" title="Recolher índice lateral">
-				Índice
-			</button>
-		</div>
+
 		{shouldRenderThemeSelect && (
 			<div class="vault-theme-demo" aria-label="Tema do site">
 				<select data-vault-palette-select aria-label="Paleta">
@@ -120,48 +113,6 @@ const shouldRenderTechnicalDocs =
 	</div>
 </div>
 
-<script is:inline>
-	(() => {
-		const root = document.documentElement;
-		const controls = Array.from(document.querySelectorAll('[data-vault-sidebar-toggle]'));
-		const storageKeys = {
-			left: 'vault-seed:sidebar-left-collapsed',
-			right: 'vault-seed:sidebar-right-collapsed',
-		};
-
-		function apply(side, collapsed) {
-			root.dataset[side === 'left' ? 'vaultSidebarLeft' : 'vaultSidebarRight'] = collapsed
-				? 'collapsed'
-				: 'expanded';
-			controls
-				.filter((button) => button.dataset.vaultSidebarToggle === side)
-				.forEach((button) => {
-					button.setAttribute('aria-pressed', String(collapsed));
-					button.title = collapsed
-						? side === 'left'
-							? 'Expandir navegação lateral'
-							: 'Expandir índice lateral'
-						: side === 'left'
-							? 'Recolher navegação lateral'
-							: 'Recolher índice lateral';
-				});
-		}
-
-		for (const side of ['left', 'right']) {
-			apply(side, localStorage.getItem(storageKeys[side]) === '1');
-		}
-
-		controls.forEach((button) => {
-			button.addEventListener('click', () => {
-				const side = button.dataset.vaultSidebarToggle;
-				const attr = side === 'left' ? 'vaultSidebarLeft' : 'vaultSidebarRight';
-				const collapsed = root.dataset[attr] !== 'collapsed';
-				localStorage.setItem(storageKeys[side], collapsed ? '1' : '0');
-				apply(side, collapsed);
-			});
-		});
-	})();
-</script>
 
 <style>
 	@layer starlight.core {
@@ -207,7 +158,6 @@ const shouldRenderTechnicalDocs =
 			border-inline-end: 1px solid var(--sl-color-gray-5);
 		}
 
-		.vault-sidebar-toggles,
 		.vault-theme-demo {
 			display: flex;
 			gap: 0.35rem;
@@ -250,29 +200,6 @@ const shouldRenderTechnicalDocs =
 			padding: 0.5rem;
 		}
 
-		.vault-sidebar-toggle {
-			border: 1px solid var(--sl-color-hairline);
-			border-radius: 999px;
-			background: transparent;
-			color: var(--sl-color-text);
-			cursor: pointer;
-			font: inherit;
-			font-size: var(--sl-text-xs);
-			font-weight: 650;
-			line-height: 1;
-			padding: 0.4rem 0.7rem;
-		}
-
-		.vault-sidebar-toggle:hover,
-		.vault-sidebar-toggle[aria-pressed='true'] {
-			background: var(--sl-color-accent);
-			color: var(--sl-color-black);
-		}
-
-		:global(:root:not([data-has-sidebar])) [data-vault-sidebar-toggle='left'],
-		:global(:root:not([data-has-toc])) [data-vault-sidebar-toggle='right'] {
-			display: none;
-		}
 
 		.vault-theme-demo select {
 			max-width: 8.25rem;

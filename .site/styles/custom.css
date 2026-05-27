@@ -563,7 +563,7 @@
 }
 
 @media (min-width: 50rem) {
-  :root[data-vault-sidebar-left='collapsed'][data-has-sidebar] .sidebar {
+  :root[data-vault-sidebar-left='collapsed'][data-has-sidebar] .sidebar-pane {
     display: none;
   }
 
@@ -578,6 +578,7 @@
   }
 
   :root[data-vault-sidebar-right='collapsed'] .main-pane {
+    --sl-content-margin-inline: auto;
     width: 100%;
   }
 

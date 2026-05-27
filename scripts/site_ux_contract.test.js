@@ -11,6 +11,8 @@ test('Astro header keeps theme controls discoverable without mobile duplication'
   const mobileFooter = read('.site/components/MobileMenuFooter.astro');
   const astroConfig = read('astro.config.mjs');
   const customCss = read('.site/styles/custom.css');
+  const pageFrame = read('.site/components/PageFrame.astro');
+  const twoColumn = read('.site/components/TwoColumnContent.astro');
 
   assert.match(header, /details class="vault-theme-mobile print:hidden"/);
   assert.match(header, /<summary aria-label="Tema do site" title="Tema">◐<\/summary>/);
@@ -19,16 +21,22 @@ test('Astro header keeps theme controls discoverable without mobile duplication'
   assert.match(header, /data-vault-mode-select/);
   assert.match(header, /repoName === 'vault-seed'/);
   assert.match(header, /content: 'VS'/);
-  assert.match(header, /data-vault-sidebar-toggle="left"/);
-  assert.match(header, /data-vault-sidebar-toggle="right"/);
+  assert.doesNotMatch(header, /data-vault-sidebar-toggle/);
   assert.doesNotMatch(header, /data-vault-focus-toggle/);
   assert.doesNotMatch(header, /vault-seed:focus-mode/);
-  assert.match(customCss, /data-vault-sidebar-left='collapsed'/);
+  assert.match(pageFrame, /data-vault-sidebar-toggle="left"/);
+  assert.match(twoColumn, /data-vault-sidebar-toggle="right"/);
+  assert.match(pageFrame, /vault-seed:sidebar-left-collapsed/);
+  assert.match(pageFrame, /vault-seed:sidebar-right-collapsed/);
+  assert.match(customCss, /data-vault-sidebar-left='collapsed'[\s\S]*\.sidebar-pane/);
   assert.match(customCss, /data-vault-sidebar-right='collapsed'/);
+  assert.match(customCss, /data-vault-sidebar-right='collapsed'[\s\S]*\.main-pane[\s\S]*--sl-content-margin-inline: auto/);
   assert.doesNotMatch(customCss, /data-vault-focus='content'/);
   assert.match(header, /href={`\$\{base\}\/explorar\/`}>Explorar/);
   assert.match(header, /href={`\$\{base\}\/lab\/`}>Lab/);
 
+  assert.match(astroConfig, /PageFrame: '\.\/\.site\/components\/PageFrame\.astro'/);
+  assert.match(astroConfig, /TwoColumnContent: '\.\/\.site\/components\/TwoColumnContent\.astro'/);
   assert.match(astroConfig, /MobileMenuFooter: '\.\/\.site\/components\/MobileMenuFooter\.astro'/);
   assert.doesNotMatch(mobileFooter, /ThemeSelect/);
   assert.match(mobileFooter, /LanguageSelect/);
