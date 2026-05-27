@@ -26,6 +26,8 @@ test('Astro header keeps theme controls discoverable without mobile duplication'
   assert.doesNotMatch(header, /vault-seed:focus-mode/);
   assert.match(pageFrame, /data-vault-sidebar-toggle="left"/);
   assert.match(twoColumn, /data-vault-sidebar-toggle="right"/);
+  assert.match(pageFrame, /\.vault-sidebar-rail-toggle span[\s\S]*place-items: center/);
+  assert.match(twoColumn, /\.vault-sidebar-rail-toggle span[\s\S]*place-items: center/);
   assert.match(pageFrame, /vault-seed:sidebar-left-collapsed/);
   assert.match(pageFrame, /vault-seed:sidebar-right-collapsed/);
   assert.match(customCss, /data-vault-sidebar-left='collapsed'[\s\S]*\.sidebar-pane/);
@@ -61,6 +63,7 @@ test('Graph previews show truncated labels while preserving full accessible titl
   assert.match(css, /overflow: visible/);
   assert.match(home, /node\.parentNode\?\.appendChild\(node\)/);
   assert.match(graph, /node\.parentNode\?\.appendChild\(node\)/);
+  assert.match(css, /\.vault-graph-view__nodes text[\s\S]*pointer-events: auto/);
   assert.match(css, /\.vault-graph-view__label--full[\s\S]*opacity: 0;[\s\S]*visibility: hidden/);
   assert.match(css, /\.vault-graph-view__nodes a:is\(:hover, :focus-visible\) \.vault-graph-view__label--full[\s\S]*opacity: 1;[\s\S]*visibility: visible/);
 });
@@ -71,11 +74,13 @@ test('Marimo shell spacing remains topbar-aware and smoke-tested', () => {
   const shellTest = read('scripts/lab_shell_contract.test.mjs');
 
   assert.match(css, /--vault-lab-topbar-height: 3\.5rem/);
+  assert.match(css, /--vault-lab-content-gap: 4\.75rem/);
   assert.match(css, /--vault-lab-content-offset: calc\(var\(--vault-lab-topbar-height\) \+ var\(--vault-lab-content-gap\)\)/);
   assert.match(css, /:root\[data-vault-marimo-shell="lab"\] #root/);
   assert.match(css, /position: sticky/);
   assert.match(css, /padding-top: var\(--vault-lab-content-gap\) !important/);
   assert.match(css, /padding-top: calc\(var\(--vault-lab-content-gap\) \+ env\(safe-area-inset-top, 0px\)\) !important/);
+  assert.match(css, /--vault-lab-content-gap: 5rem/);
   assert.match(css, /\.vault-lab-footer/);
 
   assert.match(smoke, /document\.querySelector\("#root"\)/);

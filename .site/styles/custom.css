@@ -483,7 +483,8 @@
   font-size: 6px;
   font-weight: 700;
   paint-order: stroke;
-  pointer-events: none;
+  cursor: pointer;
+  pointer-events: auto;
   stroke: var(--sl-color-bg);
   stroke-width: 2.5px;
 }

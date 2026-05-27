@@ -698,7 +698,7 @@ iframe {
 
 :root[data-vault-marimo-shell="lab"] {
   --vault-lab-topbar-height: 3.5rem;
-  --vault-lab-content-gap: 3.5rem;
+  --vault-lab-content-gap: 4.75rem;
   --vault-lab-content-offset: calc(var(--vault-lab-topbar-height) + var(--vault-lab-content-gap));
   --vault-lab-sidebar-width: 15.5rem;
 }
@@ -956,7 +956,7 @@ iframe {
 
   :root[data-vault-marimo-shell="lab"] {
     --vault-lab-topbar-height: 3.75rem;
-    --vault-lab-content-gap: 4rem;
+    --vault-lab-content-gap: 5rem;
   }
 
   :root[data-vault-marimo-shell="lab"] #root,
