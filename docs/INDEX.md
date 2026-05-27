@@ -6,7 +6,7 @@ Git, GitHub Actions, versionamento, segurança e manutenção do template.
 Para aprender a usar o vault como sistema de conhecimento, comece em
 `99 - Meta e Anexos/Guia do Jardineiro Digital.md`.
 
-Para preparar um computador de usuario final, use
+Para preparar um computador de usuário final, use
 `99 - Meta e Anexos/Preparando seu Computador para o Vault.md`.
 
 ## Comece Aqui
@@ -22,7 +22,7 @@ Para preparar um computador de usuario final, use
 ## Git e GitHub
 
 - [Workflow Git](git-workflow.md)
-- [Conventional Commits e versionamento automatico](conventional-commits-e-versionamento-automatico.md)
+- [Conventional Commits e versionamento automático](conventional-commits-e-versionamento-automatico.md)
 - [Estratégia de versionamento](estrategia-de-versionamento.md)
 - [Processo de release](processo-de-release.md)
 - [Templates de Pull Request](pull-request-templates.md)

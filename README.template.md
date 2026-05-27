@@ -31,7 +31,7 @@ Para começar a explorar e organizar suas notas, abra esta pasta no Obsidian ou 
 
 ➡️ Para uma introdução completa e um guia sobre como usar este cofre, abra a nota **[Guia do Jardineiro Digital](99%20-%20Meta%20e%20Anexos/Guia%20do%20Jardineiro%20Digital.md)**.
 
-Depois, siga **[Exploracao Guiada do Vault](99%20-%20Meta%20e%20Anexos/Exploracao%20Guiada%20do%20Vault.md)** para uma primeira visita de
+Depois, siga **[Exploração Guiada do Vault](99%20-%20Meta%20e%20Anexos/Exploracao%20Guiada%20do%20Vault.md)** para uma primeira visita de
 30 minutos sem precisar entender Git, plugins ou automações de uma vez.
 
 Se este for seu primeiro vault versionado, abra também
@@ -39,7 +39,7 @@ Se este for seu primeiro vault versionado, abra também
 VS Code, Git, GitHub Desktop e sincronização sem conflitos entre dispositivos.
 
 Quando a recepção automática do template terminar, abra
-**[Depois da Recepcao do Template](99%20-%20Meta%20e%20Anexos/Depois%20da%20Recepcao%20do%20Template.md)** para conferir o que ficou com você,
+**[Depois da Recepção do Template](99%20-%20Meta%20e%20Anexos/Depois%20da%20Recepcao%20do%20Template.md)** para conferir o que ficou com você,
 o que não deve ser sincronizado manualmente e como operar o vault entre
 desktop e celular.
 
