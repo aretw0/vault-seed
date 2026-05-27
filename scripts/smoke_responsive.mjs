@@ -282,7 +282,7 @@ async function assertPresentationSizing(page, target, viewport, label, externalN
 }
 
 async function assertLabShellLayout(page, target, viewport, label) {
-  if (target.type !== "notebook" || target.path.endsWith("vault-seed-slides.html")) {
+  if (target.type !== "notebook") {
     return;
   }
 
@@ -337,8 +337,8 @@ async function assertLabShellLayout(page, target, viewport, label) {
     }
   }
 
-  if (layout.root.paddingTop < layout.topbar.bottom - 2) {
-    fail(`${label}: notebook content padding does not clear fixed Lab topbar`);
+  if (layout.root.top + layout.root.paddingTop < layout.topbar.bottom - 2) {
+    fail(`${label}: notebook content starts under the fixed Lab topbar`);
   }
 }
 

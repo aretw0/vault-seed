@@ -75,15 +75,6 @@ function escapeHtml(value) {
 function labNavigationHtml(currentOutput) {
 	const labIndexHref = notebooksPath === "lab" ? "./" : "../lab/";
 
-	if (currentOutput === "vault-seed-slides.html") {
-		return String.raw`
-<nav class="vault-marimo-navigation" data-vault-marimo-navigation aria-label="Navegação do vault">
-  <a href="../">Vault</a>
-  <a href="${labIndexHref}">Lab</a>
-</nav>
-`;
-	}
-
 	const notebookLinks = manifest
 		.filter((entry) => entry.publish)
 		.map((entry) => {
@@ -356,7 +347,6 @@ ${readFileSync(join(ROOT, ".site", "styles", "marimo-vault.css"), "utf8")}
     <nav class="vault-lite-nav" aria-label="Navegação dos slides leves">
       <a href="../">Vault</a>
       <a href="./">Lab</a>
-      <a href="./vault-seed-slides.html">Abrir versão interativa</a>
     </nav>
 
     <section class="vault-lite-slide"><h1>vault-seed</h1><p>Um vault local-first com site, automação e notebooks no mesmo repositório.</p></section>

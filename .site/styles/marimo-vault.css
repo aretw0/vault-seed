@@ -698,7 +698,14 @@ iframe {
 
 :root[data-vault-marimo-shell="lab"] {
   --vault-lab-topbar-height: 3.25rem;
+  --vault-lab-content-gap: 2.25rem;
+  --vault-lab-content-offset: calc(var(--vault-lab-topbar-height) + var(--vault-lab-content-gap));
   --vault-lab-sidebar-width: 15.5rem;
+}
+
+:root[data-vault-marimo-shell="lab"] body {
+  box-sizing: border-box;
+  scroll-padding-top: var(--vault-lab-content-offset);
 }
 
 :root[data-vault-marimo-shell="lab"] .vault-lab-topbar {
@@ -788,12 +795,12 @@ iframe {
   font-weight: 700;
 }
 
-:root[data-vault-marimo-shell="lab"]:not([data-vault-marimo-presentation="slides"]) #root {
+:root[data-vault-marimo-shell="lab"] #root {
   box-sizing: border-box;
   width: calc(100% - var(--vault-lab-sidebar-width));
   min-height: 100dvh;
   margin-left: var(--vault-lab-sidebar-width);
-  padding-top: var(--vault-lab-topbar-height);
+  padding-top: var(--vault-lab-content-offset) !important;
   transition: margin-left 160ms ease, width 160ms ease;
 }
 
@@ -801,13 +808,9 @@ iframe {
   transform: translateX(-100%);
 }
 
-:root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"]:not([data-vault-marimo-presentation="slides"]) #root {
+:root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] #root {
   width: 100%;
   margin-left: 0;
-}
-
-:root[data-vault-marimo-presentation="slides"] .vault-marimo-navigation {
-  display: none;
 }
 
 :root[data-vault-marimo-presentation="slides"] {
@@ -824,7 +827,7 @@ iframe {
 }
 
 :root[data-vault-marimo-presentation="slides"] #root {
-  height: 100dvh;
+  height: calc(100dvh - var(--vault-lab-content-offset, 0px));
   overflow: hidden;
 }
 
@@ -908,7 +911,7 @@ iframe {
   }
 
   :root[data-vault-marimo-shell="lab"] .vault-lab-topbar {
-    padding-right: 0.75rem;
+    padding-right: 6.5rem;
   }
 
   :root[data-vault-marimo-shell="lab"] .vault-lab-sidebar {
@@ -920,17 +923,17 @@ iframe {
     transform: translateX(0);
   }
 
-  :root[data-vault-marimo-shell="lab"]:not([data-vault-marimo-presentation="slides"]) #root,
-  :root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"]:not([data-vault-marimo-presentation="slides"]) #root {
+  :root[data-vault-marimo-shell="lab"] #root,
+  :root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] #root {
     width: 100%;
     margin-left: 0;
-    padding-top: calc(var(--vault-lab-topbar-height) + 4.25rem);
+    padding-top: calc(var(--vault-lab-topbar-height) + 3.25rem) !important;
   }
 
-  :root[data-vault-marimo-shell="lab"]:not([data-vault-marimo-presentation="slides"]) .vault-marimo-theme-selector {
-    top: calc(var(--vault-lab-topbar-height) + 0.5rem);
+  :root[data-vault-marimo-shell="lab"] .vault-marimo-theme-selector {
+    top: 0.5rem;
     right: 0.75rem;
-    left: 0.75rem;
+    left: auto;
   }
 
   .vault-marimo-theme-selector select {

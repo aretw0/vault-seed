@@ -69,6 +69,8 @@ const labEtlDemoScript = read("scripts/lab_etl_demo.mjs");
 const iaAuditScript = read("scripts/audit_information_architecture.mjs");
 const informationArchitectureAuditRuntime = read(".site/lib/information-architecture-audit.mjs");
 const headerComponent = read(".site/components/Header.astro");
+const homePage = read(".site/pages/index.astro");
+const graphViewComponent = read(".site/components/VaultGraphView.astro");
 const explorePage = read(".site/pages/explorar/index.astro");
 const exploreIntentPage = read(".site/pages/explorar/intencoes.astro");
 const exploreDataEndpoint = read(".site/pages/explorar/dados.json.ts");
@@ -162,9 +164,10 @@ requireCondition(
   "Lab ETL tooling must prepare deterministic local/runtime dataset manifests for dev, check, and export.",
 );
 requireCondition(
-  templatePkg.scripts?.["notebooks:export:public"] === "node scripts/export_notebooks.mjs --public" &&
+    templatePkg.scripts?.["notebooks:export:public"] === "node scripts/export_notebooks.mjs --public" &&
     templatePkg.scripts?.["notebooks:export:slides"] === "node scripts/export_notebook_slides.mjs" &&
     templatePkg.scripts?.["site:dev:lab"] === "pnpm run notebooks:export:public && astro dev" &&
+    templatePkg.scripts?.["site:dev:lab:host"] === "pnpm run notebooks:export:public && astro dev --host 0.0.0.0" &&
     templatePkg.scripts?.["site:responsive"] === "pnpm run site:build && pnpm run notebooks:export && node scripts/smoke_responsive.mjs" &&
     templatePkg.devDependencies?.["@playwright/test"] === "^1.60.0" &&
     exists("scripts/smoke_responsive.mjs"),
@@ -257,12 +260,13 @@ requireCondition(
     notebooksExportScript.includes("data-vault-marimo-presentation-fullscreen") &&
     notebooksExportScript.includes("vaultMarimoFullscreenButton") &&
     notebooksExportScript.includes("Fechar tela cheia") &&
+    !notebooksExportScript.includes("vault-marimo-fullscreen-toggle") &&
+    !notebooksExportScript.includes("Abrir versão interativa") &&
     notebooksSlidesScript.includes("data-vault-marimo-navigation") &&
     notebooksSlidesScript.includes("data-vault-marimo-presentation-fullscreen") &&
     notebooksSlidesScript.includes("vaultMarimoFullscreenButton") &&
     notebooksSlidesScript.includes("Fechar tela cheia") &&
-    !notebooksExportScript.includes("data-vault-marimo-presentation-exit") &&
-    marimoCss.includes(".vault-marimo-navigation"),
+    !notebooksExportScript.includes("data-vault-marimo-presentation-exit"),
   "Marimo exported notebooks must include stable navigation and fullscreen labeling for presentations.",
 );
 requireCondition(
@@ -320,7 +324,13 @@ requireCondition(
 
 requireCondition(
   headerComponent.includes('/explorar/') &&
+    homePage.includes('graphHeroHtml') &&
+    homePage.includes('heroGraphHtml') &&
+    !homePage.includes('data-language="mermaid"') &&
+    graphViewComponent.includes('vault-graph-view') &&
+    graphViewComponent.includes('viewBox="0 0 200 200"') &&
     explorePage.includes('buildVaultExploreData') &&
+    explorePage.includes('VaultGraphView') &&
     explorePage.includes('data-vault-explore-search') &&
     explorePage.includes('data-vault-explore-intent') &&
     explorePage.includes('vault-metric-grid') &&
@@ -343,6 +353,7 @@ requireCondition(
     exploreDataLib.includes('insights') &&
     customCss.includes('.vault-filter-panel') &&
     customCss.includes('.vault-resource-list') &&
+    customCss.includes('.vault-graph-view') &&
     customCss.includes('.vault-graph-cloud'),
   "Astro must expose a static exploration surface with filters, metrics, graph data, and reusable UI primitives.",
 );
@@ -353,6 +364,8 @@ requireCondition(
     sidebarSectionsConfig.includes('"intent": "explorar"') &&
     astroConfig.includes("deriveNoteIntents") &&
     astroConfig.includes("informationArchitecture") &&
+    astroConfig.includes("labSidebarSection") &&
+    astroConfig.includes("labNotebooksManifest") &&
     astroConfig.includes("if (!e.folder) return false"),
   "Published sidebar must use the shared information-architecture intents without leaking technical docs into intent sections.",
 );
