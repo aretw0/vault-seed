@@ -10,6 +10,7 @@ test('Astro header keeps theme controls discoverable without mobile duplication'
   const header = read('.site/components/Header.astro');
   const mobileFooter = read('.site/components/MobileMenuFooter.astro');
   const astroConfig = read('astro.config.mjs');
+  const customCss = read('.site/styles/custom.css');
 
   assert.match(header, /details class="vault-theme-mobile print:hidden"/);
   assert.match(header, /<summary aria-label="Tema do site" title="Tema">◐<\/summary>/);
@@ -18,6 +19,13 @@ test('Astro header keeps theme controls discoverable without mobile duplication'
   assert.match(header, /data-vault-mode-select/);
   assert.match(header, /repoName === 'vault-seed'/);
   assert.match(header, /content: 'VS'/);
+  assert.match(header, /data-vault-sidebar-toggle="left"/);
+  assert.match(header, /data-vault-sidebar-toggle="right"/);
+  assert.doesNotMatch(header, /data-vault-focus-toggle/);
+  assert.doesNotMatch(header, /vault-seed:focus-mode/);
+  assert.match(customCss, /data-vault-sidebar-left='collapsed'/);
+  assert.match(customCss, /data-vault-sidebar-right='collapsed'/);
+  assert.doesNotMatch(customCss, /data-vault-focus='content'/);
   assert.match(header, /href={`\$\{base\}\/explorar\/`}>Explorar/);
   assert.match(header, /href={`\$\{base\}\/lab\/`}>Lab/);
 
