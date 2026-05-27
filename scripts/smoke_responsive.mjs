@@ -196,6 +196,36 @@ async function assertNoHorizontalOverflow(page, label) {
   }
 }
 
+async function assertStaticGridAlignment(page, target, label) {
+  if (target.type !== "site") return;
+
+  const grids = await page.evaluate(() => {
+    return Array.from(document.querySelectorAll(".vault-card-grid, .vault-metric-grid"))
+      .map((grid) => {
+        const columns = getComputedStyle(grid).gridTemplateColumns
+          .split(" ")
+          .filter(Boolean).length;
+        const items = Array.from(grid.children)
+          .filter((element) => !element.hasAttribute("hidden"))
+          .map((element) => {
+            const rect = element.getBoundingClientRect();
+            return { top: rect.top, bottom: rect.bottom, height: rect.height };
+          });
+        return { className: grid.className, columns, items };
+      })
+      .filter((grid) => grid.columns > 1 && grid.items.length >= grid.columns);
+  });
+
+  for (const grid of grids) {
+    const firstRow = grid.items.slice(0, grid.columns);
+    const minTop = Math.min(...firstRow.map((item) => item.top));
+    const maxTop = Math.max(...firstRow.map((item) => item.top));
+    if (maxTop - minTop > 2) {
+      fail(`${label}: ${grid.className} first row is vertically misaligned by ${Math.round(maxTop - minTop)}px`);
+    }
+  }
+}
+
 async function assertVisibleContent(page, target, label) {
   if (target.type === "notebook") {
     const hasNotebookContent = await page.locator("marimo-wasm, marimo-island, marimo-code").count();
@@ -310,6 +340,7 @@ async function assertLabShellLayout(page, target, viewport, label) {
             left: rootBox.left,
             top: rootBox.top,
             paddingTop: Number.parseFloat(getComputedStyle(notebookRoot).paddingTop) || 0,
+            contentTop: rootBox.top + (Number.parseFloat(getComputedStyle(notebookRoot).paddingTop) || 0),
           }
         : null,
       topbar: topbarBox ? { bottom: topbarBox.bottom } : null,
@@ -337,8 +368,8 @@ async function assertLabShellLayout(page, target, viewport, label) {
     }
   }
 
-  if (layout.root.top + layout.root.paddingTop < layout.topbar.bottom - 2) {
-    fail(`${label}: notebook content starts under the fixed Lab topbar`);
+  if (layout.root.contentTop < layout.topbar.bottom - 2) {
+    fail(`${label}: notebook content starts under the Lab topbar`);
   }
 }
 
@@ -450,6 +481,7 @@ async function run() {
 
         await assertVisibleContent(page, target, label);
         await assertNoHorizontalOverflow(page, label);
+        await assertStaticGridAlignment(page, target, label);
         await assertPresentationSizing(
           page,
           target,

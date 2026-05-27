@@ -337,23 +337,17 @@ function presentationLiteHtml() {
   <style>
 ${readFileSync(join(ROOT, ".site", "styles", "marimo-vault.css"), "utf8")}
     body { margin: 0; }
-    .vault-lite-slides { max-width: min(64rem, calc(100vw - 2rem)); margin: 0 auto; padding: clamp(1.5rem, 5vw, 4rem) 1rem 5rem; }
-    .vault-lite-nav { position: sticky; top: 0; z-index: 2; display: flex; gap: .75rem; flex-wrap: wrap; align-items: center; border-bottom: 1px solid var(--border); background: color-mix(in srgb, var(--card) 94%, transparent); margin: -1rem -1rem 1.5rem; padding: .75rem 1rem; }
-    .vault-lite-nav::after { content: "slides leves"; margin-left: auto; color: var(--muted-foreground); font-size: .8rem; font-weight: 700; text-transform: uppercase; }
+    .vault-lite-slides { box-sizing: border-box; width: calc(100% - var(--vault-lab-sidebar-width)); max-width: min(64rem, calc(100vw - 2rem)); margin: 0 auto; margin-left: max(var(--vault-lab-sidebar-width), calc((100vw - 64rem) / 2)); padding: clamp(1.5rem, 5vw, 4rem) 1rem 5rem; }
     .vault-lite-slide { min-height: min(70vh, 38rem); display: grid; align-content: center; border: 1px solid var(--border); border-radius: 1rem; background: var(--card); padding: clamp(1.25rem, 5vw, 4rem); margin-block: 1rem; box-shadow: 0 .75rem 2rem color-mix(in srgb, var(--foreground) 8%, transparent); }
     .vault-lite-slide h1, .vault-lite-slide h2 { color: var(--primary); margin-block-start: 0; }
     .vault-lite-slide table { width: 100%; border-collapse: collapse; }
     .vault-lite-slide th, .vault-lite-slide td { border: 1px solid var(--border); padding: .5rem; text-align: left; }
-    .vault-lite-footer { position: fixed; left: .75rem; bottom: .75rem; z-index: 3; border: 1px solid var(--border); border-radius: 999px; background: color-mix(in srgb, var(--card) 94%, transparent); color: var(--muted-foreground); font-size: .78rem; padding: .45rem .7rem; }
-    .vault-lite-footer a { color: var(--primary); font-weight: 700; text-decoration: none; }
+    @media (max-width: 44rem) { .vault-lite-slides { width: 100%; margin-left: 0; padding-inline: 1rem; } }
   </style>
 </head>
 <body>
+${labNavigationHtml("vault-seed-slides-lite.html")}
   <main class="vault-lite-slides">
-    <nav class="vault-lite-nav" aria-label="Navegação dos slides leves">
-      <a href="../">Vault</a>
-      <a href="./">Lab</a>
-    </nav>
 
     <section class="vault-lite-slide"><h1>vault-seed</h1><p>Um vault local-first com site, automação e notebooks no mesmo repositório.</p></section>
     <section class="vault-lite-slide"><h2>A tese</h2><p>O vault não é só uma pasta de Markdown. Ele é um sistema versionado para pensar, publicar, automatizar e analisar o próprio conhecimento.</p></section>
@@ -363,7 +357,6 @@ ${readFileSync(join(ROOT, ".site", "styles", "marimo-vault.css"), "utf8")}
     <section class="vault-lite-slide"><h2>Governança</h2><p>Criar um notebook não publica esse notebook. A publicação passa pelo manifesto <code>.site/lab.notebooks.json</code>.</p></section>
     <section class="vault-lite-slide"><h2>Próximo passo</h2><p>Distribuir um vault pronto para uso, publicar documentação viva, criar notebooks de análise e separar ETL local de visualização empacotada.</p></section>
   </main>
-  <footer class="vault-lite-footer" lang="pt-BR">feito com <span aria-label="amor">♥</span> por <a href="https://github.com/aretw0">aretw0</a></footer>
 </body>
 </html>
 `;
@@ -374,12 +367,12 @@ function injectNotebookNavigation(htmlPath, currentOutput) {
 	if (html.includes(NAVIGATION_MARKER)) {
 		return;
 	}
-	if (!html.includes("</body>")) {
-		throw new Error(`HTML exportado sem </body>: ${htmlPath}`);
+	if (!/<body\b[^>]*>/i.test(html)) {
+		throw new Error(`HTML exportado sem <body>: ${htmlPath}`);
 	}
 	writeFileSync(
 		htmlPath,
-		html.replace("</body>", `${labNavigationHtml(currentOutput)}\n</body>`),
+		html.replace(/<body\b([^>]*)>/i, `<body$1>\n${labNavigationHtml(currentOutput)}`),
 	);
 }
 

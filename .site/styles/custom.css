@@ -56,17 +56,24 @@
   --vault-card-min-height: 13rem;
   --vault-card-title-lines: 2;
   --vault-card-body-lines: 3;
+  --vault-card-column-min: 18rem;
   display: grid;
   gap: 1rem;
-  grid-auto-rows: 1fr;
+  grid-auto-rows: minmax(var(--vault-card-min-height), auto);
   align-items: stretch;
+  align-content: start;
   margin-block: 1.5rem;
 }
 
 @media (min-width: 44rem) {
   .vault-card-grid {
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--vault-card-column-min)), 1fr));
   }
+}
+
+.vault-card-grid > * {
+  align-self: stretch;
+  margin-block: 0 !important;
 }
 
 .vault-card {
@@ -196,15 +203,22 @@
 .vault-metric-grid {
   display: grid;
   gap: 0.75rem;
-  grid-auto-rows: 1fr;
+  grid-auto-rows: minmax(7.5rem, auto);
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
   align-items: stretch;
+  align-content: start;
   margin-block: 1.5rem;
+}
+
+.vault-metric-grid > * {
+  align-self: stretch;
+  margin-block: 0 !important;
 }
 
 .vault-metric {
   display: grid;
   grid-template-rows: auto minmax(2.6em, 1fr);
+  min-height: 7.5rem;
   height: 100%;
   border: 1px solid var(--sl-color-hairline);
   border-radius: 0.85rem;
@@ -428,6 +442,7 @@
 }
 
 .vault-graph-view {
+  position: relative;
   margin: 1rem 0;
 }
 
@@ -483,8 +498,24 @@
   display: none;
 }
 
-.vault-graph-view__nodes a:is(:hover, :focus-visible) .vault-graph-view__label--full {
-  display: block;
+.vault-graph-view[data-vault-hover-label]::after {
+  position: absolute;
+  z-index: 5;
+  right: clamp(0.75rem, 4vw, 1.25rem);
+  bottom: 2.25rem;
+  left: clamp(0.75rem, 4vw, 1.25rem);
+  border: 1px solid color-mix(in srgb, var(--sl-color-accent) 42%, var(--sl-color-hairline));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--sl-color-bg-nav) 94%, transparent);
+  box-shadow: 0 0.75rem 1.8rem color-mix(in srgb, var(--sl-color-black) 18%, transparent);
+  color: var(--sl-color-white);
+  content: attr(data-vault-hover-label);
+  font-size: var(--sl-text-sm);
+  font-weight: 750;
+  line-height: 1.2;
+  padding: 0.55rem 0.75rem;
+  pointer-events: none;
+  text-align: center;
 }
 
 .vault-graph-view__nodes a:hover circle,

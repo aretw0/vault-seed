@@ -35,7 +35,7 @@ function graphHeroHtml() {
     return `<line x1="${source.x.toFixed(1)}" y1="${source.y.toFixed(1)}" x2="${target.x.toFixed(1)}" y2="${target.y.toFixed(1)}" />`;
   }).join('');
   const circles = positioned.map((node) => (
-    `<a href="${base}/${escapeHtml(node.id)}/" aria-label="${escapeHtml(node.title)}: ${node.degree} conexões">` +
+    `<a href="${base}/${escapeHtml(node.id)}/" aria-label="${escapeHtml(node.title)}: ${node.degree} conexões" data-vault-graph-node-label="${escapeHtml(node.title)}">` +
     `<title>${escapeHtml(node.title)} · ${node.degree} conexões</title>` +
     `<circle cx="${node.x.toFixed(1)}" cy="${node.y.toFixed(1)}" r="${node.size.toFixed(1)}" style="--vault-node-weight:${node.weight.toFixed(2)}" />` +
     `<text class="vault-graph-view__label vault-graph-view__label--short" x="${node.x.toFixed(1)}" y="${(node.y + node.size + 8).toFixed(1)}" text-anchor="middle">${escapeHtml(truncateLabel(node.title))}</text>` +
@@ -72,7 +72,7 @@ const heroGraphHtml = graphHeroHtml();
     },
   }}
 >
-  <section class="vault-home-section" aria-labelledby="vault-home-base">
+  <section class="vault-home-section" aria-label="Possibilidades de uso do vault-seed">
     <p class="vault-lead">
       O vault-seed é uma base flexível: ele não tenta prever o uso final do seu espaço,
       mas entrega uma base coerente de navegação, publicação, blocos visuais e Lab para que
@@ -82,7 +82,7 @@ const heroGraphHtml = graphHeroHtml();
     <div class="vault-card-grid">
       <article class="vault-card">
         <span class="vault-card__eyebrow">Site pessoal</span>
-        <h2 class="vault-card__title" id="vault-home-base">Cartão de visita ou jardim digital</h2>
+        <h2 class="vault-card__title">Cartão de visita ou jardim digital</h2>
         <p class="vault-card__body">
           Publique notas selecionadas com busca, sidebar, metadados e paletas consistentes.
         </p>
@@ -148,6 +148,29 @@ const heroGraphHtml = graphHeroHtml();
     </div>
   </section>
 </StarlightPage>
+
+<script is:inline>
+  (() => {
+    function setupGraphLabels() {
+      document.querySelectorAll('.vault-graph-view').forEach((figure) => {
+        if (figure.dataset.vaultGraphHoverReady === '1') return;
+        figure.dataset.vaultGraphHoverReady = '1';
+        const nodes = figure.querySelectorAll('[data-vault-graph-node-label]');
+        nodes.forEach((node) => {
+          const label = node.getAttribute('data-vault-graph-node-label') || '';
+          const show = () => figure.setAttribute('data-vault-hover-label', label);
+          const hide = () => figure.removeAttribute('data-vault-hover-label');
+          node.addEventListener('mouseenter', show);
+          node.addEventListener('focus', show);
+          node.addEventListener('mouseleave', hide);
+          node.addEventListener('blur', hide);
+        });
+      });
+    }
+    setupGraphLabels();
+    document.addEventListener('astro:page-load', setupGraphLabels);
+  })();
+</script>
 
 <style>
   .vault-home-section {

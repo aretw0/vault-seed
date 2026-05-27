@@ -37,14 +37,15 @@ test('Graph previews show truncated labels while preserving full accessible titl
     assert.match(source, /<title>.*node\.title/s);
     assert.match(source, /aria-label=.*node\.title/s);
     assert.match(source, /vault-graph-view__label--short[\s\S]*truncateLabel\(node\.title\)/);
-    assert.match(source, /vault-graph-view__label--full[\s\S]*node\.title/);
+    assert.match(source, /data-vault-graph-node-label/);
   }
 
   assert.match(home, /heroNodes = explore\.graph\.insights\.hubs\.slice\(0, 6\)/);
   assert.match(home, /rótulo completo ao passar o mouse ou focar/);
   assert.match(css, /overflow: visible/);
-  assert.match(css, /\.vault-graph-view__label--full/);
-  assert.match(css, /\.vault-graph-view__nodes a:is\(:hover, :focus-visible\) \.vault-graph-view__label--full/);
+  assert.match(css, /\.vault-graph-view\[data-vault-hover-label\]::after/);
+  assert.match(css, /content: attr\(data-vault-hover-label\)/);
+  assert.match(css, /z-index: 5/);
 });
 
 test('Marimo shell spacing remains topbar-aware and smoke-tested', () => {
@@ -55,15 +56,16 @@ test('Marimo shell spacing remains topbar-aware and smoke-tested', () => {
   assert.match(css, /--vault-lab-topbar-height: 3\.5rem/);
   assert.match(css, /--vault-lab-content-offset: calc\(var\(--vault-lab-topbar-height\) \+ var\(--vault-lab-content-gap\)\)/);
   assert.match(css, /:root\[data-vault-marimo-shell="lab"\] #root/);
-  assert.match(css, /padding-top: var\(--vault-lab-content-offset\) !important/);
-  assert.match(css, /padding-top: calc\(var\(--vault-lab-topbar-height\) \+ var\(--vault-lab-content-gap\) \+ env\(safe-area-inset-top, 0px\)\) !important/);
+  assert.match(css, /position: sticky/);
+  assert.match(css, /padding-top: var\(--vault-lab-content-gap\) !important/);
+  assert.match(css, /padding-top: calc\(var\(--vault-lab-content-gap\) \+ env\(safe-area-inset-top, 0px\)\) !important/);
   assert.match(css, /\.vault-lab-footer/);
 
   assert.match(smoke, /document\.querySelector\("#root"\)/);
   assert.match(smoke, /document\.querySelector\("\.vault-lab-topbar"\)/);
   assert.match(smoke, /paddingTop: Number\.parseFloat\(getComputedStyle\(notebookRoot\)\.paddingTop\)/);
-  assert.match(smoke, /layout\.root\.top \+ layout\.root\.paddingTop < layout\.topbar\.bottom/);
-  assert.match(smoke, /notebook content starts under the fixed Lab topbar/);
+  assert.match(smoke, /layout\.root\.contentTop < layout\.topbar\.bottom/);
+  assert.match(smoke, /notebook content starts under the Lab topbar/);
 
   assert.match(shellTest, /assert\.doesNotMatch\(exportNotebooks, \/vault-marimo-fullscreen-toggle\//);
   assert.match(shellTest, /assert\.match\(exportNotebooks, \/vault-seed-slides-lite\\\.html\//);

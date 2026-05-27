@@ -709,9 +709,9 @@ iframe {
 }
 
 :root[data-vault-marimo-shell="lab"] .vault-lab-topbar {
-  position: fixed;
+  position: sticky;
   z-index: 10000;
-  inset: 0 0 auto 0;
+  inset-block-start: 0;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -798,9 +798,9 @@ iframe {
 :root[data-vault-marimo-shell="lab"] #root {
   box-sizing: border-box;
   width: calc(100% - var(--vault-lab-sidebar-width));
-  min-height: 100dvh;
+  min-height: calc(100dvh - var(--vault-lab-topbar-height));
   margin-left: var(--vault-lab-sidebar-width);
-  padding-top: var(--vault-lab-content-offset) !important;
+  padding-top: var(--vault-lab-content-gap) !important;
   padding-bottom: 4rem !important;
   transition: margin-left 160ms ease, width 160ms ease;
 }
@@ -963,7 +963,7 @@ iframe {
   :root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] #root {
     width: 100%;
     margin-left: 0;
-    padding-top: calc(var(--vault-lab-topbar-height) + var(--vault-lab-content-gap) + env(safe-area-inset-top, 0px)) !important;
+    padding-top: calc(var(--vault-lab-content-gap) + env(safe-area-inset-top, 0px)) !important;
   }
 
   .vault-lab-footer,

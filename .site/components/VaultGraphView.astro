@@ -51,7 +51,7 @@ const byId = new Map(positioned.map((node) => [node.id, node]));
     </g>
     <g class="vault-graph-view__nodes">
       {positioned.map((node) => (
-        <a href={node.href} aria-label={`${node.title}: ${node.degree} conexões`}>
+        <a href={node.href} aria-label={`${node.title}: ${node.degree} conexões`} data-vault-graph-node-label={node.title}>
           <title>{node.title} · {node.degree} conexões</title>
           <circle cx={node.x} cy={node.y} r={node.size} style={`--vault-node-weight: ${node.weight}`} />
           {showLabels && <text class="vault-graph-view__label vault-graph-view__label--short" x={node.x} y={node.y + node.size + 8} text-anchor="middle">{truncateLabel(node.title)}</text>}
@@ -64,3 +64,26 @@ const byId = new Map(positioned.map((node) => [node.id, node]));
     {positioned.length} nós em destaque · {selectedLinks.length} relações renderizadas localmente em SVG.
   </figcaption>
 </figure>
+
+<script is:inline>
+  (() => {
+    function setupGraphLabels() {
+      document.querySelectorAll('.vault-graph-view').forEach((figure) => {
+        if (figure.dataset.vaultGraphHoverReady === '1') return;
+        figure.dataset.vaultGraphHoverReady = '1';
+        const nodes = figure.querySelectorAll('[data-vault-graph-node-label]');
+        nodes.forEach((node) => {
+          const label = node.getAttribute('data-vault-graph-node-label') || '';
+          const show = () => figure.setAttribute('data-vault-hover-label', label);
+          const hide = () => figure.removeAttribute('data-vault-hover-label');
+          node.addEventListener('mouseenter', show);
+          node.addEventListener('focus', show);
+          node.addEventListener('mouseleave', hide);
+          node.addEventListener('blur', hide);
+        });
+      });
+    }
+    setupGraphLabels();
+    document.addEventListener('astro:page-load', setupGraphLabels);
+  })();
+</script>
