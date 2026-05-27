@@ -1,38 +1,38 @@
 # Agents Lab
 
-[`agents-lab`](https://github.com/aretw0/agents-lab) e outro projeto do mesmo
-ecossistema, usado como laboratorio de agentes para curar capacidades que podem
-apoiar o desenvolvimento do `vault-seed`, especialmente skills, extensoes,
+[`agents-lab`](https://github.com/aretw0/agents-lab) é outro projeto do mesmo
+ecossistema, usado como laboratório de agentes para curar capacidades que podem
+apoiar o desenvolvimento do `vault-seed`, especialmente skills, extensões,
 tools e pesquisas operacionais sobre agentes.
 
-Ele nao faz parte deste repositorio e tambem nao faz parte do vault gerado para
-o usuario final. Nesta maquina de desenvolvimento, o checkout local fica em
-`../../agents-lab`; essa localizacao e contexto de mantenedor, nao contrato do
+Ele não faz parte deste repositório e também não faz parte do vault gerado para
+o usuário final. Nesta máquina de desenvolvimento, o checkout local fica em
+`../../agents-lab`; essa localização é contexto de mantenedor, não contrato do
 template.
 
-Referencias a esse projeto devem ficar em documentacao tecnica do template,
-specs, planos ou notas de manutencao. Notas em `99 - Meta e Anexos/` devem falar
-com o usuario final e evitar depender de caminhos locais.
+Referências a esse projeto devem ficar em documentação técnica do template,
+specs, planos ou notas de manutenção. Notas em `99 - Meta e Anexos/` devem falar
+com o usuário final e evitar depender de caminhos locais.
 
-## Relacao Com O Vault Seed
+## Relação Com O Vault Seed
 
-Use `agents-lab` como ambiente de incubacao quando uma capacidade de agente
-precisa ser reutilizavel fora de uma unica sessao de Codex ou Claude. O
-`vault-seed` deve receber apenas o que ja virou contrato claro para o usuario:
-scripts, documentacao, validacoes ou arquivos versionados.
+Use `agents-lab` como ambiente de incubação quando uma capacidade de agente
+precisa ser reutilizável fora de uma única sessão de Codex ou Claude. O
+`vault-seed` deve receber apenas o que já virou contrato claro para o usuário:
+scripts, documentação, validações ou arquivos versionados.
 
 ## Marimo
 
-Para Marimo, a recomendacao atual e separar duas camadas:
+Para Marimo, a recomendação atual é separar duas camadas:
 
-- **Arquivo e terminal:** fluxo estavel hoje. O agente edita notebooks `.py`,
-  roda `pnpm run notebooks:check`, valida execucao de sessao e revisa
+- **Arquivo e terminal:** fluxo estável hoje. O agente edita notebooks `.py`,
+  roda `pnpm run notebooks:check`, valida execução de sessão e revisa
   `git diff`.
 - **Runtime Marimo:** fluxo a estudar. `marimo pair`, MCP e ACP podem dar acesso
-  a celulas, variaveis em memoria e UI, mas devem entrar como integracao
+  a células, variáveis em memória e UI, mas devem entrar como integração
   governada, com testes e fallback para o fluxo de arquivo.
 
-Um backlog natural para `agents-lab` e uma skill/tool Marimo que:
+Um backlog natural para `agents-lab` é uma skill/tool Marimo que:
 
 - inicia `pnpm run notebooks:dev`;
 - gera prompts com `pnpm run notebooks:pair`;
@@ -41,12 +41,12 @@ Um backlog natural para `agents-lab` e uma skill/tool Marimo que:
 - inspeciona diffs antes de publicar;
 - orienta quando atualizar `.site/lab.notebooks.json`.
 
-Essa integracao deve documentar explicitamente se esta operando so por arquivo
-ou se esta conectada ao runtime vivo do Marimo.
+Essa integração deve documentar explicitamente se está operando só por arquivo
+ou se está conectada ao runtime vivo do Marimo.
 
 ## Refarm
 
-`refarm` pode servir como referencia de operacao e orquestracao no ecossistema,
-mas nao e dependencia do `vault-seed`. Qualquer padrao inspirado nele deve
-chegar aqui como contrato pequeno: arquivo, comando, validacao ou documentacao
-que funcione sem checkout local de outro repositorio.
+`refarm` pode servir como referência de operação e orquestração no ecossistema,
+mas não é dependência do `vault-seed`. Qualquer padrão inspirado nele deve
+chegar aqui como contrato pequeno: arquivo, comando, validação ou documentação
+que funcione sem checkout local de outro repositório.

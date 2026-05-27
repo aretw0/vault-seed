@@ -24,7 +24,7 @@ test("README separates generated-vault users from template contributors", () => 
 test("technical docs index states user versus template-maintainer entrypoints", () => {
   const index = read("docs/INDEX.md");
 
-  assert.match(index, /documentacao operacional do projeto `vault-seed`/);
+  assert.match(index, /documenta[çc][aã]o operacional do projeto `vault-seed`/);
   assert.match(index, /Para aprender a usar o vault como sistema de conhecimento/);
   assert.match(index, /Como evitar drift/);
 });
