@@ -62,20 +62,36 @@ function listHtmlFiles(dir, results = []) {
 // Links in built HTML are <base>/slug, but files live at dist/slug.
 const astroBase = (process.env.ASTRO_BASE || "").replace(/\/$/, "");
 
-function distExists(urlPath) {
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function resolveDistFile(urlPath) {
+  const [pathOnly] = String(urlPath).split(/[?#]/, 1);
   // Strip base prefix so /vault-seed/foo/bar → /foo/bar before resolving.
-  let rel = urlPath;
+  let rel = pathOnly;
   if (astroBase && rel.startsWith(astroBase + "/")) {
     rel = rel.slice(astroBase.length);
   }
   // /foo/bar/ → dist/foo/bar/index.html  or  dist/foo/bar.html
   const clean = rel.replace(/^\//, "").replace(/\/$/, "");
-  if (!clean) return fs.existsSync(path.join(distDir, "index.html"));
-  return (
-    fs.existsSync(path.join(distDir, clean, "index.html")) ||
-    fs.existsSync(path.join(distDir, clean + ".html")) ||
-    fs.existsSync(path.join(distDir, clean))
-  );
+  const candidates = clean
+    ? [path.join(distDir, clean, "index.html"), path.join(distDir, clean + ".html"), path.join(distDir, clean)]
+    : [path.join(distDir, "index.html")];
+  return candidates.find((candidate) => fs.existsSync(candidate)) || null;
+}
+
+function distExists(urlPath) {
+  const filePath = resolveDistFile(urlPath);
+  if (!filePath) return false;
+
+  const hash = String(urlPath).split("#", 2)[1]?.split("?", 1)[0];
+  if (!hash || hash.startsWith(":~:")) return true;
+
+  const decodedHash = decodeURIComponent(hash);
+  const html = fs.readFileSync(filePath, "utf8");
+  const anchorPattern = new RegExp(`\\s(?:id|name)="${escapeRegExp(decodedHash)}"`);
+  return anchorPattern.test(html);
 }
 
 // ── 1. dist/ must exist ───────────────────────────────────────────────────────

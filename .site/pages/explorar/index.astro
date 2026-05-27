@@ -1,5 +1,6 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import VaultGraphView from '../../components/VaultGraphView.astro';
 import { buildVaultExploreData } from '../../lib/vault-explore';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -254,7 +255,8 @@ const exploreJson = JSON.stringify(explore).replace(/</g, '\\u003c');
         </div>
         <span class="vault-status">{explore.graph.nodes.length} nós · {explore.graph.links.length} links</span>
       </div>
-      <div class="vault-graph-cloud" aria-label="Principais nós do grafo">
+      <VaultGraphView nodes={explore.graph.nodes} links={explore.graph.links} base={base} limit={10} title="Graph view dos principais hubs do vault" />
+      <div class="vault-graph-cloud" aria-label="Principais nós do grafo em lista">
         {hubNodes.map((node) => (
           <a href={`${base}/${node.id}/`} style={`--vault-node-weight: ${Math.min(1.65, 0.9 + node.degree / 10)}`}>{node.title}</a>
         ))}

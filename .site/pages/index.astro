@@ -1,7 +1,49 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { buildVaultExploreData } from '../lib/vault-explore';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const explore = buildVaultExploreData();
+const heroNodes = explore.graph.insights.hubs.slice(0, 6);
+const heroNodeIds = new Set(heroNodes.map((node) => node.id));
+const heroLinks = explore.graph.links.filter((link) => heroNodeIds.has(link.source) && heroNodeIds.has(link.target));
+function escapeHtml(value: string) {
+  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function truncateLabel(value: string, max = 16) {
+  return value.length > max ? `${value.slice(0, max - 1)}…` : value;
+}
+function graphHeroHtml() {
+  const center = 100;
+  const radius = 58;
+  const maxDegree = Math.max(1, ...heroNodes.map((node) => node.degree));
+  const positioned = heroNodes.map((node, index) => {
+    const angle = heroNodes.length > 1 ? (Math.PI * 2 * index) / heroNodes.length - Math.PI / 2 : 0;
+    return {
+      ...node,
+      x: center + Math.cos(angle) * radius,
+      y: center + Math.sin(angle) * radius,
+      size: 5 + Math.min(9, node.degree * 1.15),
+      weight: 0.72 + (node.degree / maxDegree) * 0.6,
+    };
+  });
+  const byId = new Map(positioned.map((node) => [node.id, node]));
+  const lines = heroLinks.slice(0, 10).map((link) => {
+    const source = byId.get(link.source);
+    const target = byId.get(link.target);
+    if (!source || !target) return '';
+    return `<line x1="${source.x.toFixed(1)}" y1="${source.y.toFixed(1)}" x2="${target.x.toFixed(1)}" y2="${target.y.toFixed(1)}" />`;
+  }).join('');
+  const circles = positioned.map((node) => (
+    `<a href="${base}/${escapeHtml(node.id)}/" aria-label="${escapeHtml(node.title)}: ${node.degree} conexões">` +
+    `<title>${escapeHtml(node.title)} · ${node.degree} conexões</title>` +
+    `<circle cx="${node.x.toFixed(1)}" cy="${node.y.toFixed(1)}" r="${node.size.toFixed(1)}" style="--vault-node-weight:${node.weight.toFixed(2)}" />` +
+    `<text x="${node.x.toFixed(1)}" y="${(node.y + node.size + 8).toFixed(1)}" text-anchor="middle">${escapeHtml(truncateLabel(node.title))}</text>` +
+    `</a>`
+  )).join('');
+  return `<figure class="vault-graph-view vault-graph-view--hero" aria-label="Graph view do vault"><svg viewBox="0 0 200 200" role="img"><title>Graph view do vault</title><g class="vault-graph-view__links" aria-hidden="true">${lines}</g><g class="vault-graph-view__nodes">${circles}</g></svg><figcaption>${positioned.length} hubs navegáveis · rótulos abreviados com título completo no foco</figcaption></figure>`;
+}
+const heroGraphHtml = graphHeroHtml();
 ---
 
 <StarlightPage
@@ -10,15 +52,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     template: 'splash',
     hero: {
       image: {
-        html: `<div class="hero-diagram"><pre data-language="mermaid">graph TB
-  V(("vault-seed")) --> D["Diário"]
-  V --> P["Projetos"]
-  V --> A["Áreas"]
-  V --> R["Recursos"]
-  V --> Q["Arquivo"]
-  P --> S(["Site publicado"])
-  R -.-> P
-  A -.-> P</pre></div>`,
+        html: heroGraphHtml,
       },
       tagline: 'Uma base flexível para vaults locais: arquivos puros, publicação coerente e Lab integrado sem impor o uso final.',
       actions: [
@@ -116,6 +150,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 <style>
   .vault-home-section {
+    --vault-card-min-height: 15rem;
+    --vault-card-title-lines: 2;
+    --vault-card-body-lines: 3;
     margin-block: clamp(2rem, 4vw, 4rem);
   }
 </style>

@@ -7,6 +7,7 @@ import { collectVaultEntries } from './.site/integrations/collect-published-slug
 import { copyVaultAttachments } from './.site/integrations/copy-vault-attachments.js';
 import { generateVaultJson } from './.site/integrations/generate-vault-json.js';
 import { sidebarSections } from './.site/sidebar.config.js';
+import labNotebooksManifest from './.site/lab.notebooks.json' with { type: 'json' };
 import {
   deriveNoteIntents,
   loadInformationArchitecture,
@@ -78,7 +79,31 @@ function buildSidebarItems(entries) {
     })
     .filter(Boolean);
 }
-const sidebar = buildSidebarItems(vaultEntries);
+function notebookAnchor(output) {
+  return `notebook-${String(output).replace(/\.html$/, '').replace(/[^A-Za-z0-9_-]+/g, '-')}`;
+}
+const labBaseHref = `${base.replace(/\/$/, '')}/lab`;
+const labSidebarSection = {
+  label: 'Lab',
+  collapsed: true,
+  items: [
+    { label: 'Índice do Lab', link: `${base.replace(/\/$/, '')}/lab/` },
+    ...labNotebooksManifest
+      .filter((notebook) => notebook.publish)
+      .map((notebook) => ({
+        label: notebook.title,
+        link: `${labBaseHref}/#${notebookAnchor(notebook.output)}`,
+      })),
+  ],
+};
+const vaultSidebar = buildSidebarItems(vaultEntries);
+const exploreSectionIndex = vaultSidebar.findIndex((section) => section.label === 'Explorar');
+const labSectionIndex = exploreSectionIndex >= 0 ? exploreSectionIndex + 1 : Math.min(3, vaultSidebar.length);
+const sidebar = [
+  ...vaultSidebar.slice(0, labSectionIndex),
+  labSidebarSection,
+  ...vaultSidebar.slice(labSectionIndex),
+];
 const rssHref = `${base.replace(/\/$/, '')}/rss.xml`;
 
 // Client-side Mermaid rendering with palette-aware theming, rendered/code toggle,

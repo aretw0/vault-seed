@@ -53,8 +53,13 @@
 }
 
 .vault-card-grid {
+  --vault-card-min-height: 13rem;
+  --vault-card-title-lines: 2;
+  --vault-card-body-lines: 3;
   display: grid;
   gap: 1rem;
+  grid-auto-rows: 1fr;
+  align-items: stretch;
   margin-block: 1.5rem;
 }
 
@@ -69,6 +74,8 @@
   flex-direction: column;
   gap: 0.75rem;
   min-width: 0;
+  min-height: var(--vault-card-min-height);
+  height: 100%;
   border: 1px solid var(--sl-color-hairline);
   border-radius: 0.85rem;
   background:
@@ -100,6 +107,10 @@
 }
 
 .vault-card__title {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--vault-card-title-lines);
   color: var(--sl-color-white);
   font-size: clamp(1.1rem, 1rem + 0.35vw, 1.35rem);
   line-height: 1.2;
@@ -107,6 +118,10 @@
 }
 
 .vault-card__body {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--vault-card-body-lines);
   color: var(--sl-color-gray-2);
   line-height: 1.65;
   margin: 0;
@@ -295,6 +310,9 @@
 .vault-resource-card {
   display: grid;
   gap: 0.55rem;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-height: 11rem;
+  min-width: 0;
   border: 1px solid var(--sl-color-hairline);
   border-radius: 0.85rem;
   background: var(--sl-color-bg-nav);
@@ -311,6 +329,10 @@
 }
 
 .vault-resource-card h3 a {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   color: var(--sl-color-white);
   text-decoration: none;
 }
@@ -320,6 +342,10 @@
 }
 
 .vault-resource-card p {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
   color: var(--sl-color-gray-2);
   line-height: 1.6;
 }
@@ -328,6 +354,8 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
+  max-height: 4.75rem;
+  overflow: hidden;
   color: var(--sl-color-gray-3);
   font-size: var(--sl-text-xs);
 }
@@ -390,6 +418,82 @@
     radial-gradient(circle at top left, color-mix(in srgb, var(--sl-color-accent) 20%, transparent), transparent 34%),
     var(--sl-color-bg-nav);
   padding: clamp(1rem, 0.8rem + 1vw, 1.5rem);
+}
+
+.vault-graph-view {
+  margin: 1rem 0;
+}
+
+.vault-graph-view svg {
+  display: block;
+  width: 100%;
+  max-height: min(34rem, 70vh);
+  border: 1px solid color-mix(in srgb, var(--sl-color-accent) 24%, var(--sl-color-hairline));
+  border-radius: 1rem;
+  background:
+    radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--sl-color-accent) 13%, transparent), transparent 44%),
+    color-mix(in srgb, var(--sl-color-bg) 72%, var(--sl-color-bg-nav));
+}
+
+.vault-graph-view__links line {
+  stroke: color-mix(in srgb, var(--sl-color-accent) 34%, var(--sl-color-hairline));
+  stroke-width: 0.75;
+  vector-effect: non-scaling-stroke;
+}
+
+.vault-graph-view__nodes a {
+  color: var(--sl-color-text-accent);
+  outline: none;
+}
+
+.vault-graph-view__nodes circle {
+  fill: color-mix(in srgb, var(--sl-color-accent) calc(40% * var(--vault-node-weight, 1)), var(--sl-color-bg-nav));
+  stroke: var(--sl-color-accent);
+  stroke-width: 1.25;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: fill 160ms ease, transform 160ms ease, stroke-width 160ms ease;
+}
+
+.vault-graph-view__nodes text {
+  fill: var(--sl-color-gray-2);
+  font-size: 6px;
+  font-weight: 700;
+  paint-order: stroke;
+  pointer-events: none;
+  stroke: var(--sl-color-bg);
+  stroke-width: 2.5px;
+}
+
+.vault-graph-view__nodes a:hover circle,
+.vault-graph-view__nodes a:focus-visible circle {
+  fill: var(--sl-color-accent);
+  stroke-width: 2;
+  transform: scale(1.18);
+}
+
+.vault-graph-view__nodes a:hover text,
+.vault-graph-view__nodes a:focus-visible text {
+  fill: var(--sl-color-white);
+}
+
+.vault-graph-view figcaption {
+  color: var(--sl-color-gray-3);
+  font-size: var(--sl-text-xs);
+  margin-block-start: 0.45rem;
+  text-align: center;
+}
+
+.vault-graph-view--hero {
+  max-width: min(34rem, 100%);
+}
+
+.vault-graph-view--no-labels svg {
+  max-height: min(25rem, 56vh);
+}
+
+.vault-graph-view--no-labels .vault-graph-view__nodes circle {
+  filter: drop-shadow(0 0.35rem 0.7rem color-mix(in srgb, var(--sl-color-black) 22%, transparent));
 }
 
 .vault-graph-cloud {

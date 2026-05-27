@@ -12,12 +12,17 @@ function resolveNotebooksPath(value: unknown): string {
 }
 const notebooksPath = resolveNotebooksPath(import.meta.env.VAULT_NOTEBOOKS_PATH);
 
+function notebookAnchor(output: string): string {
+  return `notebook-${output.replace(/\.html$/, '').replace(/[^A-Za-z0-9_-]+/g, '-')}`;
+}
+
 const notebooks = manifest
   .filter((notebook) => notebook.publish)
   .map((notebook) => ({
     title: notebook.title,
     href: `${base}/${notebooksPath}/${notebook.output}`,
     description: notebook.description,
+    anchor: notebookAnchor(notebook.output),
   }));
 ---
 
@@ -29,7 +34,8 @@ const notebooks = manifest
 
   <p>
     Os notebooks são exportados como WebAssembly e servidos junto com o site.
-    Rode <code>pnpm run site:dev:lab</code> para ver a versão empacotada localmente;
+    Rode <code>pnpm run site:dev:lab</code> para ver a versão empacotada localmente
+    ou <code>pnpm run site:dev:lab:host</code> para testar no celular pela rede local;
     em produção, o GitHub Actions faz a mesma exportação durante o deploy.
   </p>
 
@@ -40,7 +46,7 @@ const notebooks = manifest
 
   <section class="vault-card-grid notebook-grid" aria-label="Notebooks publicados">
     {notebooks.map((notebook) => (
-      <article class="vault-card notebook-card" data-notebook-link={notebook.href}>
+      <article class="vault-card notebook-card" id={notebook.anchor} data-notebook-link={notebook.href}>
         <span class="vault-card__eyebrow">Notebook</span>
         <h2 class="vault-card__title">{notebook.title}</h2>
         <p class="vault-card__body">{notebook.description}</p>
@@ -78,10 +84,12 @@ const notebooks = manifest
 
 <style>
   .notebook-grid {
+    --vault-card-min-height: 14rem;
+    --vault-card-body-lines: 3;
     margin-block: 1.75rem;
   }
 
   .notebook-card {
-    min-height: 13rem;
+    min-height: var(--vault-card-min-height);
   }
 </style>

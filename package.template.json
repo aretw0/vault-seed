@@ -39,6 +39,7 @@
     "notebooks:export:public": "node scripts/export_notebooks.mjs --public",
     "notebooks:export:slides": "node scripts/export_notebook_slides.mjs",
     "site:dev:lab": "pnpm run notebooks:export:public && astro dev",
+    "site:dev:lab:host": "pnpm run notebooks:export:public && astro dev --host 0.0.0.0",
     "validate": "pnpm run lint && pnpm run audit:ia && pnpm run site:audit:sidebar && pnpm run test && pnpm run validate:onboarding && pnpm run validate:pt-text && pnpm run validate:theme && pnpm run validate:mermaid"
   },
   "keywords": [],

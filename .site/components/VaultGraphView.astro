@@ -1,0 +1,65 @@
+---
+type GraphNode = { id: string; title: string; degree: number; folder?: string };
+type GraphLink = { source: string; target: string };
+
+interface Props {
+  nodes: GraphNode[];
+  links: GraphLink[];
+  base?: string;
+  limit?: number;
+  title?: string;
+  showLabels?: boolean;
+}
+
+const { nodes, links, base = '', limit = 12, title = 'Graph view do vault', showLabels = true } = Astro.props;
+function truncateLabel(value: string, max = 16): string {
+  return value.length > max ? `${value.slice(0, max - 1)}…` : value;
+}
+const selected = [...nodes]
+  .sort((a, b) => (b.degree - a.degree) || a.title.localeCompare(b.title, 'pt'))
+  .slice(0, limit);
+const selectedIds = new Set(selected.map((node) => node.id));
+const selectedLinks = links.filter((link) => selectedIds.has(link.source) && selectedIds.has(link.target)).slice(0, limit * 2);
+const center = 100;
+const radius = 66;
+const maxDegree = Math.max(1, ...selected.map((node) => node.degree));
+const positioned = selected.map((node, index) => {
+  const angle = selected.length > 1 ? (Math.PI * 2 * index) / selected.length - Math.PI / 2 : 0;
+  const weight = 0.72 + (node.degree / maxDegree) * 0.6;
+  return {
+    ...node,
+    x: center + Math.cos(angle) * radius,
+    y: center + Math.sin(angle) * radius,
+    size: 5 + Math.min(9, node.degree * 1.15),
+    weight,
+    href: `${base}/${node.id}/`,
+  };
+});
+const byId = new Map(positioned.map((node) => [node.id, node]));
+---
+
+<figure class:list={['vault-graph-view', !showLabels && 'vault-graph-view--no-labels']} aria-label={title}>
+  <svg viewBox="0 0 200 200" role="img" aria-labelledby="vault-graph-view-title">
+    <title id="vault-graph-view-title">{title}</title>
+    <g class="vault-graph-view__links" aria-hidden="true">
+      {selectedLinks.map((link) => {
+        const source = byId.get(link.source);
+        const target = byId.get(link.target);
+        if (!source || !target) return null;
+        return <line x1={source.x} y1={source.y} x2={target.x} y2={target.y} />;
+      })}
+    </g>
+    <g class="vault-graph-view__nodes">
+      {positioned.map((node) => (
+        <a href={node.href} aria-label={`${node.title}: ${node.degree} conexões`}>
+          <title>{node.title} · {node.degree} conexões</title>
+          <circle cx={node.x} cy={node.y} r={node.size} style={`--vault-node-weight: ${node.weight}`} />
+          {showLabels && <text x={node.x} y={node.y + node.size + 8} text-anchor="middle">{truncateLabel(node.title)}</text>}
+        </a>
+      ))}
+    </g>
+  </svg>
+  <figcaption>
+    {positioned.length} nós em destaque · {selectedLinks.length} relações renderizadas localmente em SVG.
+  </figcaption>
+</figure>

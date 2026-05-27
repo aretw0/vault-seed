@@ -44,6 +44,7 @@
     "notebooks:export:public": "node scripts/export_notebooks.mjs --public",
     "notebooks:export:slides": "node scripts/export_notebook_slides.mjs",
     "site:dev:lab": "pnpm run notebooks:export:public && astro dev",
+    "site:dev:lab:host": "pnpm run notebooks:export:public && astro dev --host 0.0.0.0",
     "diagrams:update": "mdt update",
     "diagrams:check": "mdt check",
     "release:package:smoke": "node scripts/release_package_smoke.mjs",
