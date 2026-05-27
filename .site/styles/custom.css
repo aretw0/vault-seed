@@ -488,18 +488,25 @@
   stroke-width: 2.5px;
 }
 
+.vault-graph-view__label {
+  transition: opacity 120ms ease, visibility 120ms ease;
+}
+
 .vault-graph-view__label--full {
-  display: none;
   font-size: 7px;
   letter-spacing: -0.01em;
+  opacity: 0;
+  visibility: hidden;
 }
 
 .vault-graph-view__nodes a:is(:hover, :focus-visible) .vault-graph-view__label--short {
-  display: none;
+  opacity: 0;
+  visibility: hidden;
 }
 
 .vault-graph-view__nodes a:is(:hover, :focus-visible) .vault-graph-view__label--full {
-  display: block;
+  opacity: 1;
+  visibility: visible;
 }
 
 .vault-graph-view__nodes a:hover circle,
