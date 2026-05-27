@@ -498,24 +498,8 @@
   display: none;
 }
 
-.vault-graph-view[data-vault-hover-label]::after {
-  position: absolute;
-  z-index: 5;
-  right: clamp(0.75rem, 4vw, 1.25rem);
-  bottom: 2.25rem;
-  left: clamp(0.75rem, 4vw, 1.25rem);
-  border: 1px solid color-mix(in srgb, var(--sl-color-accent) 42%, var(--sl-color-hairline));
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--sl-color-bg-nav) 94%, transparent);
-  box-shadow: 0 0.75rem 1.8rem color-mix(in srgb, var(--sl-color-black) 18%, transparent);
-  color: var(--sl-color-white);
-  content: attr(data-vault-hover-label);
-  font-size: var(--sl-text-sm);
-  font-weight: 750;
-  line-height: 1.2;
-  padding: 0.55rem 0.75rem;
-  pointer-events: none;
-  text-align: center;
+.vault-graph-view__nodes a:is(:hover, :focus-visible) .vault-graph-view__label--full {
+  display: block;
 }
 
 .vault-graph-view__nodes a:hover circle,

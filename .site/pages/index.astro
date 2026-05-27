@@ -157,13 +157,9 @@ const heroGraphHtml = graphHeroHtml();
         figure.dataset.vaultGraphHoverReady = '1';
         const nodes = figure.querySelectorAll('[data-vault-graph-node-label]');
         nodes.forEach((node) => {
-          const label = node.getAttribute('data-vault-graph-node-label') || '';
-          const show = () => figure.setAttribute('data-vault-hover-label', label);
-          const hide = () => figure.removeAttribute('data-vault-hover-label');
-          node.addEventListener('mouseenter', show);
-          node.addEventListener('focus', show);
-          node.addEventListener('mouseleave', hide);
-          node.addEventListener('blur', hide);
+          const bringToFront = () => node.parentNode?.appendChild(node);
+          node.addEventListener('mouseenter', bringToFront);
+          node.addEventListener('focus', bringToFront);
         });
       });
     }

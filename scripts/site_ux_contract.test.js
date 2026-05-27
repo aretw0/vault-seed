@@ -43,9 +43,9 @@ test('Graph previews show truncated labels while preserving full accessible titl
   assert.match(home, /heroNodes = explore\.graph\.insights\.hubs\.slice\(0, 6\)/);
   assert.match(home, /rótulo completo ao passar o mouse ou focar/);
   assert.match(css, /overflow: visible/);
-  assert.match(css, /\.vault-graph-view\[data-vault-hover-label\]::after/);
-  assert.match(css, /content: attr\(data-vault-hover-label\)/);
-  assert.match(css, /z-index: 5/);
+  assert.match(home, /node\.parentNode\?\.appendChild\(node\)/);
+  assert.match(graph, /node\.parentNode\?\.appendChild\(node\)/);
+  assert.match(css, /\.vault-graph-view__nodes a:is\(:hover, :focus-visible\) \.vault-graph-view__label--full/);
 });
 
 test('Marimo shell spacing remains topbar-aware and smoke-tested', () => {
