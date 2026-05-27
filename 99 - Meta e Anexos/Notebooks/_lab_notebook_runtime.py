@@ -245,6 +245,46 @@ def write_local_dataframe_snapshot(dataframe, relative_path: str, *, format: str
     return _local_write_result(relative_path, target)
 
 
+def write_local_markdown_note(relative_path: str, body: str, *, frontmatter=None):
+    """Escreve uma nota Markdown local para Obsidian, Bases e Dataview.
+
+    Use quando uma análise do Lab deve virar artefato curável no vault. O HTML
+    publicado nunca escreve notas; ele consome snapshots/notas já versionados.
+    """
+    import os as _os
+
+    target = local_vault_path(relative_path)
+    if not target.endswith(".md"):
+        raise RuntimeError("Notas geradas pelo Lab devem usar extensão .md.")
+
+    _os.makedirs(_os.path.dirname(target), exist_ok=True)
+    metadata = dict(frontmatter or {})
+    metadata.setdefault("lab_generated", True)
+    metadata.setdefault("status", "rascunho")
+
+    def _yaml_scalar(value):
+        if isinstance(value, bool):
+            return "true" if value else "false"
+        if value is None:
+            return "null"
+        return str(value).replace("\n", " ")
+
+    lines = ["---"]
+    for key in sorted(metadata):
+        value = metadata[key]
+        if isinstance(value, (list, tuple)):
+            lines.append(f"{key}:")
+            for item in value:
+                lines.append(f"  - {_yaml_scalar(item)}")
+        else:
+            lines.append(f"{key}: {_yaml_scalar(value)}")
+    lines.extend(["---", "", str(body).rstrip(), ""])
+
+    with open(target, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines))
+    return _local_write_result(relative_path, target)
+
+
 def get_local_secret(name: str, default=None, *, required: bool = False):
     """Lê segredo do ambiente local sem expor credenciais no HTML publicado."""
     import os as _os

@@ -37,6 +37,8 @@ test("Lab ETL demo uses shared local/published runtime primitives", () => {
   assert.match(runtime, /def read_lab_dataset/);
   assert.match(runtime, /def write_local_json_snapshot/);
   assert.match(runtime, /def write_local_dataframe_snapshot/);
+  assert.match(runtime, /def write_local_markdown_note/);
+  assert.match(runtime, /lab_generated/);
   assert.match(runtime, /def get_local_secret/);
   assert.match(runtime, /def fetch_local_url_text/);
   assert.match(runtime, /async def scrape_local_page_text/);

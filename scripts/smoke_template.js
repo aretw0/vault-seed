@@ -87,6 +87,7 @@ const themeRuntimeCss = read(".site/styles/theme-runtime.css");
 const vaultLoader = read(".site/content.config.ts");
 const customCss = read(".site/styles/custom.css");
 const curationRoutineGuide = read("99 - Meta e Anexos/Rotina de Curadoria Editorial.md");
+const labDataGuide = read("99 - Meta e Anexos/Preparando Dados para o Lab.md");
 
 requireCondition(
   typeof pkg.packageManager === "string" &&
@@ -293,6 +294,9 @@ requireCondition(
     etlNotebook.includes("load_lab_manifest") &&
     etlNotebook.includes("read_lab_dataset") &&
     etlNotebook.includes("write_local_json_snapshot") &&
+    labDataGuide.includes("Gerando notas para Bases e Dataview") &&
+    labDataGuide.includes("write_local_markdown_note") &&
+    labDataGuide.includes("lab_generated = true") &&
     etlNotebook.includes("write_local_dataframe_snapshot") &&
     etlNotebook.includes("fetch_local_url_text") &&
     etlNotebook.includes("extract_local_image_text") &&

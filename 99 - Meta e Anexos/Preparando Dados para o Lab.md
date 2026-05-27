@@ -191,6 +191,41 @@ Para um dataset remoto, use `url` e trate CORS, tamanho da resposta, tempo de
 carregamento e privacidade como parte do contrato da fonte. O notebook ETL deixa
 fontes remotas como opt-in: por padrão ele só usa snapshots empacotados.
 
+## Gerando notas para Bases e Dataview
+
+O Lab também pode produzir notas Markdown locais, desde que isso aconteça antes
+da publicação. Essa é a ponte pragmática entre Marimo, Obsidian Bases e
+Dataview: o notebook calcula, mas o resultado vira uma nota versionada que o
+Obsidian consegue agregar imediatamente.
+
+```python
+from _lab_notebook_runtime import write_local_markdown_note
+
+write_local_markdown_note(
+    "00 - Entrada/Resumo gerado pelo Lab.md",
+    "# Resumo gerado pelo Lab\n\nRevise este rascunho antes de promover.",
+    frontmatter={
+        "type": "lab-note",
+        "status": "rascunho",
+        "source": "lab/etl-demo",
+        "tags": ["lab/gerado", "inbox/revisar"],
+    },
+)
+```
+
+Depois disso, no Obsidian você pode criar uma Base filtrando
+`lab_generated = true`, ou uma consulta Dataview:
+
+```text
+TABLE status, source
+FROM "00 - Entrada"
+WHERE lab_generated = true
+SORT file.mtime DESC
+```
+
+A regra continua a mesma: Marimo ajuda a gerar rascunhos e snapshots; o vault em
+Markdown continua sendo a fonte revisável e auditável.
+
 ## Kitchen sink ETL soberano
 
 O exemplo `/lab/etl.html` consolida uma curadoria de capacidades mínimas de ETL:
