@@ -11,91 +11,703 @@ interface Props {
   showLabels?: boolean;
 }
 
-const { nodes, links, base = '', limit = 12, title = 'Graph view do vault', showLabels = true } = Astro.props;
-function truncateLabel(value: string, max = 16): string {
+const {
+  nodes,
+  links,
+  base = '',
+  limit,
+  title = 'Graph view do vault',
+  showLabels = true,
+} = Astro.props;
+
+function truncateLabel(value: string, max = 24): string {
   return value.length > max ? `${value.slice(0, max - 1)}…` : value;
 }
-const selected = [...nodes]
-  .sort((a, b) => (b.degree - a.degree) || a.title.localeCompare(b.title, 'pt'))
-  .slice(0, limit);
-const selectedIds = new Set(selected.map((node) => node.id));
-const selectedLinks = links.filter((link) => selectedIds.has(link.source) && selectedIds.has(link.target)).slice(0, limit * 2);
+
+const sortedNodes = [...nodes].sort(
+  (a, b) => (b.degree - a.degree) || a.title.localeCompare(b.title, 'pt'),
+);
+
+const initialVisibleCount =
+  Number.isFinite(limit) && limit > 0
+    ? Math.max(1, Math.floor(limit))
+    : Math.max(8, Math.min(28, Math.ceil(sortedNodes.length * 0.28)));
+
 const center = 100;
 const radius = 66;
-const maxDegree = Math.max(1, ...selected.map((node) => node.degree));
-const positioned = selected.map((node, index) => {
-  const angle = selected.length > 1 ? (Math.PI * 2 * index) / selected.length - Math.PI / 2 : 0;
+const maxDegree = Math.max(1, ...sortedNodes.map((node) => node.degree));
+
+const positioned = sortedNodes.map((node, index) => {
+  const angle = sortedNodes.length > 1 ? (Math.PI * 2 * index) / sortedNodes.length - Math.PI / 2 : 0;
   const weight = 0.72 + (node.degree / maxDegree) * 0.6;
+  const shortLabel = truncateLabel(node.title);
   return {
     ...node,
     x: center + Math.cos(angle) * radius,
     y: center + Math.sin(angle) * radius,
     size: 5 + Math.min(9, node.degree * 1.15),
     weight,
+    fillMix: `${Math.max(24, Math.min(86, Math.round(40 * weight)))}%`,
     href: `${base}/${node.id}/`,
+    shortLabel,
+    visibleByDefault: index < initialVisibleCount,
   };
 });
+
+const nodeIds = new Set(positioned.map((node) => node.id));
 const byId = new Map(positioned.map((node) => [node.id, node]));
+const selectedLinks = links.filter((link) => nodeIds.has(link.source) && nodeIds.has(link.target));
+const graphTitleId = `vault-graph-view-title-${Math.random().toString(36).slice(2, 10)}`;
+const visibleCountStep = 4;
+const maxVisibleCount = Math.max(0, positioned.length);
+const hasData = positioned.length > 0;
 ---
 
-<figure class:list={['vault-graph-view', !showLabels && 'vault-graph-view--no-labels']} aria-label={title}>
-  <svg viewBox="0 0 200 200" role="img" aria-labelledby="vault-graph-view-title">
-    <title id="vault-graph-view-title">{title}</title>
-    <g class="vault-graph-view__links" aria-hidden="true">
-      {selectedLinks.map((link) => {
-        const source = byId.get(link.source);
-        const target = byId.get(link.target);
-        if (!source || !target) return null;
-        return <line x1={source.x} y1={source.y} x2={target.x} y2={target.y} />;
-      })}
-    </g>
-    <g class="vault-graph-view__nodes">
-      {positioned.map((node) => (
-        <a href={node.href} aria-label={`${node.title}: ${node.degree} conexões`} data-vault-graph-node-label={node.title} data-vault-graph-label-x={node.x} data-vault-graph-label-y={node.y + node.size + 8}>
-          <title>{node.title} · {node.degree} conexões</title>
-          <circle cx={node.x} cy={node.y} r={node.size} style={`--vault-node-weight: ${node.weight}`} />
-          {showLabels && <text class="vault-graph-view__label vault-graph-view__label--short" x={node.x} y={node.y + node.size + 8} text-anchor="middle">{truncateLabel(node.title)}</text>}
-        </a>
-      ))}
-    </g>
-    <g class="vault-graph-view__hover-layer" aria-hidden="true">
-      <text class="vault-graph-view__hover-label" text-anchor="middle"></text>
-    </g>
-  </svg>
-  <figcaption>
-    {positioned.length} nós em destaque · {selectedLinks.length} relações renderizadas localmente em SVG.
-  </figcaption>
+<figure
+  class:list={[
+    'vault-graph-view',
+    !showLabels && 'vault-graph-view--no-labels',
+    !hasData && 'vault-graph-view--empty',
+  ]}
+  aria-label={title}
+  data-vault-graph-initial-visible={String(Math.min(initialVisibleCount, maxVisibleCount))}
+  data-vault-graph-step={String(visibleCountStep)}
+  data-vault-graph-max-visible={String(maxVisibleCount)}
+>
+  {hasData ? (
+    <>
+      <div class="vault-graph-view__toolbar" role="group" aria-label="Controles do grafo">
+        <button type="button" class="vault-graph-view__button" data-vault-graph-action="collapse" aria-label="Recolher grafo">
+          Recolher
+        </button>
+        <button type="button" class="vault-graph-view__button" data-vault-graph-action="expand" aria-label="Expandir grafo">
+          Expandir
+        </button>
+        <button type="button" class="vault-graph-view__button vault-graph-view__button--strong" data-vault-graph-action="recenter" aria-label="Recentrar grafo">
+          Recentrar
+        </button>
+      </div>
+      <svg
+        viewBox="0 0 200 200"
+        role="img"
+        aria-labelledby={graphTitleId}
+        class="vault-graph-view__canvas"
+        style="border: 1px solid color-mix(in srgb, var(--sl-color-accent, #95d5b2) 24%, var(--sl-color-hairline, #c0c8be)); border-radius: 1rem; background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--sl-color-accent, #95d5b2) 13%, transparent), transparent 44%), color-mix(in srgb, var(--sl-color-bg, #f7f5f0) 72%, var(--sl-color-bg-nav, #111310));"
+      >
+        <title id={graphTitleId}>{title}</title>
+        <g class="vault-graph-view__viewport" data-vault-graph-viewport aria-hidden="true">
+          <g class="vault-graph-view__links" aria-hidden="true">
+            {selectedLinks.map((link) => {
+              const source = byId.get(link.source);
+              const target = byId.get(link.target);
+              if (!source || !target) return null;
+              return (
+                <line
+                  data-vault-graph-edge=""
+                  data-vault-graph-source={link.source}
+                  data-vault-graph-target={link.target}
+                  x1={source.x}
+                  y1={source.y}
+                  x2={target.x}
+                  y2={target.y}
+                  stroke="var(--sl-color-accent, #95d5b2)"
+                  stroke-width="1"
+                />
+              );
+            })}
+          </g>
+          <g class="vault-graph-view__nodes">
+            {positioned.map((node) => (
+              <a
+                href={node.href}
+                aria-label={`${node.title}: ${node.degree} conexões`}
+                data-vault-graph-node-id={node.id}
+                data-vault-graph-node-label={node.title}
+                data-vault-graph-node-label-short={node.shortLabel}
+                data-vault-graph-node-size={node.size}
+                data-vault-graph-node-x={node.x}
+                data-vault-graph-node-y={node.y}
+                data-vault-graph-label-x={node.x}
+                data-vault-graph-label-y={node.y + node.size + 9}
+                data-vault-graph-node-degree={node.degree}
+                data-vault-graph-node-visible={node.visibleByDefault ? '1' : '0'}
+              >
+                <title>{node.title} · {node.degree} conexões</title>
+                <circle
+                  cx={node.x}
+                  cy={node.y}
+                  r={node.size}
+                  data-vault-graph-node-order={sortedNodes.indexOf(node)}
+                  style={`--vault-node-weight: ${node.weight}; fill: color-mix(in srgb, var(--sl-color-accent, #95d5b2) ${node.fillMix}, var(--sl-color-bg-nav, #111310)); stroke: var(--sl-color-accent, #95d5b2);`}
+                />
+                {showLabels && (
+                  <text
+                    class="vault-graph-view__label vault-graph-view__label--short"
+                    x={node.x}
+                    y={node.y + node.size + 9}
+                    text-anchor="middle"
+                    fill="var(--sl-color-gray-2, #edf0ec)"
+                    stroke="var(--sl-color-bg, #111310)"
+                  >
+                    {truncateLabel(node.title)}
+                  </text>
+                )}
+              </a>
+            ))}
+          </g>
+          <g class="vault-graph-view__hover-layer" aria-hidden="true">
+            <text class="vault-graph-view__hover-label" text-anchor="middle"></text>
+          </g>
+        </g>
+      </svg>
+      <figcaption data-vault-graph-caption>
+        {initialVisibleCount} nós em destaque · {selectedLinks.length} relações renderizadas localmente em SVG.
+      </figcaption>
+    </>
+  ) : (
+    <p class="vault-graph-view__empty" role="status">
+      Nenhum nó disponível para renderizar o grafo neste momento.
+    </p>
+  )}
 </figure>
 
 <script is:inline>
   (() => {
-    function setupGraphLabels() {
-      document.querySelectorAll('.vault-graph-view').forEach((figure) => {
-        if (figure.dataset.vaultGraphHoverReady === '1') return;
-        figure.dataset.vaultGraphHoverReady = '1';
-        const hoverLabel = figure.querySelector('.vault-graph-view__hover-label');
-        const nodes = figure.querySelectorAll('[data-vault-graph-node-label]');
-        nodes.forEach((node) => {
-          const activate = () => {
-            if (!hoverLabel) return;
-            hoverLabel.textContent = node.dataset.vaultGraphNodeLabel || '';
-            hoverLabel.setAttribute('x', node.dataset.vaultGraphLabelX || '0');
-            hoverLabel.setAttribute('y', node.dataset.vaultGraphLabelY || '0');
-            node.classList.add('is-hovered');
-            figure.dataset.vaultGraphHover = '1';
-          };
-          const deactivate = () => {
-            node.classList.remove('is-hovered');
-            delete figure.dataset.vaultGraphHover;
-          };
-          node.addEventListener('pointerenter', activate);
-          node.addEventListener('pointerleave', deactivate);
-          node.addEventListener('focus', activate);
-          node.addEventListener('blur', deactivate);
+    const VIEWBOX_SIZE = 200;
+  const FORCE_STEPS = 180;
+  const REPULSION_FORCE = 1700;
+  const SPRING_FORCE = 0.018;
+  const CENTER_FORCE = 0.004;
+  const DAMPING = 0.82;
+  const MIN_SCALE = 0.65;
+  const MAX_SCALE = 2.9;
+  const DRAG_THRESHOLD_PX = 3;
+  const LABEL_OFFSET_Y = 9;
+  const LABEL_MARGIN = 6;
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function estimateLabelHalfWidth(text, fontSize) {
+      const safeFontSize = Number(fontSize) || 6;
+      return Math.max(5, String(text || '').length * safeFontSize * 0.52);
+    }
+
+    function placeLabel(rawX, rawY, halfWidth) {
+      const safeHalf = Math.min(Number(halfWidth) || 10, VIEWBOX_SIZE / 2 - LABEL_MARGIN - 1);
+      const minX = Math.max(safeHalf, LABEL_MARGIN);
+      const maxX = Math.min(VIEWBOX_SIZE - safeHalf - LABEL_MARGIN, VIEWBOX_SIZE - LABEL_MARGIN);
+      const clampedX = clamp(rawX, Math.min(minX, maxX), Math.max(minX, maxX));
+      const textAnchor =
+        minX === maxX
+          ? 'middle'
+          : clampedX <= minX + 0.001
+            ? 'start'
+            : clampedX >= maxX - 0.001
+              ? 'end'
+              : 'middle';
+      const clampedY = clamp(rawY, LABEL_OFFSET_Y, VIEWBOX_SIZE - LABEL_OFFSET_Y - 2);
+
+      return {
+        x: clampedX,
+        y: clampedY,
+        anchor: textAnchor,
+      };
+    }
+
+    function runPhysicsLayout(figure) {
+      const nodes = Array.from(figure.querySelectorAll('[data-vault-graph-node-id]'));
+      if (!nodes.length) return;
+
+      const nodeState = nodes.map((nodeEl) => {
+        const size = Number.parseFloat(String(nodeEl.dataset.vaultGraphNodeSize || '6')) || 6;
+        const baseX = Number.parseFloat(String(nodeEl.dataset.vaultGraphNodeX || '100')) || 100;
+        const baseY = Number.parseFloat(String(nodeEl.dataset.vaultGraphNodeY || '100')) || 100;
+        const degree = Number.parseFloat(String(nodeEl.dataset.vaultGraphNodeDegree || '0')) || 0;
+        return {
+          id: nodeEl.dataset.vaultGraphNodeId,
+          x: baseX + (Math.random() - 0.5) * 0.8,
+          y: baseY + (Math.random() - 0.5) * 0.8,
+          size,
+          degree,
+          vx: 0,
+          vy: 0,
+          visible: nodeEl.dataset.vaultGraphNodeVisible === '1',
+          element: nodeEl,
+          circle: nodeEl.querySelector('circle'),
+          label: nodeEl.querySelector('.vault-graph-view__label--short'),
+        };
+      });
+
+      const nodeById = new Map(nodeState.filter((item) => item.id).map((item) => [item.id, item]));
+      const edges = Array.from(figure.querySelectorAll('[data-vault-graph-edge]')).map((edge) => {
+        const source = nodeById.get(edge.getAttribute('data-vault-graph-source') || '');
+        const target = nodeById.get(edge.getAttribute('data-vault-graph-target') || '');
+        return {
+          edge,
+          source,
+          target,
+        };
+      });
+
+      const hoverLayer = figure.querySelector('.vault-graph-view__hover-label');
+      const graphCaption = figure.querySelector('[data-vault-graph-caption]');
+      const viewport = figure.querySelector('[data-vault-graph-viewport]');
+      const svg = figure.querySelector('svg');
+      if (!svg || !viewport) return;
+
+      const initialVisible = Math.min(
+        nodeState.length,
+        Number.parseInt(String(figure.dataset.vaultGraphInitialVisible || `${Math.min(8, nodeState.length)}`), 10),
+      );
+      const step = Math.max(1, Number.parseInt(String(figure.dataset.vaultGraphStep || '4'), 10));
+      const maxVisible = Math.min(
+        nodeState.length,
+        Number.parseInt(String(figure.dataset.vaultGraphMaxVisible || `${nodeState.length}`), 10),
+      );
+
+      nodeState.sort((a, b) => (b.degree - a.degree) || a.id.localeCompare(b.id));
+      const center = VIEWBOX_SIZE / 2;
+      const linkLimit = edges.length;
+      let currentStep = 0;
+      let visibleCount = clamp(initialVisible, 1, nodeState.length);
+
+      const svgState = {
+        scale: 1,
+        tx: 0,
+        ty: 0,
+        panning: null,
+        draggedNode: null,
+      };
+
+      const pointer = {
+        panning: null,
+        dragging: null,
+      };
+
+      const viewState = {
+        isTransforming: false,
+      };
+
+      function paint() {
+        for (const item of nodeState) {
+          if (!item.element || !item.circle) continue;
+          item.element.dataset.vaultGraphNodeX = item.x.toFixed(2);
+          item.element.dataset.vaultGraphNodeY = item.y.toFixed(2);
+          const shortLabelText = item.element.dataset.vaultGraphNodeLabelShort || item.element.dataset.vaultGraphNodeLabel || '';
+          const labelPlacement = placeLabel(
+            item.x,
+            item.y + item.size + LABEL_OFFSET_Y,
+            estimateLabelHalfWidth(shortLabelText, 6),
+          );
+          item.element.dataset.vaultGraphLabelX = labelPlacement.x.toFixed(2);
+          item.element.dataset.vaultGraphLabelY = labelPlacement.y.toFixed(2);
+
+          item.circle.setAttribute('cx', item.x.toFixed(2));
+          item.circle.setAttribute('cy', item.y.toFixed(2));
+
+          if (item.label) {
+            item.label.setAttribute('x', labelPlacement.x.toFixed(2));
+            item.label.setAttribute('y', labelPlacement.y.toFixed(2));
+            item.label.setAttribute('text-anchor', labelPlacement.anchor);
+          }
+        }
+
+        for (let i = 0; i < linkLimit; i += 1) {
+          const edge = edges[i];
+          if (!edge || !edge.edge || !edge.source || !edge.target) continue;
+          edge.edge.setAttribute('x1', edge.source.x.toFixed(2));
+          edge.edge.setAttribute('y1', edge.source.y.toFixed(2));
+          edge.edge.setAttribute('x2', edge.target.x.toFixed(2));
+          edge.edge.setAttribute('y2', edge.target.y.toFixed(2));
+        }
+      }
+
+      function visibleSetForCount(count) {
+        const ids = new Set();
+        for (let i = 0; i < Math.min(count, nodeState.length); i += 1) {
+          ids.add(nodeState[i].id);
+        }
+        return ids;
+      }
+
+      function applyVisibility() {
+        const visibleIds = visibleSetForCount(visibleCount);
+        let visibleEdges = 0;
+
+        for (const item of nodeState) {
+          const isVisible = visibleIds.has(item.id);
+          item.visible = isVisible;
+          if (isVisible) {
+            item.element.removeAttribute('data-vault-graph-node-hidden');
+            item.element.removeAttribute('hidden');
+            item.element.style.display = '';
+          } else {
+            item.element.setAttribute('data-vault-graph-node-hidden', '1');
+            item.element.setAttribute('hidden', '');
+            item.element.style.display = 'none';
+          }
+          item.element.dataset.vaultGraphNodeVisible = isVisible ? '1' : '0';
+        }
+
+        for (const edge of edges) {
+          if (!edge.source || !edge.target) continue;
+          if (visibleIds.has(edge.source.id) && visibleIds.has(edge.target.id)) {
+            edge.edge.removeAttribute('hidden');
+            visibleEdges += 1;
+          } else {
+            edge.edge.setAttribute('hidden', '');
+          }
+        }
+
+        if (graphCaption) {
+          graphCaption.textContent = `${visibleCount} nós em destaque · ${visibleEdges} relações renderizadas localmente em SVG.`;
+        }
+
+        figure.dataset.vaultGraphVisible = String(visibleCount);
+        const expandButton = figure.querySelector('[data-vault-graph-action="expand"]');
+        const collapseButton = figure.querySelector('[data-vault-graph-action="collapse"]');
+        if (expandButton) {
+          expandButton.disabled = visibleCount >= maxVisible;
+          expandButton.setAttribute('aria-label', `Expandir grafo em ${step}`);
+        }
+        if (collapseButton) {
+          collapseButton.disabled = visibleCount <= initialVisible;
+          collapseButton.setAttribute('aria-label', `Recolher grafo em ${step}`);
+        }
+      }
+
+      function constrain(item) {
+        const min = item.size + 8;
+        const max = VIEWBOX_SIZE - item.size - 8;
+        item.x = clamp(item.x, min, max);
+        item.y = clamp(item.y, min, max);
+      }
+
+      function stepSimulation() {
+        const forces = nodeState.map(() => ({ x: 0, y: 0 }));
+
+        for (let i = 0; i < nodeState.length; i += 1) {
+          const source = nodeState[i];
+          for (let j = i + 1; j < nodeState.length; j += 1) {
+            const target = nodeState[j];
+            const dx = source.x - target.x;
+            const dy = source.y - target.y;
+            const distSq = dx * dx + dy * dy + 1;
+            const dist = Math.sqrt(distSq);
+            const force = REPULSION_FORCE / distSq;
+            const fx = (dx / dist) * force;
+            const fy = (dy / dist) * force;
+            forces[i].x += fx;
+            forces[i].y += fy;
+            forces[j].x -= fx;
+            forces[j].y -= fy;
+          }
+        }
+
+        for (let i = 0; i < edges.length; i += 1) {
+          const edge = edges[i];
+          if (!edge || !edge.source || !edge.target) continue;
+          const dx = edge.target.x - edge.source.x;
+          const dy = edge.target.y - edge.source.y;
+          const distSq = dx * dx + dy * dy + 0.0001;
+          const dist = Math.sqrt(distSq);
+          const ideal = (edge.source.size + edge.target.size) + 16;
+          const pull = (dist - ideal) * SPRING_FORCE;
+          const fx = (dx / dist) * pull;
+          const fy = (dy / dist) * pull;
+          const sourceIndex = nodeState.findIndex((node) => node === edge.source);
+          const targetIndex = nodeState.findIndex((node) => node === edge.target);
+          if (sourceIndex === -1 || targetIndex === -1) continue;
+          forces[sourceIndex].x += fx;
+          forces[sourceIndex].y += fy;
+          forces[targetIndex].x -= fx;
+          forces[targetIndex].y -= fy;
+        }
+
+        for (let i = 0; i < nodeState.length; i += 1) {
+          const item = nodeState[i];
+          if (pointer.draggedNode && pointer.draggedNode.item.id === item.id) {
+            continue;
+          }
+
+          const dx = center - item.x;
+          const dy = center - item.y;
+          item.vx = (item.vx + forces[i].x + dx * CENTER_FORCE) * DAMPING;
+          item.vy = (item.vy + forces[i].y + dy * CENTER_FORCE) * DAMPING;
+          item.x += item.vx;
+          item.y += item.vy;
+          constrain(item);
+        }
+
+        paint();
+        currentStep += 1;
+        if (currentStep < FORCE_STEPS) {
+          requestAnimationFrame(stepSimulation);
+        }
+      }
+
+      function applyViewportTransform() {
+        if (!viewport) return;
+        viewport.setAttribute(
+          'transform',
+          `translate(${svgState.tx.toFixed(3)} ${svgState.ty.toFixed(3)}) scale(${svgState.scale.toFixed(3)})`,
+        );
+      }
+
+      function toGraphCoordinates(clientX, clientY) {
+        const rect = svg.getBoundingClientRect();
+        return {
+          x: (clientX - rect.left - svgState.tx) / svgState.scale,
+          y: (clientY - rect.top - svgState.ty) / svgState.scale,
+        };
+      }
+
+      function startPan(event) {
+        if (svgState.draggedNode) return;
+        if (viewState.isTransforming) return;
+        if (event.pointerType === 'touch') {
+          // allow natural page interactions outside the graph.
+          return;
+        }
+        const target = event.target;
+        if (target instanceof Element && target.closest('[data-vault-graph-node-id], [data-vault-graph-button], button')) {
+          return;
+        }
+
+        const rect = svg.getBoundingClientRect();
+        pointer.panning = {
+          pointerId: event.pointerId,
+          originX: event.clientX,
+          originY: event.clientY,
+          tx: svgState.tx,
+          ty: svgState.ty,
+        };
+        if (event.preventDefault) event.preventDefault();
+        svg.classList.add('is-panning');
+      }
+
+      function doPan(event) {
+        if (!pointer.panning || pointer.panning.pointerId !== event.pointerId) return;
+        svgState.tx = pointer.panning.tx + (event.clientX - pointer.panning.originX);
+        svgState.ty = pointer.panning.ty + (event.clientY - pointer.panning.originY);
+        applyViewportTransform();
+      }
+
+      function stopPan(event) {
+        if (!pointer.panning || pointer.panning.pointerId !== event.pointerId) return;
+        pointer.panning = null;
+        svg.classList.remove('is-panning');
+      }
+
+      function startDrag(event, item) {
+        if (!item) return;
+        event.preventDefault();
+        pointer.draggedNode = {
+          id: item.id,
+          item,
+          pointerId: event.pointerId,
+          originX: event.clientX,
+          originY: event.clientY,
+          startX: item.x,
+          startY: item.y,
+          moved: false,
+        };
+        item.element.classList.add('is-dragged');
+        svgState.draggedNode = item;
+      }
+
+      function doDrag(event) {
+        if (!pointer.draggedNode || pointer.draggedNode.pointerId !== event.pointerId) return;
+
+        const dx = event.clientX - pointer.draggedNode.originX;
+        const dy = event.clientY - pointer.draggedNode.originY;
+
+        if (!pointer.draggedNode.moved && Math.hypot(dx, dy) > DRAG_THRESHOLD_PX) {
+          pointer.draggedNode.moved = true;
+        }
+
+        if (!pointer.draggedNode.moved) return;
+
+        const graphPos = toGraphCoordinates(event.clientX, event.clientY);
+        const dragItem = pointer.draggedNode.item;
+        dragItem.x = graphPos.x;
+        dragItem.y = graphPos.y;
+        constrain(dragItem);
+
+        const sourceIndex = nodeState.indexOf(dragItem);
+        const target = dragItem;
+        if (sourceIndex !== -1) {
+          // do not apply forces in this frame for dragged node
+          nodeState[sourceIndex] = target;
+        }
+
+        paint();
+      }
+
+      function stopDrag(event) {
+        if (!pointer.draggedNode || pointer.draggedNode.pointerId !== event.pointerId) return;
+
+        const item = pointer.draggedNode.item;
+        item.element.classList.remove('is-dragged');
+        if (!pointer.draggedNode.moved) {
+          // Allow normal click for navigation.
+          item.element.click();
+        }
+
+        pointer.draggedNode = null;
+        svgState.draggedNode = null;
+      }
+
+      function zoom(event) {
+        if (!svgState) return;
+        event.preventDefault();
+
+        const rect = svg.getBoundingClientRect();
+        const pointerBefore = toGraphCoordinates(event.clientX, event.clientY);
+        const direction = event.deltaY < 0 ? 1.12 : 0.89;
+        const nextScale = clamp(svgState.scale * direction, MIN_SCALE, MAX_SCALE);
+
+        svgState.scale = nextScale;
+        svgState.tx = event.clientX - rect.left - pointerBefore.x * svgState.scale;
+        svgState.ty = event.clientY - rect.top - pointerBefore.y * svgState.scale;
+
+        applyViewportTransform();
+      }
+
+      function recenter() {
+        svgState.scale = 1;
+        svgState.tx = 0;
+        svgState.ty = 0;
+        applyViewportTransform();
+      }
+
+      function setVisibleCount(nextCount) {
+        visibleCount = clamp(Math.round(nextCount), initialVisible, maxVisible);
+        applyVisibility();
+        paint();
+      }
+
+      function setupInteractions() {
+        if (!svg) return;
+
+        svg.addEventListener('pointerdown', (event) => {
+          const node = event.target?.closest?.('[data-vault-graph-node-id]');
+          const button = event.target?.closest?.('[data-vault-graph-action]');
+          if (node instanceof Element) {
+            const id = node.getAttribute('data-vault-graph-node-id');
+            const item = nodeState.find((item) => item.id === id);
+            if (item && !node.closest('.vault-graph-view__hover-layer')) {
+              startDrag(event, item);
+            }
+            return;
+          }
+
+          if (button instanceof Element) {
+            return;
+          }
+
+          startPan(event);
+        }, { passive: false });
+
+        svg.addEventListener('dblclick', () => {
+          recenter();
         });
+
+        svg.addEventListener('wheel', zoom, { passive: false });
+
+        window.addEventListener('pointermove', (event) => {
+          if (pointer.draggedNode) {
+            doDrag(event);
+            return;
+          }
+          if (pointer.panning) {
+            doPan(event);
+          }
+        });
+
+        window.addEventListener('pointerup', (event) => {
+          if (pointer.draggedNode && event.pointerId === pointer.draggedNode.pointerId) {
+            stopDrag(event);
+          }
+          if (pointer.panning && event.pointerId === pointer.panning.pointerId) {
+            stopPan(event);
+          }
+        });
+
+        window.addEventListener('pointercancel', (event) => {
+          if (pointer.draggedNode && event.pointerId === pointer.draggedNode.pointerId) {
+            stopDrag(event);
+          }
+          if (pointer.panning && event.pointerId === pointer.panning.pointerId) {
+            stopPan(event);
+          }
+        });
+
+        figure.querySelectorAll('[data-vault-graph-action="expand"]').forEach((element) => {
+          element.addEventListener('click', () => setVisibleCount(visibleCount + step));
+        });
+
+        figure.querySelectorAll('[data-vault-graph-action="collapse"]').forEach((element) => {
+          element.addEventListener('click', () => setVisibleCount(visibleCount - step));
+        });
+
+        figure.querySelectorAll('[data-vault-graph-action="recenter"]').forEach((element) => {
+          element.addEventListener('click', () => {
+            recenter();
+          });
+        });
+      }
+
+      for (const node of nodeState) {
+        const activate = () => {
+          if (!hoverLayer || !node.visible) return;
+          const fullLabel = node.element.dataset.vaultGraphNodeLabel || '';
+          const baseX = Number.parseFloat(String(node.element.dataset.vaultGraphLabelX || '100')) || node.x;
+          const baseY = Number.parseFloat(String(node.element.dataset.vaultGraphLabelY || '0')) || (node.y + node.size + LABEL_OFFSET_Y);
+          const hoverPlacement = placeLabel(
+            baseX,
+            baseY,
+            estimateLabelHalfWidth(fullLabel, 7),
+          );
+          hoverLayer.textContent = fullLabel;
+          hoverLayer.setAttribute('x', String(hoverPlacement.x.toFixed(2)));
+          hoverLayer.setAttribute('y', String(hoverPlacement.y.toFixed(2)));
+          hoverLayer.setAttribute('text-anchor', hoverPlacement.anchor);
+          node.element.classList.add('is-hovered');
+          figure.dataset.vaultGraphHover = '1';
+        };
+        const deactivate = () => {
+          node.element.classList.remove('is-hovered');
+          delete figure.dataset.vaultGraphHover;
+        };
+
+        node.element.addEventListener('pointerenter', activate);
+        node.element.addEventListener('pointerleave', deactivate);
+        node.element.addEventListener('focus', activate);
+        node.element.addEventListener('blur', deactivate);
+      }
+
+      applyVisibility();
+      applyViewportTransform();
+      requestAnimationFrame(() => {
+        paint();
+        stepSimulation();
+        viewState.isTransforming = false;
+      });
+      setupInteractions();
+    }
+
+    function setupGraphView() {
+      document.querySelectorAll('.vault-graph-view').forEach((figure) => {
+        if (figure.dataset.vaultGraphReady === '1') return;
+        figure.dataset.vaultGraphReady = '1';
+        runPhysicsLayout(figure);
       });
     }
-    setupGraphLabels();
-    document.addEventListener('astro:page-load', setupGraphLabels);
+
+    setupGraphView();
+    document.addEventListener('astro:page-load', setupGraphView);
   })();
 </script>
