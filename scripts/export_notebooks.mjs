@@ -86,9 +86,9 @@ function labNavigationHtml(currentOutput) {
 	return String.raw`
 <div class="vault-marimo-navigation" data-vault-marimo-navigation>
   <header class="vault-lab-topbar" aria-label="Navegação principal do Lab">
-    <button class="vault-lab-sidebar-toggle" type="button" data-vault-lab-sidebar-toggle aria-expanded="true" aria-controls="vault-lab-sidebar" aria-label="Alternar lista de notebooks">
-      <span class="vault-lab-sidebar-toggle__icon" aria-hidden="true">☰</span>
-      <span class="vault-lab-sr-only">Notebooks</span>
+    <button class="vault-lab-sidebar-toggle" type="button" data-vault-lab-sidebar-toggle aria-expanded="true" aria-pressed="false" aria-controls="vault-lab-sidebar" aria-label="Recolher lista de notebooks">
+      <span class="vault-lab-sidebar-toggle__icon" aria-hidden="true">‹</span>
+      <span class="vault-lab-sr-only">Recolher lista de notebooks</span>
     </button>
     <a class="vault-lab-brand" href="../">Vault</a>
     <a class="vault-lab-section" href="${labIndexHref}">Lab</a>
@@ -112,7 +112,20 @@ function labNavigationHtml(currentOutput) {
 
   function apply(collapsed) {
     root.dataset.vaultLabSidebar = collapsed ? "collapsed" : "expanded";
-    toggle?.setAttribute("aria-expanded", String(!collapsed));
+    const toggleNode = toggle;
+    const isCollapsed = collapsed;
+    const label = isCollapsed ? "Expandir lista de notebooks" : "Recolher lista de notebooks";
+
+    if (toggleNode) {
+      toggleNode.setAttribute("aria-expanded", String(!collapsed));
+      toggleNode.setAttribute("aria-pressed", String(isCollapsed));
+      toggleNode.setAttribute("aria-label", label);
+      toggleNode.setAttribute("title", label);
+      const icon = toggleNode.querySelector("[aria-hidden='true']");
+      if (icon) {
+        icon.textContent = isCollapsed ? "›" : "‹";
+      }
+    }
   }
 
   const sidebarMedia = window.matchMedia("(max-width: 44rem)");
