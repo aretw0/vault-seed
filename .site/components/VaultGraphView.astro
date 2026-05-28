@@ -51,14 +51,15 @@ const byId = new Map(positioned.map((node) => [node.id, node]));
     </g>
     <g class="vault-graph-view__nodes">
       {positioned.map((node) => (
-        <a href={node.href} aria-label={`${node.title}: ${node.degree} conexões`} data-vault-graph-node-label={node.title}>
+        <a href={node.href} aria-label={`${node.title}: ${node.degree} conexões`} data-vault-graph-node-label={node.title} data-vault-graph-label-x={node.x} data-vault-graph-label-y={node.y + node.size + 8}>
           <title>{node.title} · {node.degree} conexões</title>
-          <rect class="vault-graph-view__hitbox" x={node.x - 44} y={node.y - node.size - 14} width="88" height={node.size + 34} rx="10" />
           <circle cx={node.x} cy={node.y} r={node.size} style={`--vault-node-weight: ${node.weight}`} />
           {showLabels && <text class="vault-graph-view__label vault-graph-view__label--short" x={node.x} y={node.y + node.size + 8} text-anchor="middle">{truncateLabel(node.title)}</text>}
-          {showLabels && <text class="vault-graph-view__label vault-graph-view__label--full" x={node.x} y={node.y + node.size + 8} text-anchor="middle">{node.title}</text>}
         </a>
       ))}
+    </g>
+    <g class="vault-graph-view__hover-layer" aria-hidden="true">
+      <text class="vault-graph-view__hover-label" text-anchor="middle"></text>
     </g>
   </svg>
   <figcaption>
@@ -72,11 +73,25 @@ const byId = new Map(positioned.map((node) => [node.id, node]));
       document.querySelectorAll('.vault-graph-view').forEach((figure) => {
         if (figure.dataset.vaultGraphHoverReady === '1') return;
         figure.dataset.vaultGraphHoverReady = '1';
+        const hoverLabel = figure.querySelector('.vault-graph-view__hover-label');
         const nodes = figure.querySelectorAll('[data-vault-graph-node-label]');
         nodes.forEach((node) => {
-          const bringToFront = () => node.parentNode?.appendChild(node);
-          node.addEventListener('mouseenter', bringToFront);
-          node.addEventListener('focus', bringToFront);
+          const activate = () => {
+            if (!hoverLabel) return;
+            hoverLabel.textContent = node.dataset.vaultGraphNodeLabel || '';
+            hoverLabel.setAttribute('x', node.dataset.vaultGraphLabelX || '0');
+            hoverLabel.setAttribute('y', node.dataset.vaultGraphLabelY || '0');
+            node.classList.add('is-hovered');
+            figure.dataset.vaultGraphHover = '1';
+          };
+          const deactivate = () => {
+            node.classList.remove('is-hovered');
+            delete figure.dataset.vaultGraphHover;
+          };
+          node.addEventListener('pointerenter', activate);
+          node.addEventListener('pointerleave', deactivate);
+          node.addEventListener('focus', activate);
+          node.addEventListener('blur', deactivate);
         });
       });
     }

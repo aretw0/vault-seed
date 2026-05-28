@@ -11,6 +11,7 @@ test('Astro header keeps theme controls discoverable without mobile duplication'
   const mobileFooter = read('.site/components/MobileMenuFooter.astro');
   const astroConfig = read('astro.config.mjs');
   const customCss = read('.site/styles/custom.css');
+  const footer = read('.site/components/Footer.astro');
   const pageFrame = read('.site/components/PageFrame.astro');
   const twoColumn = read('.site/components/TwoColumnContent.astro');
 
@@ -34,6 +35,8 @@ test('Astro header keeps theme controls discoverable without mobile duplication'
   assert.match(customCss, /data-vault-sidebar-right='collapsed'/);
   assert.match(customCss, /data-vault-sidebar-right='collapsed'[\s\S]*\.main-pane[\s\S]*--sl-content-margin-inline: auto/);
   assert.doesNotMatch(customCss, /data-vault-focus='content'/);
+  assert.match(footer, /Feito com ♥ por/);
+  assert.doesNotMatch(footer, /made with/);
   assert.match(header, /href={`\$\{base\}\/explorar\/`}>Explorar/);
   assert.match(header, /href={`\$\{base\}\/lab\/`}>Lab/);
 
@@ -61,14 +64,18 @@ test('Graph previews show truncated labels while preserving full accessible titl
   assert.match(home, /heroNodes = explore\.graph\.insights\.hubs\.slice\(0, 6\)/);
   assert.match(home, /rótulo completo ao passar o mouse ou focar/);
   assert.match(css, /overflow: visible/);
-  assert.match(home, /node\.parentNode\?\.appendChild\(node\)/);
-  assert.match(graph, /node\.parentNode\?\.appendChild\(node\)/);
-  assert.match(home, /vault-graph-view__hitbox/);
-  assert.match(graph, /vault-graph-view__hitbox/);
-  assert.match(css, /\.vault-graph-view__hitbox[\s\S]*pointer-events: all/);
+  assert.doesNotMatch(home, /node\.parentNode\?\.appendChild\(node\)/);
+  assert.doesNotMatch(graph, /node\.parentNode\?\.appendChild\(node\)/);
+  assert.match(home, /vault-graph-view__hover-layer/);
+  assert.match(graph, /vault-graph-view__hover-layer/);
+  assert.match(home, /classList\.add\('is-hovered'\)/);
+  assert.match(graph, /classList\.add\('is-hovered'\)/);
+  assert.doesNotMatch(home, /vault-graph-view__hitbox/);
+  assert.doesNotMatch(graph, /vault-graph-view__hitbox/);
+  assert.doesNotMatch(css, /vault-graph-view__hitbox/);
   assert.match(css, /\.vault-graph-view__nodes text[\s\S]*pointer-events: none/);
-  assert.match(css, /\.vault-graph-view__label--full[\s\S]*opacity: 0;[\s\S]*visibility: hidden/);
-  assert.match(css, /\.vault-graph-view__nodes a:is\(:hover, :focus-visible\) \.vault-graph-view__label--full[\s\S]*opacity: 1;[\s\S]*visibility: visible/);
+  assert.match(css, /\.vault-graph-view__hover-layer[\s\S]*opacity: 0;[\s\S]*pointer-events: none/);
+  assert.match(css, /data-vault-graph-hover='1'[\s\S]*\.vault-graph-view__hover-layer[\s\S]*opacity: 1/);
 });
 
 test('Marimo shell spacing remains topbar-aware and smoke-tested', () => {
@@ -82,13 +89,17 @@ test('Marimo shell spacing remains topbar-aware and smoke-tested', () => {
   assert.match(css, /--vault-lab-content-offset: calc\(var\(--vault-lab-topbar-height\) \+ var\(--vault-lab-content-gap\)\)/);
   assert.match(css, /:root\[data-vault-marimo-shell="lab"\] #root/);
   assert.match(css, /#root \[data-testid="chrome-wrapper"\]/);
+  assert.match(css, /\.vault-marimo-navigation \*/);
   assert.match(css, /\[class~="min-w-\[400px\]"\]/);
+  assert.match(css, /\[class~="px-1"\][\s\S]*padding-inline: clamp\(0\.75rem/);
   assert.match(css, /\[class~="fixed"\]\[class~="top-0"\]\[class~="right-0"\]/);
   assert.match(css, /position: sticky/);
   assert.match(css, /padding-top: var\(--vault-lab-content-gap\) !important/);
   assert.match(css, /padding-top: calc\(var\(--vault-lab-content-gap\) \+ env\(safe-area-inset-top, 0px\)\) !important/);
   assert.match(css, /--vault-lab-content-gap: 5rem/);
-  assert.match(css, /\.vault-lab-footer/);
+  assert.match(css, /\.vault-lab-footer[\s\S]*bottom: 0/);
+  assert.match(exportNotebooks, /vault-seed-slides-lite\.html[\s\S]*\$\{themeSelectorHtml\}/);
+  assert.match(exportNotebooks, /\.vault-lite-slides \{ width: 100%; max-width: 100%;/);
   assert.match(exportNotebooks, /attachSelectorToTopbar/);
   assert.match(exportNotebooks, /topbar\.appendChild\(selector\)/);
 

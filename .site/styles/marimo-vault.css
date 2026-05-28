@@ -711,6 +711,11 @@ iframe {
   scroll-padding-top: var(--vault-lab-content-offset);
 }
 
+:root[data-vault-marimo-shell="lab"] .vault-marimo-navigation,
+:root[data-vault-marimo-shell="lab"] .vault-marimo-navigation * {
+  box-sizing: border-box;
+}
+
 :root[data-vault-marimo-shell="lab"] .vault-lab-topbar {
   position: sticky;
   z-index: 10000;
@@ -823,7 +828,7 @@ iframe {
 }
 
 :root[data-vault-marimo-shell="lab"] #root [class~="px-1"] {
-  padding-inline: 0 !important;
+  padding-inline: clamp(0.75rem, 2.5vw, 1.25rem) !important;
 }
 
 :root[data-vault-marimo-shell="lab"] #root [class~="fixed"][class~="top-0"][class~="right-0"] {
@@ -833,7 +838,7 @@ iframe {
 .vault-lab-footer {
   position: fixed;
   z-index: 9998;
-  bottom: 0.75rem;
+  bottom: 0;
   left: calc(var(--vault-lab-sidebar-width) + 0.75rem);
   border: 1px solid var(--border);
   border-radius: 999px;
@@ -925,9 +930,7 @@ iframe {
 }
 
 :root[data-vault-marimo-presentation="slides"] .vault-marimo-theme-selector {
-  top: 0.75rem;
-  right: 0.75rem;
-  bottom: auto;
+  inset: auto;
 }
 
 @media (max-width: 44rem) {
@@ -996,7 +999,7 @@ iframe {
   .vault-lab-footer,
   :root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] .vault-lab-footer {
     left: 0.75rem;
-    bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+    bottom: env(safe-area-inset-bottom, 0px);
   }
 
   :root[data-vault-marimo-shell="lab"] .vault-marimo-theme-selector {

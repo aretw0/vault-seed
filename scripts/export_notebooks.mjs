@@ -351,7 +351,7 @@ ${readFileSync(join(ROOT, ".site", "styles", "marimo-vault.css"), "utf8")}
     .vault-lite-slide h1, .vault-lite-slide h2 { color: var(--primary); margin-block-start: 0; }
     .vault-lite-slide table { width: 100%; border-collapse: collapse; }
     .vault-lite-slide th, .vault-lite-slide td { border: 1px solid var(--border); padding: .5rem; text-align: left; }
-    @media (max-width: 44rem) { .vault-lite-slides { width: 100%; margin-left: 0; padding-inline: 1rem; } }
+    @media (max-width: 44rem) { .vault-lite-slides { width: 100%; max-width: 100%; margin-inline: 0; margin-left: 0; padding-inline: 1rem; } }
   </style>
 </head>
 <body>
@@ -366,6 +366,7 @@ ${labNavigationHtml("vault-seed-slides-lite.html")}
     <section class="vault-lite-slide"><h2>Governança</h2><p>Criar um notebook não publica esse notebook. A publicação passa pelo manifesto <code>.site/lab.notebooks.json</code>.</p></section>
     <section class="vault-lite-slide"><h2>Próximo passo</h2><p>Distribuir um vault pronto para uso, publicar documentação viva, criar notebooks de análise e separar ETL local de visualização empacotada.</p></section>
   </main>
+${themeSelectorHtml}
 </body>
 </html>
 `;

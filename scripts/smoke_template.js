@@ -336,8 +336,8 @@ requireCondition(
     !homePage.includes('data-language="mermaid"') &&
     graphViewComponent.includes('vault-graph-view') &&
     graphViewComponent.includes('viewBox="0 0 200 200"') &&
-    graphViewComponent.includes('vault-graph-view__label--full') &&
-    customCss.includes('.vault-graph-view__label--full') &&
+    graphViewComponent.includes('vault-graph-view__hover-layer') &&
+    customCss.includes('.vault-graph-view__hover-layer') &&
     explorePage.includes('buildVaultExploreData') &&
     explorePage.includes('VaultGraphView') &&
     explorePage.includes('data-vault-explore-search') &&

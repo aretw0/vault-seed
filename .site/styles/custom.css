@@ -469,12 +469,6 @@
   outline: none;
 }
 
-.vault-graph-view__hitbox {
-  fill: transparent;
-  pointer-events: all;
-  stroke: none;
-}
-
 .vault-graph-view__nodes circle {
   fill: color-mix(in srgb, var(--sl-color-accent) calc(40% * var(--vault-node-weight, 1)), var(--sl-color-bg-nav));
   stroke: var(--sl-color-accent);
@@ -498,34 +492,38 @@
   transition: opacity 120ms ease, visibility 120ms ease;
 }
 
-.vault-graph-view__label--full {
-  font-size: 7px;
-  letter-spacing: -0.01em;
+.vault-graph-view__hover-layer {
   opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease, visibility 120ms ease;
   visibility: hidden;
 }
 
-.vault-graph-view__nodes a:is(:hover, :focus-visible) .vault-graph-view__label--short {
-  opacity: 0;
-  visibility: hidden;
-}
-
-.vault-graph-view__nodes a:is(:hover, :focus-visible) .vault-graph-view__label--full {
+.vault-graph-view[data-vault-graph-hover='1'] .vault-graph-view__hover-layer {
   opacity: 1;
   visibility: visible;
 }
 
-.vault-graph-view__nodes a:hover circle,
+.vault-graph-view__hover-label {
+  fill: var(--sl-color-white);
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  paint-order: stroke;
+  stroke: var(--sl-color-bg);
+  stroke-width: 3px;
+}
+
+.vault-graph-view__nodes a:is(.is-hovered, :focus-visible) .vault-graph-view__label--short {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.vault-graph-view__nodes a.is-hovered circle,
 .vault-graph-view__nodes a:focus-visible circle {
   fill: var(--sl-color-accent);
   stroke-width: 2;
   transform: scale(1.18);
-}
-
-.vault-graph-view__nodes a:hover text,
-.vault-graph-view__nodes a:focus-visible text {
-  fill: var(--sl-color-white);
-  stroke-width: 3px;
 }
 
 .vault-graph-view figcaption {
