@@ -221,6 +221,13 @@ def _(mo):
         "- Atualizar este notebook em cada ciclo de release;\n"
         "- Fechar evidências de maturidade em contratos e trilhas de onboarding."
     )
+
+    mo.md(
+        "### Nível de excelência — comunicação institucional\n\n"
+        "- Transformar os checkpoints em um playbook reutilizável para novos mantenedores;\n"
+        "- Medir clareza e adoção dos trilhos por etapa (ex.: leitura, decisão, revisão).\n"
+        "- Fechar um ciclo semestrais de revisão de narrativa e alinhamento de contratos."
+    )
     return
 
 

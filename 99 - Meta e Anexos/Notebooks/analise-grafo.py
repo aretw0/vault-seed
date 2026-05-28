@@ -186,6 +186,13 @@ def _(mo):
         "- Usar os sinais deste painel para propor refatorações de estrutura;\n"
         "- Repetir a análise após cada ciclo para medir redução de nós órfãos e melhoria de cobertura."
     )
+
+    mo.md(
+        "### Nível de excelência — arquitetura de coesão\n\n"
+        "- Consolidar um glossário de hubs por domínio e manter uma regra de exceção para grafos locais;\n"
+        "- Criar alertas de regressão (queda abrupta de densidade ou explosão de órfãos);\n"
+        "- Fechar uma revisão de arquitetura a cada sprint com plano de refatoração priorizado."
+    )
     return
 
 

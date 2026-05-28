@@ -167,6 +167,13 @@ def _(mo):
         "- Integrar com rotinas locais de publicação em lotes;\n"
         "- Fechar evidência de revisão para cada saída (status, timestamp, operador)."
     )
+
+    mo.md(
+        "### Nível de excelência — governança ativa\n\n"
+        "- Definir SLA mínimo para revisão da rotina e monitorar SLAs por campanha;\n"
+        "- Publicar um checklist de risco antes da publicação em lote e registrar revisão no changelog;\n"
+        "- Fechar uma retro semanal com indicadores de retorno por fonte e formato."
+    )
     return
 
 

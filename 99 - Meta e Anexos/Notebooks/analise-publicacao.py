@@ -151,6 +151,13 @@ def _(mo):
         "- Estabelecer meta de publicação por etapa e medir evolução por sprints;\n"
         "- Consolidar regras de revisão cruzada e validar contratos de export.",
     )
+
+    mo.md(
+        "### Nível de excelência — maturidade editorial\n\n"
+        "- Mapear gargalos por etapa e automatizar sinalização de bloqueios recorrentes;\n"
+        "- Criar playbook de revisão final com critérios de cobertura, qualidade e consistência;\n"
+        "- Transformar os alertas em métricas revisadas no fim de cada ciclo de publicação."
+    )
     return
 
 

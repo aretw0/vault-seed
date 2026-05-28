@@ -610,6 +610,13 @@ def _(mo):
         "- Transformar esse fluxo em rotina cron/CI local;\n"
         "- Assinar artefatos versionáveis (JSON/CSV) e reusar em exports futuros."
     )
+
+    mo.md(
+        "### Nível de excelência — sustentabilidade operacional\n\n"
+        "- Automatizar validações de schema, checksum e retenção antes de publicar artefatos;\n"
+        "- Criar rollback explícito por fonte e registrar causa raiz de cada correção;\n"
+        "- Documentar o impacto de custo/latência de cada etapa para definir prioridades de otimização."
+    )
     return
 
 

@@ -199,6 +199,13 @@ def _(mo):
         "- Comparar snapshots para detectar deriva em fontes e sinais novos;\n"
         "- Conectar os resultados ao pipeline de templates e revisão editorial."
     )
+
+    mo.md(
+        "### Nível de excelência — curadoria como sistema\n\n"
+        "- Fechar os pontos com trilha de decisão explícita para aprovar fontes, revisão e publicação;\n"
+        "- Transformar descobertas repetidas em uma política de limpeza de ruído e uma rotina de auditoria semanal;\n"
+        "- Publicar um resumo de impacto por ciclo (fontes novas, candidatos aprovados, exceções tratadas)."
+    )
     return
 
 
