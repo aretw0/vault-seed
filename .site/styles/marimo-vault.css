@@ -820,6 +820,42 @@ iframe {
   text-transform: uppercase;
 }
 
+.vault-lab-notebook-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0 0.35rem 0.55rem;
+}
+
+.vault-lab-notebook-filter__input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 0.45rem;
+  background: var(--card);
+  color: var(--foreground);
+  padding: 0.45rem 0.55rem;
+  font: inherit;
+  font-size: 0.72rem;
+  line-height: 1.15;
+}
+
+.vault-lab-notebook-filter__input::placeholder {
+  color: var(--muted-foreground);
+}
+
+.vault-lab-notebook-filter__input:focus {
+  outline: 2px solid color-mix(in srgb, var(--primary) 45%, transparent);
+  outline-offset: 1px;
+}
+
+.vault-lab-notebook-empty {
+  margin: 0;
+  padding: 0 0.15rem;
+  font-size: 0.72rem;
+  line-height: 1.15;
+  color: var(--muted-foreground);
+}
+
 .vault-lab-notebook-list {
   display: grid;
   gap: 0.25rem;

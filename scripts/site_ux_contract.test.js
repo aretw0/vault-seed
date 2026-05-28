@@ -102,6 +102,12 @@ test('Marimo shell spacing remains topbar-aware and smoke-tested', () => {
   assert.match(exportNotebooks, /\.vault-lite-slides \{ width: 100%; max-width: 100%;/);
   assert.match(exportNotebooks, /attachSelectorToTopbar/);
   assert.match(exportNotebooks, /topbar\.appendChild\(selector\)/);
+  assert.match(exportNotebooks, /data-vault-lab-notebook-search/);
+  assert.match(exportNotebooks, /data-vault-lab-notebook-link/);
+  assert.match(exportNotebooks, /vault-lab-notebook-filter__input/);
+  assert.match(exportNotebooks, /vault-lab-notebook-empty/);
+  assert.match(exportNotebooks, /applyNotebookFilter/);
+  assert.match(exportNotebooks, /data-vault-lab-notebook-title/);
 
   assert.match(smoke, /document\.querySelector\("#root"\)/);
   assert.match(smoke, /document\.querySelector\("\.vault-lab-topbar"\)/);

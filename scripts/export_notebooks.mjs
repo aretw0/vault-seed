@@ -79,7 +79,7 @@ function labNavigationHtml(currentOutput) {
 		.filter((entry) => entry.publish)
 		.map((entry) => {
 			const active = entry.output === currentOutput;
-			return `<a href="./${escapeHtml(entry.output)}"${active ? ' aria-current="page"' : ""}>${escapeHtml(entry.title)}</a>`;
+			return `<a href="./${escapeHtml(entry.output)}"${active ? ' aria-current="page"' : ""} data-vault-lab-notebook-link data-vault-lab-notebook-title="${escapeHtml(entry.title)}">${escapeHtml(entry.title)}</a>`;
 		})
 		.join("\n      ");
 
@@ -95,6 +95,18 @@ function labNavigationHtml(currentOutput) {
   </header>
   <aside class="vault-lab-sidebar" id="vault-lab-sidebar" aria-label="Notebooks publicados">
     <div class="vault-lab-sidebar__title">Notebooks</div>
+    <div class="vault-lab-notebook-filter">
+      <label class="vault-lab-sr-only" for="vault-lab-notebook-filter">Filtrar notebooks publicados</label>
+      <input
+        id="vault-lab-notebook-filter"
+        class="vault-lab-notebook-filter__input"
+        type="search"
+        data-vault-lab-notebook-search
+        placeholder="Buscar"
+        aria-label="Buscar notebook"
+      />
+      <p class="vault-lab-notebook-empty" data-vault-lab-notebook-empty hidden>Nenhum notebook encontrado.</p>
+    </div>
     <nav class="vault-lab-notebook-list">
       ${notebookLinks}
     </nav>
@@ -107,6 +119,10 @@ function labNavigationHtml(currentOutput) {
 (() => {
   const root = document.documentElement;
   const key = "vault-seed:lab-sidebar-collapsed";
+
+  const notebookFilterInput = document.querySelector("[data-vault-lab-notebook-search]");
+  const notebookItems = Array.from(document.querySelectorAll("[data-vault-lab-notebook-link]"));
+  const notebookEmptyState = document.querySelector("[data-vault-lab-notebook-empty]");
   const toggle = document.querySelector("[data-vault-lab-sidebar-toggle]");
   root.dataset.vaultMarimoShell = "lab";
 
@@ -130,6 +146,31 @@ function labNavigationHtml(currentOutput) {
 
   const sidebarMedia = window.matchMedia("(max-width: 44rem)");
 
+  function applyNotebookFilter(term = "") {
+    const normalized = String(term).trim().toLowerCase();
+    let visibleCount = 0;
+
+    if (!notebookItems.length) {
+      if (notebookEmptyState) {
+        notebookEmptyState.hidden = true;
+      }
+      return;
+    }
+
+    notebookItems.forEach((item) => {
+      const label = String(item.dataset.vaultLabNotebookTitle || "").toLowerCase();
+      const matches = label.includes(normalized);
+      item.style.display = matches ? "" : "none";
+      if (matches) {
+        visibleCount += 1;
+      }
+    });
+
+    if (notebookEmptyState) {
+      notebookEmptyState.hidden = normalized.length === 0 ? true : visibleCount > 0;
+    }
+  }
+
   function preferredCollapsed() {
     const saved = localStorage.getItem(key);
     if (saved !== null) return saved === "1";
@@ -137,6 +178,11 @@ function labNavigationHtml(currentOutput) {
   }
 
   apply(preferredCollapsed());
+  applyNotebookFilter("");
+
+  notebookFilterInput?.addEventListener("input", (event) => {
+    applyNotebookFilter(event.target?.value || "");
+  });
 
   sidebarMedia.addEventListener("change", () => {
     if (localStorage.getItem(key) === null) apply(sidebarMedia.matches);
