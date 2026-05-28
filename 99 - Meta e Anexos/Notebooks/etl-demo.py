@@ -586,5 +586,32 @@ def _(load_remote, mo, read_lab_json, runtime_sources):
     return
 
 
+@app.cell
+def _(mo):
+    mo.md(
+        "## 🧭 Lane de entendimento\n\n"
+        "Converta este notebook em uma trilha prática para pipeline ETL local + pacote publicado:"
+    )
+
+    mo.md(
+        "### Nível inicial — transparência\n\n"
+        "- Ler contrato de datasets e validar fontes disponíveis;\n"
+        "- Confirmar snapshots como fonte única da fonte publicada."
+    )
+
+    mo.md(
+        "### Nível intermediário — proteção\n\n"
+        "- Separar primitivas locais (acesso ao disco, OCR, secrects) das transformações publicadas;\n"
+        "- Testar modos de extração com e sem rede para reduzir falhas de ambiente."
+    )
+
+    mo.md(
+        "### Nível avançado — automação\n\n"
+        "- Transformar esse fluxo em rotina cron/CI local;\n"
+        "- Assinar artefatos versionáveis (JSON/CSV) e reusar em exports futuros."
+    )
+    return
+
+
 if __name__ == "__main__":
     app.run()

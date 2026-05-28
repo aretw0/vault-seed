@@ -143,5 +143,32 @@ def _(mo):
     return
 
 
+@app.cell
+def _(mo):
+    mo.md(
+        "## 🧭 Lane de entendimento\n\n"
+        "Evolua esse notebook até virar um painel operacional de publicação:"
+    )
+
+    mo.md(
+        "### Nível inicial — observação\n\n"
+        "- Mapear itens com status pendente e identificar sinais de risco;\n"
+        "- Entender política de licença e privacidade antes de qualquer distribuição."
+    )
+
+    mo.md(
+        "### Nível intermediário — curadoria\n\n"
+        "- Organizar candidatos por canal, revisar tom e referências;\n"
+        "- Garantir vínculo reverso para a nota canônica de origem."
+    )
+
+    mo.md(
+        "### Nível avançado — operação repetível\n\n"
+        "- Integrar com rotinas locais de publicação em lotes;\n"
+        "- Fechar evidência de revisão para cada saída (status, timestamp, operador)."
+    )
+    return
+
+
 if __name__ == "__main__":
     app.run()

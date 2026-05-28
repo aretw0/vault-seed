@@ -197,5 +197,32 @@ def _(dedent, mo):
     return
 
 
+@app.cell
+def _(mo):
+    mo.md(
+        "## 🧭 Lane de entendimento\n\n"
+        "Use esta trilha para transformar a apresentação em roteiro operacional da comunidade:"
+    )
+
+    mo.md(
+        "### Nível inicial — contexto\n\n"
+        "- Entender os contratos do template e onde cada superfície é gerada;\n"
+        "- Garantir que a mensagem central apareça no primeiro nível do site."
+    )
+
+    mo.md(
+        "### Nível intermediário — operação\n\n"
+        "- Traduzir objetivos em rotinas de publicação, review e revisão de datasets;\n"
+        "- Conectar slides, docs e notas em um mesmo ciclo de manutenção."
+    )
+
+    mo.md(
+        "### Nível avançado — governança contínua\n\n"
+        "- Atualizar este notebook em cada ciclo de release;\n"
+        "- Fechar evidências de maturidade em contratos e trilhas de onboarding."
+    )
+    return
+
+
 if __name__ == "__main__":
     app.run()

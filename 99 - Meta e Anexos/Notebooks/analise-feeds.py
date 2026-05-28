@@ -171,5 +171,36 @@ def _(candidates_df, mo):
     return
 
 
+@app.cell
+def _(mo):
+    mo.md(
+        "## 🧭 Lane de entendimento\n\n"
+        "Use esta trilha para evoluir o notebook de um uso pontual para uma rotina de "
+        "curadoria contínua:"
+    )
+
+    mo.md(
+        "### Nível inicial — leitura rápida\n\n"
+        "- Mapear quais fontes realmente aparecem na trilha atual;\n"
+        "- Classificar por domínio e tag para reduzir ruído;\n"
+        "- Preparar notas candidatas sem publicar ou enviar nada automaticamente."
+    )
+
+    mo.md(
+        "### Nível intermediário — decisão local\n\n"
+        "- Cruzar candidatas com prioridade por frequência e privacidade;\n"
+        "- Transformar listas em critérios de revisão humana por pasta/público;\n"
+        "- Criar checklists de triagem para revisão rápida antes de abrir o outbox."
+    )
+
+    mo.md(
+        "### Nível avançado — operação em ciclo\n\n"
+        "- Rodar esse notebook em `notebooks:extract:local` durante o sync;\n"
+        "- Comparar snapshots para detectar deriva em fontes e sinais novos;\n"
+        "- Conectar os resultados ao pipeline de templates e revisão editorial."
+    )
+    return
+
+
 if __name__ == "__main__":
     app.run()

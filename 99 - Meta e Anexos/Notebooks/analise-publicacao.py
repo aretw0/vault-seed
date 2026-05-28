@@ -127,5 +127,32 @@ def _(dropdown, mo, notes):
     return ()
 
 
+@app.cell
+def _(mo):
+    mo.md(
+        "## 🧭 Lane de entendimento\n\n"
+        "Passe da leitura de distribuição para uma disciplina editorial contínua:"
+    )
+
+    mo.md(
+        "### Nível inicial — visão\n\n"
+        "- Entender a composição do corpus por status, pasta e tag;\n"
+        "- Detectar notas com título fraco que exigem padronização.",
+    )
+
+    mo.md(
+        "### Nível intermediário — higiene\n\n"
+        "- Aplicar filtros por pasta/área antes da revisão final;\n"
+        "- Preparar plano para reduzir inconsistências de metadata e status." 
+    )
+
+    mo.md(
+        "### Nível avançado — governança\n\n"
+        "- Estabelecer meta de publicação por etapa e medir evolução por sprints;\n"
+        "- Consolidar regras de revisão cruzada e validar contratos de export.",
+    )
+    return
+
+
 if __name__ == "__main__":
     app.run()
