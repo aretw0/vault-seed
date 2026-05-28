@@ -744,20 +744,44 @@ iframe {
 
 .vault-lab-sidebar-toggle {
   border: 1px solid var(--border);
-  background: var(--muted);
+  background: transparent;
   cursor: pointer;
-  padding: 0.45rem 0.65rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.34rem 0.55rem;
+  gap: 0;
+}
+
+.vault-lab-sidebar-toggle__icon {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.vault-lab-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(100%);
+  border: 0;
+}
+
+.vault-lab-brand,
+.vault-lab-section {
+  padding: 0.45rem 0.6rem;
 }
 
 .vault-lab-brand {
-  color: var(--primary);
-  font-weight: 750;
-  padding: 0.45rem 0.6rem;
+  color: var(--foreground);
+  font-weight: 700;
 }
 
 .vault-lab-section {
-  color: var(--muted-foreground);
-  padding: 0.45rem 0.6rem;
+  color: var(--foreground);
 }
 
 .vault-lab-sidebar {

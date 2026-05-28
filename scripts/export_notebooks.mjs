@@ -86,7 +86,10 @@ function labNavigationHtml(currentOutput) {
 	return String.raw`
 <div class="vault-marimo-navigation" data-vault-marimo-navigation>
   <header class="vault-lab-topbar" aria-label="Navegação principal do Lab">
-    <button class="vault-lab-sidebar-toggle" type="button" data-vault-lab-sidebar-toggle aria-expanded="true" aria-controls="vault-lab-sidebar">Menu</button>
+    <button class="vault-lab-sidebar-toggle" type="button" data-vault-lab-sidebar-toggle aria-expanded="true" aria-controls="vault-lab-sidebar" aria-label="Alternar lista de notebooks">
+      <span class="vault-lab-sidebar-toggle__icon" aria-hidden="true">☰</span>
+      <span class="vault-lab-sr-only">Notebooks</span>
+    </button>
     <a class="vault-lab-brand" href="../">Vault</a>
     <a class="vault-lab-section" href="${labIndexHref}">Lab</a>
   </header>
