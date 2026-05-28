@@ -1,3 +1,16 @@
+---
+import VaultGraphView from './VaultGraphView.astro';
+import { buildVaultExploreData } from '../lib/vault-explore';
+
+const isExploreRoute =
+  Astro.url.pathname === '/explorar/' ||
+  Astro.url.pathname === '/explorar' ||
+  Astro.locals.starlightRoute.entry.id === 'explorar/index' ||
+  Astro.locals.starlightRoute.entry.id === 'explorar';
+const exploreGraphData = isExploreRoute ? buildVaultExploreData() : null;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const exploreGraphLimit = 12;
+---
 <div class="lg:sl-flex">
 	{
 		Astro.locals.starlightRoute.toc && (
@@ -14,6 +27,18 @@
 				</button>
 				<aside class="right-sidebar-container print:hidden">
 					<div class="right-sidebar">
+						{isExploreRoute && exploreGraphData && (
+							<section class="vault-graph-sidebar" aria-label="Graph lateral de exploração">
+								<VaultGraphView
+									nodes={exploreGraphData.graph.nodes}
+									links={exploreGraphData.graph.links}
+									base={base}
+									limit={exploreGraphLimit}
+									title="Graph view lateral do vault"
+									showLabels={false}
+								/>
+							</section>
+						)}
 						<slot name="right-sidebar" />
 					</div>
 				</aside>
@@ -59,8 +84,9 @@
 				position: fixed;
 				z-index: calc(var(--sl-z-index-navbar) - 1);
 				top: calc(var(--sl-nav-height) + 0.75rem);
-				inline-size: 1.75rem;
-				block-size: 1.75rem;
+				inline-size: 2rem;
+				block-size: 2rem;
+				padding: 0;
 				border: 1px solid var(--sl-color-hairline);
 				border-radius: 999px;
 				background: var(--sl-color-bg-nav);
@@ -68,9 +94,11 @@
 				color: var(--sl-color-text-accent);
 				cursor: pointer;
 				font: inherit;
-				font-size: 1.1rem;
-				font-weight: 800;
+				font-size: 1.5rem;
+				font-family: var(--sl-font-system, system-ui);
+				font-weight: 860;
 				line-height: 1;
+				text-align: center;
 			}
 
 			.vault-sidebar-rail-toggle span {
@@ -79,7 +107,8 @@
 				inline-size: 1em;
 				block-size: 1em;
 				line-height: 1;
-				transform: translateY(-0.04em);
+				font-size: 1.15rem;
+				transform: translateY(-0.01em);
 			}
 
 			.vault-sidebar-rail-toggle:hover,

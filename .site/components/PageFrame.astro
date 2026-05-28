@@ -171,8 +171,9 @@ const { hasSidebar } = Astro.locals.starlightRoute;
 				position: fixed;
 				z-index: calc(var(--sl-z-index-navbar) - 1);
 				top: calc(var(--sl-nav-height) + 0.75rem);
-				inline-size: 1.75rem;
-				block-size: 1.75rem;
+				inline-size: 2rem;
+				block-size: 2rem;
+				padding: 0;
 				border: 1px solid var(--sl-color-hairline);
 				border-radius: 999px;
 				background: var(--sl-color-bg-nav);
@@ -180,9 +181,11 @@ const { hasSidebar } = Astro.locals.starlightRoute;
 				color: var(--sl-color-text-accent);
 				cursor: pointer;
 				font: inherit;
-				font-size: 1.1rem;
-				font-weight: 800;
+				font-size: 1.5rem;
+				font-family: var(--sl-font-system, system-ui);
+				font-weight: 860;
 				line-height: 1;
+				text-align: center;
 			}
 
 			.vault-sidebar-rail-toggle span {
@@ -191,7 +194,8 @@ const { hasSidebar } = Astro.locals.starlightRoute;
 				inline-size: 1em;
 				block-size: 1em;
 				line-height: 1;
-				transform: translateY(-0.04em);
+				font-size: 1.15rem;
+				transform: translateY(-0.01em);
 			}
 
 			.vault-sidebar-rail-toggle:hover,

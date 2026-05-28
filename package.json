@@ -50,7 +50,7 @@
     "diagrams:check": "mdt check",
     "release:package:smoke": "node scripts/release_package_smoke.mjs",
     "release:package:smoke:json": "node scripts/release_package_smoke.mjs --json",
-    "validate": "pnpm run actions:pins && pnpm run lint && pnpm run audit:ia && pnpm run site:audit:sidebar && pnpm run test && pnpm run validate:onboarding && pnpm run validate:pt-text && pnpm run validate:theme && pnpm run validate:mermaid && pnpm run smoke:template && pnpm run release:package:smoke",
+    "validate": "pnpm run actions:pins && pnpm run lint && pnpm run audit:ia && pnpm run site:audit:sidebar && pnpm run test && pnpm run validate:onboarding && pnpm run validate:pt-text && pnpm run validate:theme && pnpm run validate:mermaid && pnpm run site:graph-smoke && pnpm run smoke:template && pnpm run release:package:smoke",
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish"
