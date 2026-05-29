@@ -704,6 +704,8 @@ iframe {
   --vault-lab-content-gap: 4.75rem;
   --vault-lab-content-offset: calc(var(--vault-lab-topbar-height) + var(--vault-lab-content-gap));
   --vault-lab-sidebar-width: 15.5rem;
+  --vault-lab-sidebar-control-size: 0.94rem;
+  --vault-lab-sidebar-toggle-size: 1.08rem;
 }
 
 :root[data-vault-marimo-shell="lab"] body {
@@ -737,7 +739,7 @@ iframe {
   border-radius: 0.5rem;
   color: var(--foreground);
   font: inherit;
-  font-size: 0.82rem;
+  font-size: var(--vault-lab-sidebar-control-size);
   line-height: 1;
   text-decoration: none;
 }
@@ -754,7 +756,7 @@ iframe {
   cursor: pointer;
   padding: 0;
   gap: 0;
-  font-size: 1.08rem;
+  font-size: var(--vault-lab-sidebar-toggle-size);
   line-height: 1;
   font-weight: 760;
   box-shadow: 0 0.5rem 1.25rem color-mix(in srgb, var(--foreground) 12%, transparent);
@@ -771,7 +773,7 @@ iframe {
   place-items: center;
   width: 1em;
   height: 1em;
-  font-size: 1.02rem;
+  font-size: var(--vault-lab-sidebar-toggle-size);
   line-height: 1;
   transform: none;
 }

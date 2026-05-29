@@ -59,6 +59,65 @@ function parseVisibleCount(caption) {
   return match ? Number(match[1]) : 0;
 }
 
+async function beginFrameSamples(page) {
+  await page.evaluate(() => {
+    const samples = [];
+    let last = performance.now();
+
+    const state = {
+      samples,
+      running: true,
+      id: 0,
+    };
+
+    const tick = (time) => {
+      if (!state.running) return;
+      const delta = time - last;
+      if (Number.isFinite(delta) && delta > 0) {
+        samples.push(delta);
+      }
+      last = time;
+      state.id = requestAnimationFrame(tick);
+    };
+
+    const rafId = requestAnimationFrame((time) => {
+      last = time;
+      state.id = requestAnimationFrame(tick);
+    });
+    state.id = rafId;
+
+    window.__vaultGraphFrameSamples = state;
+  });
+}
+
+async function endFrameSamples(page) {
+  return page.evaluate(() => {
+    const state = window.__vaultGraphFrameSamples;
+    if (!state || !Array.isArray(state.samples)) {
+      return null;
+    }
+
+    state.running = false;
+    if (state.id) {
+      cancelAnimationFrame(state.id);
+    }
+
+    const samples = state.samples.filter((value) => Number.isFinite(value) && value >= 0);
+    if (!samples.length) return { count: 0 };
+
+    const sorted = [...samples].sort((a, b) => a - b);
+    const total = sorted.reduce((acc, value) => acc + value, 0);
+
+    return {
+      count: sorted.length,
+      avg: total / sorted.length,
+      max: sorted[sorted.length - 1],
+      p90: sorted[Math.floor(sorted.length * 0.9)] || sorted[sorted.length - 1],
+      p95: sorted[Math.floor(sorted.length * 0.95)] || sorted[sorted.length - 1],
+    };
+  });
+}
+
 async function parseViewportTransform(graph) {
   return graph.locator('[data-vault-graph-viewport]').first().getAttribute('transform');
 }
@@ -486,6 +545,41 @@ async function runExploreGraphSmoke() {
     }
 
     assert.ok(anyNodeMoved, "Drag interaction should move at least one visible node.");
+
+    const stressTarget = await firstNode.boundingBox();
+    if (stressTarget) {
+      const stressStartX = stressTarget.x + stressTarget.width * 0.25;
+      const stressStartY = stressTarget.y + stressTarget.height * 0.25;
+      const stressMoves = 45;
+
+      await beginFrameSamples(page);
+      await page.mouse.move(stressStartX, stressStartY);
+      await page.mouse.down();
+      for (let index = 1; index <= stressMoves; index += 1) {
+        const ratio = index / stressMoves;
+        const waveX = Math.sin(ratio * Math.PI * 1.2) * 2;
+        const waveY = Math.cos(ratio * Math.PI * 0.8) * 2;
+        const x = stressStartX + ratio * 48 + waveX;
+        const y = stressStartY + ratio * 24 + waveY;
+        await page.mouse.move(x, y, { steps: 1 });
+        await page.waitForTimeout(6);
+      }
+      await page.mouse.up();
+      await page.waitForTimeout(120);
+      const stressFrameStats = await endFrameSamples(page);
+
+      assert.ok(stressFrameStats && stressFrameStats.count >= 20, 'Drag stress test should capture frame samples.');
+      assert.ok(
+        stressFrameStats.avg <= 120,
+        `Average frame interval under sustained drag is too high (${stressFrameStats.avg.toFixed(1)}ms).`
+      );
+      assert.ok(
+        stressFrameStats.p95 <= 220,
+        `95th-percentile frame interval under sustained drag is too high (${stressFrameStats.p95.toFixed(1)}ms).`
+      );
+    } else {
+      fail('Unable to locate drag target for graph stress sample.', failures);
+    }
 
     // Ensure drag interaction causes a measurable movement in the graph state.
 

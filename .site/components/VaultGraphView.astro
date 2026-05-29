@@ -176,10 +176,15 @@ const hasData = positioned.length > 0;
   (() => {
     const VIEWBOX_SIZE = 200;
     const FORCE_STEPS = 80;
-    const REPULSION_FORCE = 1600;
-    const SPRING_FORCE = 0.018;
+    const REPULSION_FORCE = 1100;
+    const SPRING_FORCE = 0.014;
     const CENTER_FORCE = 0.004;
     const DAMPING = 0.82;
+    const MAX_REPULSION_FORCE = 2.4;
+    const MAX_SPRING_FORCE = 0.72;
+    const FOCUS_INTERACTION_RADIUS = 84;
+    const GLOBAL_INTERACTION_RADIUS = 110;
+    const MAX_NODE_VELOCITY = 0.95;
     const MIN_SCALE = 0.65;
     const MAX_SCALE = 2.9;
     const DRAG_THRESHOLD_PX = 3;
@@ -187,7 +192,7 @@ const hasData = positioned.length > 0;
     const LABEL_MARGIN = 6;
     const LABEL_MARGIN_Y = 1;
     const VIEWPORT_BOUNDS_PADDING = 10;
-    const POST_DRAG_SETTLE_STEPS = 12;
+    const POST_DRAG_SETTLE_STEPS = 7;
     function clamp(value, min, max) {
       return Math.min(max, Math.max(min, value));
     }
@@ -371,7 +376,8 @@ const hasData = positioned.length > 0;
         }
       }
 
-      function scheduleViewportSettle() {
+      function scheduleViewportSettle(focusItem = null) {
+        if (!focusItem) return;
         stopViewportSettle();
         settleSteps = POST_DRAG_SETTLE_STEPS;
         settleFrameId = window.requestAnimationFrame(() => {
@@ -379,10 +385,10 @@ const hasData = positioned.length > 0;
           if (settleSteps <= 0) return;
 
           settleSteps -= 1;
-          runPhysicsRelaxation(1);
+          runPhysicsRelaxation(1, focusItem);
           queuePaint();
           if (settleSteps > 0) {
-            scheduleViewportSettle();
+            scheduleViewportSettle(focusItem);
           }
         });
       }
@@ -450,17 +456,19 @@ const hasData = positioned.length > 0;
 
         for (let step = 0; step < steps; step += 1) {
           const forces = nodes.map(() => ({ x: 0, y: 0 }));
+          const focusInteractionLimitSq = Math.pow(focusItem ? FOCUS_INTERACTION_RADIUS : GLOBAL_INTERACTION_RADIUS, 2);
 
           for (let i = 0; i < nodes.length; i += 1) {
             const source = nodes[i];
             for (let j = i + 1; j < nodes.length; j += 1) {
               const target = nodes[j];
 
-              const shouldInteract = focusItem
-                ? (source === focusItem || target === focusItem)
-                  && source.visible
-                  && target.visible
-                : source.visible && target.visible;
+              const sourceDistanceSq = (source.x - target.x) ** 2 + (source.y - target.y) ** 2;
+              const shouldInteract = source.visible &&
+                target.visible &&
+                (focusItem
+                  ? (source === focusItem || target === focusItem) && sourceDistanceSq <= focusInteractionLimitSq
+                  : sourceDistanceSq <= focusInteractionLimitSq);
 
               if (!shouldInteract) continue;
 
@@ -468,7 +476,8 @@ const hasData = positioned.length > 0;
               const dy = source.y - target.y;
               const distSq = dx * dx + dy * dy + 0.25;
               const dist = Math.sqrt(distSq);
-              const repulsion = REPULSION_FORCE / (distSq * Math.max(1, dist));
+              const repulsionRaw = REPULSION_FORCE / (distSq * Math.max(1, dist));
+              const repulsion = clamp(repulsionRaw, 0, MAX_REPULSION_FORCE);
               const forceX = (dx / dist) * repulsion;
               const forceY = (dy / dist) * repulsion;
 
@@ -484,12 +493,19 @@ const hasData = positioned.length > 0;
             if (focusItem && edge.source !== focusItem && edge.target !== focusItem) continue;
             if (!edge.source.visible || !edge.target.visible) continue;
 
+            const edgeDistSq = (edge.source.x - edge.target.x) ** 2 + (edge.source.y - edge.target.y) ** 2;
+            if (edgeDistSq > GLOBAL_INTERACTION_RADIUS * GLOBAL_INTERACTION_RADIUS) continue;
+
             const dx = edge.target.x - edge.source.x;
             const dy = edge.target.y - edge.source.y;
             const distSq = dx * dx + dy * dy + 0.01;
             const dist = Math.sqrt(distSq);
             const ideal = edge.source.size + edge.target.size + 22;
-            const pull = (dist - ideal) * SPRING_FORCE * (focusItem ? 0.58 : 0.22);
+            const pull = clamp(
+              (dist - ideal) * SPRING_FORCE * (focusItem ? 0.58 : 0.22),
+              -MAX_SPRING_FORCE,
+              MAX_SPRING_FORCE,
+            );
             const fx = (dx / dist) * pull;
             const fy = (dy / dist) * pull;
 
@@ -507,11 +523,24 @@ const hasData = positioned.length > 0;
             const item = nodes[i];
             if (focusItem && item !== focusItem && !item.visible) continue;
             if (!item.visible) continue;
+            if (!focusItem && !Number.isFinite(item.vx + item.vy)) {
+              item.vx = 0;
+              item.vy = 0;
+              continue;
+            }
 
             const dx = VIEWBOX_SIZE / 2 - item.x;
             const dy = VIEWBOX_SIZE / 2 - item.y;
-            item.vx = (item.vx + forces[i].x + dx * (focusItem ? CENTER_FORCE : CENTER_FORCE * 0.22)) * DAMPING;
-            item.vy = (item.vy + forces[i].y + dy * (focusItem ? CENTER_FORCE : CENTER_FORCE * 0.22)) * DAMPING;
+            item.vx = clamp(
+              (item.vx + forces[i].x + dx * (focusItem ? CENTER_FORCE : CENTER_FORCE * 0.22)) * DAMPING,
+              -MAX_NODE_VELOCITY,
+              MAX_NODE_VELOCITY,
+            );
+            item.vy = clamp(
+              (item.vy + forces[i].y + dy * (focusItem ? CENTER_FORCE : CENTER_FORCE * 0.22)) * DAMPING,
+              -MAX_NODE_VELOCITY,
+              MAX_NODE_VELOCITY,
+            );
             item.x += item.vx;
             item.y += item.vy;
             constrain(item);
@@ -845,7 +874,7 @@ const hasData = positioned.length > 0;
         if (!pointerState.moved) {
           item.element.click();
         } else {
-          scheduleViewportSettle();
+          scheduleViewportSettle(item);
         }
 
         pointerState.kind = null;

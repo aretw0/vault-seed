@@ -469,6 +469,10 @@
   margin: 1rem 0;
 }
 
+.vault-graph-sidebar .vault-graph-view__toolbar {
+  padding-inline-end: calc(var(--vault-sidebar-rail-toggle-size, 2rem) + 0.45rem);
+}
+
 .vault-graph-view__toolbar {
   display: flex;
   gap: 0.45rem;
