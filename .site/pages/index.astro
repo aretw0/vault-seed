@@ -4,7 +4,10 @@ import { buildVaultExploreData } from '../lib/vault-explore';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const explore = buildVaultExploreData();
-const heroNodes = explore.graph.insights.hubs.slice(0, 6);
+const heroNodeCap = Math.max(8, Math.min(28, Math.ceil(explore.graph.nodes.length * 0.22)));
+const heroNodes = [...explore.graph.nodes]
+  .sort((a, b) => (b.degree - a.degree) || a.title.localeCompare(b.title, 'pt'))
+  .slice(0, heroNodeCap);
 const heroNodeIds = new Set(heroNodes.map((node) => node.id));
 const heroLinks = explore.graph.links.filter((link) => heroNodeIds.has(link.source) && heroNodeIds.has(link.target));
 function escapeHtml(value: string) {
@@ -28,20 +31,20 @@ function graphHeroHtml() {
     };
   });
   const byId = new Map(positioned.map((node) => [node.id, node]));
-  const lines = heroLinks.slice(0, 10).map((link) => {
+  const lines = heroLinks.slice(0, Math.min(heroLinks.length, heroNodes.length * 2)).map((link) => {
     const source = byId.get(link.source);
     const target = byId.get(link.target);
     if (!source || !target) return '';
-    return `<line x1="${source.x.toFixed(1)}" y1="${source.y.toFixed(1)}" x2="${target.x.toFixed(1)}" y2="${target.y.toFixed(1)}" />`;
+    return `<line data-vault-graph-link="" data-vault-graph-source="${escapeHtml(link.source)}" data-vault-graph-target="${escapeHtml(link.target)}" x1="${source.x.toFixed(1)}" y1="${source.y.toFixed(1)}" x2="${target.x.toFixed(1)}" y2="${target.y.toFixed(1)}" />`;
   }).join('');
   const circles = positioned.map((node) => (
-    `<a href="${base}/${escapeHtml(node.id)}/" aria-label="${escapeHtml(node.title)}: ${node.degree} conexões" data-vault-graph-node-label="${escapeHtml(node.title)}" data-vault-graph-label-x="${node.x.toFixed(1)}" data-vault-graph-label-y="${(node.y + node.size + 8).toFixed(1)}">` +
+    `<a href="${base}/${escapeHtml(node.id)}/" aria-label="${escapeHtml(node.title)}: ${node.degree} conexões" data-vault-graph-node-id="${escapeHtml(node.id)}" data-vault-graph-node-label="${escapeHtml(node.title)}" data-vault-graph-node-size="${node.size.toFixed(1)}" data-vault-graph-node-x="${node.x.toFixed(1)}" data-vault-graph-node-y="${node.y.toFixed(1)}" data-vault-graph-label-x="${node.x.toFixed(1)}" data-vault-graph-label-y="${(node.y + node.size + 8).toFixed(1)}">` +
     `<title>${escapeHtml(node.title)} · ${node.degree} conexões</title>` +
     `<circle cx="${node.x.toFixed(1)}" cy="${node.y.toFixed(1)}" r="${node.size.toFixed(1)}" style="--vault-node-weight:${node.weight.toFixed(2)}" />` +
     `<text class="vault-graph-view__label vault-graph-view__label--short" x="${node.x.toFixed(1)}" y="${(node.y + node.size + 8).toFixed(1)}" text-anchor="middle">${escapeHtml(truncateLabel(node.title))}</text>` +
     `</a>`
   )).join('');
-  return `<figure class="vault-graph-view vault-graph-view--hero" aria-label="Graph view do vault"><svg viewBox="0 0 200 200" role="img"><title>Graph view do vault</title><g class="vault-graph-view__links" aria-hidden="true">${lines}</g><g class="vault-graph-view__nodes">${circles}</g><g class="vault-graph-view__hover-layer" aria-hidden="true"><text class="vault-graph-view__hover-label" text-anchor="middle"></text></g></svg><figcaption>${positioned.length} hubs navegáveis · rótulo completo ao passar o mouse ou focar</figcaption></figure>`;
+  return `<figure class="vault-graph-view vault-graph-view--hero" aria-label="Graph view do vault"><svg viewBox="0 0 200 200" role="img"><title>Graph view do vault</title><g class="vault-graph-view__links" aria-hidden="true">${lines}</g><g class="vault-graph-view__nodes">${circles}</g><g class="vault-graph-view__hover-layer" aria-hidden="true"><text class="vault-graph-view__hover-label" text-anchor="middle"></text></g></svg><figcaption>${positioned.length} nós navegáveis · rótulo completo ao passar o mouse ou focar</figcaption></figure>`;
 }
 const heroGraphHtml = graphHeroHtml();
 ---
@@ -150,18 +153,200 @@ const heroGraphHtml = graphHeroHtml();
 
 <script is:inline>
   (() => {
-    function setupGraphLabels() {
-      document.querySelectorAll('.vault-graph-view').forEach((figure) => {
-        if (figure.dataset.vaultGraphHoverReady === '1') return;
-        figure.dataset.vaultGraphHoverReady = '1';
+    const VIEWBOX_SIZE = 200;
+    const FORCE_STEPS = 140;
+    const REPULSION_FORCE = 1600;
+    const SPRING_FORCE = 0.018;
+    const CENTER_FORCE = 0.004;
+    const DAMPING = 0.82;
+    const LABEL_OFFSET_Y = 9;
+    const LABEL_MARGIN = 6;
+    const LABEL_MARGIN_Y = 1;
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function estimateLabelHalfWidth(text, fontSize) {
+      const safeFontSize = Number(fontSize) || 6;
+      return Math.max(5, String(text || '').length * safeFontSize * 0.52);
+    }
+
+    function placeLabel(rawX, rawY, halfWidth) {
+      const safeHalf = Math.min(Number(halfWidth) || 10, VIEWBOX_SIZE / 2 - LABEL_MARGIN - 1);
+      const minX = Math.max(safeHalf, LABEL_MARGIN);
+      const maxX = Math.min(VIEWBOX_SIZE - safeHalf - LABEL_MARGIN, VIEWBOX_SIZE - LABEL_MARGIN);
+
+      const clampedX = clamp(rawX, Math.min(minX, maxX), Math.max(minX, maxX));
+      const textAnchor =
+        minX === maxX
+          ? 'middle'
+          : clampedX <= minX + 0.001
+            ? 'start'
+            : clampedX >= maxX - 0.001
+              ? 'end'
+              : 'middle';
+
+      const clampedY = clamp(rawY, LABEL_OFFSET_Y + LABEL_MARGIN_Y, VIEWBOX_SIZE - LABEL_OFFSET_Y - LABEL_MARGIN_Y);
+
+      return {
+        x: clampedX,
+        y: clampedY,
+        anchor: textAnchor,
+      };
+    }
+
+    function runPhysicsLayout(figure) {
+      const nodes = Array.from(figure.querySelectorAll('[data-vault-graph-node-id]'));
+      if (!nodes.length) return;
+
+      const state = nodes.map((node) => {
+        const size = Number.parseFloat(String(node.dataset.vaultGraphNodeSize || '6')) || 6;
+        return {
+          id: node.dataset.vaultGraphNodeId,
+          x: Number.parseFloat(String(node.dataset.vaultGraphNodeX || '100')) || 100,
+          y: Number.parseFloat(String(node.dataset.vaultGraphNodeY || '100')) || 100,
+          size,
+          vx: (Math.random() - 0.5) * 0.6,
+          vy: (Math.random() - 0.5) * 0.6,
+          element: node,
+          circle: node.querySelector('circle'),
+          label: node.querySelector('.vault-graph-view__label--short'),
+        };
+      });
+
+      const stateById = new Map(state.map((item) => [item.id, item]));
+      const edges = Array.from(figure.querySelectorAll('[data-vault-graph-link]')).map((edge) => ({
+        edge,
+        source: stateById.get(edge.getAttribute('data-vault-graph-source') || ''),
+        target: stateById.get(edge.getAttribute('data-vault-graph-target') || ''),
+      }));
+
+      const center = VIEWBOX_SIZE / 2;
+      let step = 0;
+
+      function paint() {
+        state.forEach((item) => {
+          if (!item.element || !item.circle) return;
+          item.element.dataset.vaultGraphNodeX = item.x.toFixed(2);
+          item.element.dataset.vaultGraphNodeY = item.y.toFixed(2);
+
+          const shortText = item.label?.textContent || item.element.dataset.vaultGraphNodeLabel || '';
+          const shortPlacement = placeLabel(
+            item.x,
+            item.y + item.size + LABEL_OFFSET_Y,
+            estimateLabelHalfWidth(shortText, 6),
+          );
+
+          item.element.dataset.vaultGraphLabelX = shortPlacement.x.toFixed(2);
+          item.element.dataset.vaultGraphLabelY = shortPlacement.y.toFixed(2);
+
+          item.circle.setAttribute('cx', item.x.toFixed(2));
+          item.circle.setAttribute('cy', item.y.toFixed(2));
+
+          if (item.label) {
+            item.label.setAttribute('x', shortPlacement.x.toFixed(2));
+            item.label.setAttribute('y', shortPlacement.y.toFixed(2));
+            item.label.setAttribute('text-anchor', shortPlacement.anchor);
+          }
+        });
+
+        edges.forEach((edge) => {
+          if (!edge.source || !edge.target) return;
+          edge.edge.setAttribute('x1', edge.source.x.toFixed(2));
+          edge.edge.setAttribute('y1', edge.source.y.toFixed(2));
+          edge.edge.setAttribute('x2', edge.target.x.toFixed(2));
+          edge.edge.setAttribute('y2', edge.target.y.toFixed(2));
+        });
+      }
+
+      function iterate() {
+        const forces = state.map(() => ({ x: 0, y: 0 }));
+
+        for (let i = 0; i < state.length; i += 1) {
+          const source = state[i];
+          for (let j = i + 1; j < state.length; j += 1) {
+            const target = state[j];
+            const dx = source.x - target.x;
+            const dy = source.y - target.y;
+            const distSq = dx * dx + dy * dy + 0.2;
+            const dist = Math.sqrt(distSq);
+            const force = REPULSION_FORCE / distSq;
+            const nx = (dx / dist) * force;
+            const ny = (dy / dist) * force;
+            forces[i].x += nx;
+            forces[i].y += ny;
+            forces[j].x -= nx;
+            forces[j].y -= ny;
+          }
+        }
+
+        for (const edge of edges) {
+          if (!edge.source || !edge.target) continue;
+          const dx = edge.target.x - edge.source.x;
+          const dy = edge.target.y - edge.source.y;
+          const distSq = dx * dx + dy * dy + 0.01;
+          const dist = Math.sqrt(distSq);
+          const ideal = edge.source.size + edge.target.size + 16;
+          const pull = (dist - ideal) * SPRING_FORCE;
+          const fx = (dx / dist) * pull;
+          const fy = (dy / dist) * pull;
+          const sourceIndex = state.indexOf(edge.source);
+          const targetIndex = state.indexOf(edge.target);
+          if (sourceIndex < 0 || targetIndex < 0) continue;
+          forces[sourceIndex].x += fx;
+          forces[sourceIndex].y += fy;
+          forces[targetIndex].x -= fx;
+          forces[targetIndex].y -= fy;
+        }
+
+        for (let i = 0; i < state.length; i += 1) {
+          const item = state[i];
+          const dx = center - item.x;
+          const dy = center - item.y;
+          item.vx = (item.vx + forces[i].x + dx * CENTER_FORCE) * DAMPING;
+          item.vy = (item.vy + forces[i].y + dy * CENTER_FORCE) * DAMPING;
+          item.x += item.vx;
+          item.y += item.vy;
+
+          const min = item.size + 8;
+          const max = VIEWBOX_SIZE - item.size - 8;
+          item.x = Math.min(max, Math.max(min, item.x));
+          item.y = Math.min(max, Math.max(min, item.y));
+        }
+
+        paint();
+        step += 1;
+        if (step < FORCE_STEPS) {
+          requestAnimationFrame(iterate);
+        }
+      }
+
+      paint();
+      requestAnimationFrame(iterate);
+    }
+
+    function setupGraph() {
+      document.querySelectorAll('.vault-graph-view--hero').forEach((figure) => {
+        if (figure.dataset.vaultGraphReady === '1') return;
+        figure.dataset.vaultGraphReady = '1';
+
         const hoverLabel = figure.querySelector('.vault-graph-view__hover-label');
         const nodes = figure.querySelectorAll('[data-vault-graph-node-label]');
+
         nodes.forEach((node) => {
           const activate = () => {
             if (!hoverLabel) return;
-            hoverLabel.textContent = node.dataset.vaultGraphNodeLabel || '';
-            hoverLabel.setAttribute('x', node.dataset.vaultGraphLabelX || '0');
-            hoverLabel.setAttribute('y', node.dataset.vaultGraphLabelY || '0');
+
+            const fullLabel = node.dataset.vaultGraphNodeLabel || '';
+            const baseX = Number.parseFloat(String(node.dataset.vaultGraphLabelX || node.dataset.vaultGraphNodeX || '0')) || 0;
+            const baseY = Number.parseFloat(String(node.dataset.vaultGraphLabelY || node.dataset.vaultGraphNodeY || '0')) || 0;
+            const hoverPlacement = placeLabel(baseX, baseY, estimateLabelHalfWidth(fullLabel, 7));
+
+            hoverLabel.textContent = fullLabel;
+            hoverLabel.setAttribute('x', hoverPlacement.x.toFixed(2));
+            hoverLabel.setAttribute('y', hoverPlacement.y.toFixed(2));
+            hoverLabel.setAttribute('text-anchor', hoverPlacement.anchor);
             node.classList.add('is-hovered');
             figure.dataset.vaultGraphHover = '1';
           };
@@ -169,15 +354,19 @@ const heroGraphHtml = graphHeroHtml();
             node.classList.remove('is-hovered');
             delete figure.dataset.vaultGraphHover;
           };
+
           node.addEventListener('pointerenter', activate);
           node.addEventListener('pointerleave', deactivate);
           node.addEventListener('focus', activate);
           node.addEventListener('blur', deactivate);
         });
+
+        runPhysicsLayout(figure);
       });
     }
-    setupGraphLabels();
-    document.addEventListener('astro:page-load', setupGraphLabels);
+
+    setupGraph();
+    document.addEventListener('astro:page-load', setupGraph);
   })();
 </script>
 
