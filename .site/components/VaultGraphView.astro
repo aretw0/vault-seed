@@ -38,7 +38,8 @@ const radius = 66;
 const maxDegree = Math.max(1, ...sortedNodes.map((node) => node.degree));
 
 const positioned = sortedNodes.map((node, index) => {
-  const angle = sortedNodes.length > 1 ? (Math.PI * 2 * index) / sortedNodes.length - Math.PI / 2 : 0;
+  const goldenAngle = sortedNodes.length > 0 ? index * 0.61803398875 : 0;
+  const angle = sortedNodes.length > 1 ? (Math.PI * 2 * (goldenAngle % 1)) - Math.PI / 2 : 0;
   const weight = 0.72 + (node.degree / maxDegree) * 0.6;
   const shortLabel = truncateLabel(node.title);
   return {
@@ -174,20 +175,24 @@ const hasData = positioned.length > 0;
 <script is:inline>
   (() => {
     const VIEWBOX_SIZE = 200;
+    const FORCE_STEPS = 80;
+    const REPULSION_FORCE = 1600;
+    const SPRING_FORCE = 0.018;
+    const CENTER_FORCE = 0.004;
+    const DAMPING = 0.82;
     const MIN_SCALE = 0.65;
     const MAX_SCALE = 2.9;
     const DRAG_THRESHOLD_PX = 3;
     const LABEL_OFFSET_Y = 9;
     const LABEL_MARGIN = 6;
     const LABEL_MARGIN_Y = 1;
-
     function clamp(value, min, max) {
       return Math.min(max, Math.max(min, value));
     }
 
     function estimateLabelHalfWidth(text, fontSize) {
       const safeFontSize = Number(fontSize) || 6;
-      return Math.max(5, String(text || '').length * safeFontSize * 0.52);
+      return Math.max(5, Math.min(18, String(text || '').length * safeFontSize * 0.52));
     }
 
     function placeLabel(rawX, rawY, halfWidth) {
@@ -224,10 +229,17 @@ const hasData = positioned.length > 0;
         const baseY = Number.parseFloat(String(nodeEl.dataset.vaultGraphNodeY || '100')) || 100;
         const degree = Number.parseFloat(String(nodeEl.dataset.vaultGraphNodeDegree || '0')) || 0;
 
+        const id = nodeEl.dataset.vaultGraphNodeId || '';
+        const seed = id
+          .split('')
+          .reduce((acc, char) => (acc * 131 + char.codePointAt(0)) % 100000, 1);
+
         return {
-          id: nodeEl.dataset.vaultGraphNodeId,
-          x: baseX,
-          y: baseY,
+          id,
+          x: baseX + (((seed % 100) - 50) / 100) * 1.6,
+          y: baseY + ((((seed * 11) % 100) - 50) / 100) * 1.6,
+          vx: (seed % 20 - 10) / 1000,
+          vy: (((seed * 3) % 20 - 10) / 1000),
           size,
           degree,
           visible: nodeEl.dataset.vaultGraphNodeVisible === '1',
@@ -302,6 +314,65 @@ const hasData = positioned.length > 0;
         const max = VIEWBOX_SIZE - item.size - 2;
         item.x = clamp(item.x, min, max);
         item.y = clamp(item.y, min, max);
+      }
+
+      function runInitialLayout() {
+        if (nodes.length < 2) return;
+
+        for (let step = 0; step < FORCE_STEPS; step += 1) {
+          const forces = nodes.map(() => ({ x: 0, y: 0 }));
+
+          for (let i = 0; i < nodes.length; i += 1) {
+            const source = nodes[i];
+            for (let j = i + 1; j < nodes.length; j += 1) {
+              const target = nodes[j];
+              const dx = source.x - target.x;
+              const dy = source.y - target.y;
+              const distSq = dx * dx + dy * dy + 0.2;
+              const dist = Math.sqrt(distSq);
+              const repulsion = REPULSION_FORCE / distSq;
+              const forceX = (dx / dist) * repulsion;
+              const forceY = (dy / dist) * repulsion;
+
+              forces[i].x += forceX;
+              forces[i].y += forceY;
+              forces[j].x -= forceX;
+              forces[j].y -= forceY;
+            }
+          }
+
+          for (const edge of edges) {
+            if (!edge.source || !edge.target) continue;
+            const dx = edge.target.x - edge.source.x;
+            const dy = edge.target.y - edge.source.y;
+            const distSq = dx * dx + dy * dy + 0.01;
+            const dist = Math.sqrt(distSq);
+            const ideal = edge.source.size + edge.target.size + 18;
+            const pull = (dist - ideal) * SPRING_FORCE;
+            const fx = (dx / dist) * pull;
+            const fy = (dy / dist) * pull;
+
+            const sourceIndex = nodes.indexOf(edge.source);
+            const targetIndex = nodes.indexOf(edge.target);
+            if (sourceIndex < 0 || targetIndex < 0) continue;
+
+            forces[sourceIndex].x += fx;
+            forces[sourceIndex].y += fy;
+            forces[targetIndex].x -= fx;
+            forces[targetIndex].y -= fy;
+          }
+
+          for (let i = 0; i < nodes.length; i += 1) {
+            const item = nodes[i];
+            const dx = VIEWBOX_SIZE / 2 - item.x;
+            const dy = VIEWBOX_SIZE / 2 - item.y;
+            item.vx = (item.vx + forces[i].x + dx * CENTER_FORCE) * DAMPING;
+            item.vy = (item.vy + forces[i].y + dy * CENTER_FORCE) * DAMPING;
+            item.x += item.vx;
+            item.y += item.vy;
+            constrain(item);
+          }
+        }
       }
 
       function paint() {
@@ -642,6 +713,8 @@ const hasData = positioned.length > 0;
         node.element.addEventListener('focus', () => activateHover(node));
         node.element.addEventListener('blur', () => deactivateHover(node));
       }
+
+      runInitialLayout();
 
       for (const node of nodes) {
         constrain(node);

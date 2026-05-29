@@ -169,7 +169,7 @@ const heroGraphHtml = graphHeroHtml();
 
     function estimateLabelHalfWidth(text, fontSize) {
       const safeFontSize = Number(fontSize) || 6;
-      return Math.max(5, String(text || '').length * safeFontSize * 0.52);
+      return Math.max(5, Math.min(18, String(text || '').length * safeFontSize * 0.52));
     }
 
     function placeLabel(rawX, rawY, halfWidth) {
