@@ -27,6 +27,7 @@
     "site:check": "node scripts/smoke_site.js",
     "site:responsive": "pnpm run site:build && pnpm run notebooks:export && node scripts/smoke_responsive.mjs",
     "site:graph-smoke": "pnpm run site:build && node scripts/graph_interactions_smoke.mjs",
+    "site:graph-perf-smoke": "pnpm run site:build && node scripts/graph_interactions_perf_smoke.mjs",
     "site:test": "node --test scripts/mermaid_render_contract.test.js scripts/mermaid_toggle.test.js",
     "site:audit:sidebar": "node scripts/audit_sidebar.js",
     "audit:ia": "node scripts/audit_information_architecture.mjs",
