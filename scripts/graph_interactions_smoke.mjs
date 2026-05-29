@@ -276,6 +276,144 @@ async function runExploreGraphSmoke() {
       "Pan interaction should update viewport transform.",
     );
 
+    const firstNodeRect = await firstNode.boundingBox();
+    assert.ok(firstNodeRect, "First graph node should expose a bounding box.");
+
+    const rightPanStart = {
+      x: firstNodeRect.x + firstNodeRect.width / 2,
+      y: firstNodeRect.y + firstNodeRect.height / 2,
+    };
+    const rightPanEnd = {
+      x: rightPanStart.x + 45,
+      y: rightPanStart.y + 28,
+    };
+
+    await page.evaluate(
+      ({ selector, startX, startY, endX, endY }) => {
+        const node = document.querySelector(selector);
+        if (!node) return;
+
+        const pointerDown = new PointerEvent('pointerdown', {
+          bubbles: true,
+          cancelable: true,
+          pointerId: 222,
+          pointerType: 'mouse',
+          clientX: startX,
+          clientY: startY,
+          button: 2,
+        });
+        node.dispatchEvent(pointerDown);
+
+        const pointerMove = new PointerEvent('pointermove', {
+          bubbles: true,
+          cancelable: true,
+          pointerId: 222,
+          pointerType: 'mouse',
+          clientX: endX,
+          clientY: endY,
+          button: 2,
+        });
+        window.dispatchEvent(pointerMove);
+
+        const pointerUp = new PointerEvent('pointerup', {
+          bubbles: true,
+          cancelable: true,
+          pointerId: 222,
+          pointerType: 'mouse',
+          clientX: endX,
+          clientY: endY,
+          button: 2,
+        });
+        window.dispatchEvent(pointerUp);
+      },
+      {
+        selector: '.vault-graph-preview .vault-graph-view [data-vault-graph-node-id]',
+        startX: rightPanStart.x,
+        startY: rightPanStart.y,
+        endX: rightPanEnd.x,
+        endY: rightPanEnd.y,
+      },
+    );
+    await page.waitForTimeout(120);
+
+    const afterRightPanTransform = await parseViewportTransform(graph);
+    assert.ok(
+      afterRightPanTransform && afterRightPanTransform !== afterPanTransform,
+      "Right-click pan on node should update viewport transform.",
+    );
+
+    const beforeNodeX = Number.parseFloat((await firstNode.getAttribute('data-vault-graph-node-x')) || '0');
+    const beforeNodeY = Number.parseFloat((await firstNode.getAttribute('data-vault-graph-node-y')) || '0');
+    const dragDeltaX = Number.isFinite(beforeNodeX) && beforeNodeX > 110 ? -40 : 40;
+    const dragDeltaY = Number.isFinite(beforeNodeY) && beforeNodeY > 110 ? -30 : 30;
+    const dragStart = {
+      x: rightPanEnd.x + 5,
+      y: rightPanEnd.y + 5,
+    };
+    const dragEnd = {
+      x: dragStart.x + dragDeltaX,
+      y: dragStart.y + dragDeltaY,
+    };
+
+    await page.evaluate(
+      ({ selector, startX, startY, endX, endY }) => {
+        const node = document.querySelector(selector);
+        if (!node) return;
+
+        const down = new PointerEvent('pointerdown', {
+          bubbles: true,
+          cancelable: true,
+          pointerId: 333,
+          pointerType: 'mouse',
+          clientX: startX,
+          clientY: startY,
+          button: 0,
+        });
+        node.dispatchEvent(down);
+
+        const move = new PointerEvent('pointermove', {
+          bubbles: true,
+          cancelable: true,
+          pointerId: 333,
+          pointerType: 'mouse',
+          clientX: endX,
+          clientY: endY,
+          button: 0,
+        });
+        window.dispatchEvent(move);
+
+        const up = new PointerEvent('pointerup', {
+          bubbles: true,
+          cancelable: true,
+          pointerId: 333,
+          pointerType: 'mouse',
+          clientX: endX,
+          clientY: endY,
+          button: 0,
+        });
+        window.dispatchEvent(up);
+      },
+      {
+        selector: '.vault-graph-preview .vault-graph-view [data-vault-graph-node-id]',
+        startX: dragStart.x,
+        startY: dragStart.y,
+        endX: dragEnd.x,
+        endY: dragEnd.y,
+      },
+    );
+    await page.waitForTimeout(120);
+
+    const afterNodeX = Number.parseFloat((await firstNode.getAttribute('data-vault-graph-node-x')) || '0');
+    const afterNodeY = Number.parseFloat((await firstNode.getAttribute('data-vault-graph-node-y')) || '0');
+    assert.ok(
+      Number.isFinite(beforeNodeX) && Number.isFinite(afterNodeX) && Math.abs(afterNodeX - beforeNodeX) > 0.2,
+      "Node drag should update x position.",
+    );
+    assert.ok(
+      Number.isFinite(beforeNodeY) && Number.isFinite(afterNodeY) && Math.abs(afterNodeY - beforeNodeY) > 0.2,
+      "Node drag should update y position.",
+    );
+
     await page.evaluate(
       ({ selector, x, y }) => {
         const svg = document.querySelector(selector);
