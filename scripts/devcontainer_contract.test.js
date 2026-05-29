@@ -32,6 +32,7 @@ test("devcontainer shell scripts stay LF-only for Linux bash", () => {
 test("devcontainer provides the baseline sandbox tools expected by agents", () => {
   const config = readJson(".devcontainer/devcontainer.json");
   const dockerfile = fs.readFileSync(".devcontainer/Dockerfile", "utf8");
+  const postCreate = fs.readFileSync(".devcontainer/post-create.sh", "utf8");
   const postStart = fs.readFileSync(".devcontainer/post-start.sh", "utf8");
 
   assert.deepEqual(config.build, { dockerfile: "Dockerfile", context: "." });
@@ -55,6 +56,10 @@ test("devcontainer provides the baseline sandbox tools expected by agents", () =
   }
 
   assert.match(dockerfile, /ln -sf \/usr\/bin\/fdfind \/usr\/local\/bin\/fd/);
+  assert.match(postCreate, /if \[ -d "\$ROOT\/\.git\/objects" \]; then/);
+  assert.match(postCreate, /sudo chown -R "\$\(id -u\):\$\(id -g\)" "\$ROOT\/\.git\/objects"/);
+  assert.match(postStart, /if \[ -d "\$ROOT\/\.git\/objects" \]; then/);
+  assert.match(postStart, /sudo chown -R "\$\(id -u\):\$\(id -g\)" "\$ROOT\/\.git\/objects"/);
   assert.match(postStart, /check_agent_sandbox_tools\(\)/);
   assert.match(postStart, /for tool in bwrap fd gh jq rg shellcheck shfmt tree uv; do/);
   assert.match(postStart, /Ferramentas de sandbox ausentes/);
