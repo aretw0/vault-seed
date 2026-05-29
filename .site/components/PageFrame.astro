@@ -189,10 +189,11 @@ const { hasSidebar } = Astro.locals.starlightRoute;
 			}
 
 			.vault-sidebar-rail-toggle span {
-				display: block;
+				display: grid;
 				place-items: center;
+				inline-size: 100%;
+				block-size: 100%;
 				line-height: 1;
-				transform: translateY(-0.01rem);
 			}
 
 			.vault-sidebar-rail-toggle:hover,

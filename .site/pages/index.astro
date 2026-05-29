@@ -44,7 +44,7 @@ function graphHeroHtml() {
     `<text class="vault-graph-view__label vault-graph-view__label--short" x="${node.x.toFixed(1)}" y="${(node.y + node.size + 8).toFixed(1)}" text-anchor="middle">${escapeHtml(truncateLabel(node.title))}</text>` +
     `</a>`
   )).join('');
-  return `<figure class="vault-graph-view vault-graph-view--hero" aria-label="Graph view do vault"><svg viewBox="0 0 200 200" role="img"><title>Graph view do vault</title><g class="vault-graph-view__links" aria-hidden="true">${lines}</g><g class="vault-graph-view__nodes">${circles}</g><g class="vault-graph-view__hover-layer" aria-hidden="true"><text class="vault-graph-view__hover-label" text-anchor="middle"></text></g></svg><figcaption>${positioned.length} nós navegáveis · rótulo completo ao passar o mouse ou focar</figcaption></figure>`;
+  return `<figure class="vault-graph-view vault-graph-view--hero" aria-label="Graph view do vault"><svg class="vault-graph-view__canvas" viewBox="0 0 200 200" role="img"><title>Graph view do vault</title><g class="vault-graph-view__links" aria-hidden="true">${lines}</g><g class="vault-graph-view__nodes">${circles}</g><g class="vault-graph-view__hover-layer" aria-hidden="true"><text class="vault-graph-view__hover-label" text-anchor="middle"></text></g></svg><figcaption>${positioned.length} nós navegáveis · rótulo completo ao passar o mouse ou focar</figcaption></figure>`;
 }
 const heroGraphHtml = graphHeroHtml();
 ---
@@ -172,7 +172,7 @@ const heroGraphHtml = graphHeroHtml();
       return Math.max(5, Math.min(18, String(text || '').length * safeFontSize * 0.52));
     }
 
-    function placeLabel(rawX, rawY, halfWidth) {
+    function placeLabel(rawX, rawY, halfWidth, preferAbove = false) {
       const safeHalf = Math.min(Number(halfWidth) || 10, VIEWBOX_SIZE / 2 - LABEL_MARGIN - 1);
       const minX = Math.max(safeHalf, LABEL_MARGIN);
       const maxX = Math.min(VIEWBOX_SIZE - safeHalf - LABEL_MARGIN, VIEWBOX_SIZE - LABEL_MARGIN);
@@ -187,7 +187,16 @@ const heroGraphHtml = graphHeroHtml();
               ? 'end'
               : 'middle';
 
-      const clampedY = clamp(rawY, LABEL_OFFSET_Y + LABEL_MARGIN_Y, VIEWBOX_SIZE - LABEL_OFFSET_Y - LABEL_MARGIN_Y);
+      const minY = LABEL_OFFSET_Y + LABEL_MARGIN_Y;
+      const maxY = VIEWBOX_SIZE - LABEL_OFFSET_Y - LABEL_MARGIN_Y;
+      const preferredY = preferAbove
+        ? rawY - (LABEL_OFFSET_Y + LABEL_MARGIN_Y + 4)
+        : rawY;
+
+      let clampedY = clamp(preferredY, minY, maxY);
+      if (preferAbove && preferredY < minY) {
+        clampedY = clamp(rawY, minY, maxY);
+      }
 
       return {
         x: clampedX,
@@ -339,9 +348,10 @@ const heroGraphHtml = graphHeroHtml();
             if (!hoverLabel) return;
 
             const fullLabel = node.dataset.vaultGraphNodeLabel || '';
+            const nodeSize = Number.parseFloat(String(node.dataset.vaultGraphNodeSize || '6')) || 6;
             const baseX = Number.parseFloat(String(node.dataset.vaultGraphLabelX || node.dataset.vaultGraphNodeX || '0')) || 0;
             const baseY = Number.parseFloat(String(node.dataset.vaultGraphLabelY || node.dataset.vaultGraphNodeY || '0')) || 0;
-            const hoverPlacement = placeLabel(baseX, baseY, estimateLabelHalfWidth(fullLabel, 7));
+            const hoverPlacement = placeLabel(baseX, baseY - (nodeSize + LABEL_OFFSET_Y), estimateLabelHalfWidth(fullLabel, 7), true);
 
             hoverLabel.textContent = fullLabel;
             hoverLabel.setAttribute('x', hoverPlacement.x.toFixed(2));

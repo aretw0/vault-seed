@@ -195,7 +195,7 @@ const hasData = positioned.length > 0;
       return Math.max(5, Math.min(18, String(text || '').length * safeFontSize * 0.52));
     }
 
-    function placeLabel(rawX, rawY, halfWidth) {
+    function placeLabel(rawX, rawY, halfWidth, preferAbove = false) {
       const safeHalf = Math.min(Number(halfWidth) || 10, VIEWBOX_SIZE / 2 - LABEL_MARGIN - 1);
       const minX = Math.max(safeHalf, LABEL_MARGIN);
       const maxX = Math.min(VIEWBOX_SIZE - safeHalf - LABEL_MARGIN, VIEWBOX_SIZE - LABEL_MARGIN);
@@ -210,7 +210,16 @@ const hasData = positioned.length > 0;
               ? 'end'
               : 'middle';
 
-      const clampedY = clamp(rawY, LABEL_OFFSET_Y + LABEL_MARGIN_Y, VIEWBOX_SIZE - LABEL_OFFSET_Y - LABEL_MARGIN_Y);
+      const minY = LABEL_OFFSET_Y + LABEL_MARGIN_Y;
+      const maxY = VIEWBOX_SIZE - LABEL_OFFSET_Y - LABEL_MARGIN_Y;
+      const preferredY = preferAbove
+        ? rawY - (LABEL_OFFSET_Y + LABEL_MARGIN_Y + 4)
+        : rawY;
+
+      let clampedY = clamp(preferredY, minY, maxY);
+      if (preferAbove && preferredY < minY) {
+        clampedY = clamp(rawY, minY, maxY);
+      }
 
       return {
         x: clampedX,
@@ -615,16 +624,18 @@ const hasData = positioned.length > 0;
 
       function setupInteractions() {
         const onPointerDown = (event) => {
+          if (event.button !== 0 && event.button !== 2) return;
+
           const node = event.target?.closest?.('[data-vault-graph-node-id]');
           const button = event.target?.closest?.('[data-vault-graph-action]');
 
-          if (node instanceof Element) {
+          if (node instanceof Element && event.button === 0) {
             const id = node.getAttribute('data-vault-graph-node-id');
             const item = nodes.find((item) => item.id === id);
             if (item) {
               startDrag(event, item);
+              return;
             }
-            return;
           }
 
           if (button instanceof Element) return;
@@ -690,9 +701,10 @@ const hasData = positioned.length > 0;
         if (!hoverLabel || !node.visible) return;
 
         const fullLabel = node.element.dataset.vaultGraphNodeLabel || '';
+        const nodeSize = Number.parseFloat(String(node.element.dataset.vaultGraphNodeSize || String(node.size) || '6')) || node.size || 6;
         const baseX = Number.parseFloat(String(node.element.dataset.vaultGraphLabelX || `${node.x}`)) || node.x;
         const baseY = Number.parseFloat(String(node.element.dataset.vaultGraphLabelY || `${node.y + node.size + LABEL_OFFSET_Y}`)) || (node.y + node.size + LABEL_OFFSET_Y);
-        const hoverPlacement = placeLabel(baseX, baseY, estimateLabelHalfWidth(fullLabel, 7));
+        const hoverPlacement = placeLabel(baseX, baseY - (nodeSize + LABEL_OFFSET_Y), estimateLabelHalfWidth(fullLabel, 7), true);
 
         hoverLabel.textContent = fullLabel;
         hoverLabel.setAttribute('x', String(hoverPlacement.x.toFixed(2)));
