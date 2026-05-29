@@ -745,8 +745,8 @@ iframe {
 .vault-lab-sidebar-toggle {
   display: inline-grid;
   place-items: center;
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 2rem;
+  height: 2rem;
   border: 1px solid var(--border);
   border-radius: 999px;
   background: color-mix(in srgb, var(--card) 94%, transparent);
@@ -754,9 +754,9 @@ iframe {
   cursor: pointer;
   padding: 0;
   gap: 0;
-  font-size: 1rem;
+  font-size: 1.08rem;
   line-height: 1;
-  font-weight: 800;
+  font-weight: 760;
   box-shadow: 0 0.5rem 1.25rem color-mix(in srgb, var(--foreground) 12%, transparent);
 }
 
@@ -767,8 +767,13 @@ iframe {
 }
 
 .vault-lab-sidebar-toggle__icon {
-  font-size: 0.9rem;
+  display: inline-grid;
+  place-items: center;
+  width: 1em;
+  height: 1em;
+  font-size: 1.02rem;
   line-height: 1;
+  transform: none;
 }
 
 .vault-lab-sr-only {
@@ -788,13 +793,10 @@ iframe {
   padding: 0.45rem 0.6rem;
 }
 
-.vault-lab-brand {
-  color: var(--foreground);
-  font-weight: 700;
-}
-
+.vault-lab-brand,
 .vault-lab-section {
   color: var(--foreground);
+  font-weight: 650;
 }
 
 .vault-lab-sidebar {
@@ -920,8 +922,9 @@ iframe {
   color: var(--muted-foreground);
   font-size: 0.78rem;
   line-height: 1;
-  padding: 0.45rem 0.7rem;
+  padding: 0.45rem 0.7rem calc(0.45rem + env(safe-area-inset-bottom, 0px));
   transition: left 160ms ease;
+  bottom: 0;
 }
 
 .vault-lab-footer a {
@@ -1072,7 +1075,7 @@ iframe {
   .vault-lab-footer,
   :root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] .vault-lab-footer {
     left: 0.75rem;
-    bottom: env(safe-area-inset-bottom, 0px);
+    bottom: 0;
   }
 
   :root[data-vault-marimo-shell="lab"] .vault-marimo-theme-selector {

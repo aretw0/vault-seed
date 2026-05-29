@@ -186,6 +186,8 @@ const hasData = positioned.length > 0;
     const LABEL_OFFSET_Y = 9;
     const LABEL_MARGIN = 6;
     const LABEL_MARGIN_Y = 1;
+    const VIEWPORT_BOUNDS_PADDING = 10;
+    const POST_DRAG_SETTLE_STEPS = 12;
     function clamp(value, min, max) {
       return Math.min(max, Math.max(min, value));
     }
@@ -317,6 +319,8 @@ const hasData = positioned.length > 0;
       let renderFrameId = null;
       let needsPaint = false;
       let needsTransform = false;
+      let settleFrameId = null;
+      let settleSteps = 0;
 
       function requestRaf() {
         if (renderFrameId !== null) return;
@@ -356,6 +360,162 @@ const hasData = positioned.length > 0;
         if (needsTransform) {
           applyViewportTransform();
           needsTransform = false;
+        }
+      }
+
+      function stopViewportSettle() {
+        settleSteps = 0;
+        if (settleFrameId !== null) {
+          window.cancelAnimationFrame(settleFrameId);
+          settleFrameId = null;
+        }
+      }
+
+      function scheduleViewportSettle() {
+        stopViewportSettle();
+        settleSteps = POST_DRAG_SETTLE_STEPS;
+        settleFrameId = window.requestAnimationFrame(() => {
+          settleFrameId = null;
+          if (settleSteps <= 0) return;
+
+          settleSteps -= 1;
+          runPhysicsRelaxation(1);
+          queuePaint();
+          if (settleSteps > 0) {
+            scheduleViewportSettle();
+          }
+        });
+      }
+
+      function boundsForViewport() {
+        const visibleNodes = nodes.filter((item) => item.visible);
+        const items = visibleNodes.length ? visibleNodes : nodes;
+
+        let minX = Number.POSITIVE_INFINITY;
+        let maxX = Number.NEGATIVE_INFINITY;
+        let minY = Number.POSITIVE_INFINITY;
+        let maxY = Number.NEGATIVE_INFINITY;
+
+        for (const item of items) {
+          const labelText = item.element?.dataset?.vaultGraphNodeLabelShort || item.element?.dataset?.vaultGraphNodeLabel || '';
+          const halfLabelWidth = Math.max(6, Math.min(34, estimateLabelHalfWidth(labelText, 6)));
+          const textRadius = Math.max(halfLabelWidth, item.size + 2);
+
+          minX = Math.min(minX, item.x - textRadius - LABEL_MARGIN);
+          maxX = Math.max(maxX, item.x + textRadius + LABEL_MARGIN);
+
+          minY = Math.min(minY, item.y - item.size - LABEL_MARGIN);
+          maxY = Math.max(maxY, item.y + item.size + LABEL_OFFSET_Y + LABEL_MARGIN);
+        }
+
+        if (!Number.isFinite(minX) || !Number.isFinite(maxX) || !Number.isFinite(minY) || !Number.isFinite(maxY)) {
+          return {
+            minX: 0,
+            maxX: VIEWBOX_SIZE,
+            minY: 0,
+            maxY: VIEWBOX_SIZE,
+          };
+        }
+
+        return {
+          minX,
+          maxX,
+          minY,
+          maxY,
+        };
+      }
+
+      function clampViewportToContent() {
+        const bounds = boundsForViewport();
+        const minTx = VIEWPORT_BOUNDS_PADDING - bounds.maxX * viewportState.scale;
+        const maxTx = VIEWBOX_SIZE - VIEWPORT_BOUNDS_PADDING - bounds.minX * viewportState.scale;
+        const minTy = VIEWPORT_BOUNDS_PADDING - bounds.maxY * viewportState.scale;
+        const maxTy = VIEWBOX_SIZE - VIEWPORT_BOUNDS_PADDING - bounds.minY * viewportState.scale;
+
+        if (minTx > maxTx) {
+          viewportState.tx = (minTx + maxTx) / 2;
+        } else {
+          viewportState.tx = clamp(viewportState.tx, minTx, maxTx);
+        }
+
+        if (minTy > maxTy) {
+          viewportState.ty = (minTy + maxTy) / 2;
+        } else {
+          viewportState.ty = clamp(viewportState.ty, minTy, maxTy);
+        }
+      }
+
+      function runPhysicsRelaxation(steps = 1, focusItem = null) {
+        if (nodes.length < 2) return;
+
+        for (let step = 0; step < steps; step += 1) {
+          const forces = nodes.map(() => ({ x: 0, y: 0 }));
+
+          for (let i = 0; i < nodes.length; i += 1) {
+            const source = nodes[i];
+            for (let j = i + 1; j < nodes.length; j += 1) {
+              const target = nodes[j];
+
+              const shouldInteract = focusItem
+                ? (source === focusItem || target === focusItem)
+                  && source.visible
+                  && target.visible
+                : source.visible && target.visible;
+
+              if (!shouldInteract) continue;
+
+              const dx = source.x - target.x;
+              const dy = source.y - target.y;
+              const distSq = dx * dx + dy * dy + 0.25;
+              const dist = Math.sqrt(distSq);
+              const repulsion = REPULSION_FORCE / (distSq * Math.max(1, dist));
+              const forceX = (dx / dist) * repulsion;
+              const forceY = (dy / dist) * repulsion;
+
+              forces[i].x += forceX;
+              forces[i].y += forceY;
+              forces[j].x -= forceX;
+              forces[j].y -= forceY;
+            }
+          }
+
+          for (const edge of edges) {
+            if (!edge.source || !edge.target) continue;
+            if (focusItem && edge.source !== focusItem && edge.target !== focusItem) continue;
+            if (!edge.source.visible || !edge.target.visible) continue;
+
+            const dx = edge.target.x - edge.source.x;
+            const dy = edge.target.y - edge.source.y;
+            const distSq = dx * dx + dy * dy + 0.01;
+            const dist = Math.sqrt(distSq);
+            const ideal = edge.source.size + edge.target.size + 22;
+            const pull = (dist - ideal) * SPRING_FORCE * (focusItem ? 0.58 : 0.22);
+            const fx = (dx / dist) * pull;
+            const fy = (dy / dist) * pull;
+
+            const sourceIndex = nodes.indexOf(edge.source);
+            const targetIndex = nodes.indexOf(edge.target);
+            if (sourceIndex < 0 || targetIndex < 0) continue;
+
+            forces[sourceIndex].x += fx;
+            forces[sourceIndex].y += fy;
+            forces[targetIndex].x -= fx;
+            forces[targetIndex].y -= fy;
+          }
+
+          for (let i = 0; i < nodes.length; i += 1) {
+            const item = nodes[i];
+            if (focusItem && item !== focusItem && !item.visible) continue;
+            if (!item.visible) continue;
+
+            const dx = VIEWBOX_SIZE / 2 - item.x;
+            const dy = VIEWBOX_SIZE / 2 - item.y;
+            item.vx = (item.vx + forces[i].x + dx * (focusItem ? CENTER_FORCE : CENTER_FORCE * 0.22)) * DAMPING;
+            item.vy = (item.vy + forces[i].y + dy * (focusItem ? CENTER_FORCE : CENTER_FORCE * 0.22)) * DAMPING;
+            item.x += item.vx;
+            item.y += item.vy;
+            constrain(item);
+          }
         }
       }
 
@@ -524,6 +684,7 @@ const hasData = positioned.length > 0;
 
       function applyViewportTransform() {
         if (!viewport) return;
+        clampViewportToContent();
         viewport.setAttribute(
           'transform',
           `translate(${viewportState.tx.toFixed(3)} ${viewportState.ty.toFixed(3)}) scale(${viewportState.scale.toFixed(3)})`,
@@ -558,12 +719,14 @@ const hasData = positioned.length > 0;
         viewportState.scale = 1;
         viewportState.tx = 0;
         viewportState.ty = 0;
-        applyViewportTransform();
+        queueTransformRender();
       }
 
       function startPan(event) {
         if (pointerState.kind) return;
         if (event.pointerType === 'touch') return;
+
+        stopViewportSettle();
 
         const target = event.target;
         if (target instanceof Element && target.closest('button[data-vault-graph-action]')) {
@@ -626,6 +789,7 @@ const hasData = positioned.length > 0;
 
       function startDrag(event, item) {
         if (!item) return;
+        stopViewportSettle();
         pointerState.kind = 'drag';
         pointerState.pointerId = event.pointerId;
         pointerState.item = item;
@@ -666,6 +830,9 @@ const hasData = positioned.length > 0;
         dragItem.x = graphPos.x - pointerState.dragOffsetX;
         dragItem.y = graphPos.y - pointerState.dragOffsetY;
         constrain(dragItem);
+        if (dragItem.visible) {
+          runPhysicsRelaxation(1, dragItem);
+        }
         queuePaint();
       }
 
@@ -677,6 +844,8 @@ const hasData = positioned.length > 0;
 
         if (!pointerState.moved) {
           item.element.click();
+        } else {
+          scheduleViewportSettle();
         }
 
         pointerState.kind = null;
@@ -692,6 +861,7 @@ const hasData = positioned.length > 0;
 
       function zoom(event) {
         event.preventDefault();
+        stopViewportSettle();
         const pointerBefore = toGraphCoordinates(event.clientX, event.clientY);
         if (!pointerBefore) return;
 

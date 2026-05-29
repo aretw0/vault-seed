@@ -48,11 +48,16 @@ const exploreGraphLimit = 12;
 	<div class="main-pane"><slot /></div>
 </div>
 
-<style>
-	@layer starlight.core {
-		.main-pane {
-			isolation: isolate;
-		}
+	<style>
+		@layer starlight.core {
+			:root {
+				--vault-sidebar-rail-toggle-size: 2rem;
+				--vault-sidebar-rail-toggle-font-size: 1.68rem;
+			}
+
+			.main-pane {
+				isolation: isolate;
+			}
 
 		.vault-sidebar-rail-toggle {
 			display: none;
@@ -84,8 +89,8 @@ const exploreGraphLimit = 12;
 				position: fixed;
 				z-index: calc(var(--sl-z-index-navbar) - 1);
 				top: calc(var(--sl-nav-height) + 0.75rem);
-				inline-size: 2rem;
-				block-size: 2rem;
+				inline-size: var(--vault-sidebar-rail-toggle-size);
+				block-size: var(--vault-sidebar-rail-toggle-size);
 				padding: 0;
 				border: 1px solid var(--sl-color-hairline);
 				border-radius: 999px;
@@ -94,11 +99,12 @@ const exploreGraphLimit = 12;
 				color: var(--sl-color-text-accent);
 				cursor: pointer;
 				font: inherit;
-				font-size: 1.65rem;
+				font-size: var(--vault-sidebar-rail-toggle-font-size);
 				font-family: var(--sl-font-system, system-ui);
 				font-weight: 900;
 				line-height: 1;
 				text-align: center;
+				appearance: none;
 			}
 
 			.vault-sidebar-rail-toggle span {
@@ -107,6 +113,7 @@ const exploreGraphLimit = 12;
 				inline-size: 100%;
 				block-size: 100%;
 				line-height: 1;
+				transform: none;
 			}
 
 			.vault-sidebar-rail-toggle:hover,

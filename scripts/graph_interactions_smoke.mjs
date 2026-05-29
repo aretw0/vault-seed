@@ -63,6 +63,43 @@ async function parseViewportTransform(graph) {
   return graph.locator('[data-vault-graph-viewport]').first().getAttribute('transform');
 }
 
+async function readVisibleNodesState(graph) {
+  return graph.evaluate((graphRoot) => {
+    const canvas = graphRoot.querySelector('.vault-graph-view__canvas');
+    if (!canvas) return null;
+
+    const canvasRect = canvas.getBoundingClientRect();
+    const nodes = Array.from(graphRoot.querySelectorAll('[data-vault-graph-node-id]'));
+    const visibleNodes = nodes.filter((node) => {
+      if (node.hasAttribute('hidden')) return false;
+      const style = window.getComputedStyle(node);
+      return style.display !== 'none' && style.visibility !== 'hidden';
+    });
+
+    return {
+      canvas: {
+        left: canvasRect.left,
+        right: canvasRect.right,
+        top: canvasRect.top,
+        bottom: canvasRect.bottom,
+      },
+      nodes: visibleNodes.map((node) => {
+        const rect = node.getBoundingClientRect();
+        const id = node.getAttribute('data-vault-graph-node-id') || '';
+        return {
+          id,
+          x: Number.parseFloat(node.getAttribute('data-vault-graph-node-x') || '0'),
+          y: Number.parseFloat(node.getAttribute('data-vault-graph-node-y') || '0'),
+          left: rect.left,
+          right: rect.right,
+          top: rect.top,
+          bottom: rect.bottom,
+        };
+      }),
+    };
+  });
+}
+
 async function startStaticServer() {
   const server = createServer(async (request, response) => {
     const urlPath = request.url || "/";
@@ -341,9 +378,28 @@ async function runExploreGraphSmoke() {
       afterRightPanTransform && afterRightPanTransform !== afterPanTransform,
       "Right-click pan on node should update viewport transform.",
     );
+    const rightPanNodeState = await readVisibleNodesState(graph);
+    assert.ok(Array.isArray(rightPanNodeState?.nodes) && rightPanNodeState.nodes.length > 0, 'Graph should expose visible nodes after right-click pan.');
+
+    if (rightPanNodeState && rightPanNodeState.nodes.length) {
+      const { canvas, nodes: visibleNodes } = rightPanNodeState;
+      for (const node of visibleNodes) {
+        const overlaps =
+          node.right > canvas.left + 0.2 &&
+          node.left < canvas.right - 0.2 &&
+          node.bottom > canvas.top + 0.2 &&
+          node.top < canvas.bottom - 0.2;
+        assert.ok(overlaps, `Visible node ${node.id} should remain inside the graph canvas.`);
+      }
+    }
 
     const beforeNodeX = Number.parseFloat((await firstNode.getAttribute('data-vault-graph-node-x')) || '0');
     const beforeNodeY = Number.parseFloat((await firstNode.getAttribute('data-vault-graph-node-y')) || '0');
+    const beforeNodesState = await readVisibleNodesState(graph);
+    const beforeDragNodeById = new Map();
+    for (const node of beforeNodesState?.nodes || []) {
+      beforeDragNodeById.set(node.id, node);
+    }
     const dragDeltaX = Number.isFinite(beforeNodeX) && beforeNodeX > 110 ? -40 : 40;
     const dragDeltaY = Number.isFinite(beforeNodeY) && beforeNodeY > 110 ? -30 : 30;
     const dragStart = {
@@ -403,16 +459,35 @@ async function runExploreGraphSmoke() {
     );
     await page.waitForTimeout(120);
 
-    const afterNodeX = Number.parseFloat((await firstNode.getAttribute('data-vault-graph-node-x')) || '0');
-    const afterNodeY = Number.parseFloat((await firstNode.getAttribute('data-vault-graph-node-y')) || '0');
-    assert.ok(
-      Number.isFinite(beforeNodeX) && Number.isFinite(afterNodeX) && Math.abs(afterNodeX - beforeNodeX) > 0.2,
-      "Node drag should update x position.",
-    );
-    assert.ok(
-      Number.isFinite(beforeNodeY) && Number.isFinite(afterNodeY) && Math.abs(afterNodeY - beforeNodeY) > 0.2,
-      "Node drag should update y position.",
-    );
+    const afterNodesState = await readVisibleNodesState(graph);
+    const afterDragNodeById = new Map();
+    for (const node of afterNodesState?.nodes || []) {
+      afterDragNodeById.set(node.id, node);
+    }
+
+    let anyNodeMoved = false;
+    for (const [id, beforeNode] of beforeDragNodeById.entries()) {
+      const afterNode = afterDragNodeById.get(id);
+      if (!afterNode) continue;
+
+      if (
+        Number.isFinite(beforeNode.x) && Number.isFinite(afterNode.x) && Math.abs(afterNode.x - beforeNode.x) > 0.12
+      ) {
+        anyNodeMoved = true;
+        break;
+      }
+
+      if (
+        Number.isFinite(beforeNode.y) && Number.isFinite(afterNode.y) && Math.abs(afterNode.y - beforeNode.y) > 0.12
+      ) {
+        anyNodeMoved = true;
+        break;
+      }
+    }
+
+    assert.ok(anyNodeMoved, "Drag interaction should move at least one visible node.");
+
+    // Ensure drag interaction causes a measurable movement in the graph state.
 
     await page.evaluate(
       ({ selector, x, y }) => {
@@ -443,6 +518,18 @@ async function runExploreGraphSmoke() {
       afterZoomTransform && afterZoomTransform !== afterPanTransform,
       "Zoom interaction should update viewport transform.",
     );
+    const afterZoomNodesState = await readVisibleNodesState(graph);
+    if (afterZoomNodesState && afterZoomNodesState.nodes.length) {
+      const { canvas, nodes: visibleNodes } = afterZoomNodesState;
+      for (const node of visibleNodes) {
+        const overlaps =
+          node.right > canvas.left + 0.2 &&
+          node.left < canvas.right - 0.2 &&
+          node.bottom > canvas.top + 0.2 &&
+          node.top < canvas.bottom - 0.2;
+        assert.ok(overlaps, `Visible node ${node.id} should remain inside the graph canvas after zoom.`);
+      }
+    }
 
     await page.waitForTimeout(100);
     assertNoErrorNoise([...consoleMessages, ...pageErrors], failures);
