@@ -130,7 +130,7 @@ fonte (dump/API/arquivo) → ingestão local → normalização → contrato val
 - [x] Consolidar `vault-resource-list`.
 - [x] Consolidar `vault-empty-state`.
 - [ ] Documentar primitives em nota publicada enxuta (catálogo de uso e exemplos).
-- [ ] Cobrir primitives estruturais com smoke/contrato.
+- [x] Cobrir primitives estruturais com smoke/contrato.
 - [ ] Revisar contraste/estado de foco para keyboard/screen reader em páginas críticas.
 - [ ] Criar trilha de onboarding em 3 níveis (leitor, mantenedor, operador).
 
@@ -140,11 +140,11 @@ fonte (dump/API/arquivo) → ingestão local → normalização → contrato val
 - [x] Criar graph view leve e explicável.
 - [ ] Adicionar filtros de graph por pasta/tag/status.
 - [x] Destacar hubs e notas órfãs.
-- [ ] Habilitar movimentação dos nós por arraste (drag) no canvas do graph.
-- [ ] Oferecer controles de expandir/contrair e zoom com recenter e pan, em linguagem de exploração visual (sem exibir código-fonte).
+- [x] Habilitar movimentação dos nós por arraste (drag) no canvas do graph.
+- [x] Oferecer controles de expandir/contrair e zoom com recenter e pan, em linguagem de exploração visual (sem exibir código-fonte).
 - [x] Criar timeline simples de publicação/alteração quando houver metadados.
-- [ ] Garantir fallback sem JavaScript avançado para estados essenciais.
-- [ ] Exibir contexto de acessibilidade no graph (legenda + alternativa textual semântica).
+- [x] Garantir fallback sem JavaScript avançado para estados essenciais.
+- [x] Exibir contexto de acessibilidade no graph (legenda + alternativa textual semântica).
 
 ### 3. Arquitetura de informação e clareza editorial
 
