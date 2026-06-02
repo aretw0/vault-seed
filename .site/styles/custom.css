@@ -567,15 +567,10 @@
 }
 
 .vault-graph-view__button-icon {
-  display: grid;
-  place-items: center;
-  inline-size: 100%;
-  block-size: 100%;
-  font-size: 1.25rem;
-  line-height: 1;
+  display: block;
+  width: 1.25rem;
+  height: 1.25rem;
   pointer-events: none;
-  /* −/+/↻ sit slightly above em-square center in Segoe UI */
-  transform: translateY(0.08em);
 }
 
 .vault-graph-view__button-label {

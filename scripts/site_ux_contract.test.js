@@ -27,8 +27,10 @@ test('Astro header keeps theme controls discoverable without mobile duplication'
   assert.doesNotMatch(header, /vault-seed:focus-mode/);
   assert.match(pageFrame, /data-vault-sidebar-toggle="left"/);
   assert.match(twoColumn, /data-vault-sidebar-toggle="right"/);
-  assert.match(pageFrame, /\.vault-sidebar-rail-toggle span[\s\S]*place-items: center/);
-  assert.match(twoColumn, /\.vault-sidebar-rail-toggle span[\s\S]*place-items: center/);
+  assert.match(pageFrame, /\.vault-sidebar-rail-toggle svg[\s\S]*width: 1em/);
+  assert.match(twoColumn, /\.vault-sidebar-rail-toggle svg[\s\S]*width: 1em/);
+  assert.match(pageFrame, /data-vault-sidebar-left='collapsed'[\s\S]*\.vault-sidebar-rail-toggle--left svg[\s\S]*scaleX\(-1\)/);
+  assert.match(twoColumn, /data-vault-sidebar-right='collapsed'[\s\S]*\.vault-sidebar-rail-toggle--right svg[\s\S]*scaleX\(-1\)/);
   assert.match(pageFrame, /vault-seed:sidebar-left-collapsed/);
   assert.match(pageFrame, /vault-seed:sidebar-right-collapsed/);
   assert.match(customCss, /data-vault-sidebar-left='collapsed'[\s\S]*\.sidebar-pane/);
@@ -160,8 +162,8 @@ test('Graph toolbar buttons have consistent sizing and do not shrink', () => {
   assert.match(css, /\.vault-graph-view__button[\s\S]*height: 2rem/);
   assert.match(css, /\.vault-graph-view__button[\s\S]*flex-shrink: 0/);
 
-  // icon font size updated for better visual alignment with sidebar toggles
-  assert.match(css, /\.vault-graph-view__button-icon[\s\S]*font-size: 1\.25rem/);
+  // icon is inline SVG — sized directly with width/height, no font-size hack needed
+  assert.match(css, /\.vault-graph-view__button-icon[\s\S]*width: 1\.25rem/);
 });
 
 test('Footer kudos renders as compact pill consistent with marimo footer style', () => {

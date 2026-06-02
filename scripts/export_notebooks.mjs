@@ -87,7 +87,7 @@ function labNavigationHtml(currentOutput) {
 <div class="vault-marimo-navigation" data-vault-marimo-navigation>
   <header class="vault-lab-topbar" aria-label="Navegação principal do Lab">
     <button class="vault-lab-sidebar-toggle" type="button" data-vault-lab-sidebar-toggle aria-expanded="true" aria-pressed="false" aria-controls="vault-lab-sidebar" aria-label="Recolher lista de notebooks">
-      <span class="vault-lab-sidebar-toggle__icon" aria-hidden="true">‹</span>
+      <svg class="vault-lab-sidebar-toggle__icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       <span class="vault-lab-sr-only">Recolher lista de notebooks</span>
     </button>
     <a class="vault-lab-brand" href="../">Vault</a>
@@ -112,7 +112,7 @@ function labNavigationHtml(currentOutput) {
     </nav>
   </aside>
   <footer class="vault-lab-footer" lang="pt-BR" data-vault-lab-footer>
-    feito com <span aria-label="amor">♥</span> por <a href="https://github.com/aretw0">aretw0</a>
+    feito com <span class="vault-lab-footer__heart" aria-label="amor">♥</span> por <a href="https://github.com/aretw0">aretw0</a>
   </footer>
 </div>
 <script data-vault-marimo-navigation-script>
@@ -137,10 +137,6 @@ function labNavigationHtml(currentOutput) {
       toggleNode.setAttribute("aria-pressed", String(isCollapsed));
       toggleNode.setAttribute("aria-label", label);
       toggleNode.setAttribute("title", label);
-      const icon = toggleNode.querySelector("[aria-hidden='true']");
-      if (icon) {
-        icon.textContent = isCollapsed ? "›" : "‹";
-      }
     }
   }
 

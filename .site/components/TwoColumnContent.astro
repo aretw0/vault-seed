@@ -23,7 +23,7 @@ const exploreGraphLimit = 12;
 					aria-label="Recolher índice lateral"
 					title="Recolher índice lateral"
 				>
-					<span aria-hidden="true">›</span>
+					<svg aria-hidden="true" class="vault-sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
 				</button>
 				<aside class="right-sidebar-container print:hidden">
 					<div class="right-sidebar">
@@ -107,16 +107,15 @@ const exploreGraphLimit = 12;
 				appearance: none;
 			}
 
-			.vault-sidebar-rail-toggle span {
-				display: grid;
-				place-items: center;
-				inline-size: 100%;
-				block-size: 100%;
-				line-height: 1;
-				font-size: 1em;
-				font-weight: 900;
-				/* ‹ › sit significantly above em-square center in Segoe UI (Windows) */
-				transform: translateY(0.15em);
+			.vault-sidebar-rail-toggle svg {
+				display: block;
+				width: 1em;
+				height: 1em;
+				pointer-events: none;
+			}
+
+			:global(:root[data-vault-sidebar-right='collapsed']) .vault-sidebar-rail-toggle--right svg {
+				transform: scaleX(-1);
 			}
 
 			.vault-sidebar-rail-toggle:hover,

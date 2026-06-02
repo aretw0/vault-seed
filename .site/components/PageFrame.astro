@@ -19,7 +19,7 @@ const { hasSidebar } = Astro.locals.starlightRoute;
 					aria-label="Recolher navegação lateral"
 					title="Recolher navegação lateral"
 				>
-					<span aria-hidden="true">‹</span>
+					<svg aria-hidden="true" class="vault-sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
 				</button>
 				<div id="starlight__sidebar" class="sidebar-pane">
 					<div class="sidebar-content sl-flex">
@@ -43,14 +43,10 @@ const { hasSidebar } = Astro.locals.starlightRoute;
 			left: {
 				expanded: 'Recolher navegação lateral',
 				collapsed: 'Expandir navegação lateral',
-				expandedIcon: '‹',
-				collapsedIcon: '›',
 			},
 			right: {
 				expanded: 'Recolher índice lateral',
 				collapsed: 'Expandir índice lateral',
-				expandedIcon: '›',
-				collapsedIcon: '‹',
 			},
 		};
 
@@ -64,12 +60,9 @@ const { hasSidebar } = Astro.locals.starlightRoute;
 				: 'expanded';
 			controlsFor(side).forEach((button) => {
 				const label = collapsed ? labels[side].collapsed : labels[side].expanded;
-				const icon = collapsed ? labels[side].collapsedIcon : labels[side].expandedIcon;
 				button.setAttribute('aria-pressed', String(collapsed));
 				button.setAttribute('aria-label', label);
 				button.title = label;
-				const iconNode = button.querySelector('[aria-hidden="true"]');
-				if (iconNode) iconNode.textContent = icon;
 			});
 		}
 
@@ -195,16 +188,15 @@ const { hasSidebar } = Astro.locals.starlightRoute;
 				appearance: none;
 			}
 
-			.vault-sidebar-rail-toggle span {
-				display: grid;
-				place-items: center;
-				inline-size: 100%;
-				block-size: 100%;
-				line-height: 1;
-				font-weight: 900;
-				font-size: 1em;
-				/* ‹ › sit significantly above em-square center in Segoe UI (Windows) */
-				transform: translateY(0.15em);
+			.vault-sidebar-rail-toggle svg {
+				display: block;
+				width: 1em;
+				height: 1em;
+				pointer-events: none;
+			}
+
+			:global(:root[data-vault-sidebar-left='collapsed']) .vault-sidebar-rail-toggle--left svg {
+				transform: scaleX(-1);
 			}
 
 			.vault-sidebar-rail-toggle:hover,
