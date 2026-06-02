@@ -4,6 +4,7 @@ import MobileMenuToggle from 'virtual:starlight/components/MobileMenuToggle';
 const { hasSidebar } = Astro.locals.starlightRoute;
 ---
 
+<a href="#vault-main-content" class="vault-skip-link">Ir para o conteúdo principal</a>
 <div class="page sl-flex">
 	<header class="header"><slot name="header" /></header>
 	{
@@ -28,7 +29,7 @@ const { hasSidebar } = Astro.locals.starlightRoute;
 			</nav>
 		)
 	}
-	<div class="main-frame"><slot /></div>
+	<div id="vault-main-content" class="main-frame"><slot /></div>
 </div>
 
 <script is:inline>
@@ -200,7 +201,10 @@ const { hasSidebar } = Astro.locals.starlightRoute;
 				inline-size: 100%;
 				block-size: 100%;
 				line-height: 1;
-				transform: translateY(0.015em);
+				font-weight: 900;
+				font-size: 1em;
+				/* ‹ › sit significantly above em-square center in Segoe UI (Windows) */
+				transform: translateY(0.15em);
 			}
 
 			.vault-sidebar-rail-toggle:hover,

@@ -704,8 +704,8 @@ iframe {
   --vault-lab-content-gap: 4.75rem;
   --vault-lab-content-offset: calc(var(--vault-lab-topbar-height) + var(--vault-lab-content-gap));
   --vault-lab-sidebar-width: 15.5rem;
-  --vault-lab-sidebar-control-size: 0.94rem;
-  --vault-lab-sidebar-toggle-size: 1.08rem;
+  --vault-lab-sidebar-control-size: 1.07rem;
+  --vault-lab-sidebar-toggle-size: 1.68rem;
 }
 
 :root[data-vault-marimo-shell="lab"] body {
@@ -716,6 +716,11 @@ iframe {
 :root[data-vault-marimo-shell="lab"] .vault-marimo-navigation,
 :root[data-vault-marimo-shell="lab"] .vault-marimo-navigation * {
   box-sizing: border-box;
+}
+
+:root[data-vault-marimo-shell="lab"] .markdown,
+:root[data-vault-marimo-shell="lab"] .prose {
+  font-size: 1.08rem;
 }
 
 :root[data-vault-marimo-shell="lab"] .vault-lab-topbar {
@@ -745,8 +750,9 @@ iframe {
 }
 
 .vault-lab-sidebar-toggle {
-  display: inline-grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 2rem;
   height: 2rem;
   border: 1px solid var(--border);
@@ -769,13 +775,15 @@ iframe {
 }
 
 .vault-lab-sidebar-toggle__icon {
-  display: inline-grid;
+  display: grid;
   place-items: center;
-  width: 1em;
-  height: 1em;
+  width: 100%;
+  height: 100%;
   font-size: var(--vault-lab-sidebar-toggle-size);
   line-height: 1;
-  transform: none;
+  font-weight: 760;
+  /* ‹ › sit significantly above em-square center in Segoe UI (Windows) */
+  transform: translateY(0.15em);
 }
 
 .vault-lab-sr-only {
@@ -922,11 +930,23 @@ iframe {
   background: color-mix(in srgb, var(--card) 94%, transparent);
   box-shadow: 0 0.75rem 2rem color-mix(in srgb, var(--foreground) 8%, transparent);
   color: var(--muted-foreground);
-  font-size: 0.78rem;
-  line-height: 1;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  font-variant-emoji: text;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   padding: 0.45rem 0.7rem calc(0.45rem + env(safe-area-inset-bottom, 0px));
   transition: left 160ms ease;
-  bottom: 0;
+}
+
+.vault-lab-footer__heart {
+  display: inline-block;
+  font-size: 0.98rem;
+  line-height: 1;
+  font-family: var(--sl-font-system, system-ui);
+  font-variant-emoji: text;
+  transform: translateY(-0.05em);
 }
 
 .vault-lab-footer a {
@@ -1014,6 +1034,11 @@ iframe {
 @media (max-width: 44rem) {
   body {
     font-size: 0.95rem;
+  }
+
+  :root[data-vault-marimo-shell="lab"] .markdown,
+  :root[data-vault-marimo-shell="lab"] .prose {
+    font-size: 1.05rem;
   }
 
   .markdown h1,
