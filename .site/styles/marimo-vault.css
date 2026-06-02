@@ -930,12 +930,12 @@ iframe {
   box-shadow: 0 0.75rem 2rem color-mix(in srgb, var(--foreground) 8%, transparent);
   color: var(--muted-foreground);
   font-size: 0.8125rem;
-  line-height: 1.4;
+  line-height: 1;
   font-variant-emoji: text;
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  padding: 0.45rem 0.7rem calc(0.45rem + env(safe-area-inset-bottom, 0px));
+  padding: 0.45rem 0.7rem;
   transition: left 160ms ease;
 }
 
@@ -1101,7 +1101,7 @@ iframe {
   .vault-lab-footer,
   :root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] .vault-lab-footer {
     left: 0.75rem;
-    bottom: 0;
+    bottom: env(safe-area-inset-bottom, 0px);
   }
 
   :root[data-vault-marimo-shell="lab"] .vault-marimo-theme-selector {
