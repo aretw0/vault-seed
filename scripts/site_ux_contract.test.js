@@ -65,11 +65,11 @@ test('Graph previews show truncated labels while preserving full accessible titl
 
   assert.match(home, /heroNodeCap = Math\.max\(8, Math\.min\(28, Math\.ceil\(explore\.graph\.nodes\.length \* 0\.22\)\)\)/);
   assert.match(home, /rótulo completo ao passar o mouse ou focar/);
-  // overflow:visible + clip-path avoids compositing issues inside fixed+overflow-y ancestors
+  // overflow:visible avoids compositing-barrier bugs inside fixed+overflow-y ancestors
   assert.match(css, /\.vault-graph-view__canvas\s*\{[^}]*overflow:\s*visible/);
   assert.doesNotMatch(css, /\.vault-graph-view__canvas\s*\{[^}]*overflow:\s*hidden/);
-  // clip-path clips the painted output without creating a scroll-container BFC
-  assert.match(css, /\.vault-graph-view__canvas\s*\{[^}]*clip-path:\s*inset\(0 round 1rem\)/);
+  // CSS clip-path creates a new stacking context that causes the same invisible-sidebar bug
+  assert.doesNotMatch(css, /\.vault-graph-view__canvas\s*\{[^}]*clip-path/);
   assert.doesNotMatch(home, /node\.parentNode\?\.appendChild\(node\)/);
   assert.doesNotMatch(graph, /node\.parentNode\?\.appendChild\(node\)/);
   assert.match(home, /vault-graph-view__hover-layer/);

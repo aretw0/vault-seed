@@ -603,10 +603,10 @@
 .vault-graph-view__canvas {
   display: block;
   overflow: visible;
-  /* clip-path clips painted output to rounded bounds without creating a compositing
-     barrier — the alternative (overflow clipping) breaks SVG rendering inside
-     position:fixed + overflow-y:auto ancestors in Chrome/Windows */
-  clip-path: inset(0 round 1rem);
+  /* overflow:visible avoids the compositing barrier that breaks SVG rendering inside
+     position:fixed + overflow-y:auto (Chrome/Windows). Nodes/links are bounded by
+     the SVG-internal <clipPath>; a CSS paint clip would create a new stacking context
+     and reproduce the same invisible-sidebar bug on desktop. */
   aspect-ratio: 1 / 1;
   width: 100%;
   max-height: min(34rem, 70vh);
