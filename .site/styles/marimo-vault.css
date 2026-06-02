@@ -1101,7 +1101,7 @@ iframe {
   .vault-lab-footer,
   :root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] .vault-lab-footer {
     left: 0.75rem;
-    bottom: env(safe-area-inset-bottom, 0px);
+    bottom: 0;
   }
 
   :root[data-vault-marimo-shell="lab"] .vault-marimo-theme-selector {

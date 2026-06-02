@@ -782,8 +782,6 @@ const hasData = positioned.length > 0;
 
       function startPan(event) {
         if (pointerState.kind) return;
-        if (event.pointerType === 'touch') return;
-
         stopViewportSettle();
 
         const target = event.target;

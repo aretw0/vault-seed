@@ -75,9 +75,10 @@ const exploreGraphLimit = 12;
 			.right-sidebar {
 				position: fixed;
 				top: 0;
+				inset-inline-end: 0;
 				border-inline-start: 1px solid var(--sl-color-hairline);
 				padding-top: var(--sl-nav-height);
-				width: 100%;
+				width: calc(var(--sl-sidebar-width) + (100vw - var(--sl-content-width) - var(--sl-sidebar-width)) / 2);
 				height: 100vh;
 				overflow-y: auto;
 				scrollbar-width: none;
