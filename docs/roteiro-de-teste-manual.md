@@ -1,0 +1,174 @@
+# Roteiro de Teste Manual — vault-seed (completo)
+
+> **Quando usar:** antes de merges em `main`, após mudanças em CSS de layout, VaultGraphView, marimo-vault.css, Footer ou PageFrame.
+> **Pré-requisito:** `pnpm run validate` e `pnpm run site:graph-smoke` passando.
+> **Ambientes obrigatórios:** Chrome desktop + Safari iOS (ou BrowserStack). Firefox desktop é opcional.
+
+---
+
+## O que está automatizado (não testar manualmente)
+
+| Comportamento | Coberto por |
+|---|---|
+| `overflow: hidden` no canvas SVG | `site_ux_contract.test.js` |
+| `aspect-ratio: 1/1` no canvas | `site_ux_contract.test.js` |
+| `margin-inline: auto` no sidebar graph | `site_ux_contract.test.js` |
+| Settle usa relaxação global (`null` focus) | `site_ux_contract.test.js` |
+| `font-variant-emoji: text` nos footers | `site_ux_contract.test.js` |
+| Fontes alinhadas entre Astro e Marimo footer | `site_ux_contract.test.js` |
+| Expand/collapse/recenter/zoom/pan existem no DOM | `site_ux_contract.test.js` + `graph_interactions_smoke.mjs` |
+| Sidebar collapse state (left/right) | `site_ux_contract.test.js` |
+| Responsividade (4 viewports, 10 páginas) — screenshots | `smoke_responsive.mjs` |
+| Nós dentro do viewBox após drag/zoom (coordenadas) | `graph_interactions_smoke.mjs` |
+| Marimo shell topbar + content gap | `lab_shell_contract.test.mjs` |
+| Skip link presente e com CSS de foco (WCAG 2.4.1) | `site_ux_contract.test.js` |
+| `<link rel="license">` no head de todas as páginas | `site_ux_contract.test.js` |
+| `"license": "GPL-3.0-only"` em todos os `package.json` | `site_ux_contract.test.js` |
+| `NOTICE.md` com camadas de licença e SPDX | `site_ux_contract.test.js` |
+
+---
+
+## Seção 1 — Grafo (Graph View)
+
+### 1.1 Mobile — centralização e tamanho
+
+**Dispositivos:** iPhone SE (375px), iPhone Pro Max (430px), Android genérico (360px).
+**URL:** `/explorar/`
+
+| # | Ação | Esperado |
+|---|------|----------|
+| M1 | Rolar até a seção "Graph leve" | SVG preenche a largura disponível — sem espaço vazio à esquerda |
+| M2 | Sem interação | Nós aparecem distribuídos ao redor do centro do SVG, não aglomerados em um canto |
+| M3 | Verificar sidebar lateral (se visível) | Graph sidebar centralizado, não encostado à esquerda |
+
+**Por que manual:** rendering SVG + layout CSS em Safari iOS difere de emuladores; centralização perceptível só no dispositivo real.
+
+---
+
+### 1.2 Mobile — touch e gesto
+
+**Dispositivos:** mesmos de 1.1.
+
+| # | Ação | Esperado |
+|---|------|----------|
+| T1 | Tocar e arrastar o fundo do SVG | Viewport pan ocorre com o dedo; nós se movem junto |
+| T2 | Arrastar um nó específico | Só o nó segue o dedo; ao soltar, nós vizinhos se afastam |
+| T3 | Após arrastar nó para cima de outros | Nós clustered se dispersam progressivamente (settle global) — sem amontoamento permanente |
+| T4 | Zoom com pinch (dois dedos) | Graph amplia/reduz; nós não saem da caixa do SVG |
+| T5 | Zoom máximo e arrastar | Nós ficam clipados pela borda do SVG — nenhum nó "flutua" fora do retângulo |
+
+**Por que manual:** `touch-action: none` e pointer events são simulados em Playwright mas pinch-to-zoom real, velocidade de inércia e comportamento de scroll conflict são device-specific.
+
+---
+
+### 1.3 Desktop — contenção visual
+
+**Viewport:** 1440×900 Chrome.
+
+| # | Ação | Esperado |
+|---|------|----------|
+| D1 | Zoom com scroll até o máximo (MAX_SCALE 3.2×) | Nós continuam dentro do retângulo do SVG — sem nó visível fora da borda |
+| D2 | Pan até o limite com mouse | Nenhum nó desaparece completamente; pelo menos um nó sempre visível |
+| D3 | Duplo clique no SVG | Viewport volta ao centro (recenter) |
+| D4 | Arrastar um nó para dentro de um cluster | Ao soltar, os nós do cluster se afastam progressivamente (settle global ativo) |
+| D5 | Arrastar vários nós em sequência rápida | Grafo mantém distribuição razoável; sem colapso de todos os nós em um ponto |
+
+---
+
+### 1.4 Desktop — primeiro graph da /explorar/ visível
+
+**Viewport:** 1440×900 Chrome. **URL:** `/explorar/`
+
+| # | Ação | Esperado |
+|---|------|----------|
+| G1 | Rolar para o topo da página sem interagir | O graph "Graph leve" ocupa seu espaço visual — nenhum espaço branco onde deveria estar o SVG |
+| G2 | Inspecionar no DevTools | O `<svg class="vault-graph-view__canvas">` tem `overflow: hidden`; nenhum nó filho está fora dos 200×200 do viewBox |
+
+**Por que manual:** `overflow: hidden` num SVG dentro de `position: fixed; overflow-y: auto` depende da composição de camadas do browser — o smoke testa coordenadas mas não a renderização visual.
+
+---
+
+### 1.5 Sidebar graph (desktop ≥ 72rem)
+
+**URL:** `/explorar/` em largura ≥ 1152px.
+
+| # | Ação | Esperado |
+|---|------|----------|
+| S1 | Verificar graph visível sem scroll | O graph menor aparece na sidebar — não é espaço branco |
+| S2 | Verificar centramento dos ícones | O caractere › do rail toggle está no centro do círculo; os caracteres −/+/↻ da toolbar também estão no centro dos seus respectivos círculos |
+| S3 | Clicar em [›] para colapsar sidebar direita | Graph sidebar some; main content expande |
+| S4 | Reabrir sidebar direita | Graph sidebar reaparece centralizado |
+
+**Por que manual:** alinhamento vertical depende de box model computado que varia com font rendering e zoom do browser.
+
+---
+
+## Seção 2 — Footer
+
+### 2.1 Mobile — sem expansão de layout
+
+**Dispositivos:** mesmos de 1.1. **URL:** qualquer página publicada.
+
+| # | Ação | Esperado |
+|---|------|----------|
+| F1 | Rolar até o footer | Texto de autoria aparece centralizado como pílula compacta — sem scroll horizontal na página |
+| F2 | Inspecionar o ♥ | Renderiza como glifo de texto (preto/branco), não como emoji colorido |
+| F3 | Comparar tamanho de fonte | Visualmente igual ao footer do Lab Marimo na mesma página ou em `/lab/` |
+
+**Por que manual:** `font-variant-emoji: text` é honrada diferentemente por versões de iOS Safari; emoji fallback é visual e não tem API de inspeção automatizada.
+
+---
+
+## Seção 3 — Botões (alinhamento visual)
+
+**Viewport:** 1440×900 e 375×812.
+
+| # | Elemento | O que verificar |
+|---|----------|----------------|
+| B1 | Graph toolbar [−][+][↻] | O caractere de cada botão está no centro do seu próprio círculo — não deslocado para cima, para baixo ou para os lados |
+| B2 | Rail toggle [‹] (sidebar esquerda, desktop) | O caractere ‹ está no centro do seu círculo |
+| B3 | Rail toggle [›] (sidebar direita, desktop) | O caractere › está no centro do seu círculo |
+| B4 | Lab sidebar toggle [‹/›] (Marimo, desktop) | O caractere está no centro do círculo, consistente com os toggles do Astro |
+| B5 | Mobile — toolbar do graph | O caractere de cada botão está centrado no círculo; área de toque ≥ 44px |
+
+**Por que manual:** `display: grid; place-items: center` centra geometricamente, mas glifos como ‹, ›, −, ↻ têm métricas de em-square inconsistentes no system-ui — o olho percebe deslocamento óptico que DevTools não reporta como erro.
+
+---
+
+## Seção 4 — Temas visuais
+
+**URLs:** `/` e `/explorar/` em cada tema.
+
+| # | Tema | O que verificar |
+|---|------|----------------|
+| V1 | verde-jardim (padrão) | Grafo com acento verde; footer texto legível no dark e no light |
+| V2 | oceano | Grafo com acento azul; sem artefatos de cor no SVG |
+| V3 | terracota | Grafo com acento laranja; footer texto legível |
+| V4 | Dark ↔ Light toggle | Grafo muda de cor suavemente; sem flash de cor errada |
+
+**Por que manual:** validação de paleta é perceptiva; screenshot comparison requer baseline por tema.
+
+---
+
+## Seção 5 — Regressão rápida pós-deploy
+
+Checar em 5 minutos após deploy:
+
+| # | URL | Verificar |
+|---|-----|-----------|
+| R1 | `/` | Hero renderiza; graph SVG visível |
+| R2 | `/explorar/` | Filtros funcionam; graph responde a expand/collapse |
+| R3 | `/lab/` | Sidebar marimo; footer visível; sem JS error no console |
+| R4 | `/explorar/` mobile 390px | Graph não está colado à esquerda |
+| R5 | `/explorar/` + arrastar nó | Nós vizinhos se afastam ao soltar |
+
+---
+
+## Como reportar falhas
+
+Criar issue com:
+- URL exata
+- Dispositivo / browser / versão
+- Screenshot ou screen recording
+- O que estava esperado vs. o que aconteceu
+- Se `pnpm run validate` está passando
