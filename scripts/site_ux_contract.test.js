@@ -61,9 +61,13 @@ test('Graph previews show truncated labels while preserving full accessible titl
     assert.match(source, /data-vault-graph-node-label/);
   }
 
-  assert.match(home, /heroNodes = explore\.graph\.insights\.hubs\.slice\(0, 6\)/);
+  assert.match(home, /heroNodeCap = Math\.max\(8, Math\.min\(28, Math\.ceil\(explore\.graph\.nodes\.length \* 0\.22\)\)\)/);
   assert.match(home, /rótulo completo ao passar o mouse ou focar/);
-  assert.match(css, /overflow: visible/);
+  // overflow:visible + clip-path avoids compositing issues inside fixed+overflow-y ancestors
+  assert.match(css, /\.vault-graph-view__canvas\s*\{[^}]*overflow:\s*visible/);
+  assert.doesNotMatch(css, /\.vault-graph-view__canvas\s*\{[^}]*overflow:\s*hidden/);
+  // clip-path clips the painted output without creating a scroll-container BFC
+  assert.match(css, /\.vault-graph-view__canvas\s*\{[^}]*clip-path:\s*inset\(0 round 1rem\)/);
   assert.doesNotMatch(home, /node\.parentNode\?\.appendChild\(node\)/);
   assert.doesNotMatch(graph, /node\.parentNode\?\.appendChild\(node\)/);
   assert.match(home, /vault-graph-view__hover-layer/);
@@ -118,4 +122,164 @@ test('Marimo shell spacing remains topbar-aware and smoke-tested', () => {
 
   assert.match(shellTest, /assert\.doesNotMatch\(exportNotebooks, \/vault-marimo-fullscreen-toggle\//);
   assert.match(shellTest, /assert\.match\(exportNotebooks, \/vault-seed-slides-lite\\\.html\//);
+});
+
+
+test('Graph canvas is clipped, square, and sidebar graph is centered', () => {
+  const css = read('.site/styles/custom.css');
+  const graph = read('.site/components/VaultGraphView.astro');
+
+  // overflow:visible + CSS clip-path avoids the compositing-barrier issue with fixed ancestors
+  assert.match(css, /\.vault-graph-view__canvas\s*\{[^}]*overflow:\s*visible/);
+  assert.doesNotMatch(css, /\.vault-graph-view__canvas\s*\{[^}]*overflow:\s*hidden/);
+
+  // SVG <clipPath> is defined in <defs> so nodes/links are clipped in user-space
+  assert.match(graph, /<clipPath/);
+  // Viewport group carries the clip-path attribute
+  assert.match(graph, /clip-path.*url\(#/);
+
+  // aspect-ratio 1/1 ensures the SVG stays square on all viewports
+  assert.match(css, /\.vault-graph-view__canvas[\s\S]*aspect-ratio: 1 \/ 1/);
+
+  // sidebar graph centers itself when narrower than its container
+  assert.match(css, /\.vault-graph-sidebar[\s\S]*margin-inline: auto/);
+
+  // post-drag settle runs global relaxation (null focus) so ALL visible nodes spread apart
+  assert.match(graph, /runPhysicsRelaxation\(1, null\)/);
+  assert.doesNotMatch(graph, /scheduleViewportSettle[\s\S]{0,200}runPhysicsRelaxation\(1, focusItem\)/);
+
+  // settle steps increased so spreading has more runway
+  assert.match(graph, /POST_DRAG_SETTLE_STEPS = 60/);
+});
+
+test('Graph toolbar buttons have consistent sizing and do not shrink', () => {
+  const css = read('.site/styles/custom.css');
+
+  // physical width/height fallbacks alongside logical inline-size/block-size (iOS Safari compat)
+  assert.match(css, /\.vault-graph-view__button[\s\S]*width: 2rem/);
+  assert.match(css, /\.vault-graph-view__button[\s\S]*height: 2rem/);
+  assert.match(css, /\.vault-graph-view__button[\s\S]*flex-shrink: 0/);
+
+  // icon font size updated for better visual alignment with sidebar toggles
+  assert.match(css, /\.vault-graph-view__button-icon[\s\S]*font-size: 1\.25rem/);
+});
+
+test('Footer kudos renders as compact pill consistent with marimo footer style', () => {
+  const footer = read('.site/components/Footer.astro');
+  const marimoVault = read('.site/styles/marimo-vault.css');
+
+  // pill shape: inline-flex + border-radius + fit-content width
+  assert.match(footer, /\.kudos[\s\S]*display: inline-flex/);
+  assert.match(footer, /\.kudos[\s\S]*border-radius: 999px/);
+  assert.match(footer, /\.kudos[\s\S]*width: fit-content/);
+
+  // no width:100% which would stretch the pill to full viewport width on mobile
+  assert.doesNotMatch(footer, /\.kudos[\s\S]*width: 100%/);
+
+  // font-variant-emoji:text prevents ♥ from rendering as color emoji on iOS Safari
+  assert.match(footer, /\.kudos[\s\S]*font-variant-emoji: text/);
+  assert.match(marimoVault, /\.vault-lab-footer[\s\S]*font-variant-emoji: text/);
+
+  // both footers use the same font-size so they feel consistent
+  assert.match(footer, /\.kudos[\s\S]*font-size: 0\.8125rem/);
+  assert.match(marimoVault, /\.vault-lab-footer[\s\S]*font-size: 0\.8125rem/);
+});
+
+test('Graph interactions expose expand/collapse/zoom/pan affordances', () => {
+  const graph = read('.site/components/VaultGraphView.astro');
+  const css = read('.site/styles/custom.css');
+
+  assert.match(graph, /vault-graph-view__toolbar/);
+  assert.match(graph, /data-vault-graph-action="expand"/);
+  assert.match(graph, /data-vault-graph-action="collapse"/);
+  assert.match(graph, /data-vault-graph-action="recenter"/);
+  assert.match(graph, /pointerdown/);
+  assert.match(graph, /pointermove/);
+  assert.match(graph, /pointerup/);
+  assert.match(graph, /wheel/);
+  assert.match(graph, /startDrag\(/);
+  assert.match(graph, /startPan\(/);
+  assert.match(graph, /zoom\(/);
+  assert.match(graph, /setVisibleCount\(/);
+  assert.match(graph, /applyVisibility\(/);
+  assert.match(graph, /data-vault-graph-caption/);
+  assert.match(graph, /recenter\(\)/);
+  assert.match(graph, /data-vault-graph-viewport/);
+  assert.match(graph, /data-vault-graph-edge/);
+
+  assert.match(css, /vault-graph-view__toolbar/);
+  assert.match(css, /vault-graph-view__button/);
+  assert.match(css, /vault-graph-view__canvas/);
+  assert.match(css, /vault-graph-view__canvas\.is-panning/);
+  assert.match(css, /vault-graph-view__viewport/);
+  assert.match(css, /touch-action: none/);
+  assert.match(css, /\.vault-graph-view__links line/);
+  assert.match(css, /\.vault-graph-view__nodes a\[hidden\]/);
+});
+
+test('Graph has accessible legend and full node list as text alternative', () => {
+  const graph = read('.site/components/VaultGraphView.astro');
+  const css = read('.site/styles/custom.css');
+
+  // SVG references the legend via aria-describedby (supplements the title label)
+  assert.match(graph, /aria-describedby=\{graphLegendId\}/);
+
+  // Legend paragraph carries the matching id
+  assert.match(graph, /id=\{graphLegendId\}/);
+
+  // Legend explains the visual encoding (size = connections)
+  assert.match(graph, /Círculos maiores têm mais conexões/);
+
+  // Accessible list is a <details> so it's collapsed by default but discoverable
+  assert.match(graph, /<details class="vault-graph-view__accessible-list">/);
+  assert.match(graph, /<summary>Lista de notas e legenda visual<\/summary>/);
+
+  // Node list renders all sortedNodes (not just initially visible ones)
+  assert.match(graph, /vault-graph-view__node-list/);
+  assert.match(graph, /sortedNodes\.map/);
+
+  // Each list item has a link + connection count
+  assert.match(graph, /node\.degree.*conexão/s);
+
+  // CSS for the accessible list exists
+  assert.match(css, /\.vault-graph-view__accessible-list\s*\{/);
+  assert.match(css, /\.vault-graph-view__node-list\s*\{/);
+  // list items: link truncates, count stays full-width
+  assert.match(css, /\.vault-graph-view__node-list a\s*\{[^}]*text-overflow:\s*ellipsis/);
+  assert.match(css, /\.vault-graph-view__node-list li span\s*\{[^}]*flex:\s*none/);
+});
+
+test('Accessibility foundations: skip link, lang, and license link are present', () => {
+  const pageFrame = read('.site/components/PageFrame.astro');
+  const css = read('.site/styles/custom.css');
+  const astroConfig = read('astro.config.mjs');
+
+  // Skip link must point to the main content landmark (WCAG 2.1 AA 2.4.1)
+  assert.match(pageFrame, /class="vault-skip-link"/);
+  assert.match(pageFrame, /href="#vault-main-content"/);
+  assert.match(pageFrame, /id="vault-main-content"/);
+
+  // Skip link must be visually hidden by default and visible on focus
+  assert.match(css, /\.vault-skip-link[\s\S]*transform: translateY/);
+  assert.match(css, /\.vault-skip-link:focus[\s\S]*transform: translateY\(0\)/);
+
+  // Machine-readable license declaration in every page head
+  assert.match(astroConfig, /rel: 'license'/);
+  assert.match(astroConfig, /href: '\/LICENSE\.md'/);
+});
+
+test('Package license fields align with LICENSE.md (GPL-3.0-only)', () => {
+  const rootPkg = read('package.json');
+  const cliPkg = read('packages/cli/package.json');
+  const astroPkg = read('packages/astro-plugins/package.json');
+  const noticeMd = read('NOTICE.md');
+
+  assert.match(rootPkg, /"license": "GPL-3\.0-only"/);
+  assert.match(cliPkg, /"license": "GPL-3\.0-only"/);
+  assert.match(astroPkg, /"license": "GPL-3\.0-only"/);
+
+  // NOTICE.md must explain both software and content license layers
+  assert.match(noticeMd, /GPL-3\.0-only/);
+  assert.match(noticeMd, /Creative Commons/);
+  assert.match(noticeMd, /SPDX-License-Identifier/);
 });
