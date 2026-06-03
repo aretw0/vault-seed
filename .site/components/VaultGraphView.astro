@@ -93,18 +93,18 @@ const hasData = positioned.length > 0;
           <span class="vault-graph-view__button-label">Recentrar grafo</span>
         </button>
       </div>
+      <div class="vault-graph-view__canvas-clip">
       <svg
         viewBox="0 0 200 200"
         role="img"
         aria-labelledby={graphTitleId}
         aria-describedby={graphLegendId}
         class="vault-graph-view__canvas"
-        style="border: 1px solid color-mix(in srgb, var(--sl-color-accent, #95d5b2) 24%, var(--sl-color-hairline, #c0c8be)); border-radius: 1rem; background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--sl-color-accent, #95d5b2) 13%, transparent), transparent 44%), color-mix(in srgb, var(--sl-color-bg, #f7f5f0) 72%, var(--sl-color-bg-nav, #111310));"
       >
         <title id={graphTitleId}>{title}</title>
         <defs>
           <clipPath id={graphClipId}>
-            <rect width="200" height="200" />
+            <rect width="200" height="200" rx="12" ry="12" />
           </clipPath>
         </defs>
         <g class="vault-graph-view__viewport" data-vault-graph-viewport aria-hidden="true" clip-path={`url(#${graphClipId})`}>
@@ -173,6 +173,7 @@ const hasData = positioned.length > 0;
           <text class="vault-graph-view__hover-label" text-anchor="middle"></text>
         </g>
       </svg>
+      </div>
       <figcaption data-vault-graph-caption>
         {initialVisibleCount} nós em destaque · {selectedLinks.length} relações renderizadas localmente em SVG.
       </figcaption>

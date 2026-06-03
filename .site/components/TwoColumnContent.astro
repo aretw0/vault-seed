@@ -64,6 +64,10 @@ const exploreGraphLimit = 12;
 		}
 
 		@media (min-width: 72rem) {
+			:global(:root) {
+				--vault-right-sidebar-width: calc(var(--sl-sidebar-width) + (100dvw - 2 * var(--sl-sidebar-width) - var(--sl-content-width)) / 2);
+			}
+
 			.right-sidebar-container {
 				order: 2;
 				position: relative;
@@ -78,7 +82,7 @@ const exploreGraphLimit = 12;
 				inset-inline-end: 0;
 				border-inline-start: 1px solid var(--sl-color-hairline);
 				padding-top: var(--sl-nav-height);
-				width: calc(var(--sl-sidebar-width) + (100vw - var(--sl-content-width) - var(--sl-sidebar-width)) / 2);
+				width: var(--vault-right-sidebar-width);
 				height: 100vh;
 				overflow-y: auto;
 				scrollbar-width: none;
@@ -126,7 +130,7 @@ const exploreGraphLimit = 12;
 			}
 
 			.vault-sidebar-rail-toggle--right {
-				inset-inline-end: calc(var(--sl-sidebar-width) - 0.875rem);
+				inset-inline-end: calc(var(--vault-right-sidebar-width) - 0.875rem);
 			}
 
 			:global(:root[data-vault-sidebar-right='collapsed']) .vault-sidebar-rail-toggle--right {

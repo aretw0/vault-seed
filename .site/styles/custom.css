@@ -476,8 +476,8 @@
   background: var(--sl-color-bg-nav);
   padding: 0.75rem;
   margin-inline: auto;
-  width: min(100%, var(--sl-sidebar-width, 18.75rem) - 1rem);
-  max-width: calc(100% - 1rem);
+  width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
 }
 
@@ -508,6 +508,12 @@
 
 .vault-graph-sidebar .vault-graph-view__toolbar {
   padding-inline-end: calc(var(--vault-sidebar-rail-toggle-size, 2rem) + 0.45rem);
+}
+
+@media (min-width: 72rem) {
+  .right-sidebar .vault-graph-sidebar {
+    margin-top: calc(var(--vault-sidebar-rail-toggle-size, 2rem) + 1rem);
+  }
 }
 
 .vault-graph-view__toolbar {
@@ -605,21 +611,27 @@
   border-color: color-mix(in srgb, var(--sl-color-accent, #95d5b2) 50%, var(--sl-color-hairline, #c0c8be));
 }
 
-.vault-graph-view__canvas {
+.vault-graph-view__canvas-clip {
   display: block;
-  overflow: visible;
-  /* overflow:visible avoids the compositing barrier that breaks SVG rendering inside
-     position:fixed + overflow-y:auto (Chrome/Windows). Nodes/links are bounded by
-     the SVG-internal <clipPath>; a CSS paint clip would create a new stacking context
-     and reproduce the same invisible-sidebar bug on desktop. */
-  aspect-ratio: 1 / 1;
   width: 100%;
-  max-height: min(34rem, 70vh);
+  box-sizing: border-box;
+  overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--sl-color-accent, #95d5b2) 24%, var(--sl-color-hairline, #c0c8be));
   border-radius: 1rem;
   background:
     radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--sl-color-accent, #95d5b2) 13%, transparent), transparent 44%),
     color-mix(in srgb, var(--sl-color-bg, #f7f5f0) 72%, var(--sl-color-bg-nav, #111310));
+}
+
+.vault-graph-view__canvas {
+  display: block;
+  /* Must stay visible — setting SVG overflow to clip or hidden triggers a Chrome compositing
+     barrier that makes the sidebar graph disappear inside position:fixed+overflow-y:auto.
+     The wrapper div (.vault-graph-view__canvas-clip) handles the CSS-level clip instead. */
+  overflow: visible;
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  max-height: min(34rem, 70vh);
   touch-action: none;
   cursor: grab;
 }
