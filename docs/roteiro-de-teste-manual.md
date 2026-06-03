@@ -95,8 +95,8 @@
 | # | Ação | Esperado |
 |---|------|----------|
 | S1 | Verificar graph visível sem scroll | O graph menor aparece na sidebar — não é espaço branco |
-| S2 | Verificar centramento dos ícones | O caractere › do rail toggle está no centro do círculo; os caracteres −/+/↻ da toolbar também estão no centro dos seus respectivos círculos |
-| S3 | Clicar em [›] para colapsar sidebar direita | Graph sidebar some; main content expande |
+| S2 | Verificar centramento dos ícones | O ícone SVG do rail toggle está no centro do círculo; os ícones da toolbar (recolher, expandir, recentrar) também estão no centro dos seus respectivos círculos |
+| S3 | Clicar no rail toggle › para colapsar sidebar direita | Graph sidebar some; main content expande |
 | S4 | Reabrir sidebar direita | Graph sidebar reaparece centralizado |
 
 **Por que manual:** alinhamento vertical depende de box model computado que varia com font rendering e zoom do browser.
@@ -125,13 +125,13 @@
 
 | # | Elemento | O que verificar |
 |---|----------|----------------|
-| B1 | Graph toolbar [−][+][↻] | O caractere de cada botão está no centro do seu próprio círculo — não deslocado para cima, para baixo ou para os lados |
-| B2 | Rail toggle [‹] (sidebar esquerda, desktop) | O caractere ‹ está no centro do seu círculo |
-| B3 | Rail toggle [›] (sidebar direita, desktop) | O caractere › está no centro do seu círculo |
-| B4 | Lab sidebar toggle [‹/›] (Marimo, desktop) | O caractere está no centro do círculo, consistente com os toggles do Astro |
-| B5 | Mobile — toolbar do graph | O caractere de cada botão está centrado no círculo; área de toque ≥ 44px |
+| B1 | Graph toolbar (recolher, expandir, recentrar) | O ícone SVG de cada botão está visualmente centrado no círculo — sem deslocamento vertical ou horizontal |
+| B2 | Rail toggle esquerdo (sidebar nav, desktop) | O ícone SVG está centrado no círculo |
+| B3 | Rail toggle direito (sidebar TOC/graph, desktop) | O ícone SVG está centrado no círculo |
+| B4 | Lab sidebar toggle (Marimo, desktop) | O ícone está centrado, consistente com os toggles do Astro |
+| B5 | Mobile — toolbar do graph | O ícone SVG de cada botão está centrado; área de toque ≥ 44px |
 
-**Por que manual:** `display: grid; place-items: center` centra geometricamente, mas glifos como ‹, ›, −, ↻ têm métricas de em-square inconsistentes no system-ui — o olho percebe deslocamento óptico que DevTools não reporta como erro.
+**Por que manual:** `display: grid; place-items: center` centra geometricamente, mas o SVG viewBox pode introduzir padding óptico dependendo do ícone Lucide — o olho percebe deslocamento que DevTools não reporta como erro.
 
 ---
 
