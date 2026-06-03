@@ -320,16 +320,6 @@ async function assertLabShellLayout(page, target, viewport, label) {
     state: "attached",
     timeout: 10000,
   });
-  // The inline <script> inside the navigation div sets data-vault-marimo-shell
-  // and data-vault-lab-sidebar. It runs synchronously during HTML parsing, but
-  // waitForSelector resolves as soon as the div's opening tag is in the DOM —
-  // before the script tag inside is reached. Wait explicitly so CSS variables
-  // that depend on data-vault-marimo-shell="lab" are available when we measure.
-  await page.waitForFunction(
-    () => document.documentElement.dataset.vaultMarimoShell === "lab",
-    { timeout: 10000 },
-  );
-
   const layout = await page.evaluate(() => {
     const root = document.documentElement;
     const sidebar = document.querySelector(".vault-lab-sidebar");

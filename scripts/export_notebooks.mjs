@@ -42,6 +42,10 @@ const packageJson = JSON.parse(
 );
 const THEME_SELECTOR_MARKER = "data-vault-marimo-theme-selector";
 const NAVIGATION_MARKER = "data-vault-marimo-navigation";
+const MARIMO_VAULT_CSS = readFileSync(
+	join(ROOT, ".site", "styles", "marimo-vault.css"),
+	"utf8",
+);
 const PRESENTATION_FULLSCREEN_MARKER =
 	"data-vault-marimo-presentation-fullscreen";
 const PRESENTATION_MOBILE_FALLBACK_MARKER =
@@ -438,9 +442,12 @@ function injectNotebookNavigation(htmlPath, currentOutput) {
 	if (!/<body\b[^>]*>/i.test(html)) {
 		throw new Error(`HTML exportado sem <body>: ${htmlPath}`);
 	}
+	// Inject marimo-vault.css before the navigation so Lab shell selectors
+	// (:root[data-vault-marimo-shell="lab"] ...) resolve correctly.
+	const styleTag = `<style data-vault-marimo-shell-css>${MARIMO_VAULT_CSS}</style>`;
 	writeFileSync(
 		htmlPath,
-		html.replace(/<body\b([^>]*)>/i, `<body$1>\n${labNavigationHtml(currentOutput)}`),
+		html.replace(/<body\b([^>]*)>/i, `<body$1>\n${styleTag}\n${labNavigationHtml(currentOutput)}`),
 	);
 }
 

@@ -69,6 +69,8 @@ test("published Lab pages keep the vault shell contract", () => {
   assert.match(siteSmoke, /defaultMarimoNotebookPaths\.has\(relPath\)/);
 
   assert.match(exportNotebooks, /data-vault-marimo-navigation/);
+  assert.match(exportNotebooks, /MARIMO_VAULT_CSS/);
+  assert.match(exportNotebooks, /data-vault-marimo-shell-css/);
   assert.match(exportNotebooks, /vault-lab-topbar/);
   assert.match(exportNotebooks, /vault-lab-sidebar/);
   assert.match(exportNotebooks, /data-vault-lab-footer/);
