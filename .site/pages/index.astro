@@ -57,7 +57,7 @@ const heroGraphHtml = graphHeroHtml();
       image: {
         html: heroGraphHtml,
       },
-      tagline: 'Uma base flexível para vaults locais: arquivos puros, publicação coerente e Lab integrado sem impor o uso final.',
+      tagline: 'Conhecimento que é seu: local, versionado, AI-ready. Publique quando quiser, ou não publique nunca.',
       actions: [
         {
           text: 'Começar',
@@ -76,53 +76,44 @@ const heroGraphHtml = graphHeroHtml();
 >
   <section class="vault-home-section" aria-label="Possibilidades de uso do vault-seed">
     <p class="vault-lead">
-      O vault-seed é uma base flexível: ele não tenta prever o uso final do seu espaço,
-      mas entrega uma base coerente de navegação, publicação, blocos visuais e Lab para que
-      você não precise começar do zero.
+      O vault-seed é um ponto de partida, não uma solução completa. Tudo que está aqui pode
+      ser apagado, adaptado ou ignorado — o vault é seu desde o primeiro commit.
     </p>
 
     <div class="vault-card-grid">
       <article class="vault-card">
-        <span class="vault-card__eyebrow">Site pessoal</span>
-        <h2 class="vault-card__title">Cartão de visita ou jardim digital</h2>
+        <span class="vault-card__eyebrow">Local first</span>
+        <h2 class="vault-card__title">Conhecimento que não depende da nuvem</h2>
         <p class="vault-card__body">
-          Publique notas selecionadas com busca, sidebar, metadados e paletas consistentes.
+          Markdown puro e Git: funciona offline, em qualquer editor, sem lock-in.
+          Repo privado ou público — você decide o que compartilhar, se é que vai compartilhar algo.
         </p>
         <div class="vault-actions">
-          <a class="vault-button" href={`${base}/meta-e-anexos/publicando-seu-vault-como-site/`}>Publicar</a>
+          <a class="vault-button" href={`${base}/meta-e-anexos/entendendo-a-estrutura-de-pastas/`}>Estrutura</a>
         </div>
       </article>
 
       <article class="vault-card">
-        <span class="vault-card__eyebrow">Conhecimento coletivo</span>
-        <h2 class="vault-card__title">Documentação viva para times</h2>
+        <span class="vault-card__eyebrow">AI-ready</span>
+        <h2 class="vault-card__title">Agentes de IA como coautores</h2>
         <p class="vault-card__body">
-          Use Git, PRs e notas Markdown para manter decisões, recursos e guias em um lugar auditável.
+          AGENTS.md, CLAUDE.md e GEMINI.md entregam contexto do vault a qualquer assistente.
+          Zero configuração extra para começar a usar IA no repositório.
         </p>
         <div class="vault-actions">
-          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/convencoes-e-boas-praticas/`}>Convenções</a>
+          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/usando-com-agentes-de-ia/`}>Agentes</a>
         </div>
       </article>
 
       <article class="vault-card">
-        <span class="vault-card__eyebrow">Interface</span>
-        <h2 class="vault-card__title">Blocos visuais sem bloat</h2>
+        <span class="vault-card__eyebrow">Publicação opcional</span>
+        <h2 class="vault-card__title">Site quando você quiser</h2>
         <p class="vault-card__body">
-          Use cartões, botões, estados e metadados reaproveitáveis em páginas e notas publicadas.
+          GitHub Pages com Astro e Starlight. Escolha quais notas ficam públicas,
+          use seu domínio, ative RSS. Nada é publicado por padrão.
         </p>
         <div class="vault-actions">
-          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/identidade-visual-e-blocos-de-interface/`}>Ver UI</a>
-        </div>
-      </article>
-
-      <article class="vault-card">
-        <span class="vault-card__eyebrow">Exploração</span>
-        <h2 class="vault-card__title">Mapa público do conhecimento</h2>
-        <p class="vault-card__body">
-          Filtre notas, encontre hubs, acompanhe atualizações e veja o grafo leve do site.
-        </p>
-        <div class="vault-actions">
-          <a class="vault-button vault-button--secondary" href={`${base}/explorar/`}>Explorar</a>
+          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/publicando-seu-vault-como-site/`}>Publicar</a>
         </div>
       </article>
 
@@ -134,6 +125,17 @@ const heroGraphHtml = graphHeroHtml();
         </p>
         <div class="vault-actions">
           <a class="vault-button vault-button--secondary" href={`${base}/lab/`}>Abrir Lab</a>
+        </div>
+      </article>
+
+      <article class="vault-card">
+        <span class="vault-card__eyebrow">Conhecimento coletivo</span>
+        <h2 class="vault-card__title">Documentação viva para times</h2>
+        <p class="vault-card__body">
+          Use Git, PRs e notas Markdown para manter decisões, recursos e guias em um lugar auditável.
+        </p>
+        <div class="vault-actions">
+          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/convencoes-e-boas-praticas/`}>Convenções</a>
         </div>
       </article>
 

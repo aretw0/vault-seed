@@ -31,11 +31,11 @@ related:
   - "[[Integrando com VSCode (Foam)]]"
   - "[[O que sao system prompts de IA]]"
 ---
-# 🌱 Guia do Jardineiro Digital
+# Guia do Jardineiro Digital
 
-Bem-vindo(a) à sua sementeira de ideias! Esta nota é o ponto de partida para entender como cultivar seu conhecimento neste vault: a filosofia por trás dele, as ferramentas de jardinagem e como adaptá-lo para que seu jardim floresça.
+Esta nota é o ponto de partida para entender o vault: a filosofia por trás dele, as ferramentas disponíveis e como adaptá-lo ao que você precisa.
 
-Pense nesta nota como o canteiro principal do seu jardim. A partir daqui, você pode navegar para explorar os conceitos e ferramentas em mais detalhes.
+O vault funciona como uma sementeira de ideias — pode ficar completamente local e privado, ser publicado como site quando você quiser, ou qualquer coisa no meio do caminho. Você tem controle total desde o primeiro commit.
 
 ## Primeiros Passos no Jardim
 
