@@ -99,3 +99,11 @@ dist/
 .astro/
 .sandbox/
 public/lab/
+
+# Social dumps
+**/**/instagram-*.zip
+
+# Debug artifacts (Playwright MCP + inspeção manual local)
+.playwright-mcp/
+explorar-toc-check.png
+graph-drag-check.png

@@ -7,9 +7,13 @@ const isExploreRoute =
   Astro.url.pathname === '/explorar' ||
   Astro.locals.starlightRoute.entry.id === 'explorar/index' ||
   Astro.locals.starlightRoute.entry.id === 'explorar';
-const exploreGraphData = isExploreRoute ? buildVaultExploreData() : null;
+
+const entryData = Astro.locals.starlightRoute.entry.data as Record<string, unknown>;
+const showGraphView = isExploreRoute || entryData.showGraphView === true;
+
+const exploreGraphData = showGraphView ? buildVaultExploreData() : null;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const exploreGraphLimit = 12;
+const exploreGraphLimit = isExploreRoute ? 12 : 8;
 ---
 <div class="lg:sl-flex">
 	{
@@ -27,7 +31,7 @@ const exploreGraphLimit = 12;
 				</button>
 				<aside class="right-sidebar-container print:hidden">
 					<div class="right-sidebar">
-						{isExploreRoute && exploreGraphData && (
+						{showGraphView && exploreGraphData && (
 							<section class="vault-graph-sidebar" aria-label="Graph lateral de exploração">
 								<VaultGraphView
 									nodes={exploreGraphData.graph.nodes}
@@ -65,12 +69,17 @@ const exploreGraphLimit = 12;
 
 		@media (min-width: 72rem) {
 			:global(:root) {
-				--vault-right-sidebar-width: calc(var(--sl-sidebar-width) + (100dvw - 2 * var(--sl-sidebar-width) - var(--sl-content-width)) / 2);
+				/* Cap at 20rem so the right sidebar doesn't balloon on wide screens */
+				--vault-right-sidebar-width: min(
+					calc(var(--sl-sidebar-width) + (100dvw - 2 * var(--sl-sidebar-width) - var(--sl-content-width)) / 2),
+					20rem
+				);
 			}
 
 			.right-sidebar-container {
 				order: 2;
 				position: relative;
+				max-width: 20rem;
 				width: calc(
 					var(--sl-sidebar-width) + (100% - var(--sl-content-width) - var(--sl-sidebar-width)) / 2
 				);

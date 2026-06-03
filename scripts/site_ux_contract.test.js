@@ -131,14 +131,13 @@ test('Graph canvas is clipped, square, and sidebar graph is centered', () => {
   const css = read('.site/styles/custom.css');
   const graph = read('.site/components/VaultGraphView.astro');
 
-  // overflow:visible + CSS clip-path avoids the compositing-barrier issue with fixed ancestors
+  // SVG overflow:visible avoids the Chrome compositing-barrier that hides the sidebar graph
+  // inside position:fixed+overflow-y:auto. Clipping is handled by the CSS wrapper div instead.
   assert.match(css, /\.vault-graph-view__canvas\s*\{[^}]*overflow:\s*visible/);
   assert.doesNotMatch(css, /\.vault-graph-view__canvas\s*\{[^}]*overflow:\s*hidden/);
-
-  // SVG <clipPath> is defined in <defs> so nodes/links are clipped in user-space
-  assert.match(graph, /<clipPath/);
-  // Viewport group carries the clip-path attribute
-  assert.match(graph, /clip-path.*url\(#/);
+  // Wrapper div provides the clip — no separate SVG <clipPath> that would mismatch the visual border-radius
+  assert.doesNotMatch(graph, /clip-path.*url\(#/);
+  assert.match(css, /\.vault-graph-view__canvas-clip[\s\S]*overflow:\s*hidden/);
 
   // aspect-ratio 1/1 ensures the SVG stays square on all viewports
   assert.match(css, /\.vault-graph-view__canvas[\s\S]*aspect-ratio: 1 \/ 1/);

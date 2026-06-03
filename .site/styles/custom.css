@@ -485,9 +485,6 @@
   margin: 0;
 }
 
-.vault-graph-sidebar .vault-graph-view svg {
-  max-height: 22rem;
-}
 
 .vault-graph-sidebar .vault-graph-view__hover-label {
   font-size: 6px;
@@ -613,7 +610,12 @@
 
 .vault-graph-view__canvas-clip {
   display: block;
+  /* Cap at a square size here so the SVG's aspect-ratio:1/1 + width:100% can work
+     correctly — max-height on the SVG itself fights width:100% and produces a
+     non-square element whose effective drag area is smaller than the visible box. */
+  max-width: min(34rem, 70dvh);
   width: 100%;
+  margin-inline: auto;
   box-sizing: border-box;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--sl-color-accent, #95d5b2) 24%, var(--sl-color-hairline, #c0c8be));
@@ -631,7 +633,6 @@
   overflow: visible;
   aspect-ratio: 1 / 1;
   width: 100%;
-  max-height: min(34rem, 70vh);
   touch-action: none;
   cursor: grab;
 }
@@ -656,6 +657,17 @@
   stroke: color-mix(in srgb, var(--sl-color-accent, #95d5b2) 34%, var(--sl-color-hairline, #c0c8be));
   stroke-width: 0.75;
   vector-effect: non-scaling-stroke;
+  transition: stroke 100ms ease, stroke-width 100ms ease, opacity 100ms ease;
+}
+
+.vault-graph-view[data-vault-graph-hover='1'] .vault-graph-view__links line:not(.is-connected, [hidden]) {
+  opacity: 0.18;
+}
+
+.vault-graph-view__links line.is-connected {
+  stroke: var(--sl-color-accent, #95d5b2);
+  stroke-width: 1.5;
+  opacity: 1;
 }
 
 .vault-graph-view__nodes a {
@@ -723,6 +735,15 @@
   fill: var(--sl-color-accent, #95d5b2);
   stroke-width: 2;
   transform: scale(1.18);
+}
+
+.vault-graph-view__nodes a.is-neighbor circle {
+  fill: color-mix(in srgb, var(--sl-color-accent, #95d5b2) 65%, var(--sl-color-bg-nav, #111310));
+  stroke-width: 1.75;
+}
+
+.vault-graph-view[data-vault-graph-hover='1'] .vault-graph-view__nodes a:not(.is-hovered):not(.is-neighbor) circle {
+  opacity: 0.45;
 }
 
 .vault-graph-view--empty {
@@ -814,8 +835,8 @@
   margin-inline: auto;
 }
 
-.vault-graph-view--no-labels svg {
-  max-height: min(25rem, 56vh);
+.vault-graph-view--no-labels .vault-graph-view__canvas-clip {
+  max-width: min(25rem, 56dvh);
 }
 
 .vault-graph-view--no-labels .vault-graph-view__nodes circle {

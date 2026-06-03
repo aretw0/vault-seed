@@ -24,6 +24,11 @@ const exploreJson = JSON.stringify(explore).replace(/</g, '\\u003c');
     description: 'Explore notas, tags, hubs e caminhos do vault publicado.',
     template: 'doc',
   }}
+  headings={[
+    { depth: 2, slug: 'vault-explorer-title', text: 'Notas encontradas' },
+    { depth: 2, slug: 'vault-editorial-title', text: 'Estado da arquitetura de informação' },
+    { depth: 2, slug: 'vault-graph-title', text: 'Mapa vivo para orientar a leitura' },
+  ]}
 >
   <section class="vault-explorer" aria-labelledby="vault-explorer-title">
     <p class="vault-lead">

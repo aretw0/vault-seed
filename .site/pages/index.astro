@@ -344,6 +344,7 @@ const heroGraphHtml = graphHeroHtml();
         const nodes = figure.querySelectorAll('[data-vault-graph-node-label]');
 
         nodes.forEach((node) => {
+          const nodeId = node.dataset.vaultGraphNodeId || '';
           const activate = () => {
             if (!hoverLabel) return;
 
@@ -359,10 +360,22 @@ const heroGraphHtml = graphHeroHtml();
             hoverLabel.setAttribute('text-anchor', hoverPlacement.anchor);
             node.classList.add('is-hovered');
             figure.dataset.vaultGraphHover = '1';
+
+            figure.querySelectorAll('[data-vault-graph-link]').forEach((edge) => {
+              const src = edge.getAttribute('data-vault-graph-source');
+              const tgt = edge.getAttribute('data-vault-graph-target');
+              if (src === nodeId || tgt === nodeId) {
+                edge.classList.add('is-connected');
+                const neighborId = src === nodeId ? tgt : src;
+                figure.querySelector(`[data-vault-graph-node-id="${neighborId}"]`)?.classList.add('is-neighbor');
+              }
+            });
           };
           const deactivate = () => {
             node.classList.remove('is-hovered');
             delete figure.dataset.vaultGraphHover;
+            figure.querySelectorAll('[data-vault-graph-link].is-connected').forEach((e) => e.classList.remove('is-connected'));
+            figure.querySelectorAll('[data-vault-graph-node-id].is-neighbor').forEach((e) => e.classList.remove('is-neighbor'));
           };
 
           node.addEventListener('pointerenter', activate);

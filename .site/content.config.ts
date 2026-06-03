@@ -1,12 +1,12 @@
 // .site/content.config.ts
-import { defineCollection } from 'astro:content';
+import { defineCollection, z } from 'astro:content';
 import { docsSchema } from '@astrojs/starlight/schema';
 import { readFileSync } from 'node:fs';
 import { join, basename } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { globSync } from 'glob';
 import matter from 'gray-matter';
-import { slugify } from '@dgk/astro-plugins';
+import { slugify } from '@aretw0/dgk-astro-plugins';
 import { readTechnicalDocEntries } from './integrations/technical-docs.js';
 import { VAULT_FOLDERS } from './lib/vault-folders.mjs';
 
@@ -178,6 +178,10 @@ export const collections = {
         logger.info(`Vault loader: ${count} published notes loaded`);
       },
     },
-    schema: docsSchema(),
+    schema: docsSchema({
+      extend: z.object({
+        showGraphView: z.boolean().optional(),
+      }),
+    }),
   }),
 };

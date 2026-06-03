@@ -59,7 +59,6 @@ const nodeIds = new Set(positioned.map((node) => node.id));
 const byId = new Map(positioned.map((node) => [node.id, node]));
 const selectedLinks = links.filter((link) => nodeIds.has(link.source) && nodeIds.has(link.target));
 const graphTitleId = `vault-graph-view-title-${Math.random().toString(36).slice(2, 10)}`;
-const graphClipId = `vault-graph-clip-${Math.random().toString(36).slice(2, 10)}`;
 const graphLegendId = `vault-graph-legend-${Math.random().toString(36).slice(2, 10)}`;
 const visibleCountStep = 4;
 const maxVisibleCount = Math.max(0, positioned.length);
@@ -102,12 +101,7 @@ const hasData = positioned.length > 0;
         class="vault-graph-view__canvas"
       >
         <title id={graphTitleId}>{title}</title>
-        <defs>
-          <clipPath id={graphClipId}>
-            <rect width="200" height="200" rx="12" ry="12" />
-          </clipPath>
-        </defs>
-        <g class="vault-graph-view__viewport" data-vault-graph-viewport aria-hidden="true" clip-path={`url(#${graphClipId})`}>
+        <g class="vault-graph-view__viewport" data-vault-graph-viewport aria-hidden="true">
           <g class="vault-graph-view__links" aria-hidden="true">
             {selectedLinks.map((link) => {
               const source = byId.get(link.source);
@@ -214,6 +208,9 @@ const hasData = positioned.length > 0;
     const MAX_NODE_VELOCITY = 1.05;
     const MIN_SCALE = 0.68;
     const MAX_SCALE = 3.2;
+    // Updated after recenter() to the current fit-scale so zoom-out never
+    // reveals the empty simulation margin beyond the node layout bounds.
+    let minScale = MIN_SCALE;
     const DRAG_THRESHOLD_PX = 3;
     const LABEL_OFFSET_Y = 9;
     const LABEL_MARGIN = 6;
@@ -353,6 +350,17 @@ const hasData = positioned.length > 0;
         moved: false,
       };
 
+      // All active pointers (id → {x, y}) — enables pinch-to-zoom detection.
+      const activePointers = new Map();
+      const pinchState = {
+        active: false,
+        id1: null,
+        id2: null,
+        dist0: 1,
+        scale0: 1,
+        midLocal: null,
+      };
+
       let renderFrameId = null;
       let needsPaint = false;
       let needsTransform = false;
@@ -485,7 +493,8 @@ const hasData = positioned.length > 0;
         }
       }
 
-      function runPhysicsRelaxation(steps = 1, focusItem = null) {
+      function runPhysicsRelaxation(steps = 1, focusItem = null, options = {}) {
+        const shouldConstrainFocus = options.shouldConstrainFocus !== false;
         if (nodes.length < 2) return;
 
         for (let step = 0; step < steps; step += 1) {
@@ -554,6 +563,14 @@ const hasData = positioned.length > 0;
             if (focusItem && item !== focusItem && !item.visible) continue;
             if (!item.visible) continue;
             if (!focusItem && !Number.isFinite(item.vx + item.vy)) {
+              item.vx = 0;
+              item.vy = 0;
+              continue;
+            }
+
+            // Pinned drag target: position is set by cursor, not physics.
+            // Zero velocity so accumulated impulse doesn't teleport the node on release.
+            if (focusItem && item === focusItem && !shouldConstrainFocus) {
               item.vx = 0;
               item.vy = 0;
               continue;
@@ -775,9 +792,22 @@ const hasData = positioned.length > 0;
       }
 
       function recenter() {
-        viewportState.scale = 1;
-        viewportState.tx = 0;
-        viewportState.ty = 0;
+        const bounds = boundsForViewport();
+        const contentW = bounds.maxX - bounds.minX;
+        const contentH = bounds.maxY - bounds.minY;
+        const usable = VIEWBOX_SIZE - 2 * VIEWPORT_BOUNDS_PADDING;
+        const fitScale = clamp(
+          Math.min(usable / Math.max(contentW, 1), usable / Math.max(contentH, 1)),
+          MIN_SCALE,
+          MAX_SCALE,
+        );
+        viewportState.scale = fitScale;
+        viewportState.tx = (VIEWBOX_SIZE - (bounds.minX + bounds.maxX) * fitScale) / 2;
+        viewportState.ty = (VIEWBOX_SIZE - (bounds.minY + bounds.maxY) * fitScale) / 2;
+        // Prevent zoom-out past this fit: at fitScale the layout fills the viewport,
+        // so any lower scale would reveal empty simulation space as an "invisible box".
+        minScale = fitScale * 0.95;
+        clampViewportToContent();
         queueTransformRender();
       }
 
@@ -889,11 +919,11 @@ const hasData = positioned.length > 0;
 
         dragItem.x = graphPos.x - pointerState.dragOffsetX;
         dragItem.y = graphPos.y - pointerState.dragOffsetY;
-        constrain(dragItem);
+        // Keep containment smooth: skip viewport clamping during live drag.
+        // Let the physics settle pass reconcile both node position and viewport after mouse-up.
         if (dragItem.visible) {
-          runPhysicsRelaxation(DRAG_REPULSE_STEPS, dragItem);
+          runPhysicsRelaxation(DRAG_REPULSE_STEPS, dragItem, { shouldConstrainFocus: false });
         }
-        clampViewportToContent();
         queueTransformRender();
         queuePaint();
       }
@@ -902,14 +932,10 @@ const hasData = positioned.length > 0;
         if (pointerState.kind !== 'drag' || pointerState.pointerId !== event.pointerId || !pointerState.item) return;
 
         const item = pointerState.item;
+        const wasMoved = pointerState.moved;
         item.element.classList.remove('is-dragged');
 
-        if (!pointerState.moved) {
-          item.element.click();
-        } else {
-          scheduleViewportSettle(item);
-        }
-
+        // Clear state before any navigation so subsequent pointer events see kind=null
         pointerState.kind = null;
         pointerState.pointerId = null;
         pointerState.item = null;
@@ -918,6 +944,21 @@ const hasData = positioned.length > 0;
 
         if (svg.releasePointerCapture) {
           svg.releasePointerCapture(event.pointerId);
+        }
+
+        if (!wasMoved) {
+          // SVGAElement doesn't inherit HTMLElement.click() — navigate via a
+          // temporary HTML anchor so Astro's SPA router intercepts correctly.
+          const href = item.element.getAttribute('href');
+          if (href) {
+            const a = document.createElement('a');
+            a.href = href;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+          }
+        } else {
+          scheduleViewportSettle(item);
         }
       }
 
@@ -928,7 +969,7 @@ const hasData = positioned.length > 0;
         if (!pointerBefore) return;
 
         const direction = event.deltaY < 0 ? 1.12 : 0.89;
-        const nextScale = clamp(viewportState.scale * direction, MIN_SCALE, MAX_SCALE);
+        const nextScale = clamp(viewportState.scale * direction, minScale, MAX_SCALE);
         viewportState.scale = nextScale;
 
         viewportState.tx = pointerBefore.localX - pointerBefore.x * viewportState.scale;
@@ -944,6 +985,33 @@ const hasData = positioned.length > 0;
 
       function setupInteractions() {
         const onPointerDown = (event) => {
+          activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+          // Second active touch/pointer: switch to pinch-to-zoom
+          if (activePointers.size >= 2 && !pinchState.active) {
+            const ids = Array.from(activePointers.keys());
+            const p1 = activePointers.get(ids[0]);
+            const p2 = activePointers.get(ids[1]);
+            const midScreen = { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
+            const midLocal = toGraphCoordinates(midScreen.x, midScreen.y);
+            if (midLocal) {
+              // Cancel ongoing single-pointer interaction without side effects
+              pointerState.kind = null;
+              pointerState.pointerId = null;
+              svg.classList.remove('is-panning');
+              stopViewportSettle();
+
+              pinchState.active = true;
+              pinchState.id1 = ids[0];
+              pinchState.id2 = ids[1];
+              pinchState.dist0 = Math.hypot(p2.x - p1.x, p2.y - p1.y) || 1;
+              pinchState.scale0 = viewportState.scale;
+              pinchState.midLocal = midLocal;
+            }
+            event.preventDefault();
+            return;
+          }
+
           if (event.button !== 0 && event.button !== 2) return;
 
           const node = event.target?.closest?.('[data-vault-graph-node-id]');
@@ -964,6 +1032,27 @@ const hasData = positioned.length > 0;
         };
 
         const onPointerMove = (event) => {
+          if (activePointers.has(event.pointerId)) {
+            activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+          }
+
+          // Pinch-to-zoom: recalculate scale from new finger distance
+          if (pinchState.active && (event.pointerId === pinchState.id1 || event.pointerId === pinchState.id2)) {
+            const p1 = activePointers.get(pinchState.id1);
+            const p2 = activePointers.get(pinchState.id2);
+            if (p1 && p2) {
+              const newDist = Math.hypot(p2.x - p1.x, p2.y - p1.y) || 1;
+              const nextScale = clamp(pinchState.scale0 * (newDist / pinchState.dist0), minScale, MAX_SCALE);
+              viewportState.scale = nextScale;
+              viewportState.tx = pinchState.midLocal.localX - pinchState.midLocal.x * nextScale;
+              viewportState.ty = pinchState.midLocal.localY - pinchState.midLocal.y * nextScale;
+              clampViewportToContent();
+              queueTransformRender();
+            }
+            event.preventDefault();
+            return;
+          }
+
           if (!pointerState.kind || pointerState.pointerId !== event.pointerId) return;
 
           if (pointerState.kind === 'pan') {
@@ -976,6 +1065,18 @@ const hasData = positioned.length > 0;
         };
 
         const onPointerUp = (event) => {
+          activePointers.delete(event.pointerId);
+
+          if (pinchState.active && (event.pointerId === pinchState.id1 || event.pointerId === pinchState.id2)) {
+            pinchState.active = false;
+            pinchState.id1 = null;
+            pinchState.id2 = null;
+            pinchState.midLocal = null;
+            clampViewportToContent();
+            queueTransformRender();
+            return;
+          }
+
           if (pointerState.kind === 'pan') {
             stopPan(event);
             return;
@@ -987,6 +1088,7 @@ const hasData = positioned.length > 0;
         };
 
         const onPointerCancel = (event) => {
+          activePointers.delete(event.pointerId);
           onPointerUp(event);
         };
 
@@ -1039,11 +1141,27 @@ const hasData = positioned.length > 0;
         hoverLabel.setAttribute('text-anchor', hoverPlacement.anchor);
         node.element.classList.add('is-hovered');
         figure.dataset.vaultGraphHover = '1';
+
+        for (const edge of edges) {
+          if (!edge.visible) continue;
+          if (edge.source === node || edge.target === node) {
+            edge.edge.classList.add('is-connected');
+            const neighbor = edge.source === node ? edge.target : edge.source;
+            neighbor.element.classList.add('is-neighbor');
+          }
+        }
       };
 
       const deactivateHover = (node) => {
         node.element.classList.remove('is-hovered');
         delete figure.dataset.vaultGraphHover;
+
+        for (const edge of edges) {
+          edge.edge.classList.remove('is-connected');
+        }
+        for (const item of nodes) {
+          item.element.classList.remove('is-neighbor');
+        }
       };
 
       for (const node of nodes) {
@@ -1061,7 +1179,7 @@ const hasData = positioned.length > 0;
 
       applyVisibility();
       paint();
-      applyViewportTransform();
+      recenter();
       setupInteractions();
     }
 
