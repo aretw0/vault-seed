@@ -1,4 +1,4 @@
----
+﻿---
 title: Preparando seu Computador para o Vault
 aliases:
   - Setup do Computador
@@ -13,6 +13,8 @@ created: 2026-05-18
 updated: 2026-05-18
 category: guia
 audience: iniciante
+sidebar:
+  order: 6
 related:
   - "[[Guia do Jardineiro Digital]]"
   - "[[Usando o Git e o GitHub para Sincronizar seu Vault]]"

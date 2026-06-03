@@ -14,6 +14,8 @@ created: 2026-05-19
 updated: 2026-05-23
 category: moc
 audience: iniciante
+sidebar:
+  order: 99
 related:
   - "[[Guia do Jardineiro Digital]]"
   - "[[Exploracao Guiada do Vault]]"

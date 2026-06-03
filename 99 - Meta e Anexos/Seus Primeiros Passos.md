@@ -1,4 +1,4 @@
----
+﻿---
 title: Seus Primeiros Passos
 aliases:
   - Ciclo de Vida da Nota
@@ -13,15 +13,17 @@ created: 2023-10-27
 updated: 2023-10-27
 category: guia
 audience: iniciante
+sidebar:
+  order: 2
 related:
   - "[[Guia do Jardineiro Digital]]"
   - "[[Entendendo a Estrutura de Pastas]]"
   - "[[Evoluindo seu Vault com Links, Tags e MOCs]]"
   - "[[Convenções e Boas Práticas]]"
 ---
-# 🚀 Seus Primeiros Passos
+# Seus Primeiros Passos
 
-Bem-vindo(a) ao seu novo cofre de conhecimento! Esta nota é o seu ponto de partida para entender o ciclo de vida de uma nota, desde a ideia inicial (sua **semente**) até a sua integração plena no seu **jardim de conhecimento**.
+Esta nota é o seu ponto de partida para entender o ciclo de vida de uma nota, desde a ideia inicial (sua **semente**) até a sua integração plena no seu **jardim de conhecimento**.
 
 ## O Ciclo de Vida de uma Nota: Do Plantio à Colheita
 

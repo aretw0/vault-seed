@@ -1,4 +1,4 @@
----
+﻿---
 title: Depois da Recepção do Template
 aliases:
   - Pós-recepção do Template
@@ -13,6 +13,8 @@ created: 2026-05-19
 updated: 2026-05-19
 category: guia
 audience: iniciante
+sidebar:
+  order: 4
 related:
   - "[[Guia do Jardineiro Digital]]"
   - "[[Exploracao Guiada do Vault]]"
@@ -33,6 +35,30 @@ Depois disso, o repositório é seu. Esta nota ajuda a conferir se o ambiente fi
 3. Abra o repositório no GitHub Desktop ou no VS Code e veja se não há arquivos pendentes antes de editar.
 4. Configure o Obsidian Git seguindo [[Configurando o Obsidian Git]].
 5. Faça uma nota pequena em `00 - Entrada/`, rode um primeiro commit e confirme se ela aparece no GitHub.
+
+## O Que Virá Vazio — e É Intencional
+
+O template entrega uma estrutura PARA com as pastas principais já criadas, mas **a maioria virá vazia**. Isso é esperado: essas pastas são para o seu conteúdo, não para o conteúdo do template.
+
+**Você preenche com suas notas:**
+
+| Pasta | Para quê |
+|---|---|
+| `00 - Entrada/` | Notas em rascunho, ideias ainda não processadas |
+| `10 - Diário/` | Notas diárias, reflexões, registros rápidos |
+| `20 - Projetos/` | Projetos ativos com objetivo e prazo definidos |
+| `30 - Áreas/` | Áreas de responsabilidade contínua (saúde, finanças, trabalho…) |
+| `50 - Arquivo/` | Projetos e áreas concluídas ou pausadas |
+
+**Já vêm com conteúdo de referência:**
+
+| Pasta | O que há dentro |
+|---|---|
+| `40 - Recursos/` | Conceitos, ferramentas e referências do vault (PKM, Obsidian, Git…) |
+| `90 - Modelos/` | Templates para criar novos tipos de nota com estrutura pré-definida |
+| `99 - Meta e Anexos/` | Guias de uso, configuração e workflow do próprio vault |
+
+Você não precisa preencher as pastas vazias para "completar" o setup — elas são o espaço do seu conhecimento, não do template.
 
 ## O Que Continua Com Você
 

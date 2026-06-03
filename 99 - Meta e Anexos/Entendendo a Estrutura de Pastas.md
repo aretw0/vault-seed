@@ -1,4 +1,4 @@
----
+﻿---
 title: Entendendo a Estrutura de Pastas
 aliases:
   - Estrutura de Pastas
@@ -12,6 +12,8 @@ created: 2023-10-27
 updated: 2023-10-27
 category: guia
 audience: iniciante
+sidebar:
+  order: 5
 related:
   - "[[Guia do Jardineiro Digital]]"
   - "[[Seus Primeiros Passos]]"

@@ -1,4 +1,4 @@
----
+﻿---
 title: Exploração Guiada do Vault
 aliases:
   - Checklist de Onboarding
@@ -12,6 +12,8 @@ created: 2026-05-18
 updated: 2026-05-18
 category: guia
 audience: iniciante
+sidebar:
+  order: 3
 related:
   - "[[Guia do Jardineiro Digital]]"
   - "[[Seus Primeiros Passos]]"

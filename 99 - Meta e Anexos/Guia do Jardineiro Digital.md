@@ -1,4 +1,4 @@
----
+﻿---
 title: Guia do Jardineiro Digital
 aliases:
   - Guia do Vault
@@ -12,6 +12,8 @@ created: 2023-10-27
 updated: 2023-10-27
 category: guia
 audience: iniciante
+sidebar:
+  order: 1
 related:
   - "[[Seus Primeiros Passos]]"
   - "[[Exploracao Guiada do Vault]]"
