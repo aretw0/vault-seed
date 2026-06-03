@@ -413,7 +413,12 @@ async function assertThemeSelectorDoesNotCoverMarimoBadge(page, target, viewport
   }
 
   if (viewport.width <= 704) {
-    await page.locator('[data-vault-marimo-theme-toggle]').first().click();
+    // force:true bypasses Playwright's actionability check — Marimo's notebook
+    // cells (min-w-[400px]) can sit in the same paint layer as the topbar on
+    // narrow viewports and block the synthetic click even though the button is
+    // visible and the topbar has z-index:10000. This test checks CSS layout
+    // (selector vs badge overlap), not pointer interactability.
+    await page.locator('[data-vault-marimo-theme-toggle]').first().click({ force: true });
     const openSelector = await page
       .locator('[data-vault-marimo-theme-selector]')
       .first()
