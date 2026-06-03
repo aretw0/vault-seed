@@ -13,7 +13,16 @@ import {
   loadInformationArchitecture,
 } from './.site/lib/information-architecture.mjs';
 
-const site = process.env.ASTRO_SITE;
+// ASTRO_SITE wins when set explicitly (custom domain, local override).
+// Fall back to the GitHub Pages URL derived from GITHUB_REPOSITORY so the
+// sitemap integration never warns about a missing `site` option.
+// In bare local dev (no env vars) use localhost to keep the warning silent.
+const githubOwner = process.env.GITHUB_REPOSITORY?.split('/')[0];
+const githubRepo  = process.env.GITHUB_REPOSITORY?.split('/')[1];
+const githubPagesUrl = githubOwner && githubRepo
+  ? `https://${githubOwner}.github.io/${githubRepo}/`
+  : undefined;
+const site = process.env.ASTRO_SITE ?? githubPagesUrl ?? 'http://localhost:4321';
 const base = process.env.ASTRO_BASE ?? '/';
 const informationArchitecture = loadInformationArchitecture();
 
