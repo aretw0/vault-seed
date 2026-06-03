@@ -68,8 +68,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
-      - name: Build @dgk/astro-plugins
-        run: pnpm --filter @dgk/astro-plugins build
+      - name: Build @aretw0/dgk-astro-plugins
+        run: pnpm --filter @aretw0/dgk-astro-plugins build
 
       - name: Build site
         run: pnpm run site:build

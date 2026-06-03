@@ -1,5 +1,5 @@
 {
-  "name": "@dgk/cli",
+  "name": "@aretw0/dgk-cli",
   "version": "0.1.0",
   "description": "Digital Gardening Kit — CLI para operação do vault",
   "type": "module",
@@ -17,6 +17,7 @@
     "url": "https://github.com/aretw0/vault-seed.git",
     "directory": "packages/cli"
   },
+  "license": "GPL-3.0-only",
   "engines": {
     "node": ">=22"
   }

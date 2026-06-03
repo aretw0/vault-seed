@@ -8,7 +8,7 @@ importers:
 
   .:
     dependencies:
-      '@dgk/astro-plugins':
+      '@aretw0/dgk-astro-plugins':
         specifier: workspace:^
         version: link:packages/astro-plugins
     devDependencies:

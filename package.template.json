@@ -20,7 +20,7 @@
     "validate:theme": "node scripts/check_theme.js",
     "validate:mermaid": "node scripts/check_mermaid.js",
     "site:dev": "astro dev",
-    "site:build": "pnpm --filter @dgk/astro-plugins build && astro build",
+    "site:build": "pnpm --filter @aretw0/dgk-astro-plugins build && astro build",
     "site:preview": "astro preview",
     "site:check": "node scripts/smoke_site.js",
     "site:responsive": "pnpm run site:build && pnpm run notebooks:export && node scripts/smoke_responsive.mjs",
@@ -61,6 +61,6 @@
     "node": ">=22"
   },
   "dependencies": {
-    "@dgk/astro-plugins": "workspace:^"
+    "@aretw0/dgk-astro-plugins": "workspace:^"
   }
 }

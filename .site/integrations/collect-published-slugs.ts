@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join, basename } from 'node:path';
 import { globSync } from 'glob';
 import matter from 'gray-matter';
-import { slugify } from '@dgk/astro-plugins';
+import { slugify } from '@aretw0/dgk-astro-plugins';
 import { readTechnicalDocEntries } from './technical-docs.js';
 import { VAULT_FOLDERS } from './vault-config.js';
 

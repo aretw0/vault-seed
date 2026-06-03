@@ -52,7 +52,7 @@ function requireCondition(condition, message) {
 
 const pkg = readJson("package.json");
 const templatePkg = readJson("package.template.json");
-const templateLock = read("pnpm-lock.template.yaml");
+const templateLock = read("pnpm-lock.template.yaml").replace(/\r\n/g, "\n");
 const initializeWorkflow = read(".github/workflows/initialize.yml");
 const ciWorkflow = read(".github/workflows/ci.yml");
 const gitignore = read(".gitignore");
@@ -188,8 +188,8 @@ requireCondition(
   "notebooks:export must skip fresh notebook HTML and force overwrite only when an export is stale.",
 );
 requireCondition(
-  templatePkg.dependencies?.["@dgk/astro-plugins"] === "workspace:^",
-  "Generated vaults must use the local workspace @dgk/astro-plugins package until it is published.",
+  templatePkg.dependencies?.["@aretw0/dgk-astro-plugins"] === "workspace:^",
+  "Generated vaults must use the local workspace @aretw0/dgk-astro-plugins package until it is published.",
 );
 requireCondition(
   gitignore.includes("__marimo__/"),
@@ -259,7 +259,8 @@ requireCondition(
 requireCondition(
   notebooksExportScript.includes("data-vault-marimo-navigation") &&
     notebooksExportScript.includes("data-vault-lab-footer") &&
-    notebooksExportScript.includes("feito com <span aria-label=\"amor\">♥</span> por") &&
+    (/feito com <span[^>]*class="[^"]*vault-lab-footer__heart[^"]*"[^>]*aria-label="amor">♥<\/span> por/.test(notebooksExportScript) ||
+      notebooksExportScript.includes("feito com <span aria-label=\"amor\">♥</span> por")) &&
     notebooksExportScript.includes('href="${labIndexHref}"') &&
     notebooksExportScript.includes("data-vault-marimo-presentation-fullscreen") &&
     notebooksExportScript.includes("vaultMarimoFullscreenButton") &&

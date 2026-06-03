@@ -1,8 +1,8 @@
 {
-  "name": "@dgk/astro-plugins",
+  "name": "@aretw0/dgk-astro-plugins",
   "version": "0.1.0",
   "type": "module",
-  "description": "Remark plugins for @dgk vault publishing",
+  "description": "Remark plugins for @aretw0/dgk-astro-plugins package publishing",
   "exports": {
     ".": "./dist/index.js"
   },
@@ -31,6 +31,7 @@
     "typescript": "^5.0.0",
     "vitest": "^3.0.0"
   },
+  "license": "GPL-3.0-only",
   "engines": {
     "node": ">=22"
   }

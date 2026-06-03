@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
 import { globSync } from 'glob';
 import matter from 'gray-matter';
-import { slugify } from '@dgk/astro-plugins';
+import { slugify } from '@aretw0/dgk-astro-plugins';
 
 const TECHNICAL_DOCS_ROOT = 'docs';
 const TECHNICAL_DOCS_INDEX = `${TECHNICAL_DOCS_ROOT}/INDEX.md`;

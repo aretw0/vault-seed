@@ -1,5 +1,5 @@
 ---
-"@dgk/astro-plugins": minor
+"@aretw0/dgk-astro-plugins": minor
 ---
 
 feat: initial release with remark plugins for vault publishing

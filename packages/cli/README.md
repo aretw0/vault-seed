@@ -1,13 +1,13 @@
-# @dgk/cli
+# @aretw0/dgk-cli
 
 CLI do Digital Gardening Kit — operação do vault a partir do terminal.
 
 ## Instalação
 
 ```bash
-npm install -g @dgk/cli
+npm install -g @aretw0/dgk-cli
 # ou via pnpm (recomendado dentro do vault)
-pnpm add -D @dgk/cli
+pnpm add -D @aretw0/dgk-cli
 ```
 
 ## Comandos

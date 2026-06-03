@@ -3,8 +3,8 @@ name: Publish CLI
 on:
   push:
     tags:
-      - '@dgk/cli@*'
-      - '@dgk/astro-plugins@*'
+      - '@aretw0/dgk-cli@*'
+      - '@aretw0/dgk-astro-plugins@*'
 
 permissions:
   contents: read
@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   publish:
-    name: Publish @dgk/cli to npm
+    name: Publish @aretw0/dgk-cli to npm
     runs-on: ubuntu-latest
     timeout-minutes: 10
 

@@ -2,7 +2,7 @@ import { basename, dirname, join } from 'node:path';
 import { readFileSync } from 'node:fs';
 import { globSync } from 'glob';
 import matter from 'gray-matter';
-import { slugify } from '@dgk/astro-plugins';
+import { slugify } from '@aretw0/dgk-astro-plugins';
 import {
   deriveNoteIntents,
   getIntentLabel,

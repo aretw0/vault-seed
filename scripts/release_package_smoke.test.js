@@ -15,10 +15,10 @@ test("release package smoke keeps release and package publishing explicitly gate
   assert.equal(
     fs.readFileSync(path.join(process.cwd(), "packages/cli/src/index.js"), "utf8").includes("release"),
     false,
-    "@dgk/cli must not expose a release command until a supported release flow exists for generated vaults.",
+    "@aretw0/dgk-cli must not expose a release command until a supported release flow exists for generated vaults.",
   );
   assert.deepEqual(
     report.releasePackages.map((pkg) => pkg.name),
-    ["@dgk/cli", "@dgk/astro-plugins"],
+    ["@aretw0/dgk-cli", "@aretw0/dgk-astro-plugins"],
   );
 });

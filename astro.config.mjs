@@ -2,7 +2,7 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import remarkDirective from 'remark-directive';
-import { remarkCallouts, remarkWikiImages, remarkWikiLinks } from '@dgk/astro-plugins';
+import { remarkCallouts, remarkWikiImages, remarkWikiLinks } from '@aretw0/dgk-astro-plugins';
 import { collectVaultEntries } from './.site/integrations/collect-published-slugs.js';
 import { copyVaultAttachments } from './.site/integrations/copy-vault-attachments.js';
 import { generateVaultJson } from './.site/integrations/generate-vault-json.js';
@@ -403,6 +403,7 @@ export default defineConfig({
       sidebar,
       head: [
         { tag: 'link', attrs: { rel: 'alternate', type: 'application/rss+xml', title: `${vaultTitle} RSS`, href: rssHref } },
+        { tag: 'link', attrs: { rel: 'license', href: '/LICENSE.md' } },
         { tag: 'script', attrs: { type: 'module' }, content: mermaidScript },
       ],
       customCss: [
