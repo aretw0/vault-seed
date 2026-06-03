@@ -13,17 +13,36 @@ import {
   loadInformationArchitecture,
 } from './.site/lib/information-architecture.mjs';
 
-// ASTRO_SITE wins when set explicitly (custom domain, local override).
-// Fall back to the GitHub Pages URL derived from GITHUB_REPOSITORY so the
-// sitemap integration never warns about a missing `site` option.
-// In bare local dev (no env vars) use localhost to keep the warning silent.
+// Site URL resolution — priority order:
+//   1. ASTRO_SITE env var          — explicit override (custom domain, staging, etc.)
+//   2. CNAME file in repo root     — GitHub Pages custom domain; implies base='/'
+//   3. GITHUB_REPOSITORY env var   — default GitHub Pages subdomain (owner.github.io/repo)
+//   4. localhost:4321              — bare local dev, silences the sitemap warning
+//
+// ASTRO_BASE is only consulted when the CNAME path is NOT taken, because a
+// custom domain always serves from the root — the repo name is not part of the URL.
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+const _cnamePath = join(process.cwd(), 'CNAME');
+const _cnameHost = existsSync(_cnamePath)
+  ? readFileSync(_cnamePath, 'utf8').trim()
+  : null;
 const githubOwner = process.env.GITHUB_REPOSITORY?.split('/')[0];
 const githubRepo  = process.env.GITHUB_REPOSITORY?.split('/')[1];
 const githubPagesUrl = githubOwner && githubRepo
   ? `https://${githubOwner}.github.io/${githubRepo}/`
   : undefined;
-const site = process.env.ASTRO_SITE ?? githubPagesUrl ?? 'http://localhost:4321';
-const base = process.env.ASTRO_BASE ?? '/';
+const site = process.env.ASTRO_SITE
+  ?? (_cnameHost ? `https://${_cnameHost}/` : undefined)
+  ?? githubPagesUrl
+  ?? 'http://localhost:4321';
+// When a CNAME is present the site is served from the domain root, so base='/'
+// regardless of ASTRO_BASE. Otherwise respect the explicit env var or default '/'.
+const base = process.env.ASTRO_SITE
+  ? (process.env.ASTRO_BASE ?? '/')
+  : _cnameHost
+    ? '/'
+    : (process.env.ASTRO_BASE ?? '/');
 const informationArchitecture = loadInformationArchitecture();
 
 // Title: explicit env var → repo name from GitHub context → cwd basename
