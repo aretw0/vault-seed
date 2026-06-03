@@ -63,6 +63,86 @@ async function parseViewportTransform(graph) {
   return graph.locator('[data-vault-graph-viewport]').first().getAttribute('transform');
 }
 
+async function pointerDrag(page, {
+  selector,
+  startX,
+  startY,
+  endX,
+  endY,
+  pointerId = 700,
+  button = 0,
+}) {
+  await page.evaluate(
+    ({ selector, startX, startY, endX, endY, pointerId, button }) => {
+      const target = document.querySelector(selector);
+      if (!target) return;
+
+      const down = new PointerEvent('pointerdown', {
+        bubbles: true,
+        cancelable: true,
+        pointerId,
+        pointerType: 'mouse',
+        clientX: startX,
+        clientY: startY,
+        button,
+      });
+      target.dispatchEvent(down);
+
+      const move = new PointerEvent('pointermove', {
+        bubbles: true,
+        cancelable: true,
+        pointerId,
+        pointerType: 'mouse',
+        clientX: endX,
+        clientY: endY,
+        button,
+      });
+      window.dispatchEvent(move);
+
+      const up = new PointerEvent('pointerup', {
+        bubbles: true,
+        cancelable: true,
+        pointerId,
+        pointerType: 'mouse',
+        clientX: endX,
+        clientY: endY,
+        button,
+      });
+      window.dispatchEvent(up);
+    },
+    {
+      selector,
+      startX,
+      startY,
+      endX,
+      endY,
+      pointerId,
+      button,
+    },
+  );
+}
+
+async function wheelZoomAt(page, { selector, x, y, deltaY }) {
+  await page.evaluate(
+    ({ selector, x, y, deltaY }) => {
+      const target = document.querySelector(selector);
+      if (!target) return;
+
+      target.dispatchEvent(
+        new WheelEvent('wheel', {
+          bubbles: true,
+          cancelable: true,
+          clientX: x,
+          clientY: y,
+          deltaY,
+          deltaMode: 0,
+        }),
+      );
+    },
+    { selector, x, y, deltaY },
+  );
+}
+
 async function readVisibleNodesState(graph) {
   return graph.evaluate((graphRoot) => {
     const canvas = graphRoot.querySelector('.vault-graph-view__canvas');
@@ -99,6 +179,51 @@ async function readVisibleNodesState(graph) {
     };
   });
 }
+
+function ensureNodesWithinCanvas(state, label, failures) {
+  if (!state || !Array.isArray(state.nodes) || state.nodes.length === 0) return;
+
+  const { canvas, nodes } = state;
+  for (const node of nodes) {
+    const overlaps =
+      node.right > canvas.left + 0.2 &&
+      node.left < canvas.right - 0.2 &&
+      node.bottom > canvas.top + 0.2 &&
+      node.top < canvas.bottom - 0.2;
+    if (!overlaps) {
+      fail(`Node ${node.id} must stay inside the graph canvas (${label}).`, failures || []);
+    }
+  }
+}
+
+function nodeSpread(nodes) {
+  if (!nodes || !nodes.length) return null;
+
+  let minX = Number.POSITIVE_INFINITY;
+  let maxX = Number.NEGATIVE_INFINITY;
+  let minY = Number.POSITIVE_INFINITY;
+  let maxY = Number.NEGATIVE_INFINITY;
+
+  for (const node of nodes) {
+    const x = Number(node.x);
+    const y = Number(node.y);
+    if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
+    if (x < minX) minX = x;
+    if (x > maxX) maxX = x;
+    if (y < minY) minY = y;
+    if (y > maxY) maxY = y;
+  }
+
+  if (!Number.isFinite(minX) || !Number.isFinite(maxX) || !Number.isFinite(minY) || !Number.isFinite(maxY)) {
+    return null;
+  }
+
+  return {
+    width: maxX - minX,
+    height: maxY - minY,
+  };
+}
+
 
 async function startStaticServer() {
   const server = createServer(async (request, response) => {
@@ -178,6 +303,29 @@ async function runExploreGraphSmoke() {
 
     const graph = page.locator('.vault-graph-preview .vault-graph-view');
     await graph.first().waitFor({ state: "visible", timeout: 20000 });
+
+    const toolbarLayout = await graph
+      .locator('.vault-graph-view__toolbar .vault-graph-view__button')
+      .evaluateAll((buttons) => {
+        const bounds = buttons.map((button) => button.getBoundingClientRect());
+        const distinctRows = new Set(
+          bounds
+            .map((box) => Math.round(box.y / 2))
+            .filter((value) => Number.isFinite(value)),
+        );
+        const sizes = bounds.map((box) => ({ width: box.width, height: box.height }));
+        return {
+          buttonCount: bounds.length,
+          rowCount: distinctRows.size,
+          sizes,
+        };
+      });
+
+    assert.ok(toolbarLayout.buttonCount >= 3, "Graph toolbar should expose expand/collapse/recenter controls.");
+    assert.ok(toolbarLayout.rowCount === 1, "Graph toolbar controls must stay on a single row.");
+    for (const size of toolbarLayout.sizes) {
+      assert.ok(size.width > 1 && size.height > 1, "Graph toolbar buttons should keep measurable size.");
+    }
 
     const nodeCount = await graph.locator("[data-vault-graph-node-id]").count();
     assert.ok(nodeCount > 0, "Graph must render at least one node element.");
@@ -260,52 +408,14 @@ async function runExploreGraphSmoke() {
       y: start.y - 30,
     };
 
-    await page.evaluate(
-      ({ selector, startX, startY, endX, endY }) => {
-        const svg = document.querySelector(selector);
-        if (!svg) return;
-
-        const pointerDown = new PointerEvent('pointerdown', {
-          bubbles: true,
-          cancelable: true,
-          pointerId: 111,
-          pointerType: 'mouse',
-          clientX: startX,
-          clientY: startY,
-          button: 0,
-        });
-        svg.dispatchEvent(pointerDown);
-
-        const pointerMove = new PointerEvent('pointermove', {
-          bubbles: true,
-          cancelable: true,
-          pointerId: 111,
-          pointerType: 'mouse',
-          clientX: endX,
-          clientY: endY,
-          button: 0,
-        });
-        window.dispatchEvent(pointerMove);
-
-        const pointerUp = new PointerEvent('pointerup', {
-          bubbles: true,
-          cancelable: true,
-          pointerId: 111,
-          pointerType: 'mouse',
-          clientX: endX,
-          clientY: endY,
-          button: 0,
-        });
-        window.dispatchEvent(pointerUp);
-      },
-      {
-        selector: '.vault-graph-preview .vault-graph-view__canvas',
-        startX: start.x,
-        startY: start.y,
-        endX: end.x,
-        endY: end.y,
-      },
-    );
+    await pointerDrag(page, {
+      selector: '.vault-graph-preview .vault-graph-view__canvas',
+      startX: start.x,
+      startY: start.y,
+      endX: end.x,
+      endY: end.y,
+      pointerId: 111,
+    });
 
     const afterPanTransform = await parseViewportTransform(graph);
     assert.ok(
@@ -325,52 +435,15 @@ async function runExploreGraphSmoke() {
       y: rightPanStart.y + 28,
     };
 
-    await page.evaluate(
-      ({ selector, startX, startY, endX, endY }) => {
-        const node = document.querySelector(selector);
-        if (!node) return;
-
-        const pointerDown = new PointerEvent('pointerdown', {
-          bubbles: true,
-          cancelable: true,
-          pointerId: 222,
-          pointerType: 'mouse',
-          clientX: startX,
-          clientY: startY,
-          button: 2,
-        });
-        node.dispatchEvent(pointerDown);
-
-        const pointerMove = new PointerEvent('pointermove', {
-          bubbles: true,
-          cancelable: true,
-          pointerId: 222,
-          pointerType: 'mouse',
-          clientX: endX,
-          clientY: endY,
-          button: 2,
-        });
-        window.dispatchEvent(pointerMove);
-
-        const pointerUp = new PointerEvent('pointerup', {
-          bubbles: true,
-          cancelable: true,
-          pointerId: 222,
-          pointerType: 'mouse',
-          clientX: endX,
-          clientY: endY,
-          button: 2,
-        });
-        window.dispatchEvent(pointerUp);
-      },
-      {
-        selector: '.vault-graph-preview .vault-graph-view [data-vault-graph-node-id]',
-        startX: rightPanStart.x,
-        startY: rightPanStart.y,
-        endX: rightPanEnd.x,
-        endY: rightPanEnd.y,
-      },
-    );
+    await pointerDrag(page, {
+      selector: '.vault-graph-preview .vault-graph-view [data-vault-graph-node-id]',
+      startX: rightPanStart.x,
+      startY: rightPanStart.y,
+      endX: rightPanEnd.x,
+      endY: rightPanEnd.y,
+      pointerId: 222,
+      button: 2,
+    });
     await page.waitForTimeout(120);
 
     const afterRightPanTransform = await parseViewportTransform(graph);
@@ -380,22 +453,12 @@ async function runExploreGraphSmoke() {
     );
     const rightPanNodeState = await readVisibleNodesState(graph);
     assert.ok(Array.isArray(rightPanNodeState?.nodes) && rightPanNodeState.nodes.length > 0, 'Graph should expose visible nodes after right-click pan.');
-
-    if (rightPanNodeState && rightPanNodeState.nodes.length) {
-      const { canvas, nodes: visibleNodes } = rightPanNodeState;
-      for (const node of visibleNodes) {
-        const overlaps =
-          node.right > canvas.left + 0.2 &&
-          node.left < canvas.right - 0.2 &&
-          node.bottom > canvas.top + 0.2 &&
-          node.top < canvas.bottom - 0.2;
-        assert.ok(overlaps, `Visible node ${node.id} should remain inside the graph canvas.`);
-      }
-    }
+    ensureNodesWithinCanvas(rightPanNodeState, 'after right click pan', failures);
 
     const beforeNodeX = Number.parseFloat((await firstNode.getAttribute('data-vault-graph-node-x')) || '0');
     const beforeNodeY = Number.parseFloat((await firstNode.getAttribute('data-vault-graph-node-y')) || '0');
     const beforeNodesState = await readVisibleNodesState(graph);
+    const beforeSpread = nodeSpread(beforeNodesState?.nodes);
     const beforeDragNodeById = new Map();
     for (const node of beforeNodesState?.nodes || []) {
       beforeDragNodeById.set(node.id, node);
@@ -411,58 +474,32 @@ async function runExploreGraphSmoke() {
       y: dragStart.y + dragDeltaY,
     };
 
-    await page.evaluate(
-      ({ selector, startX, startY, endX, endY }) => {
-        const node = document.querySelector(selector);
-        if (!node) return;
-
-        const down = new PointerEvent('pointerdown', {
-          bubbles: true,
-          cancelable: true,
-          pointerId: 333,
-          pointerType: 'mouse',
-          clientX: startX,
-          clientY: startY,
-          button: 0,
-        });
-        node.dispatchEvent(down);
-
-        const move = new PointerEvent('pointermove', {
-          bubbles: true,
-          cancelable: true,
-          pointerId: 333,
-          pointerType: 'mouse',
-          clientX: endX,
-          clientY: endY,
-          button: 0,
-        });
-        window.dispatchEvent(move);
-
-        const up = new PointerEvent('pointerup', {
-          bubbles: true,
-          cancelable: true,
-          pointerId: 333,
-          pointerType: 'mouse',
-          clientX: endX,
-          clientY: endY,
-          button: 0,
-        });
-        window.dispatchEvent(up);
-      },
-      {
-        selector: '.vault-graph-preview .vault-graph-view [data-vault-graph-node-id]',
-        startX: dragStart.x,
-        startY: dragStart.y,
-        endX: dragEnd.x,
-        endY: dragEnd.y,
-      },
-    );
+    await pointerDrag(page, {
+      selector: '.vault-graph-preview .vault-graph-view [data-vault-graph-node-id]',
+      startX: dragStart.x,
+      startY: dragStart.y,
+      endX: dragEnd.x,
+      endY: dragEnd.y,
+      pointerId: 333,
+    });
     await page.waitForTimeout(120);
 
     const afterNodesState = await readVisibleNodesState(graph);
+    const afterSpread = nodeSpread(afterNodesState?.nodes);
     const afterDragNodeById = new Map();
     for (const node of afterNodesState?.nodes || []) {
       afterDragNodeById.set(node.id, node);
+    }
+
+    if (beforeSpread && afterSpread && beforeSpread.width > 0 && beforeSpread.height > 0) {
+      const beforeArea = beforeSpread.width * beforeSpread.height;
+      const afterArea = afterSpread.width * afterSpread.height;
+      if (afterArea > 0 && beforeArea > 0) {
+        assert.ok(
+          afterArea >= Math.max(beforeArea * 0.45, 12),
+          `Node spread should not collapse after drag (before=${beforeArea.toFixed(1)}, after=${afterArea.toFixed(1)}).`,
+        );
+      }
     }
 
     let anyNodeMoved = false;
@@ -489,28 +526,12 @@ async function runExploreGraphSmoke() {
 
     // Ensure drag interaction causes a measurable movement in the graph state.
 
-    await page.evaluate(
-      ({ selector, x, y }) => {
-        const svg = document.querySelector(selector);
-        if (!svg) return;
-
-        const wheel = new WheelEvent('wheel', {
-          bubbles: true,
-          cancelable: true,
-          clientX: x,
-          clientY: y,
-          deltaY: -120,
-          deltaMode: 0,
-        });
-
-        svg.dispatchEvent(wheel);
-      },
-      {
-        selector: '.vault-graph-preview .vault-graph-view__canvas',
-        x: rect.x + rect.width / 2,
-        y: rect.y + rect.height / 2,
-      },
-    );
+    await wheelZoomAt(page, {
+      selector: '.vault-graph-preview .vault-graph-view__canvas',
+      x: rect.x + rect.width / 2,
+      y: rect.y + rect.height / 2,
+      deltaY: -120,
+    });
     await page.waitForTimeout(120);
 
     const afterZoomTransform = await parseViewportTransform(graph);
@@ -530,6 +551,62 @@ async function runExploreGraphSmoke() {
         assert.ok(overlaps, `Visible node ${node.id} should remain inside the graph canvas after zoom.`);
       }
     }
+
+    const stressPanSequence = [
+      {
+        startX: rect.x + rect.width * 0.2,
+        startY: rect.y + rect.height * 0.2,
+        endX: rect.x - 320,
+        endY: rect.y - 220,
+      },
+      {
+        startX: rect.x + rect.width - 30,
+        startY: rect.y + rect.height - 26,
+        endX: rect.x + rect.width + 290,
+        endY: rect.y + rect.height + 250,
+      },
+    ];
+
+    for (let i = 0; i < stressPanSequence.length; i += 1) {
+      const move = stressPanSequence[i];
+      await pointerDrag(page, {
+        selector: '.vault-graph-preview .vault-graph-view__canvas',
+        startX: move.startX,
+        startY: move.startY,
+        endX: move.endX,
+        endY: move.endY,
+        pointerId: 410 + i,
+      });
+      await page.waitForTimeout(100);
+    }
+
+    const extremePanState = await readVisibleNodesState(graph);
+    ensureNodesWithinCanvas(extremePanState, 'after extreme pan sequence', failures);
+
+    const stressZoomCenterX = rect.x + rect.width * 0.45;
+    const stressZoomCenterY = rect.y + rect.height * 0.45;
+    for (let i = 0; i < 3; i += 1) {
+      await wheelZoomAt(page, {
+        selector: '.vault-graph-preview .vault-graph-view__canvas',
+        x: stressZoomCenterX,
+        y: stressZoomCenterY,
+        deltaY: -120,
+      });
+      await page.waitForTimeout(70);
+    }
+
+    for (let i = 0; i < 4; i += 1) {
+      await wheelZoomAt(page, {
+        selector: '.vault-graph-preview .vault-graph-view__canvas',
+        x: stressZoomCenterX,
+        y: stressZoomCenterY,
+        deltaY: 120,
+      });
+      await page.waitForTimeout(70);
+    }
+
+    const extremeZoomState = await readVisibleNodesState(graph);
+    ensureNodesWithinCanvas(extremeZoomState, 'after stress zoom sequence', failures);
 
     await page.waitForTimeout(100);
     assertNoErrorNoise([...consoleMessages, ...pageErrors], failures);
