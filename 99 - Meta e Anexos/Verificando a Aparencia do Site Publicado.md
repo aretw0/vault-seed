@@ -33,8 +33,8 @@ Abra seu site no Chrome ou Firefox e verifique:
 - [ ] **`/explorar/` em ≥ 1152px** → sidebar direita mostra um graph menor; toolbar (−/+/↻) visível
 - [ ] **Arrastar um nó** → ao soltar, os nós vizinhos se afastam progressivamente (não ficam todos amontoados)
 - [ ] **Zoom com scroll** → nós ficam dentro da borda do SVG, não "escapam" para fora
-- [ ] **Botões da toolbar** [−][+][↻] → cada caractere está no centro do seu próprio círculo, não deslocado para cima ou para baixo
-- [ ] **Botões de sidebar** [‹/›] → cada caractere está no centro do seu próprio círculo
+- [ ] **Botões da toolbar** (recolher, expandir, recentrar) → ícone SVG centrado no círculo, sem deslocamento vertical
+- [ ] **Botões de sidebar** (recolher esquerda, recolher direita) → ícone SVG centrado no círculo
 - [ ] **Footer** → texto de autoria ("Feito com ♥ por …") aparece centralizado como pílula compacta — sem quebra de layout
 
 ---
