@@ -835,6 +835,28 @@
   margin-inline: auto;
 }
 
+@media (max-width: 44rem) {
+  .vault-graph-view--hero {
+    width: min(100%, 100dvw);
+    max-width: min(100%, 100dvw);
+  }
+
+  .vault-graph-view--hero .vault-graph-view__canvas {
+    margin-inline: auto;
+    max-height: min(76dvh, 620px);
+  }
+
+  .vault-graph-view--hero .vault-graph-view__label {
+    font-size: 20px;
+    font-weight: 800;
+  }
+
+  .vault-graph-view--hero .vault-graph-view__hover-label {
+    font-size: 24px;
+    stroke-width: 3.8px;
+  }
+}
+
 .vault-graph-view--no-labels .vault-graph-view__canvas-clip {
   max-width: min(25rem, 56dvh);
 }

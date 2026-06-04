@@ -41,10 +41,10 @@ function graphHeroHtml() {
     `<a href="${base}/${escapeHtml(node.id)}/" aria-label="${escapeHtml(node.title)}: ${node.degree} conexões" data-vault-graph-node-id="${escapeHtml(node.id)}" data-vault-graph-node-label="${escapeHtml(node.title)}" data-vault-graph-node-size="${node.size.toFixed(1)}" data-vault-graph-node-x="${node.x.toFixed(1)}" data-vault-graph-node-y="${node.y.toFixed(1)}" data-vault-graph-label-x="${node.x.toFixed(1)}" data-vault-graph-label-y="${(node.y + node.size + 8).toFixed(1)}">` +
     `<title>${escapeHtml(node.title)} · ${node.degree} conexões</title>` +
     `<circle cx="${node.x.toFixed(1)}" cy="${node.y.toFixed(1)}" r="${node.size.toFixed(1)}" style="--vault-node-weight:${node.weight.toFixed(2)}" />` +
-    `<text class="vault-graph-view__label vault-graph-view__label--short" x="${node.x.toFixed(1)}" y="${(node.y + node.size + 8).toFixed(1)}" text-anchor="middle">${escapeHtml(truncateLabel(node.title))}</text>` +
+    `<text class="vault-graph-view__label vault-graph-view__label--short" x="${node.x.toFixed(1)}" y="${(node.y + node.size + 8).toFixed(1)}" text-anchor="middle" style="font-size: var(--hero-graph-label-font, 6px); font-weight: 800;">${escapeHtml(truncateLabel(node.title))}</text>` +
     `</a>`
   )).join('');
-  return `<figure class="vault-graph-view vault-graph-view--hero" aria-label="Graph view do vault"><svg class="vault-graph-view__canvas" viewBox="0 0 200 200" role="img"><title>Graph view do vault</title><g class="vault-graph-view__links" aria-hidden="true">${lines}</g><g class="vault-graph-view__nodes">${circles}</g><g class="vault-graph-view__hover-layer" aria-hidden="true"><text class="vault-graph-view__hover-label" text-anchor="middle"></text></g></svg><figcaption>${positioned.length} nós navegáveis · rótulo completo ao passar o mouse ou focar</figcaption></figure>`;
+  return `<figure class="vault-graph-view vault-graph-view--hero" aria-label="Graph view do vault"><svg class="vault-graph-view__canvas" viewBox="0 0 200 200" role="img"><title>Graph view do vault</title><g class="vault-graph-view__links" aria-hidden="true">${lines}</g><g class="vault-graph-view__nodes">${circles}</g><g class="vault-graph-view__hover-layer" aria-hidden="true"><text class="vault-graph-view__hover-label" text-anchor="middle" style="font-size: var(--hero-graph-hover-label-font, 7px); stroke-width: var(--hero-graph-hover-label-stroke, 3px);"></text></g></svg><figcaption>Toque em um nó (ou passe o mouse) para ver o nome completo</figcaption></figure>`;
 }
 const heroGraphHtml = graphHeroHtml();
 ---
@@ -61,7 +61,7 @@ const heroGraphHtml = graphHeroHtml();
       actions: [
         {
           text: 'Começar',
-          link: `${base}/meta-e-anexos/seus-primeiros-passos/`,
+          link: `${base}/meta-e-anexos/991-onboarding/seus-primeiros-passos/`,
           icon: 'right-arrow',
           variant: 'primary',
         },
@@ -84,69 +84,99 @@ const heroGraphHtml = graphHeroHtml();
       <article class="vault-card">
         <span class="vault-card__eyebrow">Local first</span>
         <h2 class="vault-card__title">Conhecimento que não depende da nuvem</h2>
-        <p class="vault-card__body">
-          Markdown puro e Git: funciona offline, em qualquer editor, sem lock-in.
-          Repo privado ou público — você decide o que compartilhar, se é que vai compartilhar algo.
-        </p>
+        <details class="vault-card__details">
+          <summary class="vault-card__body" aria-label="Resumo do card: conheça o texto completo para abrir">
+            Markdown puro e Git: funciona offline, em qualquer editor, sem lock-in.
+          </summary>
+          <p class="vault-card__body vault-card__body-full">
+            Markdown puro e Git: funciona offline, em qualquer editor, sem lock-in.
+            Repo privado ou público — você decide o que compartilhar, se é que vai compartilhar algo.
+          </p>
+        </details>
         <div class="vault-actions">
-          <a class="vault-button" href={`${base}/meta-e-anexos/entendendo-a-estrutura-de-pastas/`}>Estrutura</a>
+          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/991-onboarding/entendendo-a-estrutura-de-pastas/`}>Estrutura</a>
         </div>
       </article>
 
       <article class="vault-card">
         <span class="vault-card__eyebrow">AI-ready</span>
         <h2 class="vault-card__title">Agentes de IA como coautores</h2>
-        <p class="vault-card__body">
-          AGENTS.md, CLAUDE.md e GEMINI.md entregam contexto do vault a qualquer assistente.
-          Zero configuração extra para começar a usar IA no repositório.
-        </p>
+        <details class="vault-card__details">
+          <summary class="vault-card__body" aria-label="Resumo do card: conheça o texto completo para abrir">
+            AGENTS.md, CLAUDE.md e GEMINI.md entregam contexto do vault a qualquer assistente.
+          </summary>
+          <p class="vault-card__body vault-card__body-full">
+            AGENTS.md, CLAUDE.md e GEMINI.md entregam contexto do vault a qualquer assistente.
+            Zero configuração extra para começar a usar IA no repositório.
+          </p>
+        </details>
         <div class="vault-actions">
-          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/usando-com-agentes-de-ia/`}>Agentes</a>
+          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/993-referencia/usando-com-agentes-de-ia/`}>Agentes</a>
         </div>
       </article>
 
       <article class="vault-card">
         <span class="vault-card__eyebrow">Publicação opcional</span>
         <h2 class="vault-card__title">Site quando você quiser</h2>
-        <p class="vault-card__body">
-          GitHub Pages com Astro e Starlight. Escolha quais notas ficam públicas,
-          use seu domínio, ative RSS. Nada é publicado por padrão.
-        </p>
+        <details class="vault-card__details">
+          <summary class="vault-card__body" aria-label="Resumo do card: conheça o texto completo para abrir">
+            GitHub Pages com Astro e Starlight. Escolha quais notas ficam públicas.
+          </summary>
+          <p class="vault-card__body vault-card__body-full">
+            GitHub Pages com Astro e Starlight. Escolha quais notas ficam públicas,
+            use seu domínio, ative RSS. Nada é publicado por padrão.
+          </p>
+        </details>
         <div class="vault-actions">
-          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/publicando-seu-vault-como-site/`}>Publicar</a>
-        </div>
-      </article>
-
-      <article class="vault-card">
-        <span class="vault-card__eyebrow">Lab</span>
-        <h2 class="vault-card__title">Notebooks junto do vault</h2>
-        <p class="vault-card__body">
-          Use Marimo para extract local, transformação e análises que não pertencem ao site estático.
-        </p>
-        <div class="vault-actions">
-          <a class="vault-button vault-button--secondary" href={`${base}/lab/`}>Abrir Lab</a>
+          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/992-workflows/publicando-seu-vault-como-site/`}>Publicar</a>
         </div>
       </article>
 
       <article class="vault-card">
         <span class="vault-card__eyebrow">Conhecimento coletivo</span>
         <h2 class="vault-card__title">Documentação viva para times</h2>
-        <p class="vault-card__body">
-          Use Git, PRs e notas Markdown para manter decisões, recursos e guias em um lugar auditável.
-        </p>
+        <details class="vault-card__details">
+          <summary class="vault-card__body" aria-label="Resumo do card: conheça o texto completo para abrir">
+            Use Git, PRs e notas Markdown para manter decisões e guias auditáveis.
+          </summary>
+          <p class="vault-card__body vault-card__body-full">
+            Use Git, PRs e notas Markdown para manter decisões, recursos e guias em um lugar auditável.
+          </p>
+        </details>
         <div class="vault-actions">
-          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/convencoes-e-boas-praticas/`}>Convenções</a>
+          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/993-referencia/convencoes-e-boas-praticas/`}>Convenções</a>
+        </div>
+      </article>
+
+      <article class="vault-card">
+        <span class="vault-card__eyebrow">Lab</span>
+        <h2 class="vault-card__title">Notebooks junto do vault</h2>
+        <details class="vault-card__details">
+          <summary class="vault-card__body" aria-label="Resumo do card: conheça o texto completo para abrir">
+            Use Marimo para tarefas locais de análise e transformação.
+          </summary>
+          <p class="vault-card__body vault-card__body-full">
+            Use Marimo para extract local, transformação e análises que não pertencem ao site estático.
+          </p>
+        </details>
+        <div class="vault-actions">
+          <a class="vault-button vault-button--secondary" href={`${base}/lab/`}>Abrir Lab</a>
         </div>
       </article>
 
       <article class="vault-card">
         <span class="vault-card__eyebrow">Sindicação</span>
         <h2 class="vault-card__title">RSS para publicar e auditar fontes</h2>
-        <p class="vault-card__body">
-          Gere um feed aberto do seu vault e consuma feeds externos como snapshots analisáveis no Lab.
-        </p>
+        <details class="vault-card__details">
+          <summary class="vault-card__body" aria-label="Resumo do card: conheça o texto completo para abrir">
+            Gere um feed aberto do seu vault e consuma fontes externas.
+          </summary>
+          <p class="vault-card__body vault-card__body-full">
+            Gere um feed aberto do seu vault e consuma feeds externos como snapshots analisáveis no Lab.
+          </p>
+        </details>
         <div class="vault-actions">
-          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/publicando-e-consumindo-rss-no-vault/`}>Ver RSS</a>
+          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/992-workflows/publicando-e-consumindo-rss-no-vault/`}>Ver RSS</a>
         </div>
       </article>
     </div>
@@ -155,6 +185,13 @@ const heroGraphHtml = graphHeroHtml();
 
 <script is:inline>
   (() => {
+    const MOBILE_GRAPH_BREAKPOINT = 44;
+    const isMobileHeroGraph = window.matchMedia(`(max-width: ${MOBILE_GRAPH_BREAKPOINT}rem)`).matches;
+    const heroGraphNodeScale = isMobileHeroGraph ? 1.10 : 1;
+    const heroGraphLabelFont = isMobileHeroGraph ? 20 : 6;
+    const heroGraphRadiusBoost = isMobileHeroGraph ? 1 : 0;
+    const heroGraphLayoutScale = isMobileHeroGraph ? 1.2 : 1;
+
     const VIEWBOX_SIZE = 200;
     const FORCE_STEPS = 140;
     const REPULSION_FORCE = 2200;
@@ -171,7 +208,7 @@ const heroGraphHtml = graphHeroHtml();
 
     function estimateLabelHalfWidth(text, fontSize) {
       const safeFontSize = Number(fontSize) || 6;
-      return Math.max(5, Math.min(18, String(text || '').length * safeFontSize * 0.52));
+      return Math.max(5, Math.min(isMobileHeroGraph ? 36 : 18, String(text || '').length * safeFontSize * 0.52));
     }
 
     function placeLabel(rawX, rawY, halfWidth, preferAbove = false) {
@@ -211,13 +248,16 @@ const heroGraphHtml = graphHeroHtml();
       const nodes = Array.from(figure.querySelectorAll('[data-vault-graph-node-id]'));
       if (!nodes.length) return;
 
+      const center = VIEWBOX_SIZE / 2;
       const state = nodes.map((node) => {
         const size = Number.parseFloat(String(node.dataset.vaultGraphNodeSize || '6')) || 6;
+        const rawX = Number.parseFloat(String(node.dataset.vaultGraphNodeX || '100')) || 100;
+        const rawY = Number.parseFloat(String(node.dataset.vaultGraphNodeY || '100')) || 100;
         return {
           id: node.dataset.vaultGraphNodeId,
-          x: Number.parseFloat(String(node.dataset.vaultGraphNodeX || '100')) || 100,
-          y: Number.parseFloat(String(node.dataset.vaultGraphNodeY || '100')) || 100,
-          size,
+          x: center + (rawX - center) * heroGraphLayoutScale,
+          y: center + (rawY - center) * heroGraphLayoutScale,
+          size: size * heroGraphNodeScale,
           vx: (Math.random() - 0.5) * 0.6,
           vy: (Math.random() - 0.5) * 0.6,
           element: node,
@@ -233,7 +273,6 @@ const heroGraphHtml = graphHeroHtml();
         target: stateById.get(edge.getAttribute('data-vault-graph-target') || ''),
       }));
 
-      const center = VIEWBOX_SIZE / 2;
       let step = 0;
 
       function paint() {
@@ -246,7 +285,7 @@ const heroGraphHtml = graphHeroHtml();
           const shortPlacement = placeLabel(
             item.x,
             item.y + item.size + LABEL_OFFSET_Y,
-            estimateLabelHalfWidth(shortText, 6),
+            estimateLabelHalfWidth(shortText, heroGraphLabelFont),
           );
 
           item.element.dataset.vaultGraphLabelX = shortPlacement.x.toFixed(2);
@@ -254,6 +293,7 @@ const heroGraphHtml = graphHeroHtml();
 
           item.circle.setAttribute('cx', item.x.toFixed(2));
           item.circle.setAttribute('cy', item.y.toFixed(2));
+          item.circle.setAttribute('r', (item.size + heroGraphRadiusBoost).toFixed(2));
 
           if (item.label) {
             item.label.setAttribute('x', shortPlacement.x.toFixed(2));
@@ -298,7 +338,7 @@ const heroGraphHtml = graphHeroHtml();
           const dy = edge.target.y - edge.source.y;
           const distSq = dx * dx + dy * dy + 0.01;
           const dist = Math.sqrt(distSq);
-          const ideal = edge.source.size + edge.target.size + 28;
+          const ideal = edge.source.size + edge.target.size + (isMobileHeroGraph ? 30 : 28);
           const pull = (dist - ideal) * SPRING_FORCE;
           const fx = (dx / dist) * pull;
           const fy = (dy / dist) * pull;
@@ -341,6 +381,9 @@ const heroGraphHtml = graphHeroHtml();
       document.querySelectorAll('.vault-graph-view--hero').forEach((figure) => {
         if (figure.dataset.vaultGraphReady === '1') return;
         figure.dataset.vaultGraphReady = '1';
+        figure.style.setProperty('--hero-graph-label-font', `${heroGraphLabelFont}px`);
+        figure.style.setProperty('--hero-graph-hover-label-font', `${heroGraphLabelFont + 4}px`);
+        figure.style.setProperty('--hero-graph-hover-label-stroke', isMobileHeroGraph ? '3.8px' : '3.2px');
 
         const hoverLabel = figure.querySelector('.vault-graph-view__hover-label');
         const nodes = figure.querySelectorAll('[data-vault-graph-node-label]');
@@ -351,10 +394,10 @@ const heroGraphHtml = graphHeroHtml();
             if (!hoverLabel) return;
 
             const fullLabel = node.dataset.vaultGraphNodeLabel || '';
-            const nodeSize = Number.parseFloat(String(node.dataset.vaultGraphNodeSize || '6')) || 6;
+            const nodeSize = (Number.parseFloat(String(node.dataset.vaultGraphNodeSize || '6')) || 6) * heroGraphNodeScale;
             const baseX = Number.parseFloat(String(node.dataset.vaultGraphLabelX || node.dataset.vaultGraphNodeX || '0')) || 0;
             const baseY = Number.parseFloat(String(node.dataset.vaultGraphLabelY || node.dataset.vaultGraphNodeY || '0')) || 0;
-            const hoverPlacement = placeLabel(baseX, baseY - (nodeSize + LABEL_OFFSET_Y), estimateLabelHalfWidth(fullLabel, 7), true);
+            const hoverPlacement = placeLabel(baseX, baseY - (nodeSize + LABEL_OFFSET_Y), estimateLabelHalfWidth(fullLabel, heroGraphLabelFont + 1), true);
 
             hoverLabel.textContent = fullLabel;
             hoverLabel.setAttribute('x', hoverPlacement.x.toFixed(2));
@@ -397,9 +440,76 @@ const heroGraphHtml = graphHeroHtml();
 
 <style>
   .vault-home-section {
-    --vault-card-min-height: 15rem;
+    --vault-card-min-height: auto;
     --vault-card-title-lines: 2;
     --vault-card-body-lines: 3;
+    --vault-card-column-min: 20rem;
     margin-block: clamp(2rem, 4vw, 4rem);
+  }
+
+  .vault-home-section .vault-card-grid {
+    grid-auto-rows: auto;
+  }
+
+  .vault-home-section .vault-card {
+    min-height: auto;
+    height: auto;
+  }
+
+  .vault-home-section .vault-card__details {
+    margin: 0;
+  }
+
+  .vault-home-section .vault-card__details > summary {
+    cursor: pointer;
+    list-style: none;
+    width: 100%;
+  }
+
+  .vault-home-section .vault-card__details > summary::marker,
+  .vault-home-section .vault-card__details > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .vault-home-section .vault-card__details > summary::after {
+    content: ' (ver mais)';
+    color: var(--sl-color-text-accent);
+    font-size: var(--sl-text-xs);
+    font-weight: 650;
+    white-space: nowrap;
+  }
+
+  .vault-home-section .vault-card__details[open] > summary::after {
+    content: ' (ver menos)';
+  }
+
+  .vault-home-section .vault-card__body-full {
+    display: block;
+    min-height: 0;
+    margin: 0.45rem 0 0;
+    overflow: visible;
+    -webkit-line-clamp: unset;
+  }
+
+  @media (max-width: 44rem) {
+    .vault-graph-view--hero {
+      width: min(100%, 100dvw);
+      max-width: min(100%, 100dvw);
+    }
+
+    .vault-graph-view--hero .vault-graph-view__canvas {
+      margin-inline: auto;
+      max-height: min(76dvh, 620px);
+    }
+
+    .vault-graph-view--hero .vault-graph-view__label {
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .vault-graph-view--hero .vault-graph-view__hover-label {
+      font-size: 24px;
+      stroke-width: 3.8px;
+    }
   }
 </style>
