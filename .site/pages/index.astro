@@ -229,6 +229,10 @@ const heroGraphHtml = graphHeroHtml();
             offsetY: LABEL_OFFSET_Y,
             margin: LABEL_MARGIN,
             marginY: LABEL_MARGIN_Y,
+            visibleMinX: 0,
+            visibleMaxX: VIEWBOX_SIZE,
+            visibleMinY: 0,
+            visibleMaxY: VIEWBOX_SIZE,
           },
         );
       }
@@ -262,6 +266,51 @@ const heroGraphHtml = graphHeroHtml();
           x: clampedX,
           y: clampedY,
           anchor: textAnchor,
+        };
+      };
+
+    const fitLabelToViewport = typeof sharedGraph.fitLabelToViewport === 'function'
+      ? (
+          labelElement,
+          text,
+          rawX,
+          rawY,
+          preferAbove = false,
+        ) => {
+        return sharedGraph.fitLabelToViewport(
+          labelElement,
+          text,
+          rawX,
+          rawY,
+          preferAbove,
+          {
+            viewboxSize: VIEWBOX_SIZE,
+            offsetY: LABEL_OFFSET_Y,
+            margin: LABEL_MARGIN,
+            marginY: LABEL_MARGIN_Y,
+            visibleMinX: 0,
+            visibleMaxX: VIEWBOX_SIZE,
+            visibleMinY: 0,
+            visibleMaxY: VIEWBOX_SIZE,
+          },
+        );
+      }
+      : (labelElement, text, rawX, rawY, preferAbove = false) => {
+        if (!labelElement) {
+          return {
+            x: rawX,
+            y: rawY,
+            anchor: 'middle',
+            fontSize: '',
+          };
+        }
+
+        labelElement.textContent = String(text || '');
+        const estimatedHalfWidth = estimateLabelHalfWidth(String(text || ''), heroGraphHoverLabelFont, { maxChars: 220 });
+        const fallbackPlacement = placeLabel(rawX, rawY, estimatedHalfWidth, preferAbove);
+        return {
+          ...fallbackPlacement,
+          fontSize: '',
         };
       };
     const computeForces = typeof sharedGraph.computeForces === 'function'
@@ -407,32 +456,19 @@ const heroGraphHtml = graphHeroHtml();
             const hoverY = preferAbove ? (baseY - nodeSize - LABEL_OFFSET_Y) : (baseY + nodeSize + LABEL_OFFSET_Y);
 
             hoverLabel.textContent = fullLabel;
-            let measuredHalfWidth = estimateLabelHalfWidth(fullLabel, heroGraphHoverLabelFont, { maxChars: 220 });
-            if (typeof hoverLabel.getComputedTextLength === 'function') {
-              const measuredLength = Number(hoverLabel.getComputedTextLength());
-              if (Number.isFinite(measuredLength) && measuredLength > 0) {
-                measuredHalfWidth = Math.max(6, measuredLength / 2);
-              }
-            }
-
-            const hoverPlacement = placeLabel(
+            const hoverPlacement = fitLabelToViewport(
+              hoverLabel,
+              fullLabel,
               baseX,
               hoverY,
-              measuredHalfWidth,
               preferAbove,
-              {
-                viewboxSize: VIEWBOX_SIZE,
-                offsetY: LABEL_OFFSET_Y,
-                margin: LABEL_MARGIN,
-                marginY: LABEL_MARGIN_Y,
-                visibleMinX: 0,
-                visibleMaxX: VIEWBOX_SIZE,
-                visibleMinY: 0,
-                visibleMaxY: VIEWBOX_SIZE,
-              },
             );
 
-            hoverLabel.textContent = fullLabel;
+            if (hoverPlacement.fontSize) {
+              hoverLabel.style.fontSize = hoverPlacement.fontSize;
+            } else {
+              hoverLabel.style.removeProperty('font-size');
+            }
             hoverLabel.setAttribute('x', hoverPlacement.x.toFixed(2));
             hoverLabel.setAttribute('y', hoverPlacement.y.toFixed(2));
             hoverLabel.setAttribute('text-anchor', hoverPlacement.anchor);
@@ -454,6 +490,9 @@ const heroGraphHtml = graphHeroHtml();
             delete figure.dataset.vaultGraphHover;
             figure.querySelectorAll('[data-vault-graph-link].is-connected').forEach((e) => e.classList.remove('is-connected'));
             figure.querySelectorAll('[data-vault-graph-node-id].is-neighbor').forEach((e) => e.classList.remove('is-neighbor'));
+            if (hoverLabel) {
+              hoverLabel.style.removeProperty('font-size');
+            }
           };
 
           node.addEventListener('pointerenter', activate);

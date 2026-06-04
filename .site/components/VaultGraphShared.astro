@@ -61,6 +61,75 @@
       };
     }
 
+    function fitLabelToViewport(labelElement, text, rawX, rawY, preferAbove = false, options = {}) {
+      if (!labelElement) {
+        return {
+          x: rawX,
+          y: rawY,
+          anchor: 'middle',
+          fontSize: '',
+        };
+      }
+
+      const rawText = String(text || '');
+      const minFontScale = Number.isFinite(Number(options.minFontScale)) ? Number(options.minFontScale) : 0.2;
+      const maxFontScale = Number.isFinite(Number(options.maxFontScale)) ? Number(options.maxFontScale) : 1;
+      const viewboxSize = Number.isFinite(Number(options.viewboxSize)) ? Number(options.viewboxSize) : 200;
+      const offsetY = Number.isFinite(Number(options.offsetY)) ? Number(options.offsetY) : 9;
+      const margin = Number.isFinite(Number(options.margin)) ? Number(options.margin) : 6;
+      const marginY = Number.isFinite(Number(options.marginY)) ? Number(options.marginY) : 1;
+      const minXBoundary = Number.isFinite(Number(options.visibleMinX)) ? Number(options.visibleMinX) : 0;
+      const maxXBoundary = Number.isFinite(Number(options.visibleMaxX)) ? Number(options.visibleMaxX) : viewboxSize;
+      const minYBoundary = Number.isFinite(Number(options.visibleMinY)) ? Number(options.visibleMinY) : 0;
+      const maxYBoundary = Number.isFinite(Number(options.visibleMaxY)) ? Number(options.visibleMaxY) : viewboxSize;
+
+      labelElement.textContent = rawText;
+      const computedFontSize = Number.parseFloat(getComputedStyle(labelElement).fontSize) || 7;
+      labelElement.style.removeProperty('font-size');
+
+      const horizontalInset = Math.max(0, (maxXBoundary - minXBoundary) - 2 * margin);
+      let measuredLength = Number(labelElement.getComputedTextLength());
+      if (!Number.isFinite(measuredLength) || measuredLength <= 0) {
+        measuredLength = estimateLabelHalfWidth(rawText, computedFontSize, { maxChars: 240 }) * 2;
+      }
+
+      let scale = 1;
+      if (horizontalInset > 0 && measuredLength > horizontalInset) {
+        scale = Math.min(maxFontScale, Math.max(minFontScale, horizontalInset / measuredLength));
+        if (scale !== 1) {
+          labelElement.style.fontSize = `${computedFontSize * scale}px`;
+          const fittedLength = Number(labelElement.getComputedTextLength());
+          if (Number.isFinite(fittedLength) && fittedLength > 0) {
+            measuredLength = fittedLength;
+          }
+          if (measuredLength > horizontalInset && scale > minFontScale) {
+            const extraScale = Math.max(minFontScale, horizontalInset / measuredLength);
+            scale = Math.min(scale, extraScale);
+            if (scale !== 1) {
+              labelElement.style.fontSize = `${computedFontSize * scale}px`;
+              measuredLength = Number(labelElement.getComputedTextLength());
+            }
+          }
+        }
+      }
+
+      const placement = placeLabel(rawX, rawY, measuredLength / 2, preferAbove, {
+        viewboxSize,
+        offsetY,
+        margin,
+        marginY,
+        visibleMinX: minXBoundary,
+        visibleMaxX: maxXBoundary,
+        visibleMinY: minYBoundary,
+        visibleMaxY: maxYBoundary,
+      });
+
+      return {
+        ...placement,
+        fontSize: scale === 1 ? '' : `${computedFontSize * scale}px`,
+      };
+    }
+
     function computeForces({
       nodes,
       edges,
@@ -196,6 +265,7 @@
       clamp,
       estimateLabelHalfWidth,
       placeLabel,
+      fitLabelToViewport,
       computeForces,
     };
   })();

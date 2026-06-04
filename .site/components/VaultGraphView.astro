@@ -249,6 +249,10 @@ const hasData = positioned.length > 0;
             offsetY: LABEL_OFFSET_Y,
             margin: LABEL_MARGIN,
             marginY: LABEL_MARGIN_Y,
+            visibleMinX: 0,
+            visibleMaxX: VIEWBOX_SIZE,
+            visibleMinY: 0,
+            visibleMaxY: VIEWBOX_SIZE,
           },
         );
       }
@@ -282,6 +286,51 @@ const hasData = positioned.length > 0;
           x: clampedX,
           y: clampedY,
           anchor: textAnchor,
+        };
+      };
+
+    const fitLabelToViewport = typeof sharedGraph.fitLabelToViewport === 'function'
+      ? (
+          labelElement,
+          text,
+          rawX,
+          rawY,
+          preferAbove = false,
+        ) => {
+        return sharedGraph.fitLabelToViewport(
+          labelElement,
+          text,
+          rawX,
+          rawY,
+          preferAbove,
+          {
+            viewboxSize: VIEWBOX_SIZE,
+            offsetY: LABEL_OFFSET_Y,
+            margin: LABEL_MARGIN,
+            marginY: LABEL_MARGIN_Y,
+            visibleMinX: 0,
+            visibleMaxX: VIEWBOX_SIZE,
+            visibleMinY: 0,
+            visibleMaxY: VIEWBOX_SIZE,
+          },
+        );
+      }
+      : (labelElement, text, rawX, rawY, preferAbove = false) => {
+        if (!labelElement) {
+          return {
+            x: rawX,
+            y: rawY,
+            anchor: 'middle',
+            fontSize: '',
+          };
+        }
+
+        labelElement.textContent = String(text || '');
+        const estimatedHalfWidth = estimateLabelHalfWidth(String(text || ''), 7);
+        const fallbackPlacement = placeLabel(rawX, rawY, estimatedHalfWidth, preferAbove);
+        return {
+          ...fallbackPlacement,
+          fontSize: '',
         };
       };
     const computeForces = typeof sharedGraph.computeForces === 'function'
@@ -1101,6 +1150,7 @@ const hasData = positioned.length > 0;
           hoverLabel.removeAttribute('x');
           hoverLabel.removeAttribute('y');
           hoverLabel.removeAttribute('text-anchor');
+          hoverLabel.style.removeProperty('font-size');
         }
 
         for (const edge of edges) {
@@ -1134,35 +1184,20 @@ const hasData = positioned.length > 0;
           ? scaledNodeY - scaledNodeSize - LABEL_OFFSET_Y
           : scaledNodeY + scaledNodeSize + LABEL_OFFSET_Y;
 
-        // Measure actual text width and use it for clipping decisions, so long
-        // labels always stay inside the visible canvas.
-        hoverLabel.textContent = fullLabel;
-        let measuredHalfWidth = estimateLabelHalfWidth(fullLabel, 7, { maxChars: 220 });
-        if (typeof hoverLabel.getComputedTextLength === 'function') {
-          const measuredLength = Number(hoverLabel.getComputedTextLength());
-          if (Number.isFinite(measuredLength) && measuredLength > 0) {
-            measuredHalfWidth = Math.max(6, measuredLength / 2);
-          }
-        }
-
-        const hoverPlacement = placeLabel(
+        const hoverPlacement = fitLabelToViewport(
+          hoverLabel,
+          fullLabel,
           svgX,
           svgY,
-          measuredHalfWidth,
           preferAbove,
-          {
-            viewboxSize: VIEWBOX_SIZE,
-            offsetY: LABEL_OFFSET_Y,
-            margin: LABEL_MARGIN,
-            marginY: LABEL_MARGIN_Y,
-            visibleMinX: 0,
-            visibleMaxX: VIEWBOX_SIZE,
-            visibleMinY: 0,
-            visibleMaxY: VIEWBOX_SIZE,
-          },
         );
 
         hoveredNode = node;
+        if (hoverPlacement.fontSize) {
+          hoverLabel.style.fontSize = hoverPlacement.fontSize;
+        } else {
+          hoverLabel.style.removeProperty('font-size');
+        }
         hoverLabel.setAttribute('x', String(hoverPlacement.x.toFixed(2)));
         hoverLabel.setAttribute('y', String(hoverPlacement.y.toFixed(2)));
         hoverLabel.setAttribute('text-anchor', hoverPlacement.anchor);
