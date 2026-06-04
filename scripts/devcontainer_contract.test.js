@@ -1,6 +1,9 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const { spawnSync } = require("node:child_process");
 const fs = require("node:fs");
+const os = require("node:os");
+const path = require("node:path");
 
 function readJson(path) {
   return JSON.parse(fs.readFileSync(path, "utf8"));
@@ -63,4 +66,49 @@ test("devcontainer provides the baseline sandbox tools expected by agents", () =
   assert.match(postStart, /check_agent_sandbox_tools\(\)/);
   assert.match(postStart, /for tool in bwrap fd gh jq rg shellcheck shfmt tree uv; do/);
   assert.match(postStart, /Ferramentas de sandbox ausentes/);
+});
+
+test("substrate check detects unapplied devcontainer node_modules volume", () => {
+  if (process.platform !== "linux") return;
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "vault-seed-substrate-"));
+  try {
+    const binDir = path.join(tempDir, "node_modules", ".bin");
+    fs.mkdirSync(path.join(tempDir, ".devcontainer"), { recursive: true });
+    fs.mkdirSync(binDir, { recursive: true });
+    for (const binary of ["astro", "playwright", "markdownlint", "prettier", "changeset"]) {
+      fs.writeFileSync(path.join(binDir, binary), "", { mode: 0o755 });
+    }
+    fs.writeFileSync(path.join(tempDir, "requirements.txt"), "\n");
+    fs.writeFileSync(path.join(tempDir, "requirements.local-etl.txt"), "\n");
+    fs.writeFileSync(
+      path.join(tempDir, ".devcontainer", "devcontainer.json"),
+      `${JSON.stringify({
+        mounts: [
+          `source=dgk-node-modules,target=${path.join(tempDir, "node_modules")},type=volume`,
+        ],
+      }, null, 2)}\n`,
+    );
+
+    const result = spawnSync(process.execPath, [path.resolve("scripts/check-substrate.mjs"), "--json"], {
+      cwd: tempDir,
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        REFARM_NODE_SUBSTRATE_MOUNTINFO: `36 29 0:32 / ${tempDir} rw,relatime - 9p C: rw\n`,
+      },
+    });
+
+    assert.notEqual(result.status, 0);
+    const payload = JSON.parse(result.stdout);
+    assert.deepEqual(payload.mountIssues, [
+      {
+        id: "devcontainer_node_modules_mount",
+        path: "node_modules",
+        target: path.join(tempDir, "node_modules"),
+      },
+    ]);
+    assert.match(payload.nextCommand, /Rebuild\/reopen the devcontainer/);
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
 });
