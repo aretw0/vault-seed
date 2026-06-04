@@ -14,10 +14,10 @@
 
     function estimateLabelHalfWidth(text, fontSize, options = {}) {
       const safeFontSize = Number(fontSize) || 6;
-      const maxCharacters = Number.isFinite(Number(options.maxChars))
+      const maxWidthPx = Number.isFinite(Number(options.maxChars))
         ? Number(options.maxChars)
-        : 18;
-      return Math.max(5, Math.min(maxCharacters, String(text || '').length * safeFontSize * 0.52));
+        : 140;
+      return Math.max(5, Math.min(maxWidthPx, String(text || '').length * safeFontSize * 0.52));
     }
 
     function placeLabel(rawX, rawY, halfWidth, preferAbove = false, options = {}) {
@@ -25,10 +25,14 @@
       const offsetY = Number.isFinite(Number(options.offsetY)) ? Number(options.offsetY) : 9;
       const margin = Number.isFinite(Number(options.margin)) ? Number(options.margin) : 6;
       const marginY = Number.isFinite(Number(options.marginY)) ? Number(options.marginY) : 1;
+      const minXBoundary = Number.isFinite(Number(options.visibleMinX)) ? Number(options.visibleMinX) : 0;
+      const maxXBoundary = Number.isFinite(Number(options.visibleMaxX)) ? Number(options.visibleMaxX) : viewboxSize;
+      const minYBoundary = Number.isFinite(Number(options.visibleMinY)) ? Number(options.visibleMinY) : 0;
+      const maxYBoundary = Number.isFinite(Number(options.visibleMaxY)) ? Number(options.visibleMaxY) : viewboxSize;
 
-      const safeHalf = Math.min(Number(halfWidth) || 10, viewboxSize / 2 - margin - 1);
-      const minX = Math.max(safeHalf, margin);
-      const maxX = Math.min(viewboxSize - safeHalf - margin, viewboxSize - margin);
+      const safeHalf = Math.min(Number(halfWidth) || 10, Math.max(2, Math.abs(maxXBoundary - minXBoundary) / 2 - margin - 1));
+      const minX = Math.max(safeHalf + minXBoundary, margin + minXBoundary);
+      const maxX = Math.min(maxXBoundary - safeHalf - margin, maxXBoundary - margin);
       const clampedX = clamp(rawX, Math.min(minX, maxX), Math.max(minX, maxX));
       const textAnchor =
         minX === maxX
@@ -39,8 +43,8 @@
               ? 'end'
               : 'middle';
 
-      const minY = offsetY + marginY;
-      const maxY = viewboxSize - offsetY - marginY;
+      const minY = Math.max(offsetY + marginY, minYBoundary + 1);
+      const maxY = Math.min(maxYBoundary - offsetY - marginY, maxYBoundary - 1);
       const preferredY = preferAbove
         ? rawY - (offsetY + marginY + 4)
         : rawY;

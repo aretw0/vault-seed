@@ -1126,13 +1126,43 @@ const hasData = positioned.length > 0;
         // hover-layer is outside the viewport group, so we apply the viewport
         // transform manually to position the label in SVG user coordinates
         const s = viewportState.scale;
+        const scaledNodeY = node.y * s + viewportState.ty;
+        const scaledNodeSize = nodeSize * s;
         const svgX = node.x * s + viewportState.tx;
-        const svgY = (node.y - nodeSize - LABEL_OFFSET_Y) * s + viewportState.ty;
+        const preferAbove = scaledNodeY - scaledNodeSize - LABEL_OFFSET_Y > LABEL_OFFSET_Y + LABEL_MARGIN_Y + 4;
+        const svgY = preferAbove
+          ? scaledNodeY - scaledNodeSize - LABEL_OFFSET_Y
+          : scaledNodeY + scaledNodeSize + LABEL_OFFSET_Y;
 
-        const hoverPlacement = placeLabel(svgX, svgY, estimateLabelHalfWidth(fullLabel, 7), true);
+        // Measure actual text width and use it for clipping decisions, so long
+        // labels always stay inside the visible canvas.
+        hoverLabel.textContent = fullLabel;
+        let measuredHalfWidth = estimateLabelHalfWidth(fullLabel, 7, { maxChars: 220 });
+        if (typeof hoverLabel.getComputedTextLength === 'function') {
+          const measuredLength = Number(hoverLabel.getComputedTextLength());
+          if (Number.isFinite(measuredLength) && measuredLength > 0) {
+            measuredHalfWidth = Math.max(6, measuredLength / 2);
+          }
+        }
+
+        const hoverPlacement = placeLabel(
+          svgX,
+          svgY,
+          measuredHalfWidth,
+          preferAbove,
+          {
+            viewboxSize: VIEWBOX_SIZE,
+            offsetY: LABEL_OFFSET_Y,
+            margin: LABEL_MARGIN,
+            marginY: LABEL_MARGIN_Y,
+            visibleMinX: 0,
+            visibleMaxX: VIEWBOX_SIZE,
+            visibleMinY: 0,
+            visibleMaxY: VIEWBOX_SIZE,
+          },
+        );
 
         hoveredNode = node;
-        hoverLabel.textContent = fullLabel;
         hoverLabel.setAttribute('x', String(hoverPlacement.x.toFixed(2)));
         hoverLabel.setAttribute('y', String(hoverPlacement.y.toFixed(2)));
         hoverLabel.setAttribute('text-anchor', hoverPlacement.anchor);

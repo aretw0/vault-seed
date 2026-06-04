@@ -313,7 +313,7 @@ const heroGraphHtml = graphHeroHtml();
           const shortPlacement = placeLabel(
             item.x,
             item.y + item.size + LABEL_OFFSET_Y,
-            estimateLabelHalfWidth(shortText, heroGraphLabelFont),
+            estimateLabelHalfWidth(shortText, heroGraphLabelFont, { maxChars: 18 }),
           );
 
           item.element.dataset.vaultGraphLabelX = shortPlacement.x.toFixed(2);
@@ -402,7 +402,35 @@ const heroGraphHtml = graphHeroHtml();
             const nodeSize = (Number.parseFloat(String(node.dataset.vaultGraphNodeSize || '6')) || 6) * heroGraphNodeScale;
             const baseX = Number.parseFloat(String(node.dataset.vaultGraphLabelX || node.dataset.vaultGraphNodeX || '0')) || 0;
             const baseY = Number.parseFloat(String(node.dataset.vaultGraphLabelY || node.dataset.vaultGraphNodeY || '0')) || 0;
-            const hoverPlacement = placeLabel(baseX, baseY - (nodeSize + LABEL_OFFSET_Y), estimateLabelHalfWidth(fullLabel, heroGraphHoverLabelFont), true);
+
+            const preferAbove = (baseY - nodeSize - LABEL_OFFSET_Y) > (LABEL_OFFSET_Y + LABEL_MARGIN_Y + 4);
+            const hoverY = preferAbove ? (baseY - nodeSize - LABEL_OFFSET_Y) : (baseY + nodeSize + LABEL_OFFSET_Y);
+
+            hoverLabel.textContent = fullLabel;
+            let measuredHalfWidth = estimateLabelHalfWidth(fullLabel, heroGraphHoverLabelFont, { maxChars: 220 });
+            if (typeof hoverLabel.getComputedTextLength === 'function') {
+              const measuredLength = Number(hoverLabel.getComputedTextLength());
+              if (Number.isFinite(measuredLength) && measuredLength > 0) {
+                measuredHalfWidth = Math.max(6, measuredLength / 2);
+              }
+            }
+
+            const hoverPlacement = placeLabel(
+              baseX,
+              hoverY,
+              measuredHalfWidth,
+              preferAbove,
+              {
+                viewboxSize: VIEWBOX_SIZE,
+                offsetY: LABEL_OFFSET_Y,
+                margin: LABEL_MARGIN,
+                marginY: LABEL_MARGIN_Y,
+                visibleMinX: 0,
+                visibleMaxX: VIEWBOX_SIZE,
+                visibleMinY: 0,
+                visibleMaxY: VIEWBOX_SIZE,
+              },
+            );
 
             hoverLabel.textContent = fullLabel;
             hoverLabel.setAttribute('x', hoverPlacement.x.toFixed(2));
