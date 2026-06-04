@@ -24,7 +24,7 @@ const pages = [
   { path: "/explorar/", label: "explorar", type: "site" },
   { path: "/explorar/intencoes/", label: "explorar-intencoes", type: "site" },
   {
-    path: "/meta-e-anexos/usando-o-lab-notebooks-marimo/",
+    path: "/meta-e-anexos/workflows/usando-o-lab-notebooks-marimo/",
     label: "lab-doc",
     type: "site",
   },
@@ -375,6 +375,92 @@ async function assertLabShellLayout(page, target, viewport, label) {
   }
 }
 
+function parsePx(value) {
+  const number = Number.parseFloat(value);
+  return Number.isFinite(number) ? number : null;
+}
+
+function assertApprox(label, actualPx, expectedPx, tolerancePx, description) {
+  if (actualPx === null) {
+    fail(`${label}: ${description} is not computable in CSS for mobile viewport.`);
+    return;
+  }
+
+  if (Math.abs(actualPx - expectedPx) > tolerancePx) {
+    fail(
+      `${label}: ${description} expected ~${expectedPx.toFixed(2)}px (tolerance ${tolerancePx}px), got ${actualPx.toFixed(
+        2,
+      )}px`,
+    );
+  }
+}
+
+async function assertMobileGraphTypography(page, target, viewport, label) {
+  if (target.type !== "site" || viewport.width > 44 * 16) {
+    return;
+  }
+
+  const metrics = await page.evaluate(() => {
+    const rootFontPx = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    const heroGraph = document.querySelector('.vault-graph-view--hero');
+    const graph = document.querySelector('.vault-graph-view');
+
+    const heroLabel = heroGraph?.querySelector('.vault-graph-view__label--short');
+    const heroHover = heroGraph?.querySelector('.vault-graph-view__hover-label');
+    const defaultLabel = graph && !heroGraph
+      ? graph.querySelector('.vault-graph-view__label--short')
+      : document.querySelector('.vault-graph-view:not(.vault-graph-view--hero) .vault-graph-view__label--short');
+    const defaultHover = graph && !heroGraph
+      ? graph.querySelector('.vault-graph-view__hover-label')
+      : document.querySelector('.vault-graph-view:not(.vault-graph-view--hero) .vault-graph-view__hover-label');
+
+    const styleFor = (element, property) => {
+      if (!element) return null;
+      return getComputedStyle(element).getPropertyValue(property);
+    };
+
+    return {
+      hasGraph: Boolean(graph),
+      rootFontPx,
+      heroLabel: styleFor(heroLabel, 'font-size'),
+      heroLabelStroke: styleFor(heroLabel, 'stroke-width'),
+      heroHover: styleFor(heroHover, 'font-size'),
+      heroHoverStroke: styleFor(heroHover, 'stroke-width'),
+      defaultLabel: styleFor(defaultLabel, 'font-size'),
+      defaultLabelStroke: styleFor(defaultLabel, 'stroke-width'),
+      defaultHover: styleFor(defaultHover, 'font-size'),
+      defaultHoverStroke: styleFor(defaultHover, 'stroke-width'),
+    };
+  });
+
+  if (!metrics.hasGraph) {
+    return;
+  }
+
+  const rootFontPx = metrics.rootFontPx || 16;
+  const expectedHeroLabelPx = rootFontPx * 0.75;
+  const expectedHeroHoverPx = rootFontPx * 0.9;
+  const expectedHeroStrokePx = rootFontPx * 0.15;
+  const expectedDefaultLabelPx = rootFontPx * 0.66;
+  const expectedDefaultHoverPx = rootFontPx * 0.82;
+  const expectedDefaultLabelStrokePx = rootFontPx * 0.125; // 2px/16rem
+  const expectedDefaultHoverStrokePx = rootFontPx * 0.13125; // 2.1px/16rem
+
+  if (metrics.heroLabel !== null && metrics.heroLabelStroke !== null) {
+    assertApprox(label, parsePx(metrics.heroLabel), expectedHeroLabelPx, 1.5, 'hero mobile label font-size');
+    assertApprox(label, parsePx(metrics.heroLabelStroke), expectedHeroStrokePx, 1.5, 'hero mobile label stroke-width');
+    assertApprox(label, parsePx(metrics.heroHover), expectedHeroHoverPx, 1.5, 'hero mobile hover label font-size');
+    assertApprox(label, parsePx(metrics.heroHoverStroke), expectedHeroStrokePx, 1.5, 'hero mobile hover stroke-width');
+  }
+
+  if (metrics.defaultLabel !== null && metrics.defaultLabelStroke !== null) {
+    assertApprox(label, parsePx(metrics.defaultLabel), expectedDefaultLabelPx, 1.5, 'default mobile label font-size');
+    assertApprox(label, parsePx(metrics.defaultLabelStroke), expectedDefaultLabelStrokePx, 1, 'default mobile label stroke-width');
+    assertApprox(label, parsePx(metrics.defaultHover), expectedDefaultHoverPx, 1.5, 'default mobile hover label font-size');
+    assertApprox(label, parsePx(metrics.defaultHoverStroke), expectedDefaultHoverStrokePx, 1, 'default mobile hover stroke-width');
+  }
+}
+
 function boxesOverlap(a, b) {
   return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
 }
@@ -489,6 +575,7 @@ async function run() {
         await assertVisibleContent(page, target, label);
         await assertNoHorizontalOverflow(page, label);
         await assertStaticGridAlignment(page, target, label);
+        await assertMobileGraphTypography(page, target, viewport, label);
         await assertPresentationSizing(
           page,
           target,

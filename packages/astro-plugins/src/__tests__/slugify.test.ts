@@ -24,6 +24,18 @@ describe('slugify', () => {
     );
   });
 
+  it('handles subfolder with dotted prefix', () => {
+    expect(slugify('99.1 - Onboarding/Entendendo a Estrutura de Pastas')).toBe(
+      'onboarding/entendendo-a-estrutura-de-pastas'
+    );
+  });
+
+  it('handles workflow dotted prefix', () => {
+    expect(slugify('99.2 - Workflows/Configurando o Obsidian Git')).toBe(
+      'workflows/configurando-o-obsidian-git'
+    );
+  });
+
   it('removes non-alphanumeric characters except hyphens and slashes', () => {
     expect(slugify('30 - Áreas/Saúde & Bem-Estar')).toBe('areas/saude-bem-estar');
   });

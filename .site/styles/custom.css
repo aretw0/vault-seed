@@ -487,7 +487,7 @@
 
 
 .vault-graph-sidebar .vault-graph-view__hover-label {
-  font-size: 6px;
+  font-size: var(--vault-graph-hover-label-font, 7px);
 }
 
 .vault-graph-view {
@@ -496,6 +496,10 @@
   width: 100%;
   margin-inline: auto;
   max-width: 100%;
+  --vault-graph-label-font: 0.55rem;
+  --vault-graph-hover-label-font: 0.7rem;
+  --vault-graph-label-stroke: 2.2px;
+  --vault-graph-hover-label-stroke: 2.5px;
 }
 
 .vault-graph-preview .vault-graph-view {
@@ -548,6 +552,13 @@
 
   .vault-graph-view__toolbar {
     justify-content: center;
+  }
+
+  .vault-graph-view {
+    --vault-graph-label-font: 0.66rem;
+    --vault-graph-hover-label-font: 0.82rem;
+    --vault-graph-label-stroke: 2px;
+    --vault-graph-hover-label-stroke: 2.1px;
   }
 }
 
@@ -691,12 +702,12 @@
 
 .vault-graph-view__nodes text {
   fill: var(--sl-color-gray-2, #edf0ec);
-  font-size: 6px;
+  font-size: var(--vault-graph-label-font, 6px);
   font-weight: 700;
   paint-order: stroke;
   pointer-events: none;
   stroke: var(--sl-color-bg, #111310);
-  stroke-width: 2.5px;
+  stroke-width: var(--vault-graph-label-stroke, 2.5px);
 }
 
 .vault-graph-view__label {
@@ -717,12 +728,12 @@
 
 .vault-graph-view__hover-label {
   fill: var(--sl-color-white, #edf0ec);
-  font-size: 7px;
+  font-size: var(--vault-graph-hover-label-font, 7px);
   font-weight: 800;
   letter-spacing: -0.01em;
   paint-order: stroke;
   stroke: var(--sl-color-bg, #111310);
-  stroke-width: 3px;
+  stroke-width: var(--vault-graph-hover-label-stroke, 3px);
 }
 
 .vault-graph-view__nodes a:is(.is-hovered, :focus-visible) .vault-graph-view__label--short {
@@ -850,13 +861,13 @@
   }
 
   .vault-graph-view--hero .vault-graph-view__label {
-    font-size: var(--hero-graph-label-font, 1.25rem);
+    font-size: var(--hero-graph-label-font, 0.75rem);
     font-weight: 800;
   }
 
   .vault-graph-view--hero .vault-graph-view__hover-label {
-    font-size: var(--hero-graph-hover-label-font, 1.5rem);
-    stroke-width: var(--hero-graph-hover-label-stroke, 0.2375rem);
+    font-size: var(--hero-graph-hover-label-font, 0.9rem);
+    stroke-width: var(--hero-graph-hover-label-stroke, 0.15rem);
   }
 }
 

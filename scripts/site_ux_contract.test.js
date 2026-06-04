@@ -52,6 +52,7 @@ test('Astro header keeps theme controls discoverable without mobile duplication'
 test('Graph previews show truncated labels while preserving full accessible titles', () => {
   const home = read('.site/pages/index.astro');
   const graph = read('.site/components/VaultGraphView.astro');
+  const shared = read('.site/components/VaultGraphShared.astro');
   const css = read('.site/styles/custom.css');
 
   for (const source of [home, graph]) {
@@ -63,8 +64,15 @@ test('Graph previews show truncated labels while preserving full accessible titl
     assert.match(source, /data-vault-graph-node-label/);
   }
 
+  assert.match(home, /<VaultGraphShared\s*\/?/);
+  assert.match(graph, /<VaultGraphShared\s*\/?/);
+  assert.match(shared, /__vaultGraphShared/);
+  assert.match(shared, /computeForces/);
+  assert.match(shared, /placeLabel/);
+  assert.match(shared, /estimateLabelHalfWidth/);
+
   assert.match(home, /heroNodeCap = Math\.max\(8, Math\.min\(28, Math\.ceil\(explore\.graph\.nodes\.length \* 0\.22\)\)\)/);
-  assert.match(home, /rótulo completo ao passar o mouse ou focar/);
+  assert.match(home, /nome completo/);
   // overflow:visible avoids compositing-barrier bugs inside fixed+overflow-y ancestors
   assert.match(css, /\.vault-graph-view__canvas\s*\{[^}]*overflow:\s*visible/);
   assert.doesNotMatch(css, /\.vault-graph-view__canvas\s*\{[^}]*overflow:\s*hidden/);

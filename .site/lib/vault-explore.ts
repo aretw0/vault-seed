@@ -182,7 +182,7 @@ export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData
     rawNotes.push({
       id: slug,
       slug,
-      href: `/${slug}/`,
+      href: `/${slug}`,
       path: normalizedFile,
       title,
       folder,

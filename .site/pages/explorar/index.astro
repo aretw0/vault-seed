@@ -159,7 +159,7 @@ const exploreJson = JSON.stringify(explore).replace(/</g, '\\u003c');
         <span class="vault-card__eyebrow">Hubs</span>
         <h2 class="vault-card__title">Notas que conectam caminhos</h2>
         <ul class="vault-compact-list">
-          {hubNodes.map((node) => <li><a href={`${base}/${node.id}/`}>{node.title}</a><span>{node.degree} conexões</span></li>)}
+          {hubNodes.map((node) => <li><a href={`${base}/${node.id}`}>{node.title}</a><span>{node.degree} conexões</span></li>)}
         </ul>
       </article>
 
@@ -168,7 +168,7 @@ const exploreJson = JSON.stringify(explore).replace(/</g, '\\u003c');
         <h2 class="vault-card__title">Notas para conectar melhor</h2>
         {orphanNodes.length ? (
           <ul class="vault-compact-list">
-            {orphanNodes.map((node) => <li><a href={`${base}/${node.id}/`}>{node.title}</a><span>{node.folder}</span></li>)}
+            {orphanNodes.map((node) => <li><a href={`${base}/${node.id}`}>{node.title}</a><span>{node.folder}</span></li>)}
           </ul>
         ) : (
           <p class="vault-card__body">Nenhuma candidata a órfã no recorte atual.</p>
@@ -263,7 +263,7 @@ const exploreJson = JSON.stringify(explore).replace(/</g, '\\u003c');
       <VaultGraphView nodes={explore.graph.nodes} links={explore.graph.links} base={base} title="Graph view físico do vault" />
       <div class="vault-graph-cloud" aria-label="Principais nós do grafo em lista">
         {hubNodes.map((node) => (
-          <a href={`${base}/${node.id}/`} style={`--vault-node-weight: ${Math.min(1.65, 0.9 + node.degree / 10)}`}>{node.title}</a>
+          <a href={`${base}/${node.id}`} style={`--vault-node-weight: ${Math.min(1.65, 0.9 + node.degree / 10)}`}>{node.title}</a>
         ))}
       </div>
       <p class="vault-card__body">

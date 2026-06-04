@@ -72,6 +72,7 @@ const headerComponent = read(".site/components/Header.astro");
 const mobileMenuFooterComponent = read(".site/components/MobileMenuFooter.astro");
 const homePage = read(".site/pages/index.astro");
 const graphViewComponent = read(".site/components/VaultGraphView.astro");
+const graphSharedComponent = read(".site/components/VaultGraphShared.astro");
 const explorePage = read(".site/pages/explorar/index.astro");
 const exploreIntentPage = read(".site/pages/explorar/intencoes.astro");
 const exploreDataEndpoint = read(".site/pages/explorar/dados.json.ts");
@@ -86,8 +87,8 @@ const marimoCss = read(".site/styles/marimo-vault.css");
 const themeRuntimeCss = read(".site/styles/theme-runtime.css");
 const vaultLoader = read(".site/content.config.ts");
 const customCss = read(".site/styles/custom.css");
-const curationRoutineGuide = read("99 - Meta e Anexos/Rotina de Curadoria Editorial.md");
-const labDataGuide = read("99 - Meta e Anexos/Preparando Dados para o Lab.md");
+const curationRoutineGuide = read("99 - Meta e Anexos/99.2 - Workflows/Rotina de Curadoria Editorial.md");
+const labDataGuide = read("99 - Meta e Anexos/99.2 - Workflows/Preparando Dados para o Lab.md");
 
 requireCondition(
   typeof pkg.packageManager === "string" &&
@@ -334,11 +335,17 @@ requireCondition(
   headerComponent.includes('/explorar/') &&
     homePage.includes('graphHeroHtml') &&
     homePage.includes('heroGraphHtml') &&
-    !homePage.includes('data-language="mermaid"') &&
+    homePage.includes('<VaultGraphShared') &&
+    !homePage.includes('data-language=\"mermaid\"') &&
     graphViewComponent.includes('vault-graph-view') &&
+    graphViewComponent.includes('<VaultGraphShared') &&
     graphViewComponent.includes('viewBox="0 0 200 200"') &&
     graphViewComponent.includes('vault-graph-view__hover-layer') &&
     customCss.includes('.vault-graph-view__hover-layer') &&
+    graphSharedComponent.includes('__vaultGraphShared') &&
+    graphSharedComponent.includes('computeForces') &&
+    graphSharedComponent.includes('placeLabel') &&
+    graphSharedComponent.includes('estimateLabelHalfWidth') &&
     explorePage.includes('buildVaultExploreData') &&
     explorePage.includes('VaultGraphView') &&
     explorePage.includes('data-vault-explore-search') &&

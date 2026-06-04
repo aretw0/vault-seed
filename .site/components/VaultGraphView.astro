@@ -1,4 +1,6 @@
 ---
+import VaultGraphShared from './VaultGraphShared.astro';
+
 type GraphNode = { id: string; title: string; degree: number; folder?: string };
 type GraphLink = { source: string; target: string };
 
@@ -49,7 +51,7 @@ const positioned = sortedNodes.map((node, index) => {
     size: 5 + Math.min(9, node.degree * 1.15),
     weight,
     fillMix: `${Math.max(24, Math.min(86, Math.round(40 * weight)))}%`,
-    href: `${base}/${node.id}/`,
+    href: `${base}/${node.id}`,
     shortLabel,
     visibleByDefault: index < initialVisibleCount,
   };
@@ -64,6 +66,8 @@ const visibleCountStep = 4;
 const maxVisibleCount = Math.max(0, positioned.length);
 const hasData = positioned.length > 0;
 ---
+
+<VaultGraphShared />
 
 <figure
   class:list={[
@@ -179,7 +183,7 @@ const hasData = positioned.length > 0;
         <ol class="vault-graph-view__node-list">
           {sortedNodes.map((node) => (
             <li>
-              <a href={`${base}/${node.id}/`}>{node.title}</a>
+              <a href={`${base}/${node.id}`}>{node.title}</a>
               <span>{node.degree} {node.degree === 1 ? 'conexão' : 'conexões'}</span>
             </li>
           ))}
@@ -212,9 +216,6 @@ const hasData = positioned.length > 0;
     // reveals the empty simulation margin beyond the node layout bounds.
     let minScale = MIN_SCALE;
     const DRAG_THRESHOLD_PX = 3;
-    const LABEL_OFFSET_Y = 9;
-    const LABEL_MARGIN = 6;
-    const LABEL_MARGIN_Y = 1;
     const VIEWPORT_BOUNDS_PADDING = 14;
     const POST_DRAG_SETTLE_STEPS = 60;
     const DRAG_REPULSE_STEPS = 2;
@@ -222,48 +223,73 @@ const hasData = positioned.length > 0;
     const RUNTIME_EDGE_IDEAL_GAP = 44;
     const EDGE_FOCUS_SCALE = 0.42;
     const EDGE_RESTORE_SCALE = 0.08;
-    function clamp(value, min, max) {
-      return Math.min(max, Math.max(min, value));
-    }
 
-    function estimateLabelHalfWidth(text, fontSize) {
-      const safeFontSize = Number(fontSize) || 6;
-      return Math.max(5, Math.min(18, String(text || '').length * safeFontSize * 0.52));
-    }
-
-    function placeLabel(rawX, rawY, halfWidth, preferAbove = false) {
-      const safeHalf = Math.min(Number(halfWidth) || 10, VIEWBOX_SIZE / 2 - LABEL_MARGIN - 1);
-      const minX = Math.max(safeHalf, LABEL_MARGIN);
-      const maxX = Math.min(VIEWBOX_SIZE - safeHalf - LABEL_MARGIN, VIEWBOX_SIZE - LABEL_MARGIN);
-      const clampedX = clamp(rawX, Math.min(minX, maxX), Math.max(minX, maxX));
-
-      const textAnchor =
-        minX === maxX
-          ? 'middle'
-          : clampedX <= minX + 0.001
-            ? 'start'
-            : clampedX >= maxX - 0.001
-              ? 'end'
-              : 'middle';
-
-      const minY = LABEL_OFFSET_Y + LABEL_MARGIN_Y;
-      const maxY = VIEWBOX_SIZE - LABEL_OFFSET_Y - LABEL_MARGIN_Y;
-      const preferredY = preferAbove
-        ? rawY - (LABEL_OFFSET_Y + LABEL_MARGIN_Y + 4)
-        : rawY;
-
-      let clampedY = clamp(preferredY, minY, maxY);
-      if (preferAbove && preferredY < minY) {
-        clampedY = clamp(rawY, minY, maxY);
-      }
-
-      return {
-        x: clampedX,
-        y: clampedY,
-        anchor: textAnchor,
+    const sharedGraph = window.__vaultGraphShared || {};
+    const LABEL_OFFSET_Y = Number(sharedGraph.LABEL_OFFSET_Y || 9);
+    const LABEL_MARGIN = Number(sharedGraph.LABEL_MARGIN || 6);
+    const LABEL_MARGIN_Y = Number(sharedGraph.LABEL_MARGIN_Y || 1);
+    const clamp = typeof sharedGraph.clamp === 'function'
+      ? sharedGraph.clamp
+      : (value, min, max) => Math.min(max, Math.max(min, value));
+    const estimateLabelHalfWidth = typeof sharedGraph.estimateLabelHalfWidth === 'function'
+      ? sharedGraph.estimateLabelHalfWidth
+      : (text, fontSize) => {
+        const safeFontSize = Number(fontSize) || 6;
+        return Math.max(5, Math.min(18, String(text || '').length * safeFontSize * 0.52));
       };
-    }
+    const placeLabel = typeof sharedGraph.placeLabel === 'function'
+      ? (rawX, rawY, halfWidth, preferAbove = false) => {
+        return sharedGraph.placeLabel(
+          rawX,
+          rawY,
+          halfWidth,
+          preferAbove,
+          {
+            viewboxSize: VIEWBOX_SIZE,
+            offsetY: LABEL_OFFSET_Y,
+            margin: LABEL_MARGIN,
+            marginY: LABEL_MARGIN_Y,
+          },
+        );
+      }
+      : (rawX, rawY, halfWidth, preferAbove = false) => {
+        const safeHalf = Math.min(Number(halfWidth) || 10, VIEWBOX_SIZE / 2 - LABEL_MARGIN - 1);
+        const minX = Math.max(safeHalf, LABEL_MARGIN);
+        const maxX = Math.min(VIEWBOX_SIZE - safeHalf - LABEL_MARGIN, VIEWBOX_SIZE - LABEL_MARGIN);
+        const clampedX = clamp(rawX, Math.min(minX, maxX), Math.max(minX, maxX));
 
+        const textAnchor =
+          minX === maxX
+            ? 'middle'
+            : clampedX <= minX + 0.001
+              ? 'start'
+              : clampedX >= maxX - 0.001
+                ? 'end'
+                : 'middle';
+
+        const minY = LABEL_OFFSET_Y + LABEL_MARGIN_Y;
+        const maxY = VIEWBOX_SIZE - LABEL_OFFSET_Y - LABEL_MARGIN_Y;
+        const preferredY = preferAbove
+          ? rawY - (LABEL_OFFSET_Y + LABEL_MARGIN_Y + 4)
+          : rawY;
+
+        let clampedY = clamp(preferredY, minY, maxY);
+        if (preferAbove && preferredY < minY) {
+          clampedY = clamp(rawY, minY, maxY);
+        }
+
+        return {
+          x: clampedX,
+          y: clampedY,
+          anchor: textAnchor,
+        };
+      };
+    const computeForces = typeof sharedGraph.computeForces === 'function'
+      ? sharedGraph.computeForces
+      : (params = {}) => {
+        const nodeArr = Array.isArray(params.nodes) ? params.nodes : [];
+        return nodeArr.map(() => ({ x: 0, y: 0 }));
+      };
     function setupGraphLayout(figure) {
       const nodeElements = Array.from(figure.querySelectorAll('[data-vault-graph-node-id]'));
       if (!nodeElements.length) return;
@@ -366,6 +392,7 @@ const hasData = positioned.length > 0;
       let needsTransform = false;
       let settleFrameId = null;
       let settleSteps = 0;
+      let hoveredNode = null;
 
       function requestRaf() {
         if (renderFrameId !== null) return;
@@ -498,65 +525,29 @@ const hasData = positioned.length > 0;
         if (nodes.length < 2) return;
 
         for (let step = 0; step < steps; step += 1) {
-          const forces = nodes.map(() => ({ x: 0, y: 0 }));
-          const focusInteractionLimitSq = Math.pow(focusItem ? FOCUS_INTERACTION_RADIUS : GLOBAL_INTERACTION_RADIUS, 2);
-
-          // Repulsion always applies between ALL visible pairs within global radius.
-          // This prevents non-dragged nodes from clustering during a focusItem drag.
-          for (let i = 0; i < nodes.length; i += 1) {
-            const source = nodes[i];
-            for (let j = i + 1; j < nodes.length; j += 1) {
-              const target = nodes[j];
-              if (!source.visible || !target.visible) continue;
-
-              const dx = source.x - target.x;
-              const dy = source.y - target.y;
-              const distSq = dx * dx + dy * dy + 0.25;
-              if (distSq > focusInteractionLimitSq) continue;
-
-              const dist = Math.sqrt(distSq);
-              const repulsionRaw = REPULSION_FORCE / (distSq * Math.max(1, dist));
-              const repulsion = clamp(repulsionRaw, 0, MAX_REPULSION_FORCE);
-              const forceX = (dx / dist) * repulsion;
-              const forceY = (dy / dist) * repulsion;
-
-              forces[i].x += forceX;
-              forces[i].y += forceY;
-              forces[j].x -= forceX;
-              forces[j].y -= forceY;
-            }
-          }
-
-          for (const edge of edges) {
-            if (!edge.source || !edge.target) continue;
-            if (focusItem && edge.source !== focusItem && edge.target !== focusItem) continue;
-            if (!edge.source.visible || !edge.target.visible) continue;
-
-            const edgeDistSq = (edge.source.x - edge.target.x) ** 2 + (edge.source.y - edge.target.y) ** 2;
-            if (edgeDistSq > GLOBAL_INTERACTION_RADIUS * GLOBAL_INTERACTION_RADIUS) continue;
-
-            const dx = edge.target.x - edge.source.x;
-            const dy = edge.target.y - edge.source.y;
-            const distSq = dx * dx + dy * dy + 0.01;
-            const dist = Math.sqrt(distSq);
-            const ideal = edge.source.size + edge.target.size + (focusItem ? RUNTIME_EDGE_IDEAL_GAP : INITIAL_EDGE_IDEAL_GAP);
-            const pull = clamp(
-              (dist - ideal) * SPRING_FORCE * (focusItem ? EDGE_FOCUS_SCALE : EDGE_RESTORE_SCALE),
-              -MAX_SPRING_FORCE,
-              MAX_SPRING_FORCE,
-            );
-            const fx = (dx / dist) * pull;
-            const fy = (dy / dist) * pull;
-
-            const sourceIndex = nodes.indexOf(edge.source);
-            const targetIndex = nodes.indexOf(edge.target);
-            if (sourceIndex < 0 || targetIndex < 0) continue;
-
-            forces[sourceIndex].x += fx;
-            forces[sourceIndex].y += fy;
-            forces[targetIndex].x -= fx;
-            forces[targetIndex].y -= fy;
-          }
+          const forces = computeForces({
+            nodes,
+            edges,
+            focusItem,
+            repulsionForce: REPULSION_FORCE,
+            springForce: SPRING_FORCE,
+            repulsionMode: 'explorer',
+            maxRepulsionForce: MAX_REPULSION_FORCE,
+            maxSpringForce: MAX_SPRING_FORCE,
+            globalInteractionRadius: GLOBAL_INTERACTION_RADIUS,
+            focusInteractionRadius: FOCUS_INTERACTION_RADIUS,
+            edgeScale: focusItem ? EDGE_FOCUS_SCALE : EDGE_RESTORE_SCALE,
+            edgeIdealGap: focusItem ? RUNTIME_EDGE_IDEAL_GAP : INITIAL_EDGE_IDEAL_GAP,
+            edgeDistanceLimit: GLOBAL_INTERACTION_RADIUS,
+            nodeActivePredicate: (node) => node.visible,
+            includeInvisibleForces: false,
+            edgeActivePredicate: (edgeObj, focused) => {
+              if (!edgeObj?.source || !edgeObj?.target) return false;
+              if (!edgeObj.source.visible || !edgeObj.target.visible) return false;
+              if (!focused) return true;
+              return edgeObj.source === focused || edgeObj.target === focused;
+            },
+          });
 
           for (let i = 0; i < nodes.length; i += 1) {
             const item = nodes[i];
@@ -594,7 +585,6 @@ const hasData = positioned.length > 0;
           }
         }
       }
-
       function visibleSetForCount(count) {
         const ids = new Set();
         for (let i = 0; i < Math.min(count, nodes.length); i += 1) {
@@ -614,47 +604,22 @@ const hasData = positioned.length > 0;
         if (nodes.length < 2) return;
 
         for (let step = 0; step < FORCE_STEPS; step += 1) {
-          const forces = nodes.map(() => ({ x: 0, y: 0 }));
-
-          for (let i = 0; i < nodes.length; i += 1) {
-            const source = nodes[i];
-            for (let j = i + 1; j < nodes.length; j += 1) {
-              const target = nodes[j];
-              const dx = source.x - target.x;
-              const dy = source.y - target.y;
-              const distSq = dx * dx + dy * dy + 0.2;
-              const dist = Math.sqrt(distSq);
-              const repulsion = REPULSION_FORCE / distSq;
-              const forceX = (dx / dist) * repulsion;
-              const forceY = (dy / dist) * repulsion;
-
-              forces[i].x += forceX;
-              forces[i].y += forceY;
-              forces[j].x -= forceX;
-              forces[j].y -= forceY;
-            }
-          }
-
-          for (const edge of edges) {
-            if (!edge.source || !edge.target) continue;
-            const dx = edge.target.x - edge.source.x;
-            const dy = edge.target.y - edge.source.y;
-            const distSq = dx * dx + dy * dy + 0.01;
-            const dist = Math.sqrt(distSq);
-            const ideal = edge.source.size + edge.target.size + RUNTIME_EDGE_IDEAL_GAP;
-            const pull = (dist - ideal) * SPRING_FORCE;
-            const fx = (dx / dist) * pull;
-            const fy = (dy / dist) * pull;
-
-            const sourceIndex = nodes.indexOf(edge.source);
-            const targetIndex = nodes.indexOf(edge.target);
-            if (sourceIndex < 0 || targetIndex < 0) continue;
-
-            forces[sourceIndex].x += fx;
-            forces[sourceIndex].y += fy;
-            forces[targetIndex].x -= fx;
-            forces[targetIndex].y -= fy;
-          }
+          const forces = computeForces({
+            nodes,
+            edges,
+            focusItem: null,
+            repulsionForce: REPULSION_FORCE,
+            springForce: SPRING_FORCE,
+            repulsionMode: 'explorer',
+            globalInteractionRadius: Number.POSITIVE_INFINITY,
+            maxRepulsionForce: Number.POSITIVE_INFINITY,
+            maxSpringForce: Number.POSITIVE_INFINITY,
+            edgeScale: 1,
+            edgeIdealGap: RUNTIME_EDGE_IDEAL_GAP,
+            edgeDistanceLimit: Number.POSITIVE_INFINITY,
+            nodeActivePredicate: () => true,
+            includeInvisibleForces: true,
+          });
 
           for (let i = 0; i < nodes.length; i += 1) {
             const item = nodes[i];
@@ -668,7 +633,6 @@ const hasData = positioned.length > 0;
           }
         }
       }
-
       function paint() {
         for (const item of nodes) {
           if (!item.element || !item.circle) continue;
@@ -896,6 +860,7 @@ const hasData = positioned.length > 0;
         }
 
         item.element.classList.add('is-dragged');
+        activateHover(item);
         if (event.preventDefault) event.preventDefault();
         if (svg.setPointerCapture) {
           svg.setPointerCapture(event.pointerId);
@@ -904,6 +869,8 @@ const hasData = positioned.length > 0;
 
       function doDrag(event) {
         if (pointerState.kind !== 'drag' || pointerState.pointerId !== event.pointerId || !pointerState.item) return;
+
+        activateHover(pointerState.item);
 
         const dragItem = pointerState.item;
         const dx = event.clientX - pointerState.originX;
@@ -960,6 +927,8 @@ const hasData = positioned.length > 0;
         } else {
           scheduleViewportSettle(item);
         }
+
+        deactivateHover(item);
       }
 
       function zoom(event) {
@@ -1121,8 +1090,35 @@ const hasData = positioned.length > 0;
         });
       }
 
+      const clearHoverState = () => {
+        if (!hoveredNode) return;
+
+        hoveredNode.element.classList.remove('is-hovered');
+        delete figure.dataset.vaultGraphHover;
+
+        if (hoverLabel) {
+          hoverLabel.textContent = '';
+          hoverLabel.removeAttribute('x');
+          hoverLabel.removeAttribute('y');
+          hoverLabel.removeAttribute('text-anchor');
+        }
+
+        for (const edge of edges) {
+          edge.edge.classList.remove('is-connected');
+        }
+        for (const item of nodes) {
+          item.element.classList.remove('is-neighbor');
+        }
+
+        hoveredNode = null;
+      };
+
       const activateHover = (node) => {
-        if (!hoverLabel || !node.visible) return;
+        if (!hoverLabel || !node || !node.visible) return;
+
+        if (hoveredNode === node) return;
+
+        clearHoverState();
 
         const fullLabel = node.element.dataset.vaultGraphNodeLabel || '';
         const nodeSize = Number.parseFloat(String(node.element.dataset.vaultGraphNodeSize || String(node.size) || '6')) || node.size || 6;
@@ -1135,6 +1131,7 @@ const hasData = positioned.length > 0;
 
         const hoverPlacement = placeLabel(svgX, svgY, estimateLabelHalfWidth(fullLabel, 7), true);
 
+        hoveredNode = node;
         hoverLabel.textContent = fullLabel;
         hoverLabel.setAttribute('x', String(hoverPlacement.x.toFixed(2)));
         hoverLabel.setAttribute('y', String(hoverPlacement.y.toFixed(2)));
@@ -1153,20 +1150,23 @@ const hasData = positioned.length > 0;
       };
 
       const deactivateHover = (node) => {
-        node.element.classList.remove('is-hovered');
-        delete figure.dataset.vaultGraphHover;
-
-        for (const edge of edges) {
-          edge.edge.classList.remove('is-connected');
-        }
-        for (const item of nodes) {
-          item.element.classList.remove('is-neighbor');
-        }
+        if (!hoveredNode) return;
+        if (node && hoveredNode !== node) return;
+        clearHoverState();
       };
 
+
       for (const node of nodes) {
-        node.element.addEventListener('pointerenter', () => activateHover(node));
-        node.element.addEventListener('pointerleave', () => deactivateHover(node));
+        node.element.addEventListener('pointerenter', () => {
+          if (pointerState.kind === 'drag' && pointerState.item !== node) {
+            return;
+          }
+          activateHover(node);
+        });
+        node.element.addEventListener('pointerleave', () => {
+          if (pointerState.kind === 'drag' && pointerState.item === node) return;
+          deactivateHover(node);
+        });
         node.element.addEventListener('focus', () => activateHover(node));
         node.element.addEventListener('blur', () => deactivateHover(node));
       }

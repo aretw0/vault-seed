@@ -37,9 +37,14 @@ Este mapa mostra o vault como exemplo de organização. Use-o para entender quai
 ## Comece Por Aqui
 
 - [[Guia do Jardineiro Digital]]
-- [[Exploracao Guiada do Vault]]
+- [[Seus Primeiros Passos]]
 - [[Preparando seu Computador para o Vault]]
+- [[Entendendo a Estrutura de Pastas]]
 - [[Depois da Recepcao do Template]]
+
+Leituras complementares (opcionais):
+
+- [[Exploracao Guiada do Vault]]
 - [[Configurando o Obsidian Git]]
 - [[Publicando seu Vault como Site]]
 - [[Identidade Visual e Blocos de Interface]]
@@ -50,6 +55,7 @@ Este mapa mostra o vault como exemplo de organização. Use-o para entender quai
 - [[Inbox Soberana de Fontes]]
 - [[Outbox Soberana de Publicação]]
 - [[Rotina de Curadoria Editorial]]
+- [[Usando o Git e o GitHub para Sincronizar seu Vault]]
 
 ## Conceitos Que Sustentam o Vault
 

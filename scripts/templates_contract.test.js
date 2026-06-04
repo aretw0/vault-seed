@@ -44,7 +44,7 @@ test("starter templates use the core Obsidian Templates contract", () => {
 });
 
 test("template guide lists the actual starter templates", () => {
-  const guide = fs.readFileSync("99 - Meta e Anexos/Usando o Plugin Templates.md", "utf8");
+  const guide = fs.readFileSync("99 - Meta e Anexos/99.3 - Referência/Usando o Plugin Templates.md", "utf8");
 
   for (const file of templateFiles()) {
     assert.match(guide, new RegExp(file.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")), `${file} is missing from the guide`);

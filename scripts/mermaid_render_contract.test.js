@@ -34,7 +34,7 @@ const KNOWN_TYPES = [
 const MERMAID_PAGES = [
   "recursos/mermaid",
   "meta-e-anexos/diagramas/exemplos",
-  "meta-e-anexos/visualizacao-do-fluxo-do-vault",
+  "meta-e-anexos/referencia/visualizacao-do-fluxo-do-vault",
 ];
 
 /**

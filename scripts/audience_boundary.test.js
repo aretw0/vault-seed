@@ -45,7 +45,7 @@ test("quality documentation points to the canonical validation gate", () => {
   const generatedReadme = read("README.template.md");
   const docsIndex = read("docs/INDEX.md");
   const lintGuide = read("docs/guia-de-lint.md");
-  const localSetup = read("99 - Meta e Anexos/Configurando Localmente.md");
+  const localSetup = read("99 - Meta e Anexos/99.1 - Onboarding/Configurando Localmente.md");
 
   for (const [file, content] of [
     ["README.md", readme],
@@ -69,7 +69,7 @@ test("public positioning avoids inflated framework language", () => {
     "README.template.md",
     ".github/PULL_REQUEST_TEMPLATE/feat-technical-enhancement.md",
     ".site/pages/index.astro",
-    "99 - Meta e Anexos/Identidade Visual e Blocos de Interface.md",
+    "99 - Meta e Anexos/99.3 - Referência/Identidade Visual e Blocos de Interface.md",
   ]) {
     assert.doesNotMatch(
       read(file),

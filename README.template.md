@@ -9,11 +9,11 @@ Esta é uma "semente" (seed) de cofre (vault): uma base flexível para conhecime
 | Quero... | Caminho |
 |---|---|
 | Usar só o Obsidian, sem terminal | Instale o Obsidian e abra esta pasta |
-| VS Code + scripts locais | [Configurando Localmente](99%20-%20Meta%20e%20Anexos/Configurando%20Localmente.md) |
-| Devcontainer (VS Code + Docker) | [Configurando com Devcontainer](99%20-%20Meta%20e%20Anexos/Configurando%20com%20Devcontainer.md) |
-| Usar com agentes de IA | [Usando com Agentes de IA](99%20-%20Meta%20e%20Anexos/Usando%20com%20Agentes%20de%20IA.md) |
+| VS Code + scripts locais | [Configurando Localmente](99%20-%20Meta%20e%20Anexos/99.1%20-%20Onboarding/Configurando%20Localmente.md) |
+| Devcontainer (VS Code + Docker) | [Configurando com Devcontainer](99%20-%20Meta%20e%20Anexos/99.1%20-%20Onboarding/Configurando%20com%20Devcontainer.md) |
+| Usar com agentes de IA | [Usando com Agentes de IA](99%20-%20Meta%20e%20Anexos/99.3%20-%20Referência/Usando%20com%20Agentes%20de%20IA.md) |
 
-Os guias detalhados estão em `99 - Meta e Anexos/`. Para entender a camada visual do site publicado, veja [Identidade Visual e Blocos de Interface](99%20-%20Meta%20e%20Anexos/Identidade%20Visual%20e%20Blocos%20de%20Interface.md).
+Os guias detalhados estão em `99 - Meta e Anexos/`. Para entender a camada visual do site publicado, veja [Identidade Visual e Blocos de Interface](99%20-%20Meta%20e%20Anexos/99.3%20-%20Referência/Identidade%20Visual%20e%20Blocos%20de%20Interface.md).
 
 ## Pré-requisitos
 
@@ -29,17 +29,17 @@ Seu cofre de conhecimento foi inicializado com sucesso!
 
 Para começar a explorar e organizar suas notas, abra esta pasta no Obsidian ou Visual Studio Code.
 
-➡️ Para uma introdução completa e um guia sobre como usar este cofre, abra a nota **[Guia do Jardineiro Digital](99%20-%20Meta%20e%20Anexos/Guia%20do%20Jardineiro%20Digital.md)**.
+➡️ Para uma introdução completa e um guia sobre como usar este cofre, abra a nota **[Guia do Jardineiro Digital](99%20-%20Meta%20e%20Anexos/99.1%20-%20Onboarding/Guia%20do%20Jardineiro%20Digital.md)**.
 
-Depois, siga **[Exploração Guiada do Vault](99%20-%20Meta%20e%20Anexos/Exploracao%20Guiada%20do%20Vault.md)** para uma primeira visita de
+Depois, siga **[Exploração Guiada do Vault](99%20-%20Meta%20e%20Anexos/99.1%20-%20Onboarding/Exploracao%20Guiada%20do%20Vault.md)** para uma primeira visita de
 30 minutos sem precisar entender Git, plugins ou automações de uma vez.
 
 Se este for seu primeiro vault versionado, abra também
-**[Preparando seu Computador para o Vault](99%20-%20Meta%20e%20Anexos/Preparando%20seu%20Computador%20para%20o%20Vault.md)** para configurar Obsidian,
+**[Preparando seu Computador para o Vault](99%20-%20Meta%20e%20Anexos/99.1%20-%20Onboarding/Preparando%20seu%20Computador%20para%20o%20Vault.md)** para configurar Obsidian,
 VS Code, Git, GitHub Desktop e sincronização sem conflitos entre dispositivos.
 
 Quando a recepção automática do template terminar, abra
-**[Depois da Recepção do Template](99%20-%20Meta%20e%20Anexos/Depois%20da%20Recepcao%20do%20Template.md)** para conferir o que ficou com você,
+**[Depois da Recepção do Template](99%20-%20Meta%20e%20Anexos/99.1%20-%20Onboarding/Depois%20da%20Recepcao%20do%20Template.md)** para conferir o que ficou com você,
 o que não deve ser sincronizado manualmente e como operar o vault entre
 desktop e celular.
 

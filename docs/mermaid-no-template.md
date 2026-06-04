@@ -226,7 +226,7 @@ mocHtml.includes("mermaid.esm.min.mjs")
 pageHtml.includes('data-language="mermaid"')
 ```
 
-Páginas verificadas: `recursos/mermaid`, `meta-e-anexos/diagramas/exemplos`, `meta-e-anexos/visualizacao-do-fluxo-do-vault`.
+Páginas verificadas: `recursos/mermaid`, `meta-e-anexos/diagramas/exemplos`, `meta-e-anexos/referencia/visualizacao-do-fluxo-do-vault`.
 
 Essa verificação é estática — não requer navegador. Ela detecta regressões no pipeline de build (bloco perdido antes do JS rodar), mas **não verifica a renderização SVG em si**, que só é possível com um navegador headless (ex: Playwright), ainda não adicionado ao projeto.
 

@@ -127,13 +127,13 @@ const REQUIRED_DIST_PATHS = [
   "explorar",
   "explorar/intencoes",
   // Onboarding guides — required by validate_onboarding.js
-  "meta-e-anexos/guia-do-jardineiro-digital",
-  "meta-e-anexos/seus-primeiros-passos",
-  "meta-e-anexos/exploracao-guiada-do-vault",
-  "meta-e-anexos/preparando-seu-computador-para-o-vault",
-  "meta-e-anexos/configurando-o-obsidian-git",
-  "meta-e-anexos/depois-da-recepcao-do-template",
-  "meta-e-anexos/moc-vault-seed",
+  "meta-e-anexos/onboarding/guia-do-jardineiro-digital",
+  "meta-e-anexos/onboarding/seus-primeiros-passos",
+  "meta-e-anexos/onboarding/exploracao-guiada-do-vault",
+  "meta-e-anexos/onboarding/preparando-seu-computador-para-o-vault",
+  "meta-e-anexos/workflows/configurando-o-obsidian-git",
+  "meta-e-anexos/onboarding/depois-da-recepcao-do-template",
+  "meta-e-anexos/onboarding/moc-vault-seed",
   // Core resource notes
   "recursos/bases",
   "recursos/dataview",
@@ -155,9 +155,15 @@ requireCondition(
 );
 if (fs.existsSync(exploreDataPath)) {
   const exploreData = JSON.parse(fs.readFileSync(exploreDataPath, "utf8"));
+  const notes = Array.isArray(exploreData.notes) ? exploreData.notes : [];
+  const graphNodes = Array.isArray(exploreData.graph?.nodes) ? exploreData.graph.nodes : [];
+  const graphEdges = Array.isArray(exploreData.graph?.links) ? exploreData.graph.links : [];
+  const noteIds = new Set(notes.map((note) => note?.id).filter(Boolean));
+
   requireCondition(
     exploreData.metrics?.notes > 0 &&
-      Array.isArray(exploreData.graph?.nodes) &&
+      notes.length > 0 &&
+      graphNodes.length > 0 &&
       Array.isArray(exploreData.graph?.insights?.hubs) &&
       Array.isArray(exploreData.graph?.insights?.orphans) &&
       exploreData.editorial?.notesEvaluated > 0 &&
@@ -165,9 +171,41 @@ if (fs.existsSync(exploreDataPath)) {
       Array.isArray(exploreData.editorial?.notices) &&
       Array.isArray(exploreData.editorial?.promotionCandidates) &&
       Array.isArray(exploreData.editorial?.thinPublishedResources),
-    "dist/explorar/dados.json must expose metrics, graph insights, and editorial curation signals for the Astro exploration surface.",
+    "dist/explorar/dados.json must expose metrics, graph data, and editorial curation signals for the Astro exploration surface.",
   );
+
+  for (const note of notes) {
+    const href = note?.href;
+    requireCondition(
+      typeof href === 'string' && href.startsWith('/') && !href.endsWith('/'),
+      `dist/explorar/dados.json: note '${note?.id || '<missing-id>'}' must include a clean route href without trailing slash.`,
+    );
+    requireCondition(
+      distExists(href),
+      `dist/explorar/dados.json: note href '${href}' does not resolve to a built HTML page.`,
+    );
+  }
+
+  const graphNodeIds = new Set(graphNodes.map((node) => node?.id).filter(Boolean));
+  for (const node of graphNodes) {
+    requireCondition(
+      noteIds.has(node?.id),
+      `dist/explorar/dados.json: graph node references an unknown note id '${node?.id}'.`,
+    );
+  }
+
+  for (const edge of graphEdges) {
+    requireCondition(
+      graphNodeIds.has(edge?.source) && graphNodeIds.has(edge?.target),
+      `dist/explorar/dados.json: graph edge references unknown node ids (${edge?.source} -> ${edge?.target}).`,
+    );
+    requireCondition(
+      noteIds.has(edge?.source) && noteIds.has(edge?.target),
+      `dist/explorar/dados.json: graph edge references unknown note ids (${edge?.source} -> ${edge?.target}).`,
+    );
+  }
 }
+
 
 const rssPath = path.join(distDir, "rss.xml");
 requireCondition(
@@ -353,6 +391,7 @@ const SIDEBAR_SECTIONS = ["recursos", "meta-e-anexos"];
 const mocHtmlPath = path.join(
   distDir,
   "meta-e-anexos",
+  "onboarding",
   "moc-vault-seed",
   "index.html",
 );
@@ -389,7 +428,7 @@ if (fs.existsSync(mocHtmlPath)) {
     }
   } else {
     errors.push(
-      "meta-e-anexos/moc-vault-seed/index.html: starlight__sidebar element not found.",
+      "meta-e-anexos/onboarding/moc-vault-seed/index.html: starlight__sidebar element not found.",
     );
   }
 
@@ -417,7 +456,7 @@ if (fs.existsSync(mocHtmlPath)) {
 const MERMAID_PAGES = [
   "recursos/mermaid",
   "meta-e-anexos/diagramas/exemplos",
-  "meta-e-anexos/visualizacao-do-fluxo-do-vault",
+  "meta-e-anexos/referencia/visualizacao-do-fluxo-do-vault",
 ];
 
 for (const slug of MERMAID_PAGES) {

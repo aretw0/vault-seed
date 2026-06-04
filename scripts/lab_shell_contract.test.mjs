@@ -21,7 +21,7 @@ test("Astro and Marimo share theme storage keys", () => {
 
 test("Lab slide documentation matches the native Marimo layout contract", () => {
   const slideNotebook = read("99 - Meta e Anexos/Notebooks/apresentacao-vault-seed.py");
-  const labGuide = read("99 - Meta e Anexos/Usando o Lab (Notebooks Marimo).md");
+  const labGuide = read("99 - Meta e Anexos/99.2 - Workflows/Usando o Lab (Notebooks Marimo).md");
 
   assert.match(slideNotebook, /layout_file="layouts\/apresentacao-vault-seed\.slides\.json"/);
   assert.match(labGuide, /layout_file/);

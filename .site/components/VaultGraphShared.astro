@@ -1,0 +1,198 @@
+---
+---
+<script is:inline>
+  (() => {
+    if (window.__vaultGraphShared) {
+      return;
+    }
+
+    function clamp(value, min, max) {
+      const safeMin = Number.isFinite(Number(min)) ? Number(min) : value;
+      const safeMax = Number.isFinite(Number(max)) ? Number(max) : value;
+      return Math.min(safeMax, Math.max(safeMin, Number(value)));
+    }
+
+    function estimateLabelHalfWidth(text, fontSize, options = {}) {
+      const safeFontSize = Number(fontSize) || 6;
+      const maxCharacters = Number.isFinite(Number(options.maxChars))
+        ? Number(options.maxChars)
+        : 18;
+      return Math.max(5, Math.min(maxCharacters, String(text || '').length * safeFontSize * 0.52));
+    }
+
+    function placeLabel(rawX, rawY, halfWidth, preferAbove = false, options = {}) {
+      const viewboxSize = Number.isFinite(Number(options.viewboxSize)) ? Number(options.viewboxSize) : 200;
+      const offsetY = Number.isFinite(Number(options.offsetY)) ? Number(options.offsetY) : 9;
+      const margin = Number.isFinite(Number(options.margin)) ? Number(options.margin) : 6;
+      const marginY = Number.isFinite(Number(options.marginY)) ? Number(options.marginY) : 1;
+
+      const safeHalf = Math.min(Number(halfWidth) || 10, viewboxSize / 2 - margin - 1);
+      const minX = Math.max(safeHalf, margin);
+      const maxX = Math.min(viewboxSize - safeHalf - margin, viewboxSize - margin);
+      const clampedX = clamp(rawX, Math.min(minX, maxX), Math.max(minX, maxX));
+      const textAnchor =
+        minX === maxX
+          ? 'middle'
+          : clampedX <= minX + 0.001
+            ? 'start'
+            : clampedX >= maxX - 0.001
+              ? 'end'
+              : 'middle';
+
+      const minY = offsetY + marginY;
+      const maxY = viewboxSize - offsetY - marginY;
+      const preferredY = preferAbove
+        ? rawY - (offsetY + marginY + 4)
+        : rawY;
+
+      let clampedY = clamp(preferredY, minY, maxY);
+      if (preferAbove && preferredY < minY) {
+        clampedY = clamp(rawY, minY, maxY);
+      }
+
+      return {
+        x: clampedX,
+        y: clampedY,
+        anchor: textAnchor,
+      };
+    }
+
+    function computeForces({
+      nodes,
+      edges,
+      focusItem = null,
+      repulsionForce = 2400,
+      springForce = 0.013,
+      centerForce = 0.001,
+      repulsionMode = 'explorer',
+      maxRepulsionForce = Number.POSITIVE_INFINITY,
+      maxSpringForce = Number.POSITIVE_INFINITY,
+      globalInteractionRadius = Number.POSITIVE_INFINITY,
+      focusInteractionRadius = 150,
+      edgeScale = 1,
+      edgeIdealGap = 44,
+      edgeDistanceLimit = Number.POSITIVE_INFINITY,
+      edgeActivePredicate = null,
+      nodeActivePredicate = null,
+      includeInvisibleForces = false,
+    }) {
+      const safeNodes = Array.isArray(nodes) ? nodes : [];
+      const safeEdges = Array.isArray(edges) ? edges : [];
+
+      if (!Array.isArray(nodes) || !Array.isArray(edges)) {
+        return safeNodes.map(() => ({ x: 0, y: 0 }));
+      }
+
+      const safeNodeIndexById = new Map();
+      safeNodes.forEach((node, index) => {
+        if (node && node.id) {
+          safeNodeIndexById.set(node.id, index);
+        }
+      });
+
+      const resolvedEdges = safeEdges
+        .map((edge) => {
+          if (!edge) return null;
+          const source = edge.source && edge.source.id
+            ? edge.source
+            : safeNodeIndexById.get(edge.source);
+          const target = edge.target && edge.target.id
+            ? edge.target
+            : safeNodeIndexById.get(edge.target);
+
+          if (!source || !target) return null;
+          return {
+            edge: edge.edge || edge,
+            source,
+            target,
+            visible: true,
+          };
+        })
+        .filter(Boolean);
+
+      const forces = safeNodes.map(() => ({ x: 0, y: 0 }));
+      const isNodeActive = typeof nodeActivePredicate === 'function'
+        ? nodeActivePredicate
+        : () => true;
+      const focusLimitSq = Math.pow(focusItem ? focusInteractionRadius : globalInteractionRadius, 2);
+
+      for (let i = 0; i < safeNodes.length; i += 1) {
+        const source = safeNodes[i];
+        if (!source || (focusItem && !includeInvisibleForces && !isNodeActive(source))) {
+          continue;
+        }
+
+        for (let j = i + 1; j < safeNodes.length; j += 1) {
+          const target = safeNodes[j];
+          if (!target || (focusItem && !includeInvisibleForces && !isNodeActive(target))) {
+            continue;
+          }
+
+          const dx = source.x - target.x;
+          const dy = source.y - target.y;
+          const distSq = dx * dx + dy * dy + 0.25;
+          if (distSq > focusLimitSq) continue;
+
+          const dist = Math.sqrt(distSq);
+          const denominator = repulsionMode === 'hero'
+            ? distSq
+            : distSq * Math.max(1, dist);
+          const repulsion = clamp((repulsionForce / denominator), 0, maxRepulsionForce);
+          const forceX = (dx / dist) * repulsion;
+          const forceY = (dy / dist) * repulsion;
+
+          forces[i].x += forceX;
+          forces[i].y += forceY;
+          forces[j].x -= forceX;
+          forces[j].y -= forceY;
+        }
+      }
+
+      const edgeSqLimit = Number.isFinite(edgeDistanceLimit)
+        ? Math.pow(edgeDistanceLimit, 2)
+        : Number.POSITIVE_INFINITY;
+      for (const edge of resolvedEdges) {
+        if (!edge || !edge.source || !edge.target) continue;
+        if (focusItem && typeof edgeActivePredicate === 'function' && !edgeActivePredicate(edge, focusItem)) continue;
+        if (!edgeActivePredicate) {
+          if (focusItem) {
+            if (edge.source !== focusItem && edge.target !== focusItem) continue;
+          }
+        }
+
+        const dx = edge.target.x - edge.source.x;
+        const dy = edge.target.y - edge.source.y;
+        const distSq = dx * dx + dy * dy + 0.01;
+        if (distSq > edgeSqLimit) continue;
+
+        const dist = Math.sqrt(distSq);
+        const ideal = edge.source.size + edge.target.size + edgeIdealGap;
+        const pull = clamp((dist - ideal) * springForce * edgeScale, -maxSpringForce, maxSpringForce);
+        const fx = (dx / dist) * pull;
+        const fy = (dy / dist) * pull;
+
+        const sourceIndex = safeNodes.indexOf(edge.source);
+        const targetIndex = safeNodes.indexOf(edge.target);
+        if (sourceIndex < 0 || targetIndex < 0) continue;
+
+        forces[sourceIndex].x += fx;
+        forces[sourceIndex].y += fy;
+        forces[targetIndex].x -= fx;
+        forces[targetIndex].y -= fy;
+      }
+
+      return forces;
+    }
+
+    window.__vaultGraphShared = {
+      VIEWBOX_SIZE: 200,
+      LABEL_OFFSET_Y: 9,
+      LABEL_MARGIN: 6,
+      LABEL_MARGIN_Y: 1,
+      clamp,
+      estimateLabelHalfWidth,
+      placeLabel,
+      computeForces,
+    };
+  })();
+</script>

@@ -3,7 +3,7 @@
     .split('/')
     .map(segment =>
       segment
-        .replace(/^\d+\s*-\s*/, '')
+        .replace(/^\d+(?:\.\d+)?\s*-\s*/, '')
         .normalize('NFD')
         .replace(/[\u0300-\u036F]/g, '')
         .toLowerCase()
