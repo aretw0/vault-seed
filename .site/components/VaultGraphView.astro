@@ -860,6 +860,9 @@ const hasData = positioned.length > 0;
         minScale = fitScale * 0.95;
         clampViewportToContent();
         queueTransformRender();
+        if (hoveredNode) {
+          activateHover(hoveredNode);
+        }
       }
 
       function startPan(event) {
@@ -908,6 +911,9 @@ const hasData = positioned.length > 0;
         viewportState.ty = graphPoint.localY - pointerState.panAnchorY * viewportState.scale;
         clampViewportToContent();
         queueTransformRender();
+        if (hoveredNode) {
+          activateHover(hoveredNode);
+        }
       }
 
       function stopPan(event) {
@@ -920,6 +926,9 @@ const hasData = positioned.length > 0;
         pointerState.moved = false;
         clampViewportToContent();
         queueTransformRender();
+        if (hoveredNode) {
+          activateHover(hoveredNode);
+        }
         svg.classList.remove('is-panning');
         flushQueuedVisuals();
 
@@ -957,8 +966,6 @@ const hasData = positioned.length > 0;
       function doDrag(event) {
         if (pointerState.kind !== 'drag' || pointerState.pointerId !== event.pointerId || !pointerState.item) return;
 
-        activateHover(pointerState.item);
-
         const dragItem = pointerState.item;
         const dx = event.clientX - pointerState.originX;
         const dy = event.clientY - pointerState.originY;
@@ -980,6 +987,7 @@ const hasData = positioned.length > 0;
         }
         queueTransformRender();
         queuePaint();
+        activateHover(dragItem);
       }
 
       function stopDrag(event) {
@@ -1032,11 +1040,19 @@ const hasData = positioned.length > 0;
         viewportState.ty = pointerBefore.localY - pointerBefore.y * viewportState.scale;
 
         queueTransformRender();
+        if (hoveredNode) {
+          activateHover(hoveredNode);
+        }
       }
 
       function setVisibleCount(nextCount) {
         visibleCount = clamp(Math.round(nextCount), initialVisibleForUi, maxVisible);
         applyVisibility();
+        if (hoveredNode && !hoveredNode.visible) {
+          clearHoverState();
+        } else if (hoveredNode) {
+          activateHover(hoveredNode);
+        }
       }
 
       function setupInteractions() {
@@ -1104,6 +1120,9 @@ const hasData = positioned.length > 0;
               viewportState.ty = pinchState.midLocal.localY - pinchState.midLocal.y * nextScale;
               clampViewportToContent();
               queueTransformRender();
+              if (hoveredNode) {
+                activateHover(hoveredNode);
+              }
             }
             event.preventDefault();
             return;
@@ -1201,12 +1220,8 @@ const hasData = positioned.length > 0;
         hoveredNode = null;
       };
 
-      const activateHover = (node) => {
+      const renderHoverLabel = (node) => {
         if (!hoverLabel || !node || !node.visible) return;
-
-        if (hoveredNode === node) return;
-
-        clearHoverState();
 
         const fullLabel = node.element.dataset.vaultGraphNodeLabel || '';
         const nodeSize = Number.parseFloat(String(node.element.dataset.vaultGraphNodeSize || String(node.size) || '6')) || node.size || 6;
@@ -1236,7 +1251,6 @@ const hasData = positioned.length > 0;
           hoverLabel.textContent = fullLabel;
         }
 
-        hoveredNode = node;
         if (hoverPlacement.fontSize) {
           hoverLabel.style.fontSize = hoverPlacement.fontSize;
         } else {
@@ -1247,6 +1261,20 @@ const hasData = positioned.length > 0;
         hoverLabel.setAttribute('text-anchor', hoverPlacement.anchor);
         node.element.classList.add('is-hovered');
         figure.dataset.vaultGraphHover = '1';
+      };
+
+      const activateHover = (node) => {
+        if (!hoverLabel || !node || !node.visible) return;
+
+        const nodeChanged = hoveredNode !== node;
+        if (nodeChanged) {
+          clearHoverState();
+          hoveredNode = node;
+        }
+
+        renderHoverLabel(node);
+
+        if (!nodeChanged) return;
 
         for (const edge of edges) {
           if (!edge.visible) continue;
