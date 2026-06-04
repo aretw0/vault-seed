@@ -313,6 +313,46 @@ const heroGraphHtml = graphHeroHtml();
           fontSize: '',
         };
       };
+
+    const renderWrappedLabel = typeof sharedGraph.renderWrappedLabel === 'function'
+      ? (
+          labelElement,
+          placement,
+        ) => sharedGraph.renderWrappedLabel(labelElement, placement)
+      : (labelElement, placement) => {
+        if (!labelElement) return;
+
+        const lines = Array.isArray(placement?.lines)
+          ? placement.lines.filter((line) => line !== undefined && line !== null)
+          : [];
+        if (lines.length <= 1) {
+          return;
+        }
+
+        const x = Number(placement?.x);
+        const y = Number(placement?.y);
+        const lineHeight = Number.isFinite(Number(placement?.lineHeight))
+          ? Number(placement.lineHeight)
+          : Number.parseFloat(String(placement?.fontSize || '7px')) || 7;
+
+        while (labelElement.firstChild) {
+          labelElement.removeChild(labelElement.firstChild);
+        }
+
+        lines.forEach((line, index) => {
+          const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+          tspan.textContent = String(line);
+          tspan.setAttribute('x', String(Number.isFinite(x) ? x : 0));
+
+          if (index === 0) {
+            tspan.setAttribute('y', String(Number.isFinite(y) ? y : 0));
+          } else {
+            tspan.setAttribute('dy', String(lineHeight));
+          }
+
+          labelElement.appendChild(tspan);
+        });
+      };
     const computeForces = typeof sharedGraph.computeForces === 'function'
       ? sharedGraph.computeForces
       : (params = {}) => {
@@ -455,7 +495,6 @@ const heroGraphHtml = graphHeroHtml();
             const preferAbove = (baseY - nodeSize - LABEL_OFFSET_Y) > (LABEL_OFFSET_Y + LABEL_MARGIN_Y + 4);
             const hoverY = preferAbove ? (baseY - nodeSize - LABEL_OFFSET_Y) : (baseY + nodeSize + LABEL_OFFSET_Y);
 
-            hoverLabel.textContent = fullLabel;
             const hoverPlacement = fitLabelToViewport(
               hoverLabel,
               fullLabel,
@@ -463,6 +502,12 @@ const heroGraphHtml = graphHeroHtml();
               hoverY,
               preferAbove,
             );
+
+            if (Array.isArray(hoverPlacement.lines) && hoverPlacement.lines.length > 1) {
+              renderWrappedLabel(hoverLabel, hoverPlacement);
+            } else {
+              hoverLabel.textContent = fullLabel;
+            }
 
             if (hoverPlacement.fontSize) {
               hoverLabel.style.fontSize = hoverPlacement.fontSize;
@@ -491,6 +536,7 @@ const heroGraphHtml = graphHeroHtml();
             figure.querySelectorAll('[data-vault-graph-link].is-connected').forEach((e) => e.classList.remove('is-connected'));
             figure.querySelectorAll('[data-vault-graph-node-id].is-neighbor').forEach((e) => e.classList.remove('is-neighbor'));
             if (hoverLabel) {
+              hoverLabel.textContent = '';
               hoverLabel.style.removeProperty('font-size');
             }
           };

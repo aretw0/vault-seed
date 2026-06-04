@@ -68,6 +68,8 @@
           y: rawY,
           anchor: 'middle',
           fontSize: '',
+          lines: [],
+          lineHeight: 0,
         };
       }
 
@@ -82,38 +84,137 @@
       const maxXBoundary = Number.isFinite(Number(options.visibleMaxX)) ? Number(options.visibleMaxX) : viewboxSize;
       const minYBoundary = Number.isFinite(Number(options.visibleMinY)) ? Number(options.visibleMinY) : 0;
       const maxYBoundary = Number.isFinite(Number(options.visibleMaxY)) ? Number(options.visibleMaxY) : viewboxSize;
+      const maxLines = Number.isFinite(Number(options.maxLines)) ? Math.max(1, Math.floor(Number(options.maxLines))) : 4;
 
-      labelElement.textContent = rawText;
-      const computedFontSize = Number.parseFloat(getComputedStyle(labelElement).fontSize) || 7;
-      labelElement.style.removeProperty('font-size');
+      const availableWidth = Math.max(8, Math.abs(maxXBoundary - minXBoundary) - 2 * margin);
+      const availableHeight = Math.max(10, Math.abs(maxYBoundary - minYBoundary) - 2 * (offsetY + marginY));
+      const baseFontSize = Number.parseFloat(getComputedStyle(labelElement).fontSize) || 7;
+      const minFontPx = Math.max(2, baseFontSize * minFontScale);
+      const maxFontPx = Math.max(minFontPx, baseFontSize * maxFontScale);
+      const originalStyle = labelElement.getAttribute('style') || '';
 
-      const horizontalInset = Math.max(0, (maxXBoundary - minXBoundary) - 2 * margin);
-      let measuredLength = Number(labelElement.getComputedTextLength());
-      if (!Number.isFinite(measuredLength) || measuredLength <= 0) {
-        measuredLength = estimateLabelHalfWidth(rawText, computedFontSize, { maxChars: 240 }) * 2;
-      }
+      const measureTextLength = (candidate, fontPx) => {
+        const line = String(candidate || '');
+        labelElement.style.fontSize = `${fontPx}px`;
+        labelElement.textContent = line;
+        const measured = Number(labelElement.getComputedTextLength());
+        if (Number.isFinite(measured) && measured > 0) {
+          return measured;
+        }
+        return estimateLabelHalfWidth(line, fontPx, { maxChars: 240 }) * 2;
+      };
 
-      let scale = 1;
-      if (horizontalInset > 0 && measuredLength > horizontalInset) {
-        scale = Math.min(maxFontScale, Math.max(minFontScale, horizontalInset / measuredLength));
-        if (scale !== 1) {
-          labelElement.style.fontSize = `${computedFontSize * scale}px`;
-          const fittedLength = Number(labelElement.getComputedTextLength());
-          if (Number.isFinite(fittedLength) && fittedLength > 0) {
-            measuredLength = fittedLength;
+      const splitWordToChunks = (word, fontPx) => {
+        const chunks = [];
+        let chunk = '';
+        for (const char of String(word || '')) {
+          const nextChunk = `${chunk}${char}`;
+          if (!chunk) {
+            chunk = char;
+            continue;
           }
-          if (measuredLength > horizontalInset && scale > minFontScale) {
-            const extraScale = Math.max(minFontScale, horizontalInset / measuredLength);
-            scale = Math.min(scale, extraScale);
-            if (scale !== 1) {
-              labelElement.style.fontSize = `${computedFontSize * scale}px`;
-              measuredLength = Number(labelElement.getComputedTextLength());
+          if (measureTextLength(nextChunk, fontPx) <= availableWidth) {
+            chunk = nextChunk;
+            continue;
+          }
+          chunks.push(chunk);
+          chunk = char;
+        }
+
+        if (chunk) {
+          chunks.push(chunk);
+        }
+
+        return chunks.length ? chunks : [String(word || '')];
+      };
+
+      const buildLines = (fontPx) => {
+        const words = rawText.split(/\s+/).filter(Boolean);
+        if (!words.length) {
+          return [''];
+        }
+
+        const lines = [];
+        let currentLine = '';
+
+        for (const word of words) {
+          const withWord = currentLine ? `${currentLine} ${word}` : word;
+          const candidateLength = measureTextLength(withWord, fontPx);
+          if (candidateLength <= availableWidth) {
+            currentLine = withWord;
+            continue;
+          }
+
+          if (currentLine) {
+            lines.push(currentLine);
+            currentLine = '';
+          }
+
+          const singleWordLength = measureTextLength(word, fontPx);
+          if (singleWordLength <= availableWidth || fontPx <= minFontPx) {
+            currentLine = word;
+            continue;
+          }
+
+          const chunks = splitWordToChunks(word, fontPx);
+          if (chunks.length) {
+            for (const chunk of chunks) {
+              if (!currentLine) {
+                currentLine = chunk;
+              } else {
+                lines.push(currentLine);
+                currentLine = chunk;
+              }
             }
           }
         }
+
+        if (currentLine) {
+          lines.push(currentLine);
+        }
+
+        if (lines.length > maxLines) {
+          return lines.slice(0, maxLines);
+        }
+
+        return lines;
+      };
+
+      let fontPx = maxFontPx;
+      let lines = [''];
+      let longestLength = 0;
+      const lineHeightFactor = 1.25;
+      let lineHeight = Math.max(8, fontPx * lineHeightFactor);
+      let totalHeight = lineHeight;
+
+      for (let iteration = 0; iteration < 26; iteration += 1) {
+        lines = buildLines(fontPx);
+        const lengths = lines.map((line) => measureTextLength(line, fontPx));
+        longestLength = lengths.length ? Math.max(...lengths) : 0;
+
+        lineHeight = Math.max(8, fontPx * lineHeightFactor);
+        totalHeight = lineHeight * lines.length;
+
+        if (longestLength <= availableWidth && totalHeight <= availableHeight) {
+          break;
+        }
+
+        if (fontPx <= minFontPx) {
+          break;
+        }
+
+        const widthScale = longestLength > 0 ? availableWidth / longestLength : 1;
+        const heightScale = totalHeight > 0 ? availableHeight / totalHeight : 1;
+        const nextFontPx = Math.max(minFontPx, fontPx * Math.min(1, widthScale, heightScale));
+
+        if (nextFontPx >= fontPx - 0.01) {
+          fontPx = Math.max(minFontPx, fontPx - 0.1);
+        } else {
+          fontPx = nextFontPx;
+        }
       }
 
-      const placement = placeLabel(rawX, rawY, measuredLength / 2, preferAbove, {
+      const placement = placeLabel(rawX, rawY, Math.max(1, longestLength / 2), preferAbove, {
         viewboxSize,
         offsetY,
         margin,
@@ -124,10 +225,71 @@
         visibleMaxY: maxYBoundary,
       });
 
+      const blockHeight = lineHeight * Math.max(1, lines.length);
+      const blockBottom = Math.max(0, blockHeight - lineHeight);
+      const minLineY = minYBoundary + offsetY + marginY;
+      const maxLineY = maxYBoundary - offsetY - marginY;
+      let firstLineY = placement.y - (blockBottom / 2);
+      if (blockBottom > 0) {
+        if (firstLineY < minLineY) {
+          firstLineY = minLineY;
+        }
+        if (firstLineY + blockBottom > maxLineY) {
+          firstLineY = maxLineY - blockBottom;
+        }
+      }
+      firstLineY = clamp(firstLineY, minLineY, Math.max(minLineY, maxLineY));
+
+      if (originalStyle) {
+        labelElement.setAttribute('style', originalStyle);
+      } else {
+        labelElement.removeAttribute('style');
+      }
+
       return {
         ...placement,
-        fontSize: scale === 1 ? '' : `${computedFontSize * scale}px`,
+        x: placement.x,
+        y: firstLineY,
+        fontSize: fontPx === baseFontSize ? '' : `${fontPx}px`,
+        lines,
+        lineHeight,
       };
+    }
+
+    function renderWrappedLabel(labelElement, placement = {}) {
+      if (!labelElement) return;
+
+      const lines = Array.isArray(placement.lines)
+        ? placement.lines.filter((line) => line !== undefined && line !== null)
+        : [];
+      if (lines.length <= 1) {
+        return;
+      }
+
+      const x = Number(placement.x);
+      const y = Number(placement.y);
+      const lineHeight = Number.isFinite(Number(placement.lineHeight))
+        ? Number(placement.lineHeight)
+        : Number.parseFloat(String(placement.fontSize || '7px')) || 7;
+      const namespace = 'http://www.w3.org/2000/svg';
+
+      while (labelElement.firstChild) {
+        labelElement.removeChild(labelElement.firstChild);
+      }
+
+      lines.forEach((line, index) => {
+        const tspan = document.createElementNS(namespace, 'tspan');
+        tspan.textContent = String(line);
+        tspan.setAttribute('x', String(Number.isFinite(x) ? x : 0));
+
+        if (index === 0) {
+          tspan.setAttribute('y', String(Number.isFinite(y) ? y : 0));
+        } else {
+          tspan.setAttribute('dy', String(lineHeight));
+        }
+
+        labelElement.appendChild(tspan);
+      });
     }
 
     function computeForces({
@@ -266,6 +428,7 @@
       estimateLabelHalfWidth,
       placeLabel,
       fitLabelToViewport,
+      renderWrappedLabel,
       computeForces,
     };
   })();

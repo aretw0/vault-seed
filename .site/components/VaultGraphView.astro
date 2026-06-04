@@ -333,6 +333,44 @@ const hasData = positioned.length > 0;
           fontSize: '',
         };
       };
+
+    const renderWrappedLabel = typeof sharedGraph.renderWrappedLabel === 'function'
+      ? (
+          labelElement,
+          placement,
+        ) => sharedGraph.renderWrappedLabel(labelElement, placement)
+      : (labelElement, placement) => {
+        if (!labelElement) return;
+
+        const lines = Array.isArray(placement?.lines)
+          ? placement.lines.filter((line) => line !== undefined && line !== null)
+          : [];
+        if (lines.length <= 1) {
+          return;
+        }
+
+        const x = Number(placement?.x);
+        const y = Number(placement?.y);
+        const lineHeight = Number.isFinite(Number(placement?.lineHeight))
+          ? Number(placement.lineHeight)
+          : Number.parseFloat(String(placement?.fontSize || '7px')) || 7;
+
+        while (labelElement.firstChild) {
+          labelElement.removeChild(labelElement.firstChild);
+        }
+
+        lines.forEach((line, index) => {
+          const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+          tspan.textContent = String(line);
+          tspan.setAttribute('x', String(Number.isFinite(x) ? x : 0));
+          if (index === 0) {
+            tspan.setAttribute('y', String(Number.isFinite(y) ? y : 0));
+          } else {
+            tspan.setAttribute('dy', String(lineHeight));
+          }
+          labelElement.appendChild(tspan);
+        });
+      };
     const computeForces = typeof sharedGraph.computeForces === 'function'
       ? sharedGraph.computeForces
       : (params = {}) => {
@@ -1191,6 +1229,12 @@ const hasData = positioned.length > 0;
           svgY,
           preferAbove,
         );
+
+        if (Array.isArray(hoverPlacement.lines) && hoverPlacement.lines.length > 1) {
+          renderWrappedLabel(hoverLabel, hoverPlacement);
+        } else {
+          hoverLabel.textContent = fullLabel;
+        }
 
         hoveredNode = node;
         if (hoverPlacement.fontSize) {
