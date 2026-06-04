@@ -30,18 +30,45 @@
       const minYBoundary = Number.isFinite(Number(options.visibleMinY)) ? Number(options.visibleMinY) : 0;
       const maxYBoundary = Number.isFinite(Number(options.visibleMaxY)) ? Number(options.visibleMaxY) : viewboxSize;
 
-      const safeHalf = Math.min(Number(halfWidth) || 10, Math.max(2, Math.abs(maxXBoundary - minXBoundary) / 2 - margin - 1));
-      const minX = Math.max(safeHalf + minXBoundary, margin + minXBoundary);
-      const maxX = Math.min(maxXBoundary - safeHalf - margin, maxXBoundary - margin);
-      const clampedX = clamp(rawX, Math.min(minX, maxX), Math.max(minX, maxX));
-      const textAnchor =
-        minX === maxX
-          ? 'middle'
-          : clampedX <= minX + 0.001
-            ? 'start'
-            : clampedX >= maxX - 0.001
-              ? 'end'
-              : 'middle';
+      const safeHalf = Math.min(
+        Number(halfWidth) || 10,
+        Math.max(2, Math.abs(maxXBoundary - minXBoundary) / 2 - margin - 1),
+      );
+      const minTextX = minXBoundary + margin;
+      const maxTextX = maxXBoundary - margin;
+      const textWidth = Math.max(2, safeHalf * 2);
+      const availableTextWidth = Math.max(0, maxTextX - minTextX);
+
+      const clampedForStart = clamp(rawX, minTextX, maxTextX - textWidth);
+      const clampedForEnd = clamp(rawX, minTextX + textWidth, maxTextX);
+      const clampedForMiddle = clamp(rawX, minTextX + textWidth / 2, maxTextX - textWidth / 2);
+
+      const canPlaceStart = textWidth <= availableTextWidth && rawX >= minTextX && rawX <= maxTextX - textWidth;
+      const canPlaceEnd = textWidth <= availableTextWidth && rawX >= minTextX + textWidth && rawX <= maxTextX;
+      const canPlaceMiddle = textWidth <= availableTextWidth && rawX >= minTextX + textWidth / 2 && rawX <= maxTextX - textWidth / 2;
+
+      const midline = (minTextX + maxTextX) / 2;
+      let clampedX = clampedForMiddle;
+      let textAnchor = 'middle';
+
+      if (rawX <= midline && canPlaceStart) {
+        textAnchor = 'start';
+        clampedX = clampedForStart;
+      } else if (rawX > midline && canPlaceEnd) {
+        textAnchor = 'end';
+        clampedX = clampedForEnd;
+      } else if (canPlaceMiddle) {
+        clampedX = clampedForMiddle;
+      } else if (canPlaceStart) {
+        textAnchor = 'start';
+        clampedX = clampedForStart;
+      } else if (canPlaceEnd) {
+        textAnchor = 'end';
+        clampedX = clampedForEnd;
+      } else {
+        textAnchor = 'start';
+        clampedX = minTextX;
+      }
 
       const minY = Math.max(offsetY + marginY, minYBoundary + 1);
       const maxY = Math.min(maxYBoundary - offsetY - marginY, maxYBoundary - 1);

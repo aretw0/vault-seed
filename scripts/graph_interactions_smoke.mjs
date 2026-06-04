@@ -265,6 +265,41 @@ function assertNoErrorNoise(messages, failures) {
   }
 }
 
+async function readHoverLabelBounds(graph) {
+  return graph.locator('.vault-graph-view__hover-label').evaluate((element) => {
+    const box = element.getBBox();
+    return {
+      x: box.x,
+      y: box.y,
+      width: box.width,
+      height: box.height,
+      text: element.textContent || '',
+      textAnchor: element.getAttribute('text-anchor') || 'middle',
+      hasChildren: element.childElementCount,
+      visibility: element.getAttribute('visibility') || 'visible',
+      opacity: Number(element.style.opacity || '1'),
+    };
+  });
+}
+
+function assertHoverLabelInsideViewport(hoverBounds, failures, label) {
+  if (!hoverBounds) {
+    fail(`Unable to inspect hover label bounds (${label}).`, failures);
+    return;
+  }
+  if (hoverBounds.width === 0 || hoverBounds.height === 0) {
+    fail(`Hover label has zero size (${label}).`, failures);
+  }
+  if (
+    hoverBounds.x < -1.5 ||
+    hoverBounds.y < -1.5 ||
+    hoverBounds.x + hoverBounds.width > 206 ||
+    hoverBounds.y + hoverBounds.height > 206
+  ) {
+    fail(`Hover label escapes graph viewport (${label}): ${JSON.stringify(hoverBounds)}`, failures);
+  }
+}
+
 async function runExploreGraphSmoke() {
   const failures = [];
 
@@ -374,30 +409,43 @@ async function runExploreGraphSmoke() {
       "Hover label must expose the full node label.",
     );
 
-    const hoverBounds = await graph
-      .locator('.vault-graph-view__hover-label')
-      .evaluate((element) => {
-        const box = element.getBBox();
-        return {
-          x: box.x,
-          y: box.y,
-          width: box.width,
-          height: box.height,
-          visible: element.getAttribute('visibility') || 'visible',
-          opacity: Number(element.style.opacity || '1'),
-        };
-      });
-
-    if (hoverBounds.width === 0 || hoverBounds.height === 0) {
-      fail("Hover label has zero size.", failures);
-    }
-
-    if (hoverBounds.x < -1 || hoverBounds.y < -1 || hoverBounds.x + hoverBounds.width > 206 || hoverBounds.y + hoverBounds.height > 206) {
-      fail(`Hover label escapes graph viewport: ${JSON.stringify(hoverBounds)}`, failures);
-    }
-
     const rect = await graph.locator('.vault-graph-view__canvas').boundingBox();
     assert.ok(rect, "Graph canvas should have a bounding box.");
+
+    const hoverBounds = await readHoverLabelBounds(graph);
+    assertHoverLabelInsideViewport(hoverBounds, failures, 'initial hover');
+
+    const dragNodeTo = async (targetX, targetY) => {
+      const nodeRect = await firstNode.boundingBox();
+      if (!nodeRect) return;
+
+      const startX = nodeRect.x + nodeRect.width / 2;
+      const startY = nodeRect.y + nodeRect.height / 2;
+      await pointerDrag(page, {
+        selector: '.vault-graph-preview .vault-graph-view [data-vault-graph-node-id]',
+        startX,
+        startY,
+        endX: targetX,
+        endY: targetY,
+        pointerId: 500,
+      });
+      await page.waitForTimeout(120);
+    };
+
+    const canvasRect = rect;
+    const canvasLeft = canvasRect.x + 14;
+    const canvasRight = canvasRect.x + canvasRect.width - 14;
+    const canvasMidY = canvasRect.y + canvasRect.height / 2;
+
+    await dragNodeTo(canvasLeft, canvasMidY);
+    await firstNode.dispatchEvent('pointerenter');
+    await page.waitForTimeout(90);
+    assertHoverLabelInsideViewport(await readHoverLabelBounds(graph), failures, 'hover at left side');
+
+    await dragNodeTo(canvasRight, canvasMidY);
+    await firstNode.dispatchEvent('pointerenter');
+    await page.waitForTimeout(90);
+    assertHoverLabelInsideViewport(await readHoverLabelBounds(graph), failures, 'hover at right side');
 
     const start = {
       x: rect.x + rect.width - 25,
