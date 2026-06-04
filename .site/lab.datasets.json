@@ -1,0 +1,47 @@
+[
+  {
+    "id": "perfil-do-vault",
+    "title": "Perfil do vault",
+    "description": "Snapshot gerado localmente para demonstrar ETL antes do notebook",
+    "source": "dados/lab/perfil-do-vault.json",
+    "output": "perfil-do-vault.json",
+    "format": "json",
+    "publish": true
+  },
+  {
+    "id": "curadoria-ia",
+    "title": "Curadoria da arquitetura de informação",
+    "description": "Relatório local da auditoria editorial compartilhada entre site, CI e Lab",
+    "source": "dados/lab/curadoria-ia.json",
+    "output": "curadoria-ia.json",
+    "format": "json",
+    "publish": true
+  },
+  {
+    "id": "feeds-assinados",
+    "title": "Feeds assinados",
+    "description": "Lista OPML normalizada para auditoria de fontes abertas no Lab",
+    "source": "dados/lab/feeds-assinados.json",
+    "output": "feeds-assinados.json",
+    "format": "json",
+    "publish": true
+  },
+  {
+    "id": "outbox-publicacao",
+    "title": "Outbox de publicação",
+    "description": "Rascunhos candidatos a distribuição externa, derivados de frontmatter e revisados antes de publicar",
+    "source": "dados/lab/outbox-publicacao.json",
+    "output": "outbox-publicacao.json",
+    "format": "json",
+    "publish": true
+  },
+  {
+    "id": "json-remoto-opcional",
+    "title": "JSON remoto opcional",
+    "description": "Exemplo de fonte que um notebook WASM pode carregar no navegador quando houver CORS e rede",
+    "runtimeUrl": "https://api.github.com/repos/aretw0/vault-seed",
+    "output": "json-remoto-opcional.json",
+    "format": "json",
+    "publish": true
+  }
+]

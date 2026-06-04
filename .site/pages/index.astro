@@ -1,8 +1,56 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { buildVaultExploreData } from '../lib/vault-explore';
+import VaultGraphShared from '../components/VaultGraphShared.astro';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const explore = buildVaultExploreData();
+const heroNodeCap = Math.max(8, Math.min(28, Math.ceil(explore.graph.nodes.length * 0.22)));
+const heroNodes = [...explore.graph.nodes]
+  .sort((a, b) => (b.degree - a.degree) || a.title.localeCompare(b.title, 'pt'))
+  .slice(0, heroNodeCap);
+const heroNodeIds = new Set(heroNodes.map((node) => node.id));
+const heroLinks = explore.graph.links.filter((link) => heroNodeIds.has(link.source) && heroNodeIds.has(link.target));
+function escapeHtml(value: string) {
+  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function truncateLabel(value: string, max = 16) {
+  return value.length > max ? `${value.slice(0, max - 1)}…` : value;
+}
+function graphHeroHtml() {
+  const center = 100;
+  const radius = 58;
+  const maxDegree = Math.max(1, ...heroNodes.map((node) => node.degree));
+  const positioned = heroNodes.map((node, index) => {
+    const angle = heroNodes.length > 1 ? (Math.PI * 2 * index) / heroNodes.length - Math.PI / 2 : 0;
+    return {
+      ...node,
+      x: center + Math.cos(angle) * radius,
+      y: center + Math.sin(angle) * radius,
+      size: 5 + Math.min(9, node.degree * 1.15),
+      weight: 0.72 + (node.degree / maxDegree) * 0.6,
+    };
+  });
+  const byId = new Map(positioned.map((node) => [node.id, node]));
+  const lines = heroLinks.slice(0, Math.min(heroLinks.length, heroNodes.length * 2)).map((link) => {
+    const source = byId.get(link.source);
+    const target = byId.get(link.target);
+    if (!source || !target) return '';
+    return `<line data-vault-graph-link="" data-vault-graph-source="${escapeHtml(link.source)}" data-vault-graph-target="${escapeHtml(link.target)}" x1="${source.x.toFixed(1)}" y1="${source.y.toFixed(1)}" x2="${target.x.toFixed(1)}" y2="${target.y.toFixed(1)}" />`;
+  }).join('');
+  const circles = positioned.map((node) => (
+    `<a href="${base}/${escapeHtml(node.id)}" aria-label="${escapeHtml(node.title)}: ${node.degree} conexões" data-vault-graph-node-id="${escapeHtml(node.id)}" data-vault-graph-node-label="${escapeHtml(node.title)}" data-vault-graph-node-size="${node.size.toFixed(1)}" data-vault-graph-node-x="${node.x.toFixed(1)}" data-vault-graph-node-y="${node.y.toFixed(1)}" data-vault-graph-label-x="${node.x.toFixed(1)}" data-vault-graph-label-y="${(node.y + node.size + 8).toFixed(1)}">` +
+    `<title>${escapeHtml(node.title)} · ${node.degree} conexões</title>` +
+    `<circle cx="${node.x.toFixed(1)}" cy="${node.y.toFixed(1)}" r="${node.size.toFixed(1)}" style="--vault-node-weight:${node.weight.toFixed(2)}" />` +
+    `<text class="vault-graph-view__label vault-graph-view__label--short" x="${node.x.toFixed(1)}" y="${(node.y + node.size + 8).toFixed(1)}" text-anchor="middle" style="font-size: var(--hero-graph-label-font, var(--vault-graph-label-font, 0.375rem)); font-weight: 800;">${escapeHtml(truncateLabel(node.title))}</text>` +
+    `</a>`
+  )).join('');
+  return `<figure class="vault-graph-view vault-graph-view--hero" aria-label="Graph view do vault"><svg class="vault-graph-view__canvas" viewBox="0 0 200 200" role="img"><title>Graph view do vault</title><g class="vault-graph-view__links" aria-hidden="true">${lines}</g><g class="vault-graph-view__nodes">${circles}</g><g class="vault-graph-view__hover-layer" aria-hidden="true"><text class="vault-graph-view__hover-label" text-anchor="middle" style="font-size: var(--hero-graph-hover-label-font, var(--vault-graph-hover-label-font, 0.438rem)); stroke-width: var(--hero-graph-hover-label-stroke, var(--vault-graph-hover-label-stroke, 0.1875rem));"></text></g></svg><figcaption>Toque em um nó (ou passe o mouse) para ver o nome completo</figcaption></figure>`;
+}
+const heroGraphHtml = graphHeroHtml();
 ---
+
+<VaultGraphShared />
 
 <StarlightPage
   frontmatter={{
@@ -10,31 +58,556 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     template: 'splash',
     hero: {
       image: {
-        html: `<div class="hero-diagram"><pre data-language="mermaid">graph TB
-  V(("vault-seed")) --> D["Diário"]
-  V --> P["Projetos"]
-  V --> A["Áreas"]
-  V --> R["Recursos"]
-  V --> Q["Arquivo"]
-  P --> S(["Site publicado"])
-  R -.-> P
-  A -.-> P</pre></div>`,
+        html: heroGraphHtml,
       },
-      tagline: 'Um template de vault para Obsidian — para uso individual ou em equipe, versionado e publicável como site.',
+      tagline: 'Conhecimento que é seu: local, versionado, AI-ready. Publique quando quiser, ou não publique nunca.',
       actions: [
         {
           text: 'Começar',
-          link: `${base}/meta-e-anexos/seus-primeiros-passos/`,
+          link: `${base}/meta-e-anexos/onboarding/seus-primeiros-passos/`,
           icon: 'right-arrow',
           variant: 'primary',
         },
         {
-          text: 'Ver o Vault',
-          link: `${base}/meta-e-anexos/moc-vault-seed/`,
+          text: 'Explorar',
+          link: `${base}/explorar/`,
           icon: 'open-book',
         },
       ],
     },
   }}
 >
+  <section class="vault-home-section" aria-label="Possibilidades de uso do vault-seed">
+    <p class="vault-lead">
+      O vault-seed é um ponto de partida, não uma solução completa. Tudo que está aqui pode
+      ser apagado, adaptado ou ignorado — o vault é seu desde o primeiro commit.
+    </p>
+
+    <div class="vault-card-grid">
+      <article class="vault-card">
+        <span class="vault-card__eyebrow">Local first</span>
+        <h2 class="vault-card__title">Conhecimento que não depende da nuvem</h2>
+        <details class="vault-card__details">
+          <summary class="vault-card__body" aria-label="Resumo do card: conheça o texto completo para abrir">
+            Markdown puro e Git: funciona offline, em qualquer editor, sem lock-in.
+          </summary>
+          <p class="vault-card__body vault-card__body-full">
+            Markdown puro e Git: funciona offline, em qualquer editor, sem lock-in.
+            Repo privado ou público — você decide o que compartilhar, se é que vai compartilhar algo.
+          </p>
+        </details>
+        <div class="vault-actions">
+          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/onboarding/entendendo-a-estrutura-de-pastas/`}>Estrutura</a>
+        </div>
+      </article>
+
+      <article class="vault-card">
+        <span class="vault-card__eyebrow">AI-ready</span>
+        <h2 class="vault-card__title">Agentes de IA como coautores</h2>
+        <details class="vault-card__details">
+          <summary class="vault-card__body" aria-label="Resumo do card: conheça o texto completo para abrir">
+            AGENTS.md, CLAUDE.md e GEMINI.md entregam contexto do vault a qualquer assistente.
+          </summary>
+          <p class="vault-card__body vault-card__body-full">
+            AGENTS.md, CLAUDE.md e GEMINI.md entregam contexto do vault a qualquer assistente.
+            Zero configuração extra para começar a usar IA no repositório.
+          </p>
+        </details>
+        <div class="vault-actions">
+          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/referencia/usando-com-agentes-de-ia/`}>Agentes</a>
+        </div>
+      </article>
+
+      <article class="vault-card">
+        <span class="vault-card__eyebrow">Publicação opcional</span>
+        <h2 class="vault-card__title">Site quando você quiser</h2>
+        <details class="vault-card__details">
+          <summary class="vault-card__body" aria-label="Resumo do card: conheça o texto completo para abrir">
+            GitHub Pages com Astro e Starlight. Escolha quais notas ficam públicas.
+          </summary>
+          <p class="vault-card__body vault-card__body-full">
+            GitHub Pages com Astro e Starlight. Escolha quais notas ficam públicas,
+            use seu domínio, ative RSS. Nada é publicado por padrão.
+          </p>
+        </details>
+        <div class="vault-actions">
+          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/workflows/publicando-seu-vault-como-site/`}>Publicar</a>
+        </div>
+      </article>
+
+      <article class="vault-card">
+        <span class="vault-card__eyebrow">Conhecimento coletivo</span>
+        <h2 class="vault-card__title">Documentação viva para times</h2>
+        <details class="vault-card__details">
+          <summary class="vault-card__body" aria-label="Resumo do card: conheça o texto completo para abrir">
+            Use Git, PRs e notas Markdown para manter decisões e guias auditáveis.
+          </summary>
+          <p class="vault-card__body vault-card__body-full">
+            Use Git, PRs e notas Markdown para manter decisões, recursos e guias em um lugar auditável.
+          </p>
+        </details>
+        <div class="vault-actions">
+          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/referencia/convencoes-e-boas-praticas/`}>Convenções</a>
+        </div>
+      </article>
+
+      <article class="vault-card">
+        <span class="vault-card__eyebrow">Lab</span>
+        <h2 class="vault-card__title">Notebooks junto do vault</h2>
+        <details class="vault-card__details">
+          <summary class="vault-card__body" aria-label="Resumo do card: conheça o texto completo para abrir">
+            Use Marimo para tarefas locais de análise e transformação.
+          </summary>
+          <p class="vault-card__body vault-card__body-full">
+            Use Marimo para extract local, transformação e análises que não pertencem ao site estático.
+          </p>
+        </details>
+        <div class="vault-actions">
+          <a class="vault-button vault-button--secondary" href={`${base}/lab/`}>Abrir Lab</a>
+        </div>
+      </article>
+
+      <article class="vault-card">
+        <span class="vault-card__eyebrow">Sindicação</span>
+        <h2 class="vault-card__title">RSS para publicar e auditar fontes</h2>
+        <details class="vault-card__details">
+          <summary class="vault-card__body" aria-label="Resumo do card: conheça o texto completo para abrir">
+            Gere um feed aberto do seu vault e consuma fontes externas.
+          </summary>
+          <p class="vault-card__body vault-card__body-full">
+            Gere um feed aberto do seu vault e consuma feeds externos como snapshots analisáveis no Lab.
+          </p>
+        </details>
+        <div class="vault-actions">
+          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/workflows/publicando-e-consumindo-rss-no-vault/`}>Ver RSS</a>
+        </div>
+      </article>
+    </div>
+  </section>
 </StarlightPage>
+
+<script is:inline>
+  (() => {
+    const MOBILE_GRAPH_BREAKPOINT = 44;
+    const isMobileHeroGraph = window.matchMedia(`(max-width: ${MOBILE_GRAPH_BREAKPOINT}rem)`).matches;
+    const rootFontPx = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    const heroGraphNodeScale = isMobileHeroGraph ? 1.10 : 1;
+    const heroGraphLabelFont = isMobileHeroGraph ? rootFontPx * 0.75 : rootFontPx * 0.375;
+    const heroGraphHoverLabelFont = isMobileHeroGraph ? rootFontPx * 0.9 : rootFontPx * 0.4375;
+    const heroGraphRadiusBoost = isMobileHeroGraph ? 1 : 0;
+    const heroGraphLayoutScale = isMobileHeroGraph ? 1.2 : 1;
+
+    const VIEWBOX_SIZE = 200;
+    const FORCE_STEPS = 140;
+    const REPULSION_FORCE = 2200;
+    const SPRING_FORCE = 0.018;
+    const CENTER_FORCE = 0.002;
+    const DAMPING = 0.82;
+
+    const sharedGraph = window.__vaultGraphShared || {};
+    const LABEL_OFFSET_Y = Number(sharedGraph.LABEL_OFFSET_Y || 9);
+    const LABEL_MARGIN = Number(sharedGraph.LABEL_MARGIN || 6);
+    const LABEL_MARGIN_Y = Number(sharedGraph.LABEL_MARGIN_Y || 1);
+    const clamp = typeof sharedGraph.clamp === 'function'
+      ? sharedGraph.clamp
+      : (value, min, max) => Math.min(max, Math.max(min, value));
+    const estimateLabelHalfWidth = typeof sharedGraph.estimateLabelHalfWidth === 'function'
+      ? sharedGraph.estimateLabelHalfWidth
+      : (text, fontSize) => {
+        const safeFontSize = Number(fontSize) || 6;
+        return Math.max(5, Math.min(isMobileHeroGraph ? 36 : 18, String(text || '').length * safeFontSize * 0.52));
+      };
+    const placeLabel = typeof sharedGraph.placeLabel === 'function'
+      ? (rawX, rawY, halfWidth, preferAbove = false) => {
+        return sharedGraph.placeLabel(
+          rawX,
+          rawY,
+          halfWidth,
+          preferAbove,
+          {
+            viewboxSize: VIEWBOX_SIZE,
+            offsetY: LABEL_OFFSET_Y,
+            margin: LABEL_MARGIN,
+            marginY: LABEL_MARGIN_Y,
+            visibleMinX: 0,
+            visibleMaxX: VIEWBOX_SIZE,
+            visibleMinY: 0,
+            visibleMaxY: VIEWBOX_SIZE,
+          },
+        );
+      }
+      : (rawX, rawY, halfWidth, preferAbove = false) => {
+        const safeHalf = Math.min(Number(halfWidth) || 10, VIEWBOX_SIZE / 2 - LABEL_MARGIN - 1);
+        const minX = Math.max(safeHalf, LABEL_MARGIN);
+        const maxX = Math.min(VIEWBOX_SIZE - safeHalf - LABEL_MARGIN, VIEWBOX_SIZE - LABEL_MARGIN);
+        const clampedX = clamp(rawX, Math.min(minX, maxX), Math.max(minX, maxX));
+
+        const textAnchor =
+          minX === maxX
+            ? 'middle'
+            : clampedX <= minX + 0.001
+              ? 'start'
+              : clampedX >= maxX - 0.001
+                ? 'end'
+                : 'middle';
+
+        const minY = LABEL_OFFSET_Y + LABEL_MARGIN_Y;
+        const maxY = VIEWBOX_SIZE - LABEL_OFFSET_Y - LABEL_MARGIN_Y;
+        const preferredY = preferAbove
+          ? rawY - (LABEL_OFFSET_Y + LABEL_MARGIN_Y + 4)
+          : rawY;
+
+        let clampedY = clamp(preferredY, minY, maxY);
+        if (preferAbove && preferredY < minY) {
+          clampedY = clamp(rawY, minY, maxY);
+        }
+
+        return {
+          x: clampedX,
+          y: clampedY,
+          anchor: textAnchor,
+        };
+      };
+
+    const fitLabelToViewport = typeof sharedGraph.fitLabelToViewport === 'function'
+      ? (
+          labelElement,
+          text,
+          rawX,
+          rawY,
+          preferAbove = false,
+        ) => {
+        return sharedGraph.fitLabelToViewport(
+          labelElement,
+          text,
+          rawX,
+          rawY,
+          preferAbove,
+          {
+            viewboxSize: VIEWBOX_SIZE,
+            offsetY: LABEL_OFFSET_Y,
+            margin: LABEL_MARGIN,
+            marginY: LABEL_MARGIN_Y,
+            visibleMinX: 0,
+            visibleMaxX: VIEWBOX_SIZE,
+            visibleMinY: 0,
+            visibleMaxY: VIEWBOX_SIZE,
+          },
+        );
+      }
+      : (labelElement, text, rawX, rawY, preferAbove = false) => {
+        if (!labelElement) {
+          return {
+            x: rawX,
+            y: rawY,
+            anchor: 'middle',
+            fontSize: '',
+          };
+        }
+
+        labelElement.textContent = String(text || '');
+        const estimatedHalfWidth = estimateLabelHalfWidth(String(text || ''), heroGraphHoverLabelFont, { maxChars: 220 });
+        const fallbackPlacement = placeLabel(rawX, rawY, estimatedHalfWidth, preferAbove);
+        return {
+          ...fallbackPlacement,
+          fontSize: '',
+        };
+      };
+
+    const renderWrappedLabel = typeof sharedGraph.renderWrappedLabel === 'function'
+      ? (
+          labelElement,
+          placement,
+        ) => sharedGraph.renderWrappedLabel(labelElement, placement)
+      : (labelElement, placement) => {
+        if (!labelElement) return;
+
+        const lines = Array.isArray(placement?.lines)
+          ? placement.lines.filter((line) => line !== undefined && line !== null)
+          : [];
+        if (lines.length <= 1) {
+          return;
+        }
+
+        const x = Number(placement?.x);
+        const y = Number(placement?.y);
+        const lineHeight = Number.isFinite(Number(placement?.lineHeight))
+          ? Number(placement.lineHeight)
+          : Number.parseFloat(String(placement?.fontSize || '7px')) || 7;
+
+        while (labelElement.firstChild) {
+          labelElement.removeChild(labelElement.firstChild);
+        }
+
+        lines.forEach((line, index) => {
+          const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+          tspan.textContent = String(line);
+          tspan.setAttribute('x', String(Number.isFinite(x) ? x : 0));
+
+          if (index === 0) {
+            tspan.setAttribute('y', String(Number.isFinite(y) ? y : 0));
+          } else {
+            tspan.setAttribute('dy', String(lineHeight));
+          }
+
+          labelElement.appendChild(tspan);
+        });
+      };
+    const computeForces = typeof sharedGraph.computeForces === 'function'
+      ? sharedGraph.computeForces
+      : (params = {}) => {
+        const nodes = Array.isArray(params.nodes) ? params.nodes : [];
+        const edges = Array.isArray(params.edges) ? params.edges : [];
+        return nodes.map(() => ({ x: 0, y: 0 }));
+      };
+
+    function runPhysicsLayout(figure) {
+      const nodes = Array.from(figure.querySelectorAll('[data-vault-graph-node-id]'));
+      if (!nodes.length) return;
+
+      const center = VIEWBOX_SIZE / 2;
+      const state = nodes.map((node) => {
+        const size = Number.parseFloat(String(node.dataset.vaultGraphNodeSize || '6')) || 6;
+        const rawX = Number.parseFloat(String(node.dataset.vaultGraphNodeX || '100')) || 100;
+        const rawY = Number.parseFloat(String(node.dataset.vaultGraphNodeY || '100')) || 100;
+        return {
+          id: node.dataset.vaultGraphNodeId,
+          x: center + (rawX - center) * heroGraphLayoutScale,
+          y: center + (rawY - center) * heroGraphLayoutScale,
+          size: size * heroGraphNodeScale,
+          vx: (Math.random() - 0.5) * 0.6,
+          vy: (Math.random() - 0.5) * 0.6,
+          element: node,
+          circle: node.querySelector('circle'),
+          label: node.querySelector('.vault-graph-view__label--short'),
+        };
+      });
+
+      const stateById = new Map(state.map((item) => [item.id, item]));
+      const edges = Array.from(figure.querySelectorAll('[data-vault-graph-link]')).map((edge) => ({
+        edge,
+        source: stateById.get(edge.getAttribute('data-vault-graph-source') || ''),
+        target: stateById.get(edge.getAttribute('data-vault-graph-target') || ''),
+      }));
+
+      let step = 0;
+
+      function paint() {
+        state.forEach((item) => {
+          if (!item.element || !item.circle) return;
+          item.element.dataset.vaultGraphNodeX = item.x.toFixed(2);
+          item.element.dataset.vaultGraphNodeY = item.y.toFixed(2);
+
+          const shortText = item.label?.textContent || item.element.dataset.vaultGraphNodeLabel || '';
+          const shortPlacement = placeLabel(
+            item.x,
+            item.y + item.size + LABEL_OFFSET_Y,
+            estimateLabelHalfWidth(shortText, heroGraphLabelFont, { maxChars: 18 }),
+          );
+
+          item.element.dataset.vaultGraphLabelX = shortPlacement.x.toFixed(2);
+          item.element.dataset.vaultGraphLabelY = shortPlacement.y.toFixed(2);
+
+          item.circle.setAttribute('cx', item.x.toFixed(2));
+          item.circle.setAttribute('cy', item.y.toFixed(2));
+          item.circle.setAttribute('r', (item.size + heroGraphRadiusBoost).toFixed(2));
+
+          if (item.label) {
+            item.label.setAttribute('x', shortPlacement.x.toFixed(2));
+            item.label.setAttribute('y', shortPlacement.y.toFixed(2));
+            item.label.setAttribute('text-anchor', shortPlacement.anchor);
+          }
+        });
+
+        edges.forEach((edge) => {
+          if (!edge.source || !edge.target) return;
+          edge.edge.setAttribute('x1', edge.source.x.toFixed(2));
+          edge.edge.setAttribute('y1', edge.source.y.toFixed(2));
+          edge.edge.setAttribute('x2', edge.target.x.toFixed(2));
+          edge.edge.setAttribute('y2', edge.target.y.toFixed(2));
+        });
+      }
+
+      function iterate() {
+        const forces = computeForces({
+          nodes: state,
+          edges,
+          repulsionForce: REPULSION_FORCE,
+          springForce: SPRING_FORCE,
+          repulsionMode: 'hero',
+          globalInteractionRadius: Number.POSITIVE_INFINITY,
+          edgeIdealGap: isMobileHeroGraph ? 30 : 28,
+          nodeActivePredicate: () => true,
+          includeInvisibleForces: true,
+        });
+
+        for (let i = 0; i < state.length; i += 1) {
+          const item = state[i];
+          const dx = center - item.x;
+          const dy = center - item.y;
+          item.vx = (item.vx + forces[i].x + dx * CENTER_FORCE) * DAMPING;
+          item.vy = (item.vy + forces[i].y + dy * CENTER_FORCE) * DAMPING;
+          item.x += item.vx;
+          item.y += item.vy;
+
+          const min = item.size + 8;
+          const max = VIEWBOX_SIZE - item.size - 8;
+          item.x = Math.min(max, Math.max(min, item.x));
+          item.y = Math.min(max, Math.max(min, item.y));
+        }
+
+        paint();
+        step += 1;
+        if (step < FORCE_STEPS) {
+          requestAnimationFrame(iterate);
+        }
+      }
+
+      paint();
+      requestAnimationFrame(iterate);
+    }
+
+    function setupGraph() {
+      document.querySelectorAll('.vault-graph-view--hero').forEach((figure) => {
+        if (figure.dataset.vaultGraphReady === '1') return;
+        figure.dataset.vaultGraphReady = '1';
+        figure.style.setProperty('--vault-graph-label-font', isMobileHeroGraph ? '0.75rem' : '6px');
+        figure.style.setProperty('--vault-graph-hover-label-font', isMobileHeroGraph ? '0.9rem' : '7px');
+        figure.style.setProperty('--vault-graph-hover-label-stroke', isMobileHeroGraph ? '0.15rem' : '0.2rem');
+
+        figure.style.setProperty('--hero-graph-label-font', isMobileHeroGraph ? '0.75rem' : '0.375rem');
+        figure.style.setProperty('--hero-graph-hover-label-font', isMobileHeroGraph ? '0.9rem' : '0.4375rem');
+        figure.style.setProperty('--hero-graph-hover-label-stroke', isMobileHeroGraph ? '0.15rem' : '0.2rem');
+
+        const hoverLabel = figure.querySelector('.vault-graph-view__hover-label');
+        const nodes = figure.querySelectorAll('[data-vault-graph-node-label]');
+
+        nodes.forEach((node) => {
+          const nodeId = node.dataset.vaultGraphNodeId || '';
+          const activate = () => {
+            if (!hoverLabel) return;
+
+            const fullLabel = node.dataset.vaultGraphNodeLabel || '';
+            const nodeSize = (Number.parseFloat(String(node.dataset.vaultGraphNodeSize || '6')) || 6) * heroGraphNodeScale;
+            const baseX = Number.parseFloat(String(node.dataset.vaultGraphLabelX || node.dataset.vaultGraphNodeX || '0')) || 0;
+            const baseY = Number.parseFloat(String(node.dataset.vaultGraphLabelY || node.dataset.vaultGraphNodeY || '0')) || 0;
+
+            const preferAbove = (baseY - nodeSize - LABEL_OFFSET_Y) > (LABEL_OFFSET_Y + LABEL_MARGIN_Y + 4);
+            const hoverY = preferAbove ? (baseY - nodeSize - LABEL_OFFSET_Y) : (baseY + nodeSize + LABEL_OFFSET_Y);
+
+            const hoverPlacement = fitLabelToViewport(
+              hoverLabel,
+              fullLabel,
+              baseX,
+              hoverY,
+              preferAbove,
+            );
+
+            if (Array.isArray(hoverPlacement.lines) && hoverPlacement.lines.length > 1) {
+              renderWrappedLabel(hoverLabel, hoverPlacement);
+            } else {
+              hoverLabel.textContent = fullLabel;
+            }
+
+            if (hoverPlacement.fontSize) {
+              hoverLabel.style.fontSize = hoverPlacement.fontSize;
+            } else {
+              hoverLabel.style.removeProperty('font-size');
+            }
+            hoverLabel.setAttribute('x', hoverPlacement.x.toFixed(2));
+            hoverLabel.setAttribute('y', hoverPlacement.y.toFixed(2));
+            hoverLabel.setAttribute('text-anchor', hoverPlacement.anchor);
+            node.classList.add('is-hovered');
+            figure.dataset.vaultGraphHover = '1';
+
+            figure.querySelectorAll('[data-vault-graph-link]').forEach((edge) => {
+              const src = edge.getAttribute('data-vault-graph-source');
+              const tgt = edge.getAttribute('data-vault-graph-target');
+              if (src === nodeId || tgt === nodeId) {
+                edge.classList.add('is-connected');
+                const neighborId = src === nodeId ? tgt : src;
+                figure.querySelector(`[data-vault-graph-node-id="${neighborId}"]`)?.classList.add('is-neighbor');
+              }
+            });
+          };
+          const deactivate = () => {
+            node.classList.remove('is-hovered');
+            delete figure.dataset.vaultGraphHover;
+            figure.querySelectorAll('[data-vault-graph-link].is-connected').forEach((e) => e.classList.remove('is-connected'));
+            figure.querySelectorAll('[data-vault-graph-node-id].is-neighbor').forEach((e) => e.classList.remove('is-neighbor'));
+            if (hoverLabel) {
+              hoverLabel.textContent = '';
+              hoverLabel.style.removeProperty('font-size');
+            }
+          };
+
+          node.addEventListener('pointerenter', activate);
+          node.addEventListener('pointerleave', deactivate);
+          node.addEventListener('focus', activate);
+          node.addEventListener('blur', deactivate);
+        });
+
+        runPhysicsLayout(figure);
+      });
+    }
+
+    setupGraph();
+    document.addEventListener('astro:page-load', setupGraph);
+  })();
+</script>
+
+<style>
+  .vault-home-section {
+    --vault-card-min-height: auto;
+    --vault-card-title-lines: 2;
+    --vault-card-body-lines: 3;
+    --vault-card-column-min: 20rem;
+    margin-block: clamp(2rem, 4vw, 4rem);
+  }
+
+  .vault-home-section .vault-card-grid {
+    grid-auto-rows: auto;
+  }
+
+  .vault-home-section .vault-card {
+    min-height: auto;
+    height: auto;
+  }
+
+  .vault-home-section .vault-card__details {
+    margin: 0;
+  }
+
+  .vault-home-section .vault-card__details > summary {
+    cursor: pointer;
+    list-style: none;
+    width: 100%;
+  }
+
+  .vault-home-section .vault-card__details > summary::marker,
+  .vault-home-section .vault-card__details > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .vault-home-section .vault-card__details > summary::after {
+    content: ' (ver mais)';
+    color: var(--sl-color-text-accent);
+    font-size: var(--sl-text-xs);
+    font-weight: 650;
+    white-space: nowrap;
+  }
+
+  .vault-home-section .vault-card__details[open] > summary::after {
+    content: ' (ver menos)';
+  }
+
+  .vault-home-section .vault-card__body-full {
+    display: block;
+    min-height: 0;
+    margin: 0.45rem 0 0;
+    overflow: visible;
+    -webkit-line-clamp: unset;
+  }
+
+
+</style>

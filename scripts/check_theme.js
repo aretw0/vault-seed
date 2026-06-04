@@ -91,6 +91,7 @@ const PAIRS = [
 const MARIMO_PAIRS = [
   ['foreground',         'background', 'texto/fundo',       4.5],
   ['popover-foreground', 'popover',    'select/popover',    4.5],
+  ['popover-foreground', 'popover',    'tooltip/hover',     4.5],
   ['muted-foreground',   'background', 'cabecalho/tabela',  4.5],
   ['accent-foreground',  'accent',     'item selecionado',  4.5],
 ];

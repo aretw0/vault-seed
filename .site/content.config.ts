@@ -1,18 +1,14 @@
 // .site/content.config.ts
-import { defineCollection } from 'astro:content';
+import { defineCollection, z } from 'astro:content';
 import { docsSchema } from '@astrojs/starlight/schema';
 import { readFileSync } from 'node:fs';
 import { join, basename } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { globSync } from 'glob';
 import matter from 'gray-matter';
-import { slugify } from '@dgk/astro-plugins';
-
-const VAULT_FOLDERS = [
-  '00 - Entrada', '10 - Diário', '20 - Projetos',
-  '30 - Áreas', '40 - Recursos', '50 - Arquivo',
-  '90 - Modelos', '99 - Meta e Anexos',
-];
+import { slugify } from '@aretw0/dgk-astro-plugins';
+import { readTechnicalDocEntries } from './integrations/technical-docs.js';
+import { VAULT_FOLDERS } from './lib/vault-folders.mjs';
 
 function escapeHtml(value: unknown): string {
   return String(value)
@@ -66,6 +62,8 @@ export const collections = {
     loader: {
       name: 'vault-loader',
       load: async ({ store, logger, renderMarkdown }: { store: any; logger: any; renderMarkdown: any }) => {
+        store.clear();
+
         const patterns = VAULT_FOLDERS.map(f => `${f}/**/*.md`);
         const files = globSync(patterns, { cwd: process.cwd() });
         let count = 0;
@@ -127,9 +125,63 @@ export const collections = {
           count++;
         }
 
+        for (const entry of readTechnicalDocEntries()) {
+          const safeData: Record<string, unknown> = {};
+          for (const [k, v] of Object.entries(entry.data)) {
+            safeData[k] = v instanceof Date ? v.toISOString().slice(0, 10) : v;
+          }
+
+          const body = entry.content.replace(/^\s*#(?!#)[^\n]*\n?/, '').trimStart();
+          const rendered = await renderMarkdown(body, {
+            fileURL: pathToFileURL(entry.fullPath),
+          });
+
+          store.set({
+            id: entry.slug,
+            data: {
+              ...safeData,
+              title: entry.title,
+              draft: false,
+              head: [],
+              editUrl: true,
+              template: 'doc',
+              pagefind: true,
+              sidebar: { hidden: false, attrs: {}, ...(safeData.sidebar as object ?? {}) },
+            },
+            body,
+            filePath: `.site/content/docs/${entry.slug}.md`,
+            rendered,
+          });
+          count++;
+        }
+
+        const notFoundBody = 'A página solicitada não existe ou não está publicada.';
+        const notFoundRendered = await renderMarkdown(notFoundBody, {
+          fileURL: pathToFileURL(join(process.cwd(), '404.md')),
+        });
+        store.set({
+          id: '404',
+          data: {
+            title: 'Página não encontrada',
+            draft: true,
+            head: [],
+            editUrl: false,
+            template: 'doc',
+            pagefind: false,
+            sidebar: { hidden: true, attrs: {} },
+          },
+          body: notFoundBody,
+          filePath: '.site/content/docs/404.md',
+          rendered: notFoundRendered,
+        });
+
         logger.info(`Vault loader: ${count} published notes loaded`);
       },
     },
-    schema: docsSchema(),
+    schema: docsSchema({
+      extend: z.object({
+        showGraphView: z.boolean().optional(),
+      }),
+    }),
   }),
 };

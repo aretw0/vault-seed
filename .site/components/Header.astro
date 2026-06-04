@@ -4,27 +4,52 @@ import LanguageSelect from 'virtual:starlight/components/LanguageSelect';
 import Search from 'virtual:starlight/components/Search';
 import SiteTitle from 'virtual:starlight/components/SiteTitle';
 import SocialIcons from 'virtual:starlight/components/SocialIcons';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 
 const shouldRenderSearch =
 	config.pagefind || config.components.Search !== '@astrojs/starlight/components/Search.astro';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const themeSelectorMode = import.meta.env.VAULT_THEME_SELECTOR;
-const isVaultSeedRepo = import.meta.env.GITHUB_REPOSITORY === 'aretw0/vault-seed';
+const repoName = import.meta.env.GITHUB_REPOSITORY?.split('/')[1] ?? process.cwd().split(/[\\/]/).pop();
+const isVaultSeedRepo = import.meta.env.GITHUB_REPOSITORY === 'aretw0/vault-seed' || repoName === 'vault-seed';
 const shouldRenderThemeSelect = themeSelectorMode === '1' || (themeSelectorMode !== '0' && isVaultSeedRepo);
+const shouldRenderTechnicalDocs =
+	import.meta.env.VAULT_SEED_TECHNICAL_DOCS !== '0' && existsSync(join(process.cwd(), 'docs', 'INDEX.md'));
 ---
 
 <div class="header">
 	<div class="title-wrapper sl-flex">
 		<SiteTitle />
+		<a class="lab-link" href={`${base}/explorar/`}>Explorar</a>
 		<a class="lab-link" href={`${base}/lab/`}>Lab</a>
+		{shouldRenderTechnicalDocs && <a class="lab-link" href={`${base}/docs/`}>Docs</a>}
 	</div>
 	<div class="sl-flex print:hidden">
 		{shouldRenderSearch && <Search />}
 	</div>
+	{shouldRenderThemeSelect && (
+		<details class="vault-theme-mobile print:hidden">
+			<summary aria-label="Tema do site" title="Tema">◐</summary>
+			<div class="vault-theme-demo" aria-label="Tema do site no mobile">
+				<select data-vault-palette-select aria-label="Paleta">
+					<option value="verde-jardim">Verde jardim</option>
+					<option value="oceano">Oceano</option>
+					<option value="terracota">Terracota</option>
+				</select>
+				<select data-vault-mode-select aria-label="Modo">
+					<option value="system">Sistema</option>
+					<option value="light">Claro</option>
+					<option value="dark">Escuro</option>
+				</select>
+			</div>
+		</details>
+	)}
 	<div class="sl-hidden md:sl-flex print:hidden right-group">
 		<div class="sl-flex social-icons">
 			<SocialIcons />
 		</div>
+
 		{shouldRenderThemeSelect && (
 			<div class="vault-theme-demo" aria-label="Tema do site">
 				<select data-vault-palette-select aria-label="Paleta">
@@ -88,6 +113,7 @@ const shouldRenderThemeSelect = themeSelectorMode === '1' || (themeSelectorMode 
 	</div>
 </div>
 
+
 <style>
 	@layer starlight.core {
 		.header {
@@ -138,6 +164,43 @@ const shouldRenderThemeSelect = themeSelectorMode === '1' || (themeSelectorMode 
 			align-items: center;
 		}
 
+		.vault-theme-mobile {
+			position: relative;
+			flex: none;
+		}
+
+		.vault-theme-mobile summary {
+			border: 1px solid var(--sl-color-hairline);
+			border-radius: 999px;
+			background: var(--sl-color-bg-nav);
+			color: var(--sl-color-text-accent);
+			cursor: pointer;
+			font-size: var(--sl-text-xs);
+			font-weight: 700;
+			line-height: 1;
+			list-style: none;
+			padding: 0.45rem 0.7rem;
+		}
+
+		.vault-theme-mobile summary::-webkit-details-marker {
+			display: none;
+		}
+
+		.vault-theme-mobile .vault-theme-demo {
+			position: absolute;
+			z-index: 10;
+			top: calc(100% + 0.5rem);
+			right: 0;
+			flex-direction: column;
+			align-items: stretch;
+			border: 1px solid var(--sl-color-hairline);
+			border-radius: 0.75rem;
+			background: var(--sl-color-bg-nav);
+			box-shadow: 0 1rem 2.5rem color-mix(in srgb, var(--sl-color-black) 18%, transparent);
+			padding: 0.5rem;
+		}
+
+
 		.vault-theme-demo select {
 			max-width: 8.25rem;
 			border: 1px solid var(--sl-color-hairline);
@@ -148,6 +211,44 @@ const shouldRenderThemeSelect = themeSelectorMode === '1' || (themeSelectorMode 
 			font-size: var(--sl-text-xs);
 			line-height: 1;
 			padding: 0.3rem 0.45rem;
+		}
+
+		@media (max-width: 36rem) {
+			.header {
+				gap: 0.45rem;
+			}
+
+			.title-wrapper {
+				flex: 1 1 auto;
+				gap: 0.45rem;
+			}
+
+			.title-wrapper :global(.site-title span) {
+				position: relative;
+				display: inline-flex;
+				width: 2.35rem;
+				overflow: hidden;
+				color: transparent;
+				letter-spacing: -0.04em;
+			}
+
+			.title-wrapper :global(.site-title span)::before {
+				position: absolute;
+				inset: 0;
+				color: var(--sl-color-text-accent);
+				content: 'VS';
+				font-weight: 800;
+			}
+
+			.lab-link {
+				font-size: 0.78rem;
+			}
+		}
+
+		@media (min-width: 50rem) {
+			.vault-theme-mobile {
+				display: none;
+			}
 		}
 
 		@media (min-width: 50rem) {

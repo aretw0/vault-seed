@@ -1,0 +1,36 @@
+[build-system]
+requires = ["hatchling>=1.21"]
+build-backend = "hatchling.build"
+
+[project]
+name = "dgk-lab-runtime"
+version = "0.1.0"
+description = "Digital Gardening Kit — Lab notebook runtime utilities for Marimo notebooks in Obsidian vaults"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { spdx-expression = "GPL-3.0-only" }
+keywords = ["marimo", "obsidian", "vault", "notebook", "digital-garden"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
+dependencies = []
+
+[project.optional-dependencies]
+scraping = ["playwright>=1.40"]
+ocr = ["pytesseract>=0.3", "Pillow>=10.0"]
+
+[project.urls]
+Repository = "https://github.com/aretw0/vault-seed"
+"Bug Tracker" = "https://github.com/aretw0/vault-seed/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/dgk_lab_runtime"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/", "README.md", "pyproject.toml"]

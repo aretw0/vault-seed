@@ -48,7 +48,7 @@ views:
 
 No vault-seed, veja [[Vault Seed Kitchen Sink.base]] e [[MOC Vault Seed]].
 
-## Referencias
+## Referências
 
-- [Introducao a Bases](https://help.obsidian.md/bases)
+- [Introdução a Bases](https://help.obsidian.md/bases)
 - [Sintaxe de Bases](https://help.obsidian.md/bases/syntax)

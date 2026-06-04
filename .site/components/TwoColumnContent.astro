@@ -1,0 +1,163 @@
+---
+import VaultGraphView from './VaultGraphView.astro';
+import { buildVaultExploreData } from '../lib/vault-explore';
+
+const isExploreRoute =
+  Astro.url.pathname === '/explorar/' ||
+  Astro.url.pathname === '/explorar' ||
+  Astro.locals.starlightRoute.entry.id === 'explorar/index' ||
+  Astro.locals.starlightRoute.entry.id === 'explorar';
+
+const entryData = Astro.locals.starlightRoute.entry.data as Record<string, unknown>;
+const showGraphView = isExploreRoute || entryData.showGraphView === true;
+
+const exploreGraphData = showGraphView ? buildVaultExploreData() : null;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const exploreGraphLimit = isExploreRoute ? 12 : 8;
+---
+<div class="lg:sl-flex">
+	{
+		Astro.locals.starlightRoute.toc && (
+			<>
+				<button
+					class="vault-sidebar-rail-toggle vault-sidebar-rail-toggle--right print:hidden"
+					type="button"
+					data-vault-sidebar-toggle="right"
+					aria-pressed="false"
+					aria-label="Recolher índice lateral"
+					title="Recolher índice lateral"
+				>
+					<svg aria-hidden="true" class="vault-sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+				</button>
+				<aside class="right-sidebar-container print:hidden">
+					<div class="right-sidebar">
+						{showGraphView && exploreGraphData && (
+							<section class="vault-graph-sidebar" aria-label="Graph lateral de exploração">
+								<VaultGraphView
+									nodes={exploreGraphData.graph.nodes}
+									links={exploreGraphData.graph.links}
+									base={base}
+									limit={exploreGraphLimit}
+									title="Graph view lateral do vault"
+									showLabels={true}
+								/>
+							</section>
+						)}
+						<slot name="right-sidebar" />
+					</div>
+				</aside>
+			</>
+		)
+	}
+	<div class="main-pane"><slot /></div>
+</div>
+
+	<style>
+		@layer starlight.core {
+			:root {
+				--vault-sidebar-rail-toggle-size: 2rem;
+				--vault-sidebar-rail-toggle-font-size: 1.68rem;
+			}
+
+			.main-pane {
+				isolation: isolate;
+			}
+
+		.vault-sidebar-rail-toggle {
+			display: none;
+		}
+
+		@media (min-width: 72rem) {
+			:global(:root) {
+				/* Cap at 20rem so the right sidebar doesn't balloon on wide screens */
+				--vault-right-sidebar-width: min(
+					calc(var(--sl-sidebar-width) + (100dvw - 2 * var(--sl-sidebar-width) - var(--sl-content-width)) / 2),
+					20rem
+				);
+			}
+
+			.right-sidebar-container {
+				order: 2;
+				position: relative;
+				max-width: 20rem;
+				width: calc(
+					var(--sl-sidebar-width) + (100% - var(--sl-content-width) - var(--sl-sidebar-width)) / 2
+				);
+			}
+
+			.right-sidebar {
+				position: fixed;
+				top: 0;
+				inset-inline-end: 0;
+				border-inline-start: 1px solid var(--sl-color-hairline);
+				padding-top: var(--sl-nav-height);
+				width: var(--vault-right-sidebar-width);
+				height: 100vh;
+				overflow-y: auto;
+				scrollbar-width: none;
+			}
+
+			.vault-sidebar-rail-toggle {
+				display: grid;
+				place-items: center;
+				position: fixed;
+				z-index: calc(var(--sl-z-index-navbar) - 1);
+				top: calc(var(--sl-nav-height) + 0.75rem);
+				inline-size: var(--vault-sidebar-rail-toggle-size);
+				block-size: var(--vault-sidebar-rail-toggle-size);
+				padding: 0;
+				border: 1px solid var(--sl-color-hairline);
+				border-radius: 999px;
+				background: var(--sl-color-bg-nav);
+				box-shadow: 0 0.5rem 1.25rem color-mix(in srgb, var(--sl-color-black) 18%, transparent);
+				color: var(--sl-color-text-accent);
+				cursor: pointer;
+				font: inherit;
+				font-size: var(--vault-sidebar-rail-toggle-font-size);
+				font-family: var(--sl-font-system, system-ui);
+				font-weight: 900;
+				line-height: 1;
+				text-align: center;
+				appearance: none;
+			}
+
+			.vault-sidebar-rail-toggle svg {
+				display: block;
+				width: 1em;
+				height: 1em;
+				pointer-events: none;
+			}
+
+			:global(:root[data-vault-sidebar-right='collapsed']) .vault-sidebar-rail-toggle--right svg {
+				transform: scaleX(-1);
+			}
+
+			.vault-sidebar-rail-toggle:hover,
+			.vault-sidebar-rail-toggle[aria-pressed='true'] {
+				background: var(--sl-color-accent);
+				color: var(--sl-color-black);
+			}
+
+			.vault-sidebar-rail-toggle--right {
+				inset-inline-end: calc(var(--vault-right-sidebar-width) - 0.875rem);
+			}
+
+			:global(:root[data-vault-sidebar-right='collapsed']) .vault-sidebar-rail-toggle--right {
+				inset-inline-end: 0.75rem;
+			}
+
+			.main-pane {
+				width: 100%;
+			}
+
+			:global([data-has-sidebar][data-has-toc]) .main-pane {
+				--sl-content-margin-inline: auto 0;
+
+				order: 1;
+				width: calc(
+					var(--sl-content-width) + (100% - var(--sl-content-width) - var(--sl-sidebar-width)) / 2
+				);
+			}
+		}
+	}
+</style>

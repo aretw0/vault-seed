@@ -8,7 +8,8 @@
     "url": "https://github.com/aretw0/vault-seed.git"
   },
   "scripts": {
-    "test": "node --test scripts/audience_boundary.test.js scripts/deploy_site_workflow.test.js scripts/devcontainer_contract.test.js scripts/release_package_smoke.test.js scripts/validate_onboarding.test.js",
+    "test": "node --test scripts/audience_boundary.test.js scripts/check_pt_text.test.js scripts/deploy_site_workflow.test.js scripts/devcontainer_contract.test.js scripts/doc_host_path_contract.test.js scripts/feed_sources.test.mjs scripts/information_architecture.test.js scripts/lab_shell_contract.test.mjs scripts/notebook_export_runtime_helpers.test.mjs scripts/notebook_path.test.cjs scripts/prepare_lab_datasets.test.mjs scripts/publication_outbox.test.mjs scripts/release_package_smoke.test.js scripts/site_ux_contract.test.js scripts/templates_contract.test.js scripts/validate_onboarding.test.js scripts/vault_primitives_contract.test.js",
+    "substrate:check": "node scripts/check-substrate.mjs",
     "format": "prettier --write \"**/*.md\"",
     "format:check": "prettier --check .",
     "lint:main": "markdownlint --config .markdownlint.json \"10 - Diário/**/*.md\" \"20 - Projetos/**/*.md\" \"30 - Áreas/**/*.md\" \"40 - Recursos/**/*.md\" \"50 - Arquivo/**/*.md\" \"99 - Meta e Anexos/**/*.md\"",
@@ -22,12 +23,23 @@
     "validate:mermaid": "node scripts/check_mermaid.js",
     "actions:pins": "node scripts/check_github_action_pins.mjs",
     "site:dev": "astro dev",
-    "site:build": "pnpm --filter @dgk/astro-plugins build && astro build",
+    "site:build": "node scripts/clean_site_dist.mjs && pnpm --filter @aretw0/dgk-astro-plugins build && astro build",
     "site:preview": "astro preview",
     "site:check": "node scripts/smoke_site.js",
+    "site:responsive": "pnpm run site:build && pnpm run notebooks:export && node scripts/smoke_responsive.mjs",
+    "site:graph-smoke": "pnpm run site:build && node scripts/graph_interactions_smoke.mjs",
+    "site:graph-perf-smoke": "pnpm run site:build && node scripts/graph_interactions_perf_smoke.mjs",
     "site:test": "node --test scripts/mermaid_render_contract.test.js scripts/mermaid_toggle.test.js",
     "site:audit:sidebar": "node scripts/audit_sidebar.js",
+    "audit:ia": "node scripts/audit_information_architecture.mjs",
     "notebooks:data": "node scripts/generate_vault_data.mjs",
+    "notebooks:etl:demo": "node scripts/lab_etl_demo.mjs",
+    "feeds:opml": "node scripts/prepare_feed_sources.mjs",
+    "outbox:prepare": "node scripts/prepare_publication_outbox.mjs",
+    "notebooks:etl": "pnpm run notebooks:etl:demo && pnpm run feeds:opml && pnpm run outbox:prepare && node scripts/prepare_lab_datasets.mjs",
+    "notebooks:extract:local": "pnpm run notebooks:etl",
+    "notebooks:extract:check": "uv run --no-project --with-requirements requirements.local-etl.txt python scripts/check_lab_extract_tools.py",
+    "notebooks:extract:browser": "uv run --no-project --with-requirements requirements.local-etl.txt playwright install chromium",
     "notebooks:dev": "node scripts/notebooks_dev.mjs",
     "notebooks:check": "node scripts/notebooks_check.mjs",
     "notebooks:pair": "node scripts/notebooks_pair.mjs",
@@ -35,21 +47,23 @@
     "notebooks:export:public": "node scripts/export_notebooks.mjs --public",
     "notebooks:export:slides": "node scripts/export_notebook_slides.mjs",
     "site:dev:lab": "pnpm run notebooks:export:public && astro dev",
+    "site:dev:lab:host": "pnpm run notebooks:export:public && astro dev --host 0.0.0.0",
     "diagrams:update": "mdt update",
     "diagrams:check": "mdt check",
     "release:package:smoke": "node scripts/release_package_smoke.mjs",
     "release:package:smoke:json": "node scripts/release_package_smoke.mjs --json",
-    "validate": "pnpm run actions:pins && pnpm run lint && pnpm run test && pnpm run validate:onboarding && pnpm run validate:pt-text && pnpm run validate:theme && pnpm run validate:mermaid && pnpm run smoke:template && pnpm run release:package:smoke",
+    "validate": "pnpm run actions:pins && pnpm run lint && pnpm run audit:ia && pnpm run site:audit:sidebar && pnpm run test && pnpm run validate:onboarding && pnpm run validate:pt-text && pnpm run validate:theme && pnpm run validate:mermaid && pnpm run site:graph-smoke && pnpm run smoke:template && pnpm run release:package:smoke",
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "GPL-3.0-only",
   "type": "commonjs",
   "devDependencies": {
     "@astrojs/starlight": "^0.39.2",
+    "@playwright/test": "^1.60.0",
     "@changesets/cli": "^2.0.0",
     "astro": "^6.3.5",
     "glob": "^13.0.6",
@@ -63,6 +77,6 @@
     "node": ">=22"
   },
   "dependencies": {
-    "@dgk/astro-plugins": "workspace:^"
+    "@aretw0/dgk-astro-plugins": "workspace:^"
   }
 }

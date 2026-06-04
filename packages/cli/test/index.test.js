@@ -6,7 +6,7 @@ test('resolveCommand retorna o nome para comandos conhecidos', () => {
   assert.equal(resolveCommand('validate'), 'validate');
   assert.equal(resolveCommand('lint'), 'lint');
   assert.equal(resolveCommand('setup'), 'setup');
-  assert.equal(resolveCommand('release'), 'release');
+  assert.equal(resolveCommand('release'), null);
   assert.equal(resolveCommand('check'), 'check');
 });
 

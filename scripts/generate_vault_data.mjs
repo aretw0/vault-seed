@@ -4,18 +4,24 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { globSync } from "glob";
 import matter from "gray-matter";
+import { VAULT_FOLDERS } from "../.site/lib/vault-folders.mjs";
 
 const WIKILINK_RE = /\[\[([^\]|]+?)(?:\|[^\]]+?)?\]\]/g;
-const VAULT_FOLDERS = [
-  "00 - Entrada",
-  "10 - Diário",
-  "20 - Projetos",
-  "30 - Áreas",
-  "40 - Recursos",
-  "50 - Arquivo",
-  "90 - Modelos",
-  "99 - Meta e Anexos",
-];
+
+function resolveNotebooksPath(value = process.env.VAULT_NOTEBOOKS_PATH || "lab") {
+  const normalized = String(value || "lab")
+    .trim()
+    .replaceAll(String.fromCharCode(92), "/")
+    .replace(/^\/+|\/+$/g, "");
+
+  if (!/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(normalized)) {
+    throw new Error(
+      `VAULT_NOTEBOOKS_PATH inválido: ${value}. Use um único segmento de URL, como "lab", "notebooks" ou "studio".`,
+    );
+  }
+
+  return normalized;
+}
 
 export function slugify(input) {
   return input
@@ -84,10 +90,10 @@ export function buildVaultData({ cwd = process.cwd() } = {}) {
 
 export function writeVaultData({
   cwd = process.cwd(),
-  notebooksPath = process.env.VAULT_NOTEBOOKS_PATH || "lab",
+  notebooksPath = resolveNotebooksPath(),
 } = {}) {
   const data = buildVaultData({ cwd });
-  const outDir = join(cwd, "public", notebooksPath);
+  const outDir = join(cwd, "public", resolveNotebooksPath(notebooksPath));
   mkdirSync(outDir, { recursive: true });
   writeFileSync(join(outDir, "vault-data.json"), JSON.stringify(data, null, 2), "utf-8");
   return { data, outDir };

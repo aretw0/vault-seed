@@ -1,6 +1,6 @@
 ---
 name: Melhoria/Nova Funcionalidade Técnica
-about: Para adicionar novas funcionalidades ao framework do vault (novos scripts, workflows, automações, etc.).
+about: Para adicionar novas funcionalidades à base técnica do vault (novos scripts, workflows, automações, etc.).
 title: "feat(scope): "
 labels:
   - "tipo/feature"

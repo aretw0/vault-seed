@@ -18,7 +18,7 @@ jobs:
     name: Validate template
     if: github.repository == 'aretw0/vault-seed'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
 
     steps:
       - name: Checkout
@@ -27,11 +27,24 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
+      - name: Setup uv
+        uses: astral-sh/setup-uv@5a7eac68fb9809dea845d802897dc5c723910fa3 # v7.1.3
+        with:
+          version: "0.11.11"
+
+      - name: Install Playwright browser
+        run: pnpm exec playwright install chromium
+
       - name: Validate markdown and onboarding
         run: pnpm run validate
 
+      - name: Smoke responsive site and Lab
+        run: pnpm run site:responsive
+        env:
+          VAULT_RESPONSIVE_REQUIRE_EXTERNAL: "1"
+
       - name: Test CLI package
-        run: pnpm --filter @dgk/cli test
+        run: pnpm --filter @aretw0/dgk-cli test
 
       - name: Check for unwanted Copilot .gitattributes entry
         run: |

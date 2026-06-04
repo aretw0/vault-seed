@@ -1,0 +1,217 @@
+---
+import MobileMenuToggle from 'virtual:starlight/components/MobileMenuToggle';
+
+const { hasSidebar } = Astro.locals.starlightRoute;
+---
+
+<a href="#vault-main-content" class="vault-skip-link">Ir para o conteúdo principal</a>
+<div class="page sl-flex">
+	<header class="header"><slot name="header" /></header>
+	{
+		hasSidebar && (
+			<nav class="sidebar print:hidden" aria-label={Astro.locals.t('sidebarNav.accessibleLabel')}>
+				<MobileMenuToggle />
+				<button
+					class="vault-sidebar-rail-toggle vault-sidebar-rail-toggle--left"
+					type="button"
+					data-vault-sidebar-toggle="left"
+					aria-pressed="false"
+					aria-label="Recolher navegação lateral"
+					title="Recolher navegação lateral"
+				>
+					<svg aria-hidden="true" class="vault-sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+				</button>
+				<div id="starlight__sidebar" class="sidebar-pane">
+					<div class="sidebar-content sl-flex">
+						<slot name="sidebar" />
+					</div>
+				</div>
+			</nav>
+		)
+	}
+	<div id="vault-main-content" class="main-frame"><slot /></div>
+</div>
+
+<script is:inline>
+	(() => {
+		const root = document.documentElement;
+		const storageKeys = {
+			left: 'vault-seed:sidebar-left-collapsed',
+			right: 'vault-seed:sidebar-right-collapsed',
+		};
+		const labels = {
+			left: {
+				expanded: 'Recolher navegação lateral',
+				collapsed: 'Expandir navegação lateral',
+			},
+			right: {
+				expanded: 'Recolher índice lateral',
+				collapsed: 'Expandir índice lateral',
+			},
+		};
+
+		function controlsFor(side) {
+			return Array.from(document.querySelectorAll(`[data-vault-sidebar-toggle="${side}"]`));
+		}
+
+		function apply(side, collapsed) {
+			root.dataset[side === 'left' ? 'vaultSidebarLeft' : 'vaultSidebarRight'] = collapsed
+				? 'collapsed'
+				: 'expanded';
+			controlsFor(side).forEach((button) => {
+				const label = collapsed ? labels[side].collapsed : labels[side].expanded;
+				button.setAttribute('aria-pressed', String(collapsed));
+				button.setAttribute('aria-label', label);
+				button.title = label;
+			});
+		}
+
+		for (const side of ['left', 'right']) {
+			apply(side, localStorage.getItem(storageKeys[side]) === '1');
+		}
+
+		document.addEventListener('click', (event) => {
+			const button = event.target?.closest?.('[data-vault-sidebar-toggle]');
+			if (!button) return;
+			const side = button.dataset.vaultSidebarToggle;
+			const attr = side === 'left' ? 'vaultSidebarLeft' : 'vaultSidebarRight';
+			const collapsed = root.dataset[attr] !== 'collapsed';
+			localStorage.setItem(storageKeys[side], collapsed ? '1' : '0');
+			apply(side, collapsed);
+		});
+	})();
+</script>
+
+	<style>
+		@layer starlight.core {
+			:root {
+				--vault-sidebar-rail-toggle-size: 2rem;
+				--vault-sidebar-rail-toggle-font-size: 1.68rem;
+			}
+
+			.page {
+			flex-direction: column;
+			min-height: 100vh;
+		}
+
+		.header {
+			z-index: var(--sl-z-index-navbar);
+			position: fixed;
+			inset-inline-start: 0;
+			inset-block-start: 0;
+			width: 100%;
+			height: var(--sl-nav-height);
+			border-bottom: 1px solid var(--sl-color-hairline-shade);
+			padding: var(--sl-nav-pad-y) var(--sl-nav-pad-x);
+			padding-inline-end: var(--sl-nav-pad-x);
+			background-color: var(--sl-color-bg-nav);
+		}
+
+		:global([data-has-sidebar]) .header {
+			padding-inline-end: calc(
+				var(--sl-nav-gap) + var(--sl-nav-pad-x) + var(--sl-menu-button-size)
+			);
+		}
+
+		.sidebar-pane {
+			visibility: var(--sl-sidebar-visibility, hidden);
+			position: fixed;
+			z-index: var(--sl-z-index-menu);
+			inset-block: var(--sl-nav-height) 0;
+			inset-inline-start: 0;
+			width: 100%;
+			background-color: var(--sl-color-black);
+			overflow-y: auto;
+			scrollbar-width: none;
+		}
+
+		:global([aria-expanded='true']) ~ .sidebar-pane {
+			--sl-sidebar-visibility: visible;
+		}
+
+		.sidebar-content {
+			height: 100%;
+			min-height: max-content;
+			padding: 1rem var(--sl-sidebar-pad-x) 0;
+			flex-direction: column;
+			gap: 1rem;
+		}
+
+			.vault-sidebar-rail-toggle {
+				display: none;
+			}
+
+		@media (min-width: 50rem) {
+			.sidebar-content::after {
+				content: '';
+				padding-bottom: 1px;
+			}
+		}
+
+		.main-frame {
+			padding-top: calc(var(--sl-nav-height) + var(--sl-mobile-toc-height));
+			padding-inline-start: var(--sl-content-inline-start);
+		}
+
+		@media (min-width: 50rem) {
+			:global([data-has-sidebar]) .header {
+				padding-inline-end: var(--sl-nav-pad-x);
+			}
+			.sidebar-pane {
+				--sl-sidebar-visibility: visible;
+				width: var(--sl-sidebar-width);
+				background-color: var(--sl-color-bg-sidebar);
+				border-inline-end: 1px solid var(--sl-color-hairline-shade);
+			}
+
+			.vault-sidebar-rail-toggle {
+				display: grid;
+				place-items: center;
+				position: fixed;
+				z-index: calc(var(--sl-z-index-navbar) - 1);
+				top: calc(var(--sl-nav-height) + 0.75rem);
+				inline-size: var(--vault-sidebar-rail-toggle-size);
+				block-size: var(--vault-sidebar-rail-toggle-size);
+				padding: 0;
+				border: 1px solid var(--sl-color-hairline);
+				border-radius: 999px;
+				background: var(--sl-color-bg-nav);
+				box-shadow: 0 0.5rem 1.25rem color-mix(in srgb, var(--sl-color-black) 18%, transparent);
+				color: var(--sl-color-text-accent);
+				cursor: pointer;
+				font: inherit;
+				font-size: var(--vault-sidebar-rail-toggle-font-size);
+				font-family: var(--sl-font-system, system-ui);
+				font-weight: 900;
+				line-height: 1;
+				text-align: center;
+				appearance: none;
+			}
+
+			.vault-sidebar-rail-toggle svg {
+				display: block;
+				width: 1em;
+				height: 1em;
+				pointer-events: none;
+			}
+
+			:global(:root[data-vault-sidebar-left='collapsed']) .vault-sidebar-rail-toggle--left svg {
+				transform: scaleX(-1);
+			}
+
+			.vault-sidebar-rail-toggle:hover,
+			.vault-sidebar-rail-toggle[aria-pressed='true'] {
+				background: var(--sl-color-accent);
+				color: var(--sl-color-black);
+			}
+
+			.vault-sidebar-rail-toggle--left {
+				inset-inline-start: calc(var(--sl-sidebar-width) - 0.875rem);
+			}
+
+			:global(:root[data-vault-sidebar-left='collapsed']) .vault-sidebar-rail-toggle--left {
+				inset-inline-start: 0.75rem;
+			}
+		}
+	}
+</style>

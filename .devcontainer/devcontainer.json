@@ -33,6 +33,7 @@
     "PATH": "/home/vscode/.local/share/pnpm/bin:/home/vscode/.local/share/pnpm:/home/vscode/.npm-global/bin:${containerEnv:PATH}"
   },
   "mounts": [
+    "source=dgk-node-modules,target=/workspaces/vault-seed/node_modules,type=volume",
     "source=dgk-pnpm-store,target=/home/vscode/.local/share/pnpm/store,type=volume",
     "source=dgk-npm-global,target=/home/vscode/.npm-global,type=volume",
     "source=dgk-claude-home,target=/home/vscode/.claude,type=volume",

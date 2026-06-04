@@ -2,14 +2,48 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import remarkDirective from 'remark-directive';
-import { remarkCallouts, remarkWikiImages, remarkWikiLinks } from '@dgk/astro-plugins';
+import { remarkCallouts, remarkWikiImages, remarkWikiLinks } from '@aretw0/dgk-astro-plugins';
 import { collectVaultEntries } from './.site/integrations/collect-published-slugs.js';
 import { copyVaultAttachments } from './.site/integrations/copy-vault-attachments.js';
 import { generateVaultJson } from './.site/integrations/generate-vault-json.js';
 import { sidebarSections } from './.site/sidebar.config.js';
+import labNotebooksManifest from './.site/lab.notebooks.json' with { type: 'json' };
+import {
+  deriveNoteIntents,
+  loadInformationArchitecture,
+} from './.site/lib/information-architecture.mjs';
 
-const site = process.env.ASTRO_SITE;
-const base = process.env.ASTRO_BASE ?? '/';
+// Site URL resolution — priority order:
+//   1. ASTRO_SITE env var          — explicit override (custom domain, staging, etc.)
+//   2. CNAME file in repo root     — GitHub Pages custom domain; implies base='/'
+//   3. GITHUB_REPOSITORY env var   — default GitHub Pages subdomain (owner.github.io/repo)
+//   4. localhost:4321              — bare local dev, silences the sitemap warning
+//
+// ASTRO_BASE is only consulted when the CNAME path is NOT taken, because a
+// custom domain always serves from the root — the repo name is not part of the URL.
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+const _cnamePath = join(process.cwd(), 'CNAME');
+const _cnameHost = existsSync(_cnamePath)
+  ? readFileSync(_cnamePath, 'utf8').trim()
+  : null;
+const githubOwner = process.env.GITHUB_REPOSITORY?.split('/')[0];
+const githubRepo  = process.env.GITHUB_REPOSITORY?.split('/')[1];
+const githubPagesUrl = githubOwner && githubRepo
+  ? `https://${githubOwner}.github.io/${githubRepo}/`
+  : undefined;
+const site = process.env.ASTRO_SITE
+  ?? (_cnameHost ? `https://${_cnameHost}/` : undefined)
+  ?? githubPagesUrl
+  ?? 'http://localhost:4321';
+// When a CNAME is present the site is served from the domain root, so base='/'
+// regardless of ASTRO_BASE. Otherwise respect the explicit env var or default '/'.
+const base = process.env.ASTRO_SITE
+  ? (process.env.ASTRO_BASE ?? '/')
+  : _cnameHost
+    ? '/'
+    : (process.env.ASTRO_BASE ?? '/');
+const informationArchitecture = loadInformationArchitecture();
 
 // Title: explicit env var → repo name from GitHub context → cwd basename
 const repoName = process.env.GITHUB_REPOSITORY?.split('/')[1]
@@ -24,9 +58,19 @@ const vaultEntries = await collectVaultEntries();
 const publishedSlugs = new Set(vaultEntries.map(e => e.slug));
 
 // Build sidebar from .site/sidebar.config.ts.
+// Intent sections are backed by .site/information-architecture.json so the
+// sidebar, exploration page, and audits share the same vocabulary.
 // Directory sections use Starlight autogenerate (respects sidebar.order from frontmatter).
 // Tag/property sections produce explicit { slug } items sorted by sidebar.order then title.
 // Sections with no matching entries are omitted automatically.
+function sortSidebarEntries(entries) {
+  return [...entries].sort((a, b) => {
+    const ao = (a.data.sidebar?.order) ?? 999;
+    const bo = (b.data.sidebar?.order) ?? 999;
+    return ao !== bo ? ao - bo : a.title.localeCompare(b.title, 'pt');
+  });
+}
+
 function buildSidebarItems(entries) {
   return sidebarSections
     .map(section => {
@@ -40,6 +84,17 @@ function buildSidebarItems(entries) {
         };
       }
       const matched = entries.filter(e => {
+        if ('intent' in section) {
+          if (!e.folder) return false;
+          return deriveNoteIntents(
+            {
+              folder: e.folder ?? '',
+              tags: Array.isArray(e.data.tags) ? e.data.tags : [],
+              category: String(e.data.category ?? ''),
+            },
+            informationArchitecture,
+          ).includes(section.intent);
+        }
         if ('tag' in section) {
           const tags = e.data.tags;
           return Array.isArray(tags) && tags.includes(section.tag);
@@ -47,18 +102,37 @@ function buildSidebarItems(entries) {
         return e.data[section.property] === section.value;
       });
       if (matched.length === 0) return null;
-      const items = matched
-        .sort((a, b) => {
-          const ao = (a.data.sidebar?.order) ?? 999;
-          const bo = (b.data.sidebar?.order) ?? 999;
-          return ao !== bo ? ao - bo : a.title.localeCompare(b.title, 'pt');
-        })
-        .map(e => ({ slug: e.slug }));
+      const items = sortSidebarEntries(matched).map(e => ({ slug: e.slug }));
       return { label: section.label, collapsed: section.collapsed, items };
     })
     .filter(Boolean);
 }
-const sidebar = buildSidebarItems(vaultEntries);
+function notebookAnchor(output) {
+  return `notebook-${String(output).replace(/\.html$/, '').replace(/[^A-Za-z0-9_-]+/g, '-')}`;
+}
+const labBaseHref = `${base.replace(/\/$/, '')}/lab`;
+const labSidebarSection = {
+  label: 'Lab',
+  collapsed: true,
+  items: [
+    { label: 'Índice do Lab', link: `${base.replace(/\/$/, '')}/lab/` },
+    ...labNotebooksManifest
+      .filter((notebook) => notebook.publish)
+      .map((notebook) => ({
+        label: notebook.title,
+        link: `${labBaseHref}/#${notebookAnchor(notebook.output)}`,
+      })),
+  ],
+};
+const vaultSidebar = buildSidebarItems(vaultEntries);
+const exploreSectionIndex = vaultSidebar.findIndex((section) => section.label === 'Explorar');
+const labSectionIndex = exploreSectionIndex >= 0 ? exploreSectionIndex + 1 : Math.min(3, vaultSidebar.length);
+const sidebar = [
+  ...vaultSidebar.slice(0, labSectionIndex),
+  labSidebarSection,
+  ...vaultSidebar.slice(labSectionIndex),
+];
+const rssHref = `${base.replace(/\/$/, '')}/rss.xml`;
 
 // Client-side Mermaid rendering with palette-aware theming, rendered/code toggle,
 // copy buttons, and fullscreen pan/zoom dialog.
@@ -356,6 +430,8 @@ export default defineConfig({
         : [],
       sidebar,
       head: [
+        { tag: 'link', attrs: { rel: 'alternate', type: 'application/rss+xml', title: `${vaultTitle} RSS`, href: rssHref } },
+        { tag: 'link', attrs: { rel: 'license', href: '/LICENSE.md' } },
         { tag: 'script', attrs: { type: 'module' }, content: mermaidScript },
       ],
       customCss: [
@@ -367,6 +443,9 @@ export default defineConfig({
       ],
       components: {
         Header: './.site/components/Header.astro',
+        PageFrame: './.site/components/PageFrame.astro',
+        TwoColumnContent: './.site/components/TwoColumnContent.astro',
+        MobileMenuFooter: './.site/components/MobileMenuFooter.astro',
         Footer: './.site/components/Footer.astro',
       },
     }),

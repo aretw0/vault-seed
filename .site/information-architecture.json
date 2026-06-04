@@ -1,0 +1,50 @@
+{
+  "categories": {
+    "guia": { "label": "Guia" },
+    "conceito": { "label": "Conceito" },
+    "referencia": { "label": "Referência", "aliases": ["referência"] },
+    "ferramenta": { "label": "Ferramenta" },
+    "moc": { "label": "MOC" },
+    "workflow": { "label": "Workflow" }
+  },
+  "audiences": {
+    "iniciante": { "label": "Iniciante" },
+    "intermediario": { "label": "Intermediário", "aliases": ["intermediário"] },
+    "tecnico": { "label": "Técnico", "aliases": ["técnico"] },
+    "todos": { "label": "Todos" }
+  },
+  "intents": {
+    "comecar": {
+      "label": "Começar",
+      "description": "Primeiros passos, onboarding e configuração inicial.",
+      "tags": ["meta/onboarding", "vault/setup", "iniciante"]
+    },
+    "organizar": {
+      "label": "Organizar",
+      "description": "Métodos, links, tags, MOCs, PARA e práticas de PKM.",
+      "tags": ["meta/organizacao", "pkm/conceito", "pkm/pratica", "conceito/pkm", "obsidian/link", "obsidian/tag", "obsidian/moc", "obsidian/templates", "recurso/metodo", "recurso/fundamentos"],
+      "folders": ["40 - Recursos"]
+    },
+    "explorar": {
+      "label": "Explorar",
+      "description": "Lab, dados, diagramas, visualizações e exploração do acervo.",
+      "tags": ["meta/lab", "meta/notebooks", "meta/dados", "meta/diagramas", "meta/ui", "obsidian/dataview", "obsidian/bases", "obsidian/dashboard"],
+      "categories": ["workflow"]
+    },
+    "publicar": {
+      "label": "Publicar",
+      "description": "Publicação web, Astro, GitHub Pages e experiência pública.",
+      "tags": ["meta/site", "meta/astro", "meta/github-actions"]
+    },
+    "automatizar": {
+      "label": "Automatizar",
+      "description": "Agentes, IA, automações e extensões do fluxo de trabalho.",
+      "tags": ["meta/automacao", "meta/ia", "meta/agentes", "ia/configuracao"]
+    },
+    "manter": {
+      "label": "Manter",
+      "description": "Setup, sincronização, Git, ambiente local e manutenção do vault.",
+      "tags": ["meta/setup", "meta/git", "meta/github", "meta/sincronizacao", "meta/devops", "meta/devenv", "meta/devcontainer", "meta/mobile", "meta/desktop", "meta/ferramentas", "meta/vscode", "meta/foam", "obsidian/plugin"]
+    }
+  }
+}

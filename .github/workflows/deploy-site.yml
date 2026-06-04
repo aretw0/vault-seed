@@ -14,6 +14,10 @@ on:
       - "99 - Meta e Anexos/**"
       - "99 - Meta e Anexos/Notebooks/**"
       - "requirements.txt"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "scripts/**"
+      - "docs/**"
       - ".site/**"
       - "astro.config.mjs"
       - "packages/astro-plugins/**"
@@ -42,6 +46,9 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
+      - name: Validate vault quality gates
+        run: pnpm run validate
+
       - name: Setup uv
         uses: astral-sh/setup-uv@5a7eac68fb9809dea845d802897dc5c723910fa3 # v7.1.3
         with:
@@ -61,8 +68,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
-      - name: Build @dgk/astro-plugins
-        run: pnpm --filter @dgk/astro-plugins build
+      - name: Build @aretw0/dgk-astro-plugins
+        run: pnpm --filter @aretw0/dgk-astro-plugins build
 
       - name: Build site
         run: pnpm run site:build
@@ -74,15 +81,26 @@ jobs:
           VAULT_THEME_SELECTOR: ${{ github.repository == 'aretw0/vault-seed' && '1' || '0' }}
           VAULT_NOTEBOOKS_PATH: ${{ vars.VAULT_NOTEBOOKS_PATH || 'lab' }}
 
-      - name: Check site
-        run: pnpm run site:check
-        env:
-          ASTRO_BASE: ${{ steps.pages-url.outputs.base }}
-
       - name: Export analysis notebooks
         env:
           VAULT_NOTEBOOKS_PATH: ${{ vars.VAULT_NOTEBOOKS_PATH || 'lab' }}
         run: pnpm run notebooks:export
+
+      - name: Check site
+        run: pnpm run site:check
+        env:
+          ASTRO_BASE: ${{ steps.pages-url.outputs.base }}
+          VAULT_NOTEBOOKS_PATH: ${{ vars.VAULT_NOTEBOOKS_PATH || 'lab' }}
+          VAULT_SITE_REQUIRE_NOTEBOOKS: "1"
+
+      - name: Install Playwright browser
+        run: pnpm exec playwright install chromium
+
+      - name: Smoke responsive site and Lab
+        run: node scripts/smoke_responsive.mjs
+        env:
+          VAULT_NOTEBOOKS_PATH: ${{ vars.VAULT_NOTEBOOKS_PATH || 'lab' }}
+          VAULT_RESPONSIVE_REQUIRE_EXTERNAL: "1"
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0

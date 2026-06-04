@@ -15,16 +15,22 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
+const { resolveNotebooksPath } = require("./notebook_path.cjs");
 
 const root = process.cwd();
 const distDir = path.join(root, "dist");
 const labManifest = JSON.parse(
   fs.readFileSync(path.join(root, ".site", "lab.notebooks.json"), "utf8"),
 );
+const notebooksPath = resolveNotebooksPath();
+const requirePublishedNotebooks = process.env.VAULT_SITE_REQUIRE_NOTEBOOKS === "1";
+const hasTechnicalDocs = fs.existsSync(path.join(root, "docs", "INDEX.md"));
+const publishedNotebookEntries = labManifest.filter((entry) => entry.publish);
 const marimoNotebookPaths = new Set(
-  labManifest
-    .filter((entry) => entry.publish)
-    .map((entry) => `lab/${entry.output}`),
+  publishedNotebookEntries.map((entry) => `${notebooksPath}/${entry.output}`),
+);
+const defaultMarimoNotebookPaths = new Set(
+  publishedNotebookEntries.map((entry) => `lab/${entry.output}`),
 );
 const errors = [];
 const warnings = [];
@@ -56,20 +62,36 @@ function listHtmlFiles(dir, results = []) {
 // Links in built HTML are <base>/slug, but files live at dist/slug.
 const astroBase = (process.env.ASTRO_BASE || "").replace(/\/$/, "");
 
-function distExists(urlPath) {
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function resolveDistFile(urlPath) {
+  const [pathOnly] = String(urlPath).split(/[?#]/, 1);
   // Strip base prefix so /vault-seed/foo/bar → /foo/bar before resolving.
-  let rel = urlPath;
+  let rel = pathOnly;
   if (astroBase && rel.startsWith(astroBase + "/")) {
     rel = rel.slice(astroBase.length);
   }
   // /foo/bar/ → dist/foo/bar/index.html  or  dist/foo/bar.html
   const clean = rel.replace(/^\//, "").replace(/\/$/, "");
-  if (!clean) return fs.existsSync(path.join(distDir, "index.html"));
-  return (
-    fs.existsSync(path.join(distDir, clean, "index.html")) ||
-    fs.existsSync(path.join(distDir, clean + ".html")) ||
-    fs.existsSync(path.join(distDir, clean))
-  );
+  const candidates = clean
+    ? [path.join(distDir, clean, "index.html"), path.join(distDir, clean + ".html"), path.join(distDir, clean)]
+    : [path.join(distDir, "index.html")];
+  return candidates.find((candidate) => fs.existsSync(candidate)) || null;
+}
+
+function distExists(urlPath) {
+  const filePath = resolveDistFile(urlPath);
+  if (!filePath) return false;
+
+  const hash = String(urlPath).split("#", 2)[1]?.split("?", 1)[0];
+  if (!hash || hash.startsWith(":~:")) return true;
+
+  const decodedHash = decodeURIComponent(hash);
+  const html = fs.readFileSync(filePath, "utf8");
+  const anchorPattern = new RegExp(`\\s(?:id|name)="${escapeRegExp(decodedHash)}"`);
+  return anchorPattern.test(html);
 }
 
 // ── 1. dist/ must exist ───────────────────────────────────────────────────────
@@ -101,14 +123,17 @@ requireCondition(
 // vault loader crash, etc.).
 
 const REQUIRED_DIST_PATHS = [
+  // Astro-first exploration surface
+  "explorar",
+  "explorar/intencoes",
   // Onboarding guides — required by validate_onboarding.js
-  "meta-e-anexos/guia-do-jardineiro-digital",
-  "meta-e-anexos/seus-primeiros-passos",
-  "meta-e-anexos/exploracao-guiada-do-vault",
-  "meta-e-anexos/preparando-seu-computador-para-o-vault",
-  "meta-e-anexos/configurando-o-obsidian-git",
-  "meta-e-anexos/depois-da-recepcao-do-template",
-  "meta-e-anexos/moc-vault-seed",
+  "meta-e-anexos/onboarding/guia-do-jardineiro-digital",
+  "meta-e-anexos/onboarding/seus-primeiros-passos",
+  "meta-e-anexos/onboarding/exploracao-guiada-do-vault",
+  "meta-e-anexos/onboarding/preparando-seu-computador-para-o-vault",
+  "meta-e-anexos/workflows/configurando-o-obsidian-git",
+  "meta-e-anexos/onboarding/depois-da-recepcao-do-template",
+  "meta-e-anexos/onboarding/moc-vault-seed",
   // Core resource notes
   "recursos/bases",
   "recursos/dataview",
@@ -123,6 +148,111 @@ for (const slug of REQUIRED_DIST_PATHS) {
   );
 }
 
+const exploreDataPath = path.join(distDir, "explorar", "dados.json");
+requireCondition(
+  fs.existsSync(exploreDataPath),
+  "dist/explorar/dados.json missing — Astro exploration data endpoint was not built.",
+);
+if (fs.existsSync(exploreDataPath)) {
+  const exploreData = JSON.parse(fs.readFileSync(exploreDataPath, "utf8"));
+  const notes = Array.isArray(exploreData.notes) ? exploreData.notes : [];
+  const graphNodes = Array.isArray(exploreData.graph?.nodes) ? exploreData.graph.nodes : [];
+  const graphEdges = Array.isArray(exploreData.graph?.links) ? exploreData.graph.links : [];
+  const noteIds = new Set(notes.map((note) => note?.id).filter(Boolean));
+
+  requireCondition(
+    exploreData.metrics?.notes > 0 &&
+      notes.length > 0 &&
+      graphNodes.length > 0 &&
+      Array.isArray(exploreData.graph?.insights?.hubs) &&
+      Array.isArray(exploreData.graph?.insights?.orphans) &&
+      exploreData.editorial?.notesEvaluated > 0 &&
+      Array.isArray(exploreData.editorial?.warnings) &&
+      Array.isArray(exploreData.editorial?.notices) &&
+      Array.isArray(exploreData.editorial?.promotionCandidates) &&
+      Array.isArray(exploreData.editorial?.thinPublishedResources),
+    "dist/explorar/dados.json must expose metrics, graph data, and editorial curation signals for the Astro exploration surface.",
+  );
+
+  for (const note of notes) {
+    const href = note?.href;
+    requireCondition(
+      typeof href === 'string' && href.startsWith('/') && !href.endsWith('/'),
+      `dist/explorar/dados.json: note '${note?.id || '<missing-id>'}' must include a clean route href without trailing slash.`,
+    );
+    requireCondition(
+      distExists(href),
+      `dist/explorar/dados.json: note href '${href}' does not resolve to a built HTML page.`,
+    );
+  }
+
+  const graphNodeIds = new Set(graphNodes.map((node) => node?.id).filter(Boolean));
+  for (const node of graphNodes) {
+    requireCondition(
+      noteIds.has(node?.id),
+      `dist/explorar/dados.json: graph node references an unknown note id '${node?.id}'.`,
+    );
+  }
+
+  for (const edge of graphEdges) {
+    requireCondition(
+      graphNodeIds.has(edge?.source) && graphNodeIds.has(edge?.target),
+      `dist/explorar/dados.json: graph edge references unknown node ids (${edge?.source} -> ${edge?.target}).`,
+    );
+    requireCondition(
+      noteIds.has(edge?.source) && noteIds.has(edge?.target),
+      `dist/explorar/dados.json: graph edge references unknown note ids (${edge?.source} -> ${edge?.target}).`,
+    );
+  }
+}
+
+
+const rssPath = path.join(distDir, "rss.xml");
+requireCondition(
+  fs.existsSync(rssPath),
+  "dist/rss.xml missing — RSS feed was not generated.",
+);
+if (fs.existsSync(rssPath)) {
+  const rss = fs.readFileSync(rssPath, "utf8");
+  requireCondition(
+    rss.includes("<rss") && rss.includes("<channel>") && rss.includes("<item>"),
+    "dist/rss.xml must be a non-empty RSS feed.",
+  );
+}
+
+if (hasTechnicalDocs) {
+  requireCondition(
+    fs.existsSync(path.join(distDir, "docs", "index.html")),
+    "dist/docs/index.html missing — template technical docs route (/docs/) was not built.",
+  );
+  requireCondition(
+    !fs.existsSync(path.join(distDir, "docs", "superpowers")),
+    "dist/docs/superpowers/ exists — internal planning artifacts leaked into technical docs.",
+  );
+}
+
+if (requirePublishedNotebooks) {
+  for (const relPath of marimoNotebookPaths) {
+    requireCondition(
+      fs.existsSync(path.join(distDir, relPath)),
+      `dist/${relPath} missing — published notebook was not exported before site smoke.`,
+    );
+  }
+  requireCondition(
+    fs.existsSync(path.join(distDir, notebooksPath, "vault-seed-slides-lite.html")),
+    `dist/${notebooksPath}/vault-seed-slides-lite.html missing — mobile-safe slide fallback was not exported.`,
+  );
+}
+
+if (requirePublishedNotebooks && notebooksPath !== "lab") {
+  for (const entry of publishedNotebookEntries) {
+    requireCondition(
+      !fs.existsSync(path.join(distDir, "lab", entry.output)),
+      `dist/lab/${entry.output} exists while VAULT_NOTEBOOKS_PATH=${notebooksPath} — remove stale default notebook exports from the deploy artifact.`,
+    );
+  }
+}
+
 // ── 4. collect content pages ──────────────────────────────────────────────────
 
 const allHtml = listHtmlFiles(distDir);
@@ -134,7 +264,7 @@ const contentPages = allHtml.filter((f) => {
     !rel.endsWith("404.html") &&
     rel !== "index.html" &&
     !rel.startsWith("_") &&
-    !isMarimoNotebook(rel)
+    !isNotebookArtifact(rel)
   );
 });
 
@@ -166,7 +296,11 @@ const internalHrefPattern = /<a\s[^>]*href="(\/[^"#?][^"]*?)"/g;
 const hasMarkdownContent = /class="[^"]*sl-markdown-content[^"]*"/;
 
 function isMarimoNotebook(relPath) {
-  return marimoNotebookPaths.has(relPath);
+  return marimoNotebookPaths.has(relPath) || defaultMarimoNotebookPaths.has(relPath);
+}
+
+function isNotebookArtifact(relPath) {
+  return isMarimoNotebook(relPath) || /(^|\/)vault-seed-slides-lite\.html$/.test(relPath);
 }
 
 function hasMarimoRuntime(content) {
@@ -199,6 +333,14 @@ for (const htmlFile of contentPages) {
       `${rel}: contains ${label} — check ASTRO_BASE/ASTRO_SITE configuration.`,
     );
   }
+
+  const rawMarkdownLinks = [...content.matchAll(/<a\s[^>]*href="([^"]+)"/g)]
+    .map(([, href]) => href)
+    .filter((href) => !/^(https?:|mailto:|#)/.test(href) && /\.md(?:[#?]|$)/.test(href));
+  requireCondition(
+    rawMarkdownLinks.length === 0,
+    `${rel}: contains raw .md link(s) — markdown source links should resolve to published routes: ${rawMarkdownLinks.join(", ")}`,
+  );
 
   // 5b. Page must have Starlight's markdown content wrapper.
   requireCondition(
@@ -249,6 +391,7 @@ const SIDEBAR_SECTIONS = ["recursos", "meta-e-anexos"];
 const mocHtmlPath = path.join(
   distDir,
   "meta-e-anexos",
+  "onboarding",
   "moc-vault-seed",
   "index.html",
 );
@@ -285,7 +428,7 @@ if (fs.existsSync(mocHtmlPath)) {
     }
   } else {
     errors.push(
-      "meta-e-anexos/moc-vault-seed/index.html: starlight__sidebar element not found.",
+      "meta-e-anexos/onboarding/moc-vault-seed/index.html: starlight__sidebar element not found.",
     );
   }
 
@@ -295,6 +438,13 @@ if (fs.existsSync(mocHtmlPath)) {
     mocHtml.includes("mermaid.esm.min.mjs"),
     "Mermaid CDN script not found in page head — check head[] config in astro.config.mjs.",
   );
+
+  if (hasTechnicalDocs) {
+    requireCondition(
+      /href="[^"]*\/docs\/"/.test(mocHtml),
+      "Header/sidebar has no link to /docs/ even though docs/INDEX.md exists.",
+    );
+  }
 }
 
 // ── 7. Mermaid code blocks present in diagram pages ──────────────────────────
@@ -306,7 +456,7 @@ if (fs.existsSync(mocHtmlPath)) {
 const MERMAID_PAGES = [
   "recursos/mermaid",
   "meta-e-anexos/diagramas/exemplos",
-  "meta-e-anexos/visualizacao-do-fluxo-do-vault",
+  "meta-e-anexos/referencia/visualizacao-do-fluxo-do-vault",
 ];
 
 for (const slug of MERMAID_PAGES) {

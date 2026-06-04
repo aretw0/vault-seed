@@ -3,7 +3,18 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import manifest from '../../lab.notebooks.json';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const notebooksPath = import.meta.env.VAULT_NOTEBOOKS_PATH ?? 'lab';
+function resolveNotebooksPath(value: unknown): string {
+  const normalized = String(value || 'lab').trim().replace(/\\/g, '/').replace(/^\/+|\/+$/g, '');
+  if (!/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(normalized)) {
+    throw new Error(`VAULT_NOTEBOOKS_PATH inválido: ${String(value)}`);
+  }
+  return normalized;
+}
+const notebooksPath = resolveNotebooksPath(import.meta.env.VAULT_NOTEBOOKS_PATH);
+
+function notebookAnchor(output: string): string {
+  return `notebook-${output.replace(/\.html$/, '').replace(/[^A-Za-z0-9_-]+/g, '-')}`;
+}
 
 const notebooks = manifest
   .filter((notebook) => notebook.publish)
@@ -11,15 +22,20 @@ const notebooks = manifest
     title: notebook.title,
     href: `${base}/${notebooksPath}/${notebook.output}`,
     description: notebook.description,
+    anchor: notebookAnchor(notebook.output),
   }));
 ---
 
 <StarlightPage frontmatter={{ title: 'Lab' }}>
-  <p>Notebooks interativos <a href="https://marimo.io">Marimo</a> para explorar a saúde do seu vault.</p>
+  <p class="vault-lead">
+    Notebooks interativos <a href="https://marimo.io">Marimo</a> para explorar a saúde do seu vault.
+    A curadoria visual segue os mesmos blocos do site: cartões, ações, estados e tema compartilhado.
+  </p>
 
   <p>
     Os notebooks são exportados como WebAssembly e servidos junto com o site.
-    Rode <code>pnpm run site:dev:lab</code> para ver a versão empacotada localmente;
+    Rode <code>pnpm run site:dev:lab</code> para ver a versão empacotada localmente
+    ou <code>pnpm run site:dev:lab:host</code> para testar no celular pela rede local;
     em produção, o GitHub Actions faz a mesma exportação durante o deploy.
   </p>
 
@@ -28,15 +44,19 @@ const notebooks = manifest
     snapshots antes da publicação; os notebooks publicados consomem esses dados preparados.
   </p>
 
-  <ul class="notebook-list">
+  <section class="vault-card-grid notebook-grid" aria-label="Notebooks publicados">
     {notebooks.map((notebook) => (
-      <li data-notebook-link={notebook.href}>
-        <strong>{notebook.title}</strong>
-        <span>— {notebook.description}</span>
-        <span class="availability" data-availability>Aguardando exportação</span>
-      </li>
+      <article class="vault-card notebook-card" id={notebook.anchor} data-notebook-link={notebook.href}>
+        <span class="vault-card__eyebrow">Notebook</span>
+        <h2 class="vault-card__title">{notebook.title}</h2>
+        <p class="vault-card__body">{notebook.description}</p>
+        <div class="vault-actions">
+          <span class="vault-status" data-availability>Aguardando exportação</span>
+          <a class="vault-button vault-button--secondary" data-notebook-open hidden>Abrir</a>
+        </div>
+      </article>
     ))}
-  </ul>
+  </section>
 
   <p>
     Para rodar os notebooks localmente: <code>pnpm run notebooks:dev</code>
@@ -47,33 +67,29 @@ const notebooks = manifest
   for (const item of document.querySelectorAll('[data-notebook-link]')) {
     const href = item.getAttribute('data-notebook-link');
     const availability = item.querySelector('[data-availability]');
-    const title = item.querySelector('strong');
-    if (!href || !availability || !title) continue;
+    const openLink = item.querySelector('[data-notebook-open]');
+    if (!href || !availability || !openLink) continue;
 
     fetch(href, { method: 'HEAD' })
       .then((response) => {
         if (!response.ok) return;
-        const link = document.createElement('a');
-        link.href = href;
-        link.textContent = title.textContent;
-        title.replaceChildren(link);
         availability.textContent = 'Disponível';
+        availability.setAttribute('data-state', 'available');
+        openLink.href = href;
+        openLink.hidden = false;
       })
       .catch(() => {});
   }
 </script>
 
 <style>
-  .notebook-list {
-    display: grid;
-    gap: 0.75rem;
-    padding-inline-start: 1.25rem;
+  .notebook-grid {
+    --vault-card-min-height: 14rem;
+    --vault-card-body-lines: 3;
+    margin-block: 1.75rem;
   }
 
-  .availability {
-    display: inline-block;
-    margin-inline-start: 0.5rem;
-    color: var(--sl-color-gray-3);
-    font-size: var(--sl-text-sm);
+  .notebook-card {
+    min-height: var(--vault-card-min-height);
   }
 </style>

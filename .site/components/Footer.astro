@@ -10,15 +10,16 @@ import Pagination from 'virtual:starlight/components/Pagination';
 		<LastUpdated />
 	</div>
 	<Pagination />
-	<p class="kudos">
-		made with ♥ by <a href="https://github.com/aretw0">@aretw0</a> · {new Date().getFullYear()}
-	</p>
+	<div class="kudos" lang="pt-BR">
+		Feito com ♥ por <a href="https://github.com/aretw0">@aretw0</a> · {new Date().getFullYear()}
+	</div>
 </footer>
 
 <style>
 	footer {
 		flex-direction: column;
 		gap: 0;
+		padding: 0;
 	}
 	/* Only add spacing when meta has real content (EditLink / LastUpdated rendered).
 	   :has(> *) is false for whitespace-only text nodes, so empty meta collapses. */
@@ -36,10 +37,19 @@ import Pagination from 'virtual:starlight/components/Pagination';
 		margin-bottom: 1.5rem;
 	}
 	.kudos {
-		text-align: center;
-		font-size: var(--sl-text-xs);
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25em;
+		width: fit-content;
+		margin-block: 0.75rem;
+		margin-inline: auto;
+		padding: 0.35rem 0.75rem;
+		font-size: 0.8125rem;
+		line-height: 1;
+		font-variant-emoji: text;
 		color: var(--sl-color-gray-3);
-		margin: 0.75rem auto 0;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: 999px;
 	}
 	.kudos a {
 		color: inherit;

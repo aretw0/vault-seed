@@ -14,10 +14,31 @@
     "publish": true
   },
   {
+    "title": "ETL",
+    "source": "99 - Meta e Anexos/Notebooks/etl-demo.py",
+    "output": "etl.html",
+    "description": "snapshot local empacotado e fonte remota opcional em runtime",
+    "publish": true
+  },
+  {
+    "title": "Feeds",
+    "source": "99 - Meta e Anexos/Notebooks/analise-feeds.py",
+    "output": "feeds.html",
+    "description": "assinaturas RSS/Atom, domínios, categorias e inbox de fontes",
+    "publish": true
+  },
+  {
+    "title": "Outbox",
+    "source": "99 - Meta e Anexos/Notebooks/analise-outbox.py",
+    "output": "outbox.html",
+    "description": "rascunhos por canal, política de publicação e checklist de revisão",
+    "publish": true
+  },
+  {
     "title": "Apresentação",
     "source": "99 - Meta e Anexos/Notebooks/apresentacao-vault-seed.py",
     "output": "vault-seed-slides.html",
-    "description": "visão em slides do vault-seed e do Lab",
+    "description": "apresentação navegável do vault-seed e do Lab",
     "publish": true
   }
 ]

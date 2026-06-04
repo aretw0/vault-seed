@@ -52,25 +52,62 @@ function requireCondition(condition, message) {
 
 const pkg = readJson("package.json");
 const templatePkg = readJson("package.template.json");
-const templateLock = read("pnpm-lock.template.yaml");
+const templateLock = read("pnpm-lock.template.yaml").replace(/\r\n/g, "\n");
 const initializeWorkflow = read(".github/workflows/initialize.yml");
+const ciWorkflow = read(".github/workflows/ci.yml");
 const gitignore = read(".gitignore");
 const notebooksDevScript = read("scripts/notebooks_dev.mjs");
 const notebooksCheckScript = read("scripts/notebooks_check.mjs");
 const notebooksExportScript = read("scripts/export_notebooks.mjs");
 const notebooksSlidesScript = read("scripts/export_notebook_slides.mjs");
+const presentationNotebook = read("99 - Meta e Anexos/Notebooks/apresentacao-vault-seed.py");
+const etlNotebook = read("99 - Meta e Anexos/Notebooks/etl-demo.py");
+const labDatasetsManifest = readJson(".site/lab.datasets.json");
+const labNotebooksManifest = readJson(".site/lab.notebooks.json");
+const labDatasetsScript = read("scripts/prepare_lab_datasets.mjs");
+const labEtlDemoScript = read("scripts/lab_etl_demo.mjs");
+const iaAuditScript = read("scripts/audit_information_architecture.mjs");
+const informationArchitectureAuditRuntime = read(".site/lib/information-architecture-audit.mjs");
 const headerComponent = read(".site/components/Header.astro");
+const mobileMenuFooterComponent = read(".site/components/MobileMenuFooter.astro");
+const homePage = read(".site/pages/index.astro");
+const graphViewComponent = read(".site/components/VaultGraphView.astro");
+const graphSharedComponent = read(".site/components/VaultGraphShared.astro");
+const explorePage = read(".site/pages/explorar/index.astro");
+const exploreIntentPage = read(".site/pages/explorar/intencoes.astro");
+const exploreDataEndpoint = read(".site/pages/explorar/dados.json.ts");
+const exploreDataLib = read(".site/lib/vault-explore.ts");
 const astroConfig = read("astro.config.mjs");
+const sidebarConfig = read(".site/sidebar.config.ts");
+const sidebarSectionsConfig = read(".site/sidebar.sections.json");
+const informationArchitecture = read(".site/information-architecture.json");
+const informationArchitectureRuntime = read(".site/lib/information-architecture.mjs");
 const pyproject = read("pyproject.toml");
 const marimoCss = read(".site/styles/marimo-vault.css");
 const themeRuntimeCss = read(".site/styles/theme-runtime.css");
 const vaultLoader = read(".site/content.config.ts");
 const customCss = read(".site/styles/custom.css");
+const curationRoutineGuide = read("99 - Meta e Anexos/99.2 - Workflows/Rotina de Curadoria Editorial.md");
+const labDataGuide = read("99 - Meta e Anexos/99.2 - Workflows/Preparando Dados para o Lab.md");
 
 requireCondition(
   typeof pkg.packageManager === "string" &&
     pkg.packageManager.startsWith("pnpm@"),
   "package.json must declare pnpm in packageManager.",
+);
+requireCondition(
+  pkg.scripts?.["audit:ia"] === "node scripts/audit_information_architecture.mjs" &&
+    templatePkg.scripts?.["audit:ia"] === "node scripts/audit_information_architecture.mjs" &&
+    pkg.scripts?.["site:audit:sidebar"] === "node scripts/audit_sidebar.js" &&
+    templatePkg.scripts?.["site:audit:sidebar"] === "node scripts/audit_sidebar.js" &&
+    informationArchitecture.includes('"intents"') &&
+    informationArchitectureRuntime.includes("export function deriveNoteIntents") &&
+    iaAuditScript.includes("buildInformationArchitectureReport") &&
+    informationArchitectureAuditRuntime.includes("loadInformationArchitecture") &&
+    informationArchitectureAuditRuntime.includes("deriveNoteIntents") &&
+    informationArchitectureAuditRuntime.includes("promotionCandidates") &&
+    informationArchitectureAuditRuntime.includes("nota publicada sem category"),
+  "The template must expose deterministic information-architecture and sidebar audits for published notes.",
 );
 requireCondition(exists("pnpm-lock.yaml"), "pnpm-lock.yaml must exist.");
 requireCondition(
@@ -88,7 +125,31 @@ requireCondition(
   "package.template.json scripts must not reference release-only changelog or version tooling.",
 );
 requireCondition(
+  !templatePkg.scripts?.["lint:docs"] &&
+    templatePkg.scripts?.lint === "pnpm run lint:main && pnpm run lint:templates" &&
+    templatePkg.scripts?.test?.includes("scripts/*.test.mjs") &&
+    templatePkg.scripts?.test?.includes("scripts/*.test.cjs") &&
+    templatePkg.scripts?.validate?.includes("audit:ia") &&
+    templatePkg.scripts?.validate?.includes("site:audit:sidebar") &&
+    templatePkg.scripts?.validate?.includes("validate:pt-text") &&
+    templatePkg.scripts?.validate?.includes("validate:theme") &&
+    templatePkg.scripts?.validate?.includes("validate:mermaid"),
+  "package.template.json must keep generated-vault validation aligned with JS, MJS, CJS tests and content audits.",
+);
+requireCondition(
+  ciWorkflow.includes("pnpm run validate") &&
+    !ciWorkflow.includes("pnpm run lint:main") &&
+    !ciWorkflow.includes("pnpm run lint:templates") &&
+    !ciWorkflow.includes("pnpm run validate:onboarding"),
+  "ci.yml must run the canonical generated-vault validate script instead of duplicating an older partial gate.",
+);
+requireCondition(
   templatePkg.scripts?.["notebooks:data"] === "node scripts/generate_vault_data.mjs" &&
+    templatePkg.scripts?.["notebooks:etl:demo"] === "node scripts/lab_etl_demo.mjs" &&
+    templatePkg.scripts?.["feeds:opml"] === "node scripts/prepare_feed_sources.mjs" &&
+    templatePkg.scripts?.["outbox:prepare"] === "node scripts/prepare_publication_outbox.mjs" &&
+    templatePkg.scripts?.["notebooks:etl"] === "pnpm run notebooks:etl:demo && pnpm run feeds:opml && pnpm run outbox:prepare && node scripts/prepare_lab_datasets.mjs" &&
+    templatePkg.scripts?.["notebooks:extract:local"] === "pnpm run notebooks:etl" &&
     templatePkg.scripts?.["notebooks:dev"] === "node scripts/notebooks_dev.mjs" &&
     templatePkg.scripts?.["notebooks:check"] === "node scripts/notebooks_check.mjs" &&
     templatePkg.scripts?.["notebooks:pair"] === "node scripts/notebooks_pair.mjs" &&
@@ -96,9 +157,23 @@ requireCondition(
   "package.template.json must expose notebooks:dev for generated vaults.",
 );
 requireCondition(
-  templatePkg.scripts?.["notebooks:export:public"] === "node scripts/export_notebooks.mjs --public" &&
+  exists(".site/lab.datasets.json") &&
+    notebooksDevScript.includes("buildLabDatasets") &&
+    notebooksCheckScript.includes("buildLabDatasets") &&
+    notebooksExportScript.includes("buildLabDatasets") &&
+    notebooksSlidesScript.includes("buildLabDatasets") &&
+    labDatasetsScript.includes('"assets", DATASET_ROOT') &&
+    labDatasetsScript.includes("sha256"),
+  "Lab ETL tooling must prepare deterministic local/runtime dataset manifests for dev, check, and export.",
+);
+requireCondition(
+    templatePkg.scripts?.["notebooks:export:public"] === "node scripts/export_notebooks.mjs --public" &&
     templatePkg.scripts?.["notebooks:export:slides"] === "node scripts/export_notebook_slides.mjs" &&
-    templatePkg.scripts?.["site:dev:lab"] === "pnpm run notebooks:export:public && astro dev",
+    templatePkg.scripts?.["site:dev:lab"] === "pnpm run notebooks:export:public && astro dev" &&
+    templatePkg.scripts?.["site:dev:lab:host"] === "pnpm run notebooks:export:public && astro dev --host 0.0.0.0" &&
+    templatePkg.scripts?.["site:responsive"] === "pnpm run site:build && pnpm run notebooks:export && node scripts/smoke_responsive.mjs" &&
+    templatePkg.devDependencies?.["@playwright/test"] === "^1.60.0" &&
+    exists("scripts/smoke_responsive.mjs"),
   "package.template.json must expose a local published-Lab preview path for generated vaults.",
 );
 requireCondition(
@@ -108,8 +183,14 @@ requireCondition(
   "notebooks:export must copy vault-data.json to both notebook root and assets/ for WASM runtime fetches.",
 );
 requireCondition(
-  templatePkg.dependencies?.["@dgk/astro-plugins"] === "workspace:^",
-  "Generated vaults must use the local workspace @dgk/astro-plugins package until it is published.",
+  notebooksExportScript.includes("isNotebookExportFresh") &&
+    notebooksExportScript.includes("skip notebook:") &&
+    notebooksExportScript.includes('"--force"'),
+  "notebooks:export must skip fresh notebook HTML and force overwrite only when an export is stale.",
+);
+requireCondition(
+  templatePkg.dependencies?.["@aretw0/dgk-astro-plugins"] === "workspace:^",
+  "Generated vaults must use the local workspace @aretw0/dgk-astro-plugins package until it is published.",
 );
 requireCondition(
   gitignore.includes("__marimo__/"),
@@ -146,11 +227,24 @@ requireCondition(
   marimoCss.includes('color-scheme: dark') &&
     marimoCss.includes("--color-background: var(--background)") &&
     marimoCss.includes("--gdg-bg-cell: var(--background)") &&
+    marimoCss.includes("#vg-tooltip-element") &&
+    marimoCss.includes(".vega-embed") &&
     marimoCss.includes('[role="combobox"]') &&
     marimoCss.includes("marimo-table tr:nth-child(even)") &&
     marimoCss.includes('[role="option"][aria-selected="true"]') &&
     marimoCss.includes('.text-muted-foreground'),
   "Marimo exported notebooks must harden table, data-grid, and select colors for accessible dark/light themes.",
+);
+requireCondition(
+  /app = marimo\.App\(\r?\n    width="medium",\r?\n    layout_file="layouts\/apresentacao-vault-seed\.slides\.json",\r?\n\)/.test(presentationNotebook) &&
+    exists("99 - Meta e Anexos/Notebooks/layouts/apresentacao-vault-seed.slides.json") &&
+    !presentationNotebook.includes("mo.carousel") &&
+    !presentationNotebook.includes("def slide(source):") &&
+    notebooksExportScript.includes("cpSync(sourceLayoutsDir") &&
+    marimoCss.includes("overflow-x: hidden") &&
+    marimoCss.includes("-webkit-overflow-scrolling: touch") &&
+    marimoCss.includes("data-vault-marimo-presentation"),
+  "Marimo presentation notebook must use the native slides layout and export its layout file with the notebook source.",
 );
 requireCondition(
   notebooksExportScript.includes("VAULT_MARIMO_THEME_SELECTOR") &&
@@ -165,10 +259,52 @@ requireCondition(
 );
 requireCondition(
   notebooksExportScript.includes("data-vault-marimo-navigation") &&
-    notebooksExportScript.includes('<a href="../">Vault</a>\n  <a href="./">Lab</a>') &&
+    notebooksExportScript.includes("data-vault-lab-footer") &&
+    (/feito com <span[^>]*class="[^"]*vault-lab-footer__heart[^"]*"[^>]*aria-label="amor">♥<\/span> por/.test(notebooksExportScript) ||
+      notebooksExportScript.includes("feito com <span aria-label=\"amor\">♥</span> por")) &&
+    notebooksExportScript.includes('href="${labIndexHref}"') &&
+    notebooksExportScript.includes("data-vault-marimo-presentation-fullscreen") &&
+    notebooksExportScript.includes("vaultMarimoFullscreenButton") &&
+    notebooksExportScript.includes("Fechar tela cheia") &&
+    !notebooksExportScript.includes("vault-marimo-fullscreen-toggle") &&
+    !notebooksExportScript.includes("Abrir versão interativa") &&
     notebooksSlidesScript.includes("data-vault-marimo-navigation") &&
-    marimoCss.includes(".vault-marimo-navigation"),
-  "Marimo exported notebooks must include stable navigation back to the Lab and vault site.",
+    notebooksSlidesScript.includes("data-vault-marimo-presentation-fullscreen") &&
+    notebooksSlidesScript.includes("vaultMarimoFullscreenButton") &&
+    notebooksSlidesScript.includes("Fechar tela cheia") &&
+    !notebooksExportScript.includes("data-vault-marimo-presentation-exit"),
+  "Marimo exported notebooks must include stable navigation and fullscreen labeling for presentations.",
+);
+requireCondition(
+    pkg.scripts?.["notebooks:etl:demo"] === "node scripts/lab_etl_demo.mjs" &&
+    pkg.scripts?.["feeds:opml"] === "node scripts/prepare_feed_sources.mjs" &&
+    pkg.scripts?.["outbox:prepare"] === "node scripts/prepare_publication_outbox.mjs" &&
+    pkg.scripts?.["notebooks:etl"]?.includes("outbox:prepare") &&
+    pkg.scripts?.["notebooks:etl"]?.includes("feeds:opml") &&
+    pkg.scripts?.["notebooks:etl"]?.includes("notebooks:etl:demo") &&
+    pkg.scripts?.["notebooks:extract:local"] === "pnpm run notebooks:etl" &&
+    labEtlDemoScript.includes("dados\", \"lab\", \"perfil-do-vault.json") &&
+    labEtlDemoScript.includes("dados\", \"lab\", \"curadoria-ia.json") &&
+    labDatasetsManifest.some((entry) => entry.id === "perfil-do-vault" && entry.source === "dados/lab/perfil-do-vault.json") &&
+    labDatasetsManifest.some((entry) => entry.id === "curadoria-ia" && entry.source === "dados/lab/curadoria-ia.json") &&
+    labDatasetsManifest.some((entry) => entry.id === "feeds-assinados" && entry.source === "dados/lab/feeds-assinados.json") &&
+    labDatasetsManifest.some((entry) => entry.id === "outbox-publicacao" && entry.source === "dados/lab/outbox-publicacao.json") &&
+    labDatasetsManifest.some((entry) => entry.id === "json-remoto-opcional" && entry.runtimeUrl) &&
+    labNotebooksManifest.some((entry) => entry.source === "99 - Meta e Anexos/Notebooks/etl-demo.py" && entry.publish === true) &&
+    labNotebooksManifest.some((entry) => entry.source === "99 - Meta e Anexos/Notebooks/analise-feeds.py" && entry.publish === true) &&
+    labNotebooksManifest.some((entry) => entry.source === "99 - Meta e Anexos/Notebooks/analise-outbox.py" && entry.publish === true) &&
+    etlNotebook.includes("load_lab_manifest") &&
+    etlNotebook.includes("read_lab_dataset") &&
+    etlNotebook.includes("write_local_json_snapshot") &&
+    labDataGuide.includes("Gerando notas para Bases e Dataview") &&
+    labDataGuide.includes("write_local_markdown_note") &&
+    labDataGuide.includes("lab_generated = true") &&
+    etlNotebook.includes("write_local_dataframe_snapshot") &&
+    etlNotebook.includes("fetch_local_url_text") &&
+    etlNotebook.includes("extract_local_image_text") &&
+    etlNotebook.includes("Primitivas locais vs publicadas") &&
+    etlNotebook.includes("Carregar exemplo remoto no navegador"),
+  "Lab ETL demo must keep local snapshot generation, dataset manifest packaging, and a published notebook example wired together.",
 );
 requireCondition(
   astroConfig.includes("process.env.VAULT_THEME_SELECTOR ??=") &&
@@ -187,14 +323,81 @@ requireCondition(
   "Published notes must render frontmatter tag/property badges.",
 );
 requireCondition(
+  curationRoutineGuide.includes("pnpm run validate") &&
+    curationRoutineGuide.includes("pnpm run audit:ia") &&
+    curationRoutineGuide.includes("/explorar/") &&
+    curationRoutineGuide.includes("curadoria-ia.json") &&
+    curationRoutineGuide.includes("decisão humana"),
+  "The generated vault must document the recurring editorial curation routine across validation, Astro, and Lab.",
+);
+
+requireCondition(
+  headerComponent.includes('/explorar/') &&
+    homePage.includes('graphHeroHtml') &&
+    homePage.includes('heroGraphHtml') &&
+    homePage.includes('<VaultGraphShared') &&
+    !homePage.includes('data-language=\"mermaid\"') &&
+    graphViewComponent.includes('vault-graph-view') &&
+    graphViewComponent.includes('<VaultGraphShared') &&
+    graphViewComponent.includes('viewBox="0 0 200 200"') &&
+    graphViewComponent.includes('vault-graph-view__hover-layer') &&
+    customCss.includes('.vault-graph-view__hover-layer') &&
+    graphSharedComponent.includes('__vaultGraphShared') &&
+    graphSharedComponent.includes('computeForces') &&
+    graphSharedComponent.includes('placeLabel') &&
+    graphSharedComponent.includes('estimateLabelHalfWidth') &&
+    explorePage.includes('buildVaultExploreData') &&
+    explorePage.includes('VaultGraphView') &&
+    explorePage.includes('data-vault-explore-search') &&
+    explorePage.includes('data-vault-explore-intent') &&
+    explorePage.includes('vault-metric-grid') &&
+    explorePage.includes('vault-graph-cloud') &&
+    explorePage.includes('orphanNodes') &&
+    explorePage.includes('Curadoria editorial') &&
+    explorePage.includes('promotionCandidates') &&
+    explorePage.includes('/explorar/intencoes/') &&
+    exploreIntentPage.includes('Mapa por Intenção') &&
+    exploreIntentPage.includes('degreeBySlug') &&
+    exploreIntentPage.includes('Hubs desta intenção') &&
+    exploreIntentPage.includes('.site/information-architecture.json') &&
+    exploreDataEndpoint.includes('buildVaultExploreData') &&
+    exploreDataLib.includes('loadInformationArchitecture') &&
+    exploreDataLib.includes('deriveNoteIntents') &&
+    exploreDataLib.includes('graph:') &&
+    exploreDataLib.includes('editorial:') &&
+    exploreDataLib.includes('buildInformationArchitectureReport') &&
+    exploreDataLib.includes('orphanCandidates') &&
+    exploreDataLib.includes('insights') &&
+    customCss.includes('.vault-filter-panel') &&
+    customCss.includes('.vault-resource-list') &&
+    customCss.includes('.vault-graph-view') &&
+    customCss.includes('.vault-graph-cloud'),
+  "Astro must expose a static exploration surface with filters, metrics, graph data, and reusable UI primitives.",
+);
+requireCondition(
+  sidebarConfig.includes('sidebar.sections.json') &&
+    sidebarSectionsConfig.includes('"intent": "comecar"') &&
+    sidebarSectionsConfig.includes('"intent": "organizar"') &&
+    sidebarSectionsConfig.includes('"intent": "explorar"') &&
+    astroConfig.includes("deriveNoteIntents") &&
+    astroConfig.includes("informationArchitecture") &&
+    astroConfig.includes("MobileMenuFooter") &&
+    !mobileMenuFooterComponent.includes("ThemeSelect") &&
+    astroConfig.includes("labSidebarSection") &&
+    astroConfig.includes("labNotebooksManifest") &&
+    astroConfig.includes("if (!e.folder) return false"),
+  "Published sidebar must use the shared information-architecture intents without leaking technical docs into intent sections.",
+);
+requireCondition(
   (() => {
     const match = initializeWorkflow.match(/files_to_remove:\s*"([^"]+)"/);
     const removed = match ? match[1].split(/\s+/) : [];
     return !removed.includes("packages") &&
       !removed.includes("pnpm-workspace.yaml") &&
-      removed.includes("packages/cli");
+      removed.includes("packages/cli") &&
+      removed.includes("ROADMAP.md");
   })(),
-  "initialize.yml must keep pnpm-workspace.yaml and packages/astro-plugins, removing only packages/cli.",
+  "initialize.yml must keep pnpm-workspace.yaml and packages/astro-plugins, removing packages/cli and template-only ROADMAP.md.",
 );
 for (const [name, specifier] of Object.entries({
   ...(templatePkg.dependencies || {}),

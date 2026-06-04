@@ -3,6 +3,8 @@ title: Diagramas do Vault
 tags:
   - meta/diagramas
 status: published
+category: referencia
+audience: tecnico
 ---
 # Diagramas do Vault
 

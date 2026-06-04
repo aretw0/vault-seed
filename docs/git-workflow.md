@@ -44,7 +44,7 @@ Este documento detalha a estratégia de branches e merges utilizada neste reposi
         git checkout -b feature/minha-nova-feature
         ```
 2.  **Desenvolvimento:**
-    *   Faça suas alterações e commits no branch de `feature`. Siga a convenção de [Conventional Commits](CONTRIBUTING.md).
+    *   Faça suas alterações e commits no branch de `feature`. Siga a convenção de [Conventional Commits](conventional-commits-e-versionamento-automatico.md).
 3.  **Submissão para Revisão:**
     *   Envie seu branch para o repositório remoto:
         ```bash

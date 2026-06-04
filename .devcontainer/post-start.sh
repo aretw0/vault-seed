@@ -4,6 +4,14 @@
 export PNPM_HOME="${PNPM_HOME:-/home/vscode/.local/share/pnpm}"
 export PATH="$PNPM_HOME/bin:$PNPM_HOME:$PATH"
 
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+
+# Repair .git/objects ownership — the container runtime may clone as root, leaving
+# some object subdirs as drwxr-xr-x and causing "insufficient permission" on commit.
+if [ -d "$ROOT/.git/objects" ]; then
+  sudo chown -R "$(id -u):$(id -g)" "$ROOT/.git/objects" 2>/dev/null || true
+fi
+
 repair_owned_dir() {
   local dir="$1"
   mkdir -p "$dir" 2>/dev/null || {

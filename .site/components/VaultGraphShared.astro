@@ -1,0 +1,462 @@
+---
+---
+<script is:inline>
+  (() => {
+    if (window.__vaultGraphShared) {
+      return;
+    }
+
+    function clamp(value, min, max) {
+      const safeMin = Number.isFinite(Number(min)) ? Number(min) : value;
+      const safeMax = Number.isFinite(Number(max)) ? Number(max) : value;
+      return Math.min(safeMax, Math.max(safeMin, Number(value)));
+    }
+
+    function estimateLabelHalfWidth(text, fontSize, options = {}) {
+      const safeFontSize = Number(fontSize) || 6;
+      const maxWidthPx = Number.isFinite(Number(options.maxChars))
+        ? Number(options.maxChars)
+        : 140;
+      return Math.max(5, Math.min(maxWidthPx, String(text || '').length * safeFontSize * 0.52));
+    }
+
+    function placeLabel(rawX, rawY, halfWidth, preferAbove = false, options = {}) {
+      const viewboxSize = Number.isFinite(Number(options.viewboxSize)) ? Number(options.viewboxSize) : 200;
+      const offsetY = Number.isFinite(Number(options.offsetY)) ? Number(options.offsetY) : 9;
+      const margin = Number.isFinite(Number(options.margin)) ? Number(options.margin) : 6;
+      const marginY = Number.isFinite(Number(options.marginY)) ? Number(options.marginY) : 1;
+      const minXBoundary = Number.isFinite(Number(options.visibleMinX)) ? Number(options.visibleMinX) : 0;
+      const maxXBoundary = Number.isFinite(Number(options.visibleMaxX)) ? Number(options.visibleMaxX) : viewboxSize;
+      const minYBoundary = Number.isFinite(Number(options.visibleMinY)) ? Number(options.visibleMinY) : 0;
+      const maxYBoundary = Number.isFinite(Number(options.visibleMaxY)) ? Number(options.visibleMaxY) : viewboxSize;
+
+      const safeHalf = Math.min(
+        Number(halfWidth) || 10,
+        Math.max(2, Math.abs(maxXBoundary - minXBoundary) / 2 - margin - 1),
+      );
+      const minTextX = minXBoundary + margin;
+      const maxTextX = maxXBoundary - margin;
+      const textWidth = Math.max(2, safeHalf * 2);
+      const availableTextWidth = Math.max(0, maxTextX - minTextX);
+
+      const clampedForStart = clamp(rawX, minTextX, maxTextX - textWidth);
+      const clampedForEnd = clamp(rawX, minTextX + textWidth, maxTextX);
+      const clampedForMiddle = clamp(rawX, minTextX + textWidth / 2, maxTextX - textWidth / 2);
+
+      const canPlaceStart = textWidth <= availableTextWidth && rawX >= minTextX && rawX <= maxTextX - textWidth;
+      const canPlaceEnd = textWidth <= availableTextWidth && rawX >= minTextX + textWidth && rawX <= maxTextX;
+      const canPlaceMiddle = textWidth <= availableTextWidth && rawX >= minTextX + textWidth / 2 && rawX <= maxTextX - textWidth / 2;
+
+      const midline = (minTextX + maxTextX) / 2;
+      let clampedX = clampedForMiddle;
+      let textAnchor = 'middle';
+
+      if (rawX <= midline && canPlaceStart) {
+        textAnchor = 'start';
+        clampedX = clampedForStart;
+      } else if (rawX > midline && canPlaceEnd) {
+        textAnchor = 'end';
+        clampedX = clampedForEnd;
+      } else if (canPlaceMiddle) {
+        clampedX = clampedForMiddle;
+      } else if (canPlaceStart) {
+        textAnchor = 'start';
+        clampedX = clampedForStart;
+      } else if (canPlaceEnd) {
+        textAnchor = 'end';
+        clampedX = clampedForEnd;
+      } else {
+        textAnchor = 'start';
+        clampedX = minTextX;
+      }
+
+      const minY = Math.max(offsetY + marginY, minYBoundary + 1);
+      const maxY = Math.min(maxYBoundary - offsetY - marginY, maxYBoundary - 1);
+      const preferredY = preferAbove
+        ? rawY - (offsetY + marginY + 4)
+        : rawY;
+
+      let clampedY = clamp(preferredY, minY, maxY);
+      if (preferAbove && preferredY < minY) {
+        clampedY = clamp(rawY, minY, maxY);
+      }
+
+      return {
+        x: clampedX,
+        y: clampedY,
+        anchor: textAnchor,
+      };
+    }
+
+    function fitLabelToViewport(labelElement, text, rawX, rawY, preferAbove = false, options = {}) {
+      if (!labelElement) {
+        return {
+          x: rawX,
+          y: rawY,
+          anchor: 'middle',
+          fontSize: '',
+          lines: [],
+          lineHeight: 0,
+        };
+      }
+
+      const rawText = String(text || '');
+      const minFontScale = Number.isFinite(Number(options.minFontScale)) ? Number(options.minFontScale) : 0.2;
+      const maxFontScale = Number.isFinite(Number(options.maxFontScale)) ? Number(options.maxFontScale) : 1;
+      const viewboxSize = Number.isFinite(Number(options.viewboxSize)) ? Number(options.viewboxSize) : 200;
+      const offsetY = Number.isFinite(Number(options.offsetY)) ? Number(options.offsetY) : 9;
+      const margin = Number.isFinite(Number(options.margin)) ? Number(options.margin) : 6;
+      const marginY = Number.isFinite(Number(options.marginY)) ? Number(options.marginY) : 1;
+      const minXBoundary = Number.isFinite(Number(options.visibleMinX)) ? Number(options.visibleMinX) : 0;
+      const maxXBoundary = Number.isFinite(Number(options.visibleMaxX)) ? Number(options.visibleMaxX) : viewboxSize;
+      const minYBoundary = Number.isFinite(Number(options.visibleMinY)) ? Number(options.visibleMinY) : 0;
+      const maxYBoundary = Number.isFinite(Number(options.visibleMaxY)) ? Number(options.visibleMaxY) : viewboxSize;
+      const maxLines = Number.isFinite(Number(options.maxLines)) ? Math.max(1, Math.floor(Number(options.maxLines))) : 4;
+
+      const availableWidth = Math.max(8, Math.abs(maxXBoundary - minXBoundary) - 2 * margin);
+      const availableHeight = Math.max(10, Math.abs(maxYBoundary - minYBoundary) - 2 * (offsetY + marginY));
+      const baseFontSize = Number.parseFloat(getComputedStyle(labelElement).fontSize) || 7;
+      const minFontPx = Math.max(2, baseFontSize * minFontScale);
+      const maxFontPx = Math.max(minFontPx, baseFontSize * maxFontScale);
+      const originalStyle = labelElement.getAttribute('style') || '';
+
+      const measureTextLength = (candidate, fontPx) => {
+        const line = String(candidate || '');
+        labelElement.style.fontSize = `${fontPx}px`;
+        labelElement.textContent = line;
+        const measured = Number(labelElement.getComputedTextLength());
+        if (Number.isFinite(measured) && measured > 0) {
+          return measured;
+        }
+        return estimateLabelHalfWidth(line, fontPx, { maxChars: 240 }) * 2;
+      };
+
+      const splitWordToChunks = (word, fontPx) => {
+        const chunks = [];
+        let chunk = '';
+        for (const char of String(word || '')) {
+          const nextChunk = `${chunk}${char}`;
+          if (!chunk) {
+            chunk = char;
+            continue;
+          }
+          if (measureTextLength(nextChunk, fontPx) <= availableWidth) {
+            chunk = nextChunk;
+            continue;
+          }
+          chunks.push(chunk);
+          chunk = char;
+        }
+
+        if (chunk) {
+          chunks.push(chunk);
+        }
+
+        return chunks.length ? chunks : [String(word || '')];
+      };
+
+      const buildLines = (fontPx) => {
+        const words = rawText.split(/\s+/).filter(Boolean);
+        if (!words.length) {
+          return [''];
+        }
+
+        const lines = [];
+        let currentLine = '';
+
+        for (const word of words) {
+          const withWord = currentLine ? `${currentLine} ${word}` : word;
+          const candidateLength = measureTextLength(withWord, fontPx);
+          if (candidateLength <= availableWidth) {
+            currentLine = withWord;
+            continue;
+          }
+
+          if (currentLine) {
+            lines.push(currentLine);
+            currentLine = '';
+          }
+
+          const singleWordLength = measureTextLength(word, fontPx);
+          if (singleWordLength <= availableWidth || fontPx <= minFontPx) {
+            currentLine = word;
+            continue;
+          }
+
+          const chunks = splitWordToChunks(word, fontPx);
+          if (chunks.length) {
+            for (const chunk of chunks) {
+              if (!currentLine) {
+                currentLine = chunk;
+              } else {
+                lines.push(currentLine);
+                currentLine = chunk;
+              }
+            }
+          }
+        }
+
+        if (currentLine) {
+          lines.push(currentLine);
+        }
+
+        if (lines.length > maxLines) {
+          return lines.slice(0, maxLines);
+        }
+
+        return lines;
+      };
+
+      let fontPx = maxFontPx;
+      let lines = [''];
+      let longestLength = 0;
+      const lineHeightFactor = 1.25;
+      let lineHeight = Math.max(8, fontPx * lineHeightFactor);
+      let totalHeight = lineHeight;
+
+      for (let iteration = 0; iteration < 26; iteration += 1) {
+        lines = buildLines(fontPx);
+        const lengths = lines.map((line) => measureTextLength(line, fontPx));
+        longestLength = lengths.length ? Math.max(...lengths) : 0;
+
+        lineHeight = Math.max(8, fontPx * lineHeightFactor);
+        totalHeight = lineHeight * lines.length;
+
+        if (longestLength <= availableWidth && totalHeight <= availableHeight) {
+          break;
+        }
+
+        if (fontPx <= minFontPx) {
+          break;
+        }
+
+        const widthScale = longestLength > 0 ? availableWidth / longestLength : 1;
+        const heightScale = totalHeight > 0 ? availableHeight / totalHeight : 1;
+        const nextFontPx = Math.max(minFontPx, fontPx * Math.min(1, widthScale, heightScale));
+
+        if (nextFontPx >= fontPx - 0.01) {
+          fontPx = Math.max(minFontPx, fontPx - 0.1);
+        } else {
+          fontPx = nextFontPx;
+        }
+      }
+
+      const placement = placeLabel(rawX, rawY, Math.max(1, longestLength / 2), preferAbove, {
+        viewboxSize,
+        offsetY,
+        margin,
+        marginY,
+        visibleMinX: minXBoundary,
+        visibleMaxX: maxXBoundary,
+        visibleMinY: minYBoundary,
+        visibleMaxY: maxYBoundary,
+      });
+
+      const blockHeight = lineHeight * Math.max(1, lines.length);
+      const blockBottom = Math.max(0, blockHeight - lineHeight);
+      const minLineY = minYBoundary + offsetY + marginY;
+      const maxLineY = maxYBoundary - offsetY - marginY;
+      let firstLineY = placement.y - (blockBottom / 2);
+      if (blockBottom > 0) {
+        if (firstLineY < minLineY) {
+          firstLineY = minLineY;
+        }
+        if (firstLineY + blockBottom > maxLineY) {
+          firstLineY = maxLineY - blockBottom;
+        }
+      }
+      firstLineY = clamp(firstLineY, minLineY, Math.max(minLineY, maxLineY));
+
+      if (originalStyle) {
+        labelElement.setAttribute('style', originalStyle);
+      } else {
+        labelElement.removeAttribute('style');
+      }
+
+      return {
+        ...placement,
+        x: placement.x,
+        y: firstLineY,
+        fontSize: fontPx === baseFontSize ? '' : `${fontPx}px`,
+        lines,
+        lineHeight,
+      };
+    }
+
+    function renderWrappedLabel(labelElement, placement = {}) {
+      if (!labelElement) return;
+
+      const lines = Array.isArray(placement.lines)
+        ? placement.lines.filter((line) => line !== undefined && line !== null)
+        : [];
+      if (lines.length <= 1) {
+        return;
+      }
+
+      const x = Number(placement.x);
+      const y = Number(placement.y);
+      const lineHeight = Number.isFinite(Number(placement.lineHeight))
+        ? Number(placement.lineHeight)
+        : Number.parseFloat(String(placement.fontSize || '7px')) || 7;
+      const namespace = 'http://www.w3.org/2000/svg';
+
+      while (labelElement.firstChild) {
+        labelElement.removeChild(labelElement.firstChild);
+      }
+
+      lines.forEach((line, index) => {
+        const tspan = document.createElementNS(namespace, 'tspan');
+        tspan.textContent = String(line);
+        tspan.setAttribute('x', String(Number.isFinite(x) ? x : 0));
+
+        if (index === 0) {
+          tspan.setAttribute('y', String(Number.isFinite(y) ? y : 0));
+        } else {
+          tspan.setAttribute('dy', String(lineHeight));
+        }
+
+        labelElement.appendChild(tspan);
+      });
+    }
+
+    function computeForces({
+      nodes,
+      edges,
+      focusItem = null,
+      repulsionForce = 2400,
+      springForce = 0.013,
+      centerForce = 0.001,
+      repulsionMode = 'explorer',
+      maxRepulsionForce = Number.POSITIVE_INFINITY,
+      maxSpringForce = Number.POSITIVE_INFINITY,
+      globalInteractionRadius = Number.POSITIVE_INFINITY,
+      focusInteractionRadius = 150,
+      edgeScale = 1,
+      edgeIdealGap = 44,
+      edgeDistanceLimit = Number.POSITIVE_INFINITY,
+      edgeActivePredicate = null,
+      nodeActivePredicate = null,
+      includeInvisibleForces = false,
+    }) {
+      const safeNodes = Array.isArray(nodes) ? nodes : [];
+      const safeEdges = Array.isArray(edges) ? edges : [];
+
+      if (!Array.isArray(nodes) || !Array.isArray(edges)) {
+        return safeNodes.map(() => ({ x: 0, y: 0 }));
+      }
+
+      const safeNodeIndexById = new Map();
+      safeNodes.forEach((node, index) => {
+        if (node && node.id) {
+          safeNodeIndexById.set(node.id, index);
+        }
+      });
+
+      const resolvedEdges = safeEdges
+        .map((edge) => {
+          if (!edge) return null;
+          const source = edge.source && edge.source.id
+            ? edge.source
+            : safeNodeIndexById.get(edge.source);
+          const target = edge.target && edge.target.id
+            ? edge.target
+            : safeNodeIndexById.get(edge.target);
+
+          if (!source || !target) return null;
+          return {
+            edge: edge.edge || edge,
+            source,
+            target,
+            visible: true,
+          };
+        })
+        .filter(Boolean);
+
+      const forces = safeNodes.map(() => ({ x: 0, y: 0 }));
+      const isNodeActive = typeof nodeActivePredicate === 'function'
+        ? nodeActivePredicate
+        : () => true;
+      const focusLimitSq = Math.pow(focusItem ? focusInteractionRadius : globalInteractionRadius, 2);
+
+      for (let i = 0; i < safeNodes.length; i += 1) {
+        const source = safeNodes[i];
+        if (!source || (focusItem && !includeInvisibleForces && !isNodeActive(source))) {
+          continue;
+        }
+
+        for (let j = i + 1; j < safeNodes.length; j += 1) {
+          const target = safeNodes[j];
+          if (!target || (focusItem && !includeInvisibleForces && !isNodeActive(target))) {
+            continue;
+          }
+
+          const dx = source.x - target.x;
+          const dy = source.y - target.y;
+          const distSq = dx * dx + dy * dy + 0.25;
+          if (distSq > focusLimitSq) continue;
+
+          const dist = Math.sqrt(distSq);
+          const denominator = repulsionMode === 'hero'
+            ? distSq
+            : distSq * Math.max(1, dist);
+          const repulsion = clamp((repulsionForce / denominator), 0, maxRepulsionForce);
+          const forceX = (dx / dist) * repulsion;
+          const forceY = (dy / dist) * repulsion;
+
+          forces[i].x += forceX;
+          forces[i].y += forceY;
+          forces[j].x -= forceX;
+          forces[j].y -= forceY;
+        }
+      }
+
+      const edgeSqLimit = Number.isFinite(edgeDistanceLimit)
+        ? Math.pow(edgeDistanceLimit, 2)
+        : Number.POSITIVE_INFINITY;
+      for (const edge of resolvedEdges) {
+        if (!edge || !edge.source || !edge.target) continue;
+        if (focusItem && typeof edgeActivePredicate === 'function' && !edgeActivePredicate(edge, focusItem)) continue;
+        if (!edgeActivePredicate) {
+          if (focusItem) {
+            if (edge.source !== focusItem && edge.target !== focusItem) continue;
+          }
+        }
+
+        const dx = edge.target.x - edge.source.x;
+        const dy = edge.target.y - edge.source.y;
+        const distSq = dx * dx + dy * dy + 0.01;
+        if (distSq > edgeSqLimit) continue;
+
+        const dist = Math.sqrt(distSq);
+        const ideal = edge.source.size + edge.target.size + edgeIdealGap;
+        const pull = clamp((dist - ideal) * springForce * edgeScale, -maxSpringForce, maxSpringForce);
+        const fx = (dx / dist) * pull;
+        const fy = (dy / dist) * pull;
+
+        const sourceIndex = safeNodes.indexOf(edge.source);
+        const targetIndex = safeNodes.indexOf(edge.target);
+        if (sourceIndex < 0 || targetIndex < 0) continue;
+
+        forces[sourceIndex].x += fx;
+        forces[sourceIndex].y += fy;
+        forces[targetIndex].x -= fx;
+        forces[targetIndex].y -= fy;
+      }
+
+      return forces;
+    }
+
+    window.__vaultGraphShared = {
+      VIEWBOX_SIZE: 200,
+      LABEL_OFFSET_Y: 9,
+      LABEL_MARGIN: 6,
+      LABEL_MARGIN_Y: 1,
+      clamp,
+      estimateLabelHalfWidth,
+      placeLabel,
+      fitLabelToViewport,
+      renderWrappedLabel,
+      computeForces,
+    };
+  })();
+</script>

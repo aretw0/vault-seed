@@ -3,9 +3,12 @@ import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { globSync } from "glob";
 import { writeVaultData } from "./generate_vault_data.mjs";
+import { buildLabDatasets } from "./prepare_lab_datasets.mjs";
+import { resolveNotebooksPath } from "./notebook_path.mjs";
 import { uvEnv } from "./uv_env.mjs";
 
 const NOTEBOOKS_DIR = "99 - Meta e Anexos/Notebooks";
+const NOTEBOOKS_PATH = resolveNotebooksPath();
 
 function run(label, args) {
   console.log(`[notebooks:check] ${label}`);
@@ -24,12 +27,14 @@ function run(label, args) {
 
 const { data } = writeVaultData();
 console.log(`[notebooks:data] ${data.noteCount} notas`);
+const { data: datasetData } = buildLabDatasets();
+console.log(`[notebooks:etl] ${datasetData.datasetCount} dataset(s)`);
 
 run("estrutura e formatação", ["check", NOTEBOOKS_DIR, "--strict", "--ignore-scripts"]);
 run("execução de sessão", ["export", "session", NOTEBOOKS_DIR, "--force-overwrite", "--no-continue-on-error"]);
 
 const mojibakeFiles = globSync([
-  "public/lab/vault-data.json",
+  `public/${NOTEBOOKS_PATH}/vault-data.json`,
   "99 - Meta e Anexos/Notebooks/**/__marimo__/session/*.json",
 ])
   .filter((file) => /(?:\\u00c3|Ã)/.test(readFileSync(file, "utf8")));

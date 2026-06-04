@@ -3,13 +3,13 @@
 [![License](https://img.shields.io/github/license/aretw0/vault-seed.svg?color=red)](LICENSE.md)
 [![Release](https://img.shields.io/github/release/aretw0/vault-seed.svg?branch=main)](https://github.com/aretw0/vault-seed/releases)
 
-Esta "semente" (seed) de cofre (vault) ajuda a criar um vault de conhecimento em Obsidian e Visual Studio Code (Foam) com estrutura inicial, automações básicas e documentação de uso.
+Esta "semente" (seed) de cofre (vault) é uma base flexível para conhecimento local-first: arquivos puros, estrutura inicial, automações básicas, publicação Astro e um Lab Marimo opcional sem impor o uso final do vault.
 
 > Template original: [https://github.com/aretw0/vault-seed](https://github.com/aretw0/vault-seed)
 
 ## Para Quem Quer Criar Um Vault
 
-Use este repositório como template quando você quer começar um vault versionado sem montar toda a estrutura do zero. O conteúdo principal para usuários está nas notas dentro do vault, especialmente em `99 - Meta e Anexos/`.
+Use este repositório como template quando você quer começar um vault versionado sem montar toda a estrutura do zero. Ele pode virar site pessoal, blog simples, documentação coletiva ou cartão de visita. O conteúdo principal para usuários está nas notas dentro do vault, especialmente em `99 - Meta e Anexos/`.
 
 ## Pré-requisitos
 
@@ -51,7 +51,7 @@ git clone https://github.com/SEU-USUARIO/NOME-DO-SEU-REPOSITORIO.git
 Agora seu cofre está pronto. Abra a pasta no Obsidian ou Visual Studio Code.
 
 Para começar, abra a nota **[Guia do Jardineiro Digital](99%20-%20Meta%20e%20Anexos/Guia%20do%20Jardineiro%20Digital.md)**.
-Depois, siga **[Exploracao Guiada do Vault](99%20-%20Meta%20e%20Anexos/Exploracao%20Guiada%20do%20Vault.md)** para uma primeira visita de
+Depois, siga **[Exploração Guiada do Vault](99%20-%20Meta%20e%20Anexos/Exploracao%20Guiada%20do%20Vault.md)** para uma primeira visita de
 30 minutos sem precisar entender Git, plugins ou automações de uma vez.
 
 Se este for seu primeiro vault versionado, abra também
@@ -59,7 +59,7 @@ Se este for seu primeiro vault versionado, abra também
 VS Code, Git, GitHub Desktop e sincronização sem conflitos entre dispositivos.
 
 Quando a recepção automática do template terminar, abra
-**[Depois da Recepcao do Template](99%20-%20Meta%20e%20Anexos/Depois%20da%20Recepcao%20do%20Template.md)** para conferir o que ficou com você,
+**[Depois da Recepção do Template](99%20-%20Meta%20e%20Anexos/Depois%20da%20Recepcao%20do%20Template.md)** para conferir o que ficou com você,
 o que não deve ser sincronizado manualmente e como operar o vault entre
 desktop e celular.
 
@@ -84,9 +84,11 @@ Este template valida automaticamente o material de entrada para evitar drift:
 pnpm run validate
 ```
 
-Esse comando roda lint Markdown, testes dos scripts e smokes de template. Ele
-verifica se os arquivos essenciais de onboarding existem, se os wikilinks do
-vault apontam para notas reais e se as automacoes continuam usando `pnpm`.
+Esse comando roda a régua canônica de qualidade: lint Markdown, auditoria de
+arquitetura de informação, auditoria da sidebar, testes dos scripts, validação
+do onboarding, revisão de acentos em português, contraste dos temas, Mermaid e
+smokes de template. Ele verifica se o vault continua publicável, navegável e
+coerente antes de ir para o CI ou para o deploy do site.
 
 ## Para Contribuidores Do Template
 

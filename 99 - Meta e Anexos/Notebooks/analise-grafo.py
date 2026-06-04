@@ -161,5 +161,40 @@ def _(inverse_index, mo, notes):
     return ()
 
 
+@app.cell
+def _(mo):
+    mo.md(
+        "## 🧭 Lane de entendimento\n\n"
+        "Conduza esse notebook como uma trilha de maturação da visão estrutural do vault:"
+    )
+
+    mo.md(
+        "### Nível inicial — topologia\n\n"
+        "- Ler hubs e órfãs para perceber lacunas;\n"
+        "- Identificar notas com links quebrados e priorizar reparos simples."
+    )
+
+    mo.md(
+        "### Nível intermediário — métrica\n\n"
+        "- Acompanhar densidade por pasta e distribuição de inbound para mapear "
+        "fronteiras de conhecimento;\n"
+        "- Relacionar outliers a perguntas de arquitetura antes de mexer no conteúdo."
+    )
+
+    mo.md(
+        "### Nível avançado — intervenção\n\n"
+        "- Usar os sinais deste painel para propor refatorações de estrutura;\n"
+        "- Repetir a análise após cada ciclo para medir redução de nós órfãos e melhoria de cobertura."
+    )
+
+    mo.md(
+        "### Nível de excelência — arquitetura de coesão\n\n"
+        "- Consolidar um glossário de hubs por domínio e manter uma regra de exceção para grafos locais;\n"
+        "- Criar alertas de regressão (queda abrupta de densidade ou explosão de órfãos);\n"
+        "- Fechar uma revisão de arquitetura a cada sprint com plano de refatoração priorizado."
+    )
+    return
+
+
 if __name__ == "__main__":
     app.run()

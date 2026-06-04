@@ -3,10 +3,9 @@ import { fileURLToPath } from 'node:url';
 import { validate } from './commands/validate.js';
 import { lint } from './commands/lint.js';
 import { setup } from './commands/setup.js';
-import { release } from './commands/release.js';
 import { check } from './commands/check.js';
 
-const COMMANDS = { validate, lint, setup, release, check };
+const COMMANDS = { validate, lint, setup, check };
 
 export function resolveCommand(name) {
   return name in COMMANDS ? name : null;

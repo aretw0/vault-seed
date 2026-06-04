@@ -1,86 +1,49 @@
 ---
-created: {{date}}
-type: nota
+title: "{{title}}"
+created: "{{date}}"
+updated: "{{date}}"
 tags:
   - tipo/conceito
-status: #status/em-desenvolvimento
-aliases:
-  - 
+status: draft
+category: conceito
+audience: pessoal
+aliases: []
+related: []
 ---
 
 # {{title}}
 
-## Visão Geral
+## Ideia em uma frase
 
-[Breve descrição do conceito principal em 2-3 frases]
+> Escreva a menor versão útil do conceito.
 
-## Conceitos Fundamentais
+## Contexto
 
-### Primeiro Conceito
+- Onde esta ideia apareceu?
+- Qual problema ela ajuda a entender?
 
-[Explicação do primeiro conceito fundamental]
+## Desenvolvimento
 
-- Ponto chave 1
-- Ponto chave 2
-- Ponto chave 3
+### Pontos principais
 
-### Segundo Conceito
+-
+-
+-
 
-[Explicação do segundo conceito fundamental]
+### Exemplos
 
-- Exemplo 1
-- Exemplo 2
-- Exemplo 3
+-
 
-## Aplicação Prática
+## Conexões
 
-### Casos de Uso
+- Relaciona com:
+- Contrasta com:
+- Pode virar:
 
-1. [Primeiro caso de uso]
-   - Detalhamento
-   - Considerações
-   - Resultados esperados
+## Fontes
 
-2. [Segundo caso de uso]
-   - Detalhamento
-   - Considerações
-   - Resultados esperados
+-
 
-## Conexões e Relações
+## Próxima revisão
 
-### Links Diretos
-
-- [[Nota Relacionada 1]]
-- [[Nota Relacionada 2]]
-- [[Nota Relacionada 3]]
-
-### Contextos Relacionados
-
-- Área: [[MOC relevante]]
-- Projeto: [[Projeto relacionado]]
-- Conceitos: [[Conceito relacionado]]
-
-## Recursos e Referências
-
-### Fontes Primárias
-
-- [Referência 1]
-- [Referência 2]
-- [Referência 3]
-
-### Leituras Adicionais
-
-- [[Recurso adicional 1]]
-- [[Recurso adicional 2]]
-
-## Notas de Revisão
-
-- Data última revisão: {{date}}
-- Próxima revisão planejada: [data]
-- Status de desenvolvimento: #status/em-desenvolvimento
-
-## Metadados
-
-- Autor: {{author}}
-- Criado em: {{date}}
-- MOC Principal: [[MOC relevante]]
+- [ ] Revisar em uma semana

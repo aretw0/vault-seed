@@ -10,7 +10,7 @@ Todos os templates de Pull Request estão localizados na pasta `.github/PULL_REQ
 
 ## Tipos de Templates de Pull Request
 
-Os templates são categorizados para cobrir tanto a aquisição e refinamento de conhecimento (conteúdo do vault) quanto a manutenção técnica e evolução do framework.
+Os templates são categorizados para cobrir tanto a aquisição e refinamento de conhecimento (conteúdo do vault) quanto a manutenção técnica e evolução da base técnica.
 
 ### 1. Para Aquisição e Refinamento de Conhecimento (Conteúdo do Vault)
 
@@ -36,7 +36,7 @@ Estes templates são focados em mudanças na estrutura, scripts, automações ou
     *   **Exemplo de Título de PR:** `fix(script): Corrige erro no script de limpeza`
 
 *   **`feat-technical-enhancement.md` (Melhoria/Nova Funcionalidade Técnica)**
-    *   **Uso:** Para adicionar novas funcionalidades ao framework do vault (novos scripts, workflows, automações, etc.).
+    *   **Uso:** Para adicionar novas funcionalidades à base técnica do vault (novos scripts, workflows, automações, etc.).
     *   **Foco:** Descrição da funcionalidade, como testar, impacto.
     *   **Exemplo de Título de PR:** `feat(workflow): Adiciona automação para notas diárias`
 

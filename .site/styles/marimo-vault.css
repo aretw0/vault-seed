@@ -30,6 +30,10 @@
   --grass-7: #2d7a4d;
   --grass-9: #1b5e3b;
   --grass-11: #0f3d26;
+  --vault-marimo-presentation-width: 78rem;
+  --vault-marimo-presentation-content-width: 74rem;
+  --vault-marimo-presentation-gutter: clamp(0.5rem, 1.5vw, 1.25rem);
+  --vault-marimo-presentation-viewport-gutter: clamp(0.75rem, 3vw, 4rem);
 }
 
 :root[data-vault-marimo-theme="dark"],
@@ -66,6 +70,67 @@
 body {
   background: var(--background);
   color: var(--foreground);
+  overflow-x: hidden;
+}
+
+a {
+  overflow-wrap: anywhere;
+}
+
+.max-w-2xl {
+  max-width: calc(100vw - 3rem) !important;
+}
+
+.whitespace-normal,
+.underline {
+  overflow-wrap: anywhere;
+}
+
+.marimo,
+main,
+article,
+.markdown,
+.prose {
+  max-width: 100%;
+}
+
+.markdown,
+.prose {
+  overflow-wrap: anywhere;
+}
+
+.markdown p,
+.markdown li,
+.prose p,
+.prose li {
+  line-height: 1.58;
+}
+
+.markdown pre,
+.markdown code,
+.prose pre,
+.prose code {
+  max-width: 100%;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.markdown img,
+.prose img,
+.markdown svg,
+.prose svg,
+canvas,
+iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+.markdown table,
+.prose table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 :root[data-vault-marimo-theme="light"] {
@@ -208,6 +273,41 @@ body {
 
 :root[data-vault-marimo-theme] .text-muted-foreground {
   color: var(--muted-foreground) !important;
+}
+
+:root[data-vault-marimo-theme] #vg-tooltip-element,
+:root[data-vault-marimo-theme] .vg-tooltip,
+:root[data-vault-marimo-theme] .vega-tooltip {
+  background: var(--popover) !important;
+  color: var(--popover-foreground) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: 0 0.75rem 2rem rgb(0 0 0 / 0.22) !important;
+}
+
+:root[data-vault-marimo-theme] #vg-tooltip-element table,
+:root[data-vault-marimo-theme] #vg-tooltip-element tr,
+:root[data-vault-marimo-theme] #vg-tooltip-element td,
+:root[data-vault-marimo-theme] .vg-tooltip table,
+:root[data-vault-marimo-theme] .vg-tooltip tr,
+:root[data-vault-marimo-theme] .vg-tooltip td,
+:root[data-vault-marimo-theme] .vega-tooltip table,
+:root[data-vault-marimo-theme] .vega-tooltip tr,
+:root[data-vault-marimo-theme] .vega-tooltip td {
+  background: var(--popover) !important;
+  color: var(--popover-foreground) !important;
+  border-color: var(--border) !important;
+}
+
+:root[data-vault-marimo-theme] .vega-embed svg text {
+  fill: var(--foreground) !important;
+}
+
+:root[data-vault-marimo-theme] .vega-embed svg g.role-axis path,
+:root[data-vault-marimo-theme] .vega-embed svg g.role-axis line,
+:root[data-vault-marimo-theme] .vega-embed svg g.role-legend path,
+:root[data-vault-marimo-theme] .vega-embed svg g.role-legend line {
+  stroke: var(--border) !important;
 }
 
 :root[data-vault-marimo-theme="light"][data-vault-marimo-palette="oceano"] {
@@ -525,17 +625,44 @@ body {
 }
 
 .vault-marimo-theme-selector {
-  position: fixed;
-  z-index: 10000;
-  top: 0.75rem;
-  right: 0.75rem;
+  position: relative;
+  z-index: 10001;
   display: flex;
-  gap: 0.25rem;
-  padding: 0.25rem;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+  margin-left: auto;
+}
+
+.vault-marimo-theme-toggle,
+.vault-marimo-theme-panel {
   border: 1px solid var(--border);
   border-radius: 0.5rem;
   background: color-mix(in srgb, var(--card) 92%, transparent);
   box-shadow: 0 8px 24px color-mix(in srgb, var(--foreground) 12%, transparent);
+}
+
+.vault-marimo-theme-toggle {
+  padding: 0.55rem 0.7rem !important;
+}
+
+.vault-marimo-theme-panel {
+  position: absolute;
+  top: calc(100% + 0.45rem);
+  right: 0;
+  display: none;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.25rem;
+  width: max-content;
+  max-width: calc(100vw - 1.5rem);
+  max-height: calc(100svh - var(--vault-lab-topbar-height, 0px) - 1rem);
+  overflow: auto;
+  padding: 0.25rem;
+}
+
+:root[data-vault-marimo-theme-panel="open"] .vault-marimo-theme-panel {
+  display: flex;
 }
 
 .vault-marimo-theme-selector button {
@@ -572,43 +699,416 @@ body {
   color: var(--primary-foreground);
 }
 
-.vault-marimo-navigation {
-  position: fixed;
-  z-index: 10000;
-  top: 0.75rem;
-  left: 0.75rem;
-  display: flex;
-  gap: 0.25rem;
-  padding: 0.25rem;
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  background: color-mix(in srgb, var(--card) 92%, transparent);
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--foreground) 12%, transparent);
+:root[data-vault-marimo-shell="lab"] {
+  --vault-lab-topbar-height: 3.5rem;
+  --vault-lab-content-gap: 4.75rem;
+  --vault-lab-content-offset: calc(var(--vault-lab-topbar-height) + var(--vault-lab-content-gap));
+  --vault-lab-sidebar-width: 15.5rem;
+  --vault-lab-sidebar-control-size: 1.07rem;
+  --vault-lab-sidebar-toggle-size: 1.68rem;
 }
 
-.vault-marimo-navigation a {
-  border-radius: 0.35rem;
+:root[data-vault-marimo-shell="lab"] body {
+  box-sizing: border-box;
+  scroll-padding-top: var(--vault-lab-content-offset);
+}
+
+:root[data-vault-marimo-shell="lab"] .vault-marimo-navigation,
+:root[data-vault-marimo-shell="lab"] .vault-marimo-navigation * {
+  box-sizing: border-box;
+}
+
+:root[data-vault-marimo-shell="lab"] .markdown,
+:root[data-vault-marimo-shell="lab"] .prose {
+  font-size: 1.08rem;
+}
+
+:root[data-vault-marimo-shell="lab"] .vault-lab-topbar {
+  position: sticky;
+  z-index: 10000;
+  inset-block-start: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: var(--vault-lab-topbar-height);
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--card) 94%, transparent);
+  box-shadow: 0 0.75rem 2rem color-mix(in srgb, var(--foreground) 10%, transparent);
+  padding: 0.5rem 0.75rem;
+}
+
+.vault-lab-sidebar-toggle,
+.vault-lab-brand,
+.vault-lab-section,
+.vault-lab-notebook-list a {
+  border-radius: 0.5rem;
   color: var(--foreground);
   font: inherit;
-  font-size: 0.78rem;
+  font-size: var(--vault-lab-sidebar-control-size);
   line-height: 1;
-  padding: 0.45rem 0.6rem;
   text-decoration: none;
 }
 
-.vault-marimo-navigation a:hover {
+.vault-lab-sidebar-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--card) 94%, transparent);
+  color: var(--foreground);
+  cursor: pointer;
+  padding: 0;
+  gap: 0;
+  font-size: var(--vault-lab-sidebar-toggle-size);
+  line-height: 1;
+  font-weight: 760;
+  box-shadow: 0 0.5rem 1.25rem color-mix(in srgb, var(--foreground) 12%, transparent);
+}
+
+.vault-lab-sidebar-toggle:hover,
+.vault-lab-sidebar-toggle[aria-pressed='true'] {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.vault-lab-sidebar-toggle__icon {
+  display: block;
+  width: 1.25rem;
+  height: 1.25rem;
+  pointer-events: none;
+}
+
+:root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] .vault-lab-sidebar-toggle svg {
+  transform: scaleX(-1);
+}
+
+.vault-lab-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(100%);
+  border: 0;
+}
+
+.vault-lab-brand,
+.vault-lab-section {
+  padding: 0.45rem 0.6rem;
+}
+
+.vault-lab-brand,
+.vault-lab-section {
+  color: var(--foreground);
+  font-weight: 650;
+}
+
+.vault-lab-sidebar {
+  position: fixed;
+  z-index: 9999;
+  top: var(--vault-lab-topbar-height);
+  bottom: 0;
+  left: 0;
+  width: var(--vault-lab-sidebar-width);
+  border-right: 1px solid var(--border);
+  background: color-mix(in srgb, var(--card) 96%, transparent);
+  overflow: auto;
+  padding: 1rem 0.75rem;
+  transition: transform 160ms ease;
+}
+
+.vault-lab-sidebar__title {
+  color: var(--muted-foreground);
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  margin: 0 0.35rem 0.6rem;
+  text-transform: uppercase;
+}
+
+.vault-lab-notebook-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0 0.35rem 0.55rem;
+}
+
+.vault-lab-notebook-filter__input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 0.45rem;
+  background: var(--card);
+  color: var(--foreground);
+  padding: 0.45rem 0.55rem;
+  font: inherit;
+  font-size: 0.72rem;
+  line-height: 1.15;
+}
+
+.vault-lab-notebook-filter__input::placeholder {
+  color: var(--muted-foreground);
+}
+
+.vault-lab-notebook-filter__input:focus {
+  outline: 2px solid color-mix(in srgb, var(--primary) 45%, transparent);
+  outline-offset: 1px;
+}
+
+.vault-lab-notebook-empty {
+  margin: 0;
+  padding: 0 0.15rem;
+  font-size: 0.72rem;
+  line-height: 1.15;
+  color: var(--muted-foreground);
+}
+
+.vault-lab-notebook-list {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.vault-lab-notebook-list a {
+  display: block;
+  padding: 0.65rem 0.7rem;
+}
+
+.vault-lab-notebook-list a:hover,
+.vault-lab-notebook-list a[aria-current="page"] {
   background: var(--muted);
 }
 
+.vault-lab-notebook-list a[aria-current="page"] {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+:root[data-vault-marimo-shell="lab"] #root {
+  box-sizing: border-box;
+  position: relative;
+  width: calc(100% - var(--vault-lab-sidebar-width));
+  min-height: calc(100dvh - var(--vault-lab-topbar-height));
+  margin-left: var(--vault-lab-sidebar-width);
+  padding-top: var(--vault-lab-content-gap) !important;
+  padding-inline: clamp(1rem, 2.5vw, 2rem) !important;
+  padding-bottom: 4rem !important;
+  transition: margin-left 160ms ease, width 160ms ease;
+}
+
+:root[data-vault-marimo-shell="lab"] #root [data-testid="chrome-wrapper"] {
+  top: var(--vault-lab-content-gap) !important;
+  right: clamp(1rem, 2.5vw, 2rem) !important;
+  bottom: 4rem !important;
+  left: clamp(1rem, 2.5vw, 2rem) !important;
+}
+
+:root[data-vault-marimo-shell="lab"] #root [class~="min-w-[400px]"] {
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+:root[data-vault-marimo-shell="lab"] #root [class~="px-1"] {
+  padding-inline: clamp(0.75rem, 2.5vw, 1.25rem) !important;
+}
+
+:root[data-vault-marimo-shell="lab"] #root [class~="fixed"][class~="top-0"][class~="right-0"] {
+  top: calc(var(--vault-lab-topbar-height) + 0.75rem) !important;
+}
+
+.vault-lab-footer {
+  position: fixed;
+  z-index: 9998;
+  bottom: 0;
+  left: calc(var(--vault-lab-sidebar-width) + 0.75rem);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--card) 94%, transparent);
+  box-shadow: 0 0.75rem 2rem color-mix(in srgb, var(--foreground) 8%, transparent);
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+  line-height: 1;
+  font-variant-emoji: text;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.45rem 0.7rem;
+  transition: left 160ms ease;
+}
+
+.vault-lab-footer__heart {
+  display: inline-block;
+  font-size: 0.98rem;
+  line-height: 1;
+  font-family: var(--sl-font-system, system-ui);
+  font-variant-emoji: text;
+  transform: translateY(-0.05em);
+}
+
+.vault-lab-footer a {
+  color: var(--primary);
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.vault-lab-footer a:hover {
+  text-decoration: underline;
+}
+
+:root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] .vault-lab-footer {
+  left: 0.75rem;
+}
+
+:root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] .vault-lab-sidebar {
+  transform: translateX(-100%);
+}
+
+:root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] #root {
+  width: 100%;
+  margin-left: 0;
+}
+
+:root[data-vault-marimo-presentation="slides"] {
+  --vault-marimo-slide-padding-block: clamp(2.5rem, 6vh, 4.5rem);
+  --vault-marimo-slide-padding-inline: clamp(3rem, 9vw, 8rem);
+  scrollbar-gutter: auto;
+}
+
+:root[data-vault-marimo-presentation="slides"],
+:root[data-vault-marimo-presentation="slides"] body {
+  height: 100%;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+:root[data-vault-marimo-presentation="slides"] #root {
+  height: calc(100dvh - var(--vault-lab-content-offset, 0px));
+  overflow: hidden;
+}
+
+:root[data-vault-marimo-presentation="slides"] .reveal,
+:root[data-vault-marimo-presentation="slides"] .reveal .slides,
+:root[data-vault-marimo-presentation="slides"] .reveal .slides section,
+:root[data-vault-marimo-presentation="slides"] .reveal .slides section > div:has(> .mo-slide-content) {
+  overflow: hidden !important;
+}
+
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content {
+  box-sizing: border-box;
+  width: min(var(--vault-marimo-presentation-width), calc(100vw - (2 * var(--vault-marimo-presentation-viewport-gutter)))) !important;
+  min-height: 0 !important;
+  max-height: 100%;
+  margin: auto !important;
+  overflow: visible !important;
+  padding-block: var(--vault-marimo-slide-padding-block) !important;
+  padding-inline: var(--vault-marimo-slide-padding-inline) !important;
+}
+
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content .output,
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content .markdown,
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content .prose {
+  max-width: min(100%, var(--vault-marimo-presentation-content-width));
+  margin-inline: auto;
+}
+
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content .markdown,
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content .prose {
+  font-size: clamp(1.05rem, 1.15vw, 1.3rem);
+}
+
+[data-vault-marimo-fullscreen-button] {
+  min-width: 2.25rem !important;
+  min-height: 2.25rem !important;
+  font-size: 1.1rem !important;
+  line-height: 1 !important;
+}
+
+:root[data-vault-marimo-presentation="slides"] .vault-marimo-theme-selector {
+  inset: auto;
+}
+
 @media (max-width: 44rem) {
-  .vault-marimo-theme-selector {
-    top: auto;
-    right: 0.75rem;
-    bottom: 0.75rem;
+  body {
+    font-size: 0.95rem;
   }
 
-  .vault-marimo-navigation {
-    top: 0.75rem;
+  :root[data-vault-marimo-shell="lab"] .markdown,
+  :root[data-vault-marimo-shell="lab"] .prose {
+    font-size: 1.05rem;
+  }
+
+  .markdown h1,
+  .prose h1 {
+    font-size: clamp(1.9rem, 10vw, 2.5rem);
+    line-height: 1.05;
+  }
+
+  .markdown h2,
+  .prose h2 {
+    font-size: clamp(1.35rem, 7vw, 1.8rem);
+    line-height: 1.15;
+  }
+
+  .markdown table,
+  .prose table {
+    font-size: 0.86rem;
+  }
+
+  :root[data-vault-marimo-presentation="slides"] {
+    --vault-marimo-slide-padding-block: clamp(2.5rem, 6vh, 3.5rem);
+    --vault-marimo-slide-padding-inline: clamp(1.25rem, 6vw, 2.5rem);
+  }
+
+  .vault-marimo-theme-selector {
+    inset: auto;
+    max-width: calc(100vw - 1.5rem);
+    justify-content: flex-end;
+  }
+
+  :root[data-vault-marimo-shell="lab"] .vault-lab-sidebar {
+    box-shadow: 1rem 0 2rem color-mix(in srgb, var(--foreground) 12%, transparent);
+    transform: translateX(-100%);
+  }
+
+  :root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="expanded"] .vault-lab-sidebar {
+    transform: translateX(0);
+  }
+
+  :root[data-vault-marimo-shell="lab"] {
+    --vault-lab-topbar-height: 3.75rem;
+    --vault-lab-content-gap: 5rem;
+  }
+
+  :root[data-vault-marimo-shell="lab"] #root,
+  :root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] #root {
+    width: 100%;
+    margin-left: 0;
+    padding-top: calc(var(--vault-lab-content-gap) + env(safe-area-inset-top, 0px)) !important;
+    padding-inline: 1rem !important;
+  }
+
+  :root[data-vault-marimo-shell="lab"] #root [data-testid="chrome-wrapper"],
+  :root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] #root [data-testid="chrome-wrapper"] {
+    top: calc(var(--vault-lab-content-gap) + env(safe-area-inset-top, 0px)) !important;
+    right: 1rem !important;
+    bottom: 4rem !important;
+    left: 1rem !important;
+  }
+
+  .vault-lab-footer,
+  :root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] .vault-lab-footer {
     left: 0.75rem;
+    bottom: 0;
+  }
+
+  :root[data-vault-marimo-shell="lab"] .vault-marimo-theme-selector {
+    margin-left: auto;
+  }
+
+  .vault-marimo-theme-selector select {
+    flex: 1 1 100%;
   }
 }

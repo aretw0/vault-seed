@@ -1,0 +1,339 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import VaultGraphView from '../../components/VaultGraphView.astro';
+import { buildVaultExploreData } from '../../lib/vault-explore';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const explore = buildVaultExploreData();
+const topTags = explore.facets.tags.slice(0, 12);
+const hubNodes = explore.graph.insights.hubs.slice(0, 8);
+const orphanNodes = explore.graph.insights.orphans.slice(0, 8);
+const recentNotes = [...explore.notes]
+  .sort((a, b) => String(b.updated ?? b.created ?? '').localeCompare(String(a.updated ?? a.created ?? '')))
+  .slice(0, 8);
+const noteHrefByPath = new Map(explore.notes.map((note) => [note.path, note.href]));
+const promotionCandidates = explore.editorial.promotionCandidates.slice(0, 6);
+const thinResources = explore.editorial.thinPublishedResources.slice(0, 8);
+const editorialWarnings = explore.editorial.warnings;
+const exploreJson = JSON.stringify(explore).replace(/</g, '\\u003c');
+---
+
+<StarlightPage
+  frontmatter={{
+    title: 'Explorar o Vault',
+    description: 'Explore notas, tags, hubs e caminhos do vault publicado.',
+    template: 'doc',
+  }}
+  headings={[
+    { depth: 2, slug: 'vault-explorer-title', text: 'Notas encontradas' },
+    { depth: 2, slug: 'vault-editorial-title', text: 'Estado da arquitetura de informação' },
+    { depth: 2, slug: 'vault-graph-title', text: 'Mapa vivo para orientar a leitura' },
+  ]}
+>
+  <section class="vault-explorer" aria-labelledby="vault-explorer-title">
+    <p class="vault-lead">
+      Esta página é o laboratório leve do Astro: ela usa dados estáticos do vault para
+      revelar estrutura, filtros e caminhos de leitura sem exigir Python, backend ou
+      runtime pesado no navegador.
+    </p>
+
+    <div class="vault-metric-grid" aria-label="Métricas do vault publicado">
+      <article class="vault-metric">
+        <span class="vault-metric__value">{explore.metrics.notes}</span>
+        <span class="vault-metric__label">notas publicadas</span>
+      </article>
+      <article class="vault-metric">
+        <span class="vault-metric__value">{explore.metrics.tags}</span>
+        <span class="vault-metric__label">tags</span>
+      </article>
+      <article class="vault-metric">
+        <span class="vault-metric__value">{explore.metrics.links}</span>
+        <span class="vault-metric__label">links resolvidos</span>
+      </article>
+      <article class="vault-metric">
+        <span class="vault-metric__value">{explore.metrics.hubs}</span>
+        <span class="vault-metric__label">hubs candidatos</span>
+      </article>
+      <article class="vault-metric">
+        <span class="vault-metric__value">{editorialWarnings.length}</span>
+        <span class="vault-metric__label">sinais editoriais</span>
+      </article>
+    </div>
+
+    <div class="vault-explorer-layout">
+      <aside class="vault-filter-panel" aria-label="Filtros de exploração">
+        <label class="vault-field">
+          <span>Buscar</span>
+          <input type="search" data-vault-explore-search placeholder="Nota, tag ou resumo" />
+        </label>
+
+        <label class="vault-field">
+          <span>Área</span>
+          <select data-vault-explore-folder>
+            <option value="">Todas</option>
+            {explore.facets.folders.map((folder) => <option value={folder.name}>{folder.name} ({folder.count})</option>)}
+          </select>
+        </label>
+
+        <label class="vault-field">
+          <span>Intenção</span>
+          <select data-vault-explore-intent>
+            <option value="">Todas</option>
+            {explore.facets.intents.map((intent) => <option value={intent.name}>{intent.label} ({intent.count})</option>)}
+          </select>
+        </label>
+
+        <label class="vault-field">
+          <span>Categoria</span>
+          <select data-vault-explore-category>
+            <option value="">Todas</option>
+            {explore.facets.categories.map((category) => <option value={category.name}>{category.name} ({category.count})</option>)}
+          </select>
+        </label>
+
+        <label class="vault-field">
+          <span>Público</span>
+          <select data-vault-explore-audience>
+            <option value="">Todos</option>
+            {explore.facets.audiences.map((audience) => <option value={audience.name}>{audience.name} ({audience.count})</option>)}
+          </select>
+        </label>
+
+        <div class="vault-filter-group" aria-label="Tags frequentes">
+          <span class="vault-filter-group__label">Tags frequentes</span>
+          <div class="vault-chip-list">
+            <button class="vault-chip" type="button" data-vault-explore-tag value="">Todas</button>
+            {topTags.map((tag) => (
+              <button class="vault-chip" type="button" data-vault-explore-tag value={tag.name}>#{tag.name}</button>
+            ))}
+          </div>
+        </div>
+
+        <a class="vault-button vault-button--secondary" href={`${base}/explorar/intencoes/`}>Ver mapa por intenção</a>
+        <a class="vault-button vault-button--secondary" href={`${base}/explorar/dados.json`}>Ver JSON estático</a>
+      </aside>
+
+      <section class="vault-results" aria-live="polite" aria-busy="false">
+        <div class="vault-section-header">
+          <div>
+            <span class="vault-card__eyebrow">Resultados</span>
+            <h2 id="vault-explorer-title">Notas encontradas</h2>
+          </div>
+          <span class="vault-status" data-vault-explore-count>{explore.notes.length} notas</span>
+        </div>
+
+        <div class="vault-resource-list" data-vault-explore-results>
+          {explore.notes.map((note) => (
+            <article
+              class="vault-resource-card"
+              data-note-title={note.title.toLowerCase()}
+              data-note-folder={note.area}
+              data-note-category={note.category}
+              data-note-audience={note.audience}
+              data-note-intents={note.intents.join(' ')}
+              data-note-tags={note.tags.join(' ')}
+              data-note-summary={note.summary.toLowerCase()}
+            >
+              <div>
+                <span class="vault-card__eyebrow">{note.primaryIntentLabel} · {note.area} · {note.category}</span>
+                <h3><a href={`${base}${note.href}`}>{note.title}</a></h3>
+              </div>
+              {note.summary && <p>{note.summary}</p>}
+              <div class="vault-resource-card__meta">
+                <span>{note.words} palavras</span>
+                {note.updated && <span>Atualizado em {note.updated}</span>}
+                {note.tags.slice(0, 4).map((tag) => <span>#{tag}</span>)}
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <p class="vault-empty-state" data-vault-explore-empty hidden>
+          Nenhuma nota encontrada com estes filtros. Limpe a busca ou escolha outra área.
+        </p>
+      </section>
+    </div>
+
+    <section class="vault-insight-grid" aria-label="Pistas de exploração">
+      <article class="vault-card">
+        <span class="vault-card__eyebrow">Hubs</span>
+        <h2 class="vault-card__title">Notas que conectam caminhos</h2>
+        <ul class="vault-compact-list">
+          {hubNodes.map((node) => <li><a href={`${base}/${node.id}`}>{node.title}</a><span>{node.degree} conexões</span></li>)}
+        </ul>
+      </article>
+
+      <article class="vault-card">
+        <span class="vault-card__eyebrow">Órfãs</span>
+        <h2 class="vault-card__title">Notas para conectar melhor</h2>
+        {orphanNodes.length ? (
+          <ul class="vault-compact-list">
+            {orphanNodes.map((node) => <li><a href={`${base}/${node.id}`}>{node.title}</a><span>{node.folder}</span></li>)}
+          </ul>
+        ) : (
+          <p class="vault-card__body">Nenhuma candidata a órfã no recorte atual.</p>
+        )}
+      </article>
+
+      <article class="vault-card">
+        <span class="vault-card__eyebrow">Timeline</span>
+        <h2 class="vault-card__title">Atualizações recentes</h2>
+        <ol class="vault-timeline">
+          {recentNotes.map((note) => (
+            <li>
+              <time datetime={note.updated ?? note.created ?? ''}>{note.updated ?? note.created ?? 'sem data'}</time>
+              <a href={`${base}${note.href}`}>{note.title}</a>
+            </li>
+          ))}
+        </ol>
+      </article>
+    </section>
+
+    <section class="vault-graph-preview" aria-labelledby="vault-editorial-title">
+      <div class="vault-section-header">
+        <div>
+          <span class="vault-card__eyebrow">Curadoria editorial</span>
+          <h2 id="vault-editorial-title">Estado da arquitetura de informação</h2>
+        </div>
+        <span class="vault-status">{explore.editorial.notesEvaluated} notas auditadas · {editorialWarnings.length} sinais</span>
+      </div>
+
+      <div class="vault-insight-grid">
+        <article class="vault-card">
+          <span class="vault-card__eyebrow">Avisos</span>
+          <h3 class="vault-card__title">Sinais para próxima curadoria</h3>
+          {editorialWarnings.length ? (
+            <ul class="vault-compact-list">
+              {editorialWarnings.map((warning) => <li><span>{warning}</span></li>)}
+            </ul>
+          ) : (
+            <p class="vault-card__body">Nenhum aviso editorial pendente no recorte atual.</p>
+          )}
+        </article>
+
+        <article class="vault-card">
+          <span class="vault-card__eyebrow">Promoções</span>
+          <h3 class="vault-card__title">Notas candidatas a virar recurso</h3>
+          {promotionCandidates.length ? (
+            <ul class="vault-compact-list">
+              {promotionCandidates.map((note) => (
+                <li>
+                  {noteHrefByPath.has(note.file) ? <a href={`${base}${noteHrefByPath.get(note.file)}`}>{note.title}</a> : <span>{note.title}</span>}
+                  <span>{note.words} palavras</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p class="vault-card__body">Nenhuma promoção candidata no recorte atual.</p>
+          )}
+        </article>
+
+        <article class="vault-card">
+          <span class="vault-card__eyebrow">Recursos curtos</span>
+          <h3 class="vault-card__title">Notas que pedem expansão ou reclassificação</h3>
+          {thinResources.length ? (
+            <ul class="vault-compact-list">
+              {thinResources.map((note) => (
+                <li>
+                  {noteHrefByPath.has(note.file) ? <a href={`${base}${noteHrefByPath.get(note.file)}`}>{note.title}</a> : <span>{note.title}</span>}
+                  <span>{note.words} palavras</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p class="vault-card__body">Nenhum recurso curto no recorte atual.</p>
+          )}
+        </article>
+      </div>
+      <p class="vault-card__body">
+        Estes sinais vêm do mesmo contrato usado por CI, deploy e Lab. Eles não substituem decisão humana,
+        mas tornam visível onde a curadoria acumula mais retorno: conteúdo curto, notas conceituais fora de
+        recursos e distribuição por intenção.
+      </p>
+    </section>
+
+    <section class="vault-graph-preview" aria-labelledby="vault-graph-title">
+      <div class="vault-section-header">
+        <div>
+          <span class="vault-card__eyebrow">Graph leve</span>
+          <h2 id="vault-graph-title">Mapa vivo para orientar a leitura</h2>
+        </div>
+        <span class="vault-status">{explore.graph.nodes.length} nós · {explore.graph.links.length} links</span>
+      </div>
+      <VaultGraphView nodes={explore.graph.nodes} links={explore.graph.links} base={base} title="Graph view físico do vault" />
+      <div class="vault-graph-cloud" aria-label="Principais nós do grafo em lista">
+        {hubNodes.map((node) => (
+          <a href={`${base}/${node.id}`} style={`--vault-node-weight: ${Math.min(1.65, 0.9 + node.degree / 10)}`}>{node.title}</a>
+        ))}
+      </div>
+      <p class="vault-card__body">
+        O graph completo deve continuar evoluindo em Astro a partir deste JSON estático.
+        Quando a exploração exigir cálculo pesado, comparação interativa ou dados privados,
+        o trabalho passa para o Lab/Marimo e para a CLI local.
+      </p>
+    </section>
+  </section>
+
+  <script type="application/json" id="vault-explore-data" set:html={exploreJson} />
+  <script is:inline>
+    (() => {
+      const root = document.querySelector('.vault-explorer');
+      if (!root) return;
+      const search = root.querySelector('[data-vault-explore-search]');
+      const folder = root.querySelector('[data-vault-explore-folder]');
+      const intent = root.querySelector('[data-vault-explore-intent]');
+      const category = root.querySelector('[data-vault-explore-category]');
+      const audience = root.querySelector('[data-vault-explore-audience]');
+      const count = root.querySelector('[data-vault-explore-count]');
+      const empty = root.querySelector('[data-vault-explore-empty]');
+      const cards = Array.from(root.querySelectorAll('.vault-resource-card'));
+      let selectedTag = '';
+
+      function normalize(value) {
+        return String(value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      }
+
+      function apply() {
+        const query = normalize(search?.value);
+        const folderValue = folder?.value || '';
+        const intentValue = intent?.value || '';
+        const categoryValue = category?.value || '';
+        const audienceValue = audience?.value || '';
+        let visible = 0;
+
+        for (const card of cards) {
+          const haystack = normalize([
+            card.dataset.noteTitle,
+            card.dataset.noteSummary,
+            card.dataset.noteTags,
+          ].join(' '));
+          const matches =
+            (!query || haystack.includes(query)) &&
+            (!folderValue || card.dataset.noteFolder === folderValue) &&
+            (!intentValue || String(card.dataset.noteIntents || '').split(' ').includes(intentValue)) &&
+            (!categoryValue || card.dataset.noteCategory === categoryValue) &&
+            (!audienceValue || card.dataset.noteAudience === audienceValue) &&
+            (!selectedTag || String(card.dataset.noteTags || '').split(' ').includes(selectedTag));
+          card.hidden = !matches;
+          if (matches) visible += 1;
+        }
+
+        if (count) count.textContent = `${visible} ${visible === 1 ? 'nota' : 'notas'}`;
+        if (empty) empty.hidden = visible !== 0;
+      }
+
+      root.querySelectorAll('[data-vault-explore-tag]').forEach((button) => {
+        button.addEventListener('click', () => {
+          selectedTag = button.value || '';
+          root.querySelectorAll('[data-vault-explore-tag]').forEach((item) => {
+            item.toggleAttribute('aria-pressed', item === button && selectedTag !== '');
+          });
+          apply();
+        });
+      });
+      [search, folder, intent, category, audience].forEach((control) => control?.addEventListener('input', apply));
+      [folder, intent, category, audience].forEach((control) => control?.addEventListener('change', apply));
+      apply();
+    })();
+  </script>
+</StarlightPage>

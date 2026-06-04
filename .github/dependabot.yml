@@ -60,3 +60,18 @@ updates:
     labels:
       - "dependencies"
       - "automação"
+
+  - package-ecosystem: "pip"
+    directory: "/packages/lab-runtime"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    groups:
+      python-lab-runtime:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: "chore(deps):"
+    labels:
+      - "dependencies"
+      - "automação"

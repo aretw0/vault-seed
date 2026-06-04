@@ -1,0 +1,1334 @@
+---
+import VaultGraphShared from './VaultGraphShared.astro';
+
+type GraphNode = { id: string; title: string; degree: number; folder?: string };
+type GraphLink = { source: string; target: string };
+
+interface Props {
+  nodes: GraphNode[];
+  links: GraphLink[];
+  base?: string;
+  limit?: number;
+  title?: string;
+  showLabels?: boolean;
+}
+
+const {
+  nodes,
+  links,
+  base = '',
+  limit,
+  title = 'Graph view do vault',
+  showLabels = true,
+} = Astro.props;
+
+function truncateLabel(value: string, max = 24): string {
+  return value.length > max ? `${value.slice(0, max - 1)}…` : value;
+}
+
+const sortedNodes = [...nodes].sort(
+  (a, b) => (b.degree - a.degree) || a.title.localeCompare(b.title, 'pt'),
+);
+
+const initialVisibleCount =
+  Number.isFinite(limit) && limit > 0
+    ? Math.max(1, Math.floor(limit))
+    : Math.max(8, Math.min(28, Math.ceil(sortedNodes.length * 0.28)));
+
+const center = 100;
+const radius = 66;
+const maxDegree = Math.max(1, ...sortedNodes.map((node) => node.degree));
+
+const positioned = sortedNodes.map((node, index) => {
+  const goldenAngle = sortedNodes.length > 0 ? index * 0.61803398875 : 0;
+  const angle = sortedNodes.length > 1 ? (Math.PI * 2 * (goldenAngle % 1)) - Math.PI / 2 : 0;
+  const weight = 0.72 + (node.degree / maxDegree) * 0.6;
+  const shortLabel = truncateLabel(node.title);
+  return {
+    ...node,
+    x: center + Math.cos(angle) * radius,
+    y: center + Math.sin(angle) * radius,
+    size: 5 + Math.min(9, node.degree * 1.15),
+    weight,
+    fillMix: `${Math.max(24, Math.min(86, Math.round(40 * weight)))}%`,
+    href: `${base}/${node.id}`,
+    shortLabel,
+    visibleByDefault: index < initialVisibleCount,
+  };
+});
+
+const nodeIds = new Set(positioned.map((node) => node.id));
+const byId = new Map(positioned.map((node) => [node.id, node]));
+const selectedLinks = links.filter((link) => nodeIds.has(link.source) && nodeIds.has(link.target));
+const graphTitleId = `vault-graph-view-title-${Math.random().toString(36).slice(2, 10)}`;
+const graphLegendId = `vault-graph-legend-${Math.random().toString(36).slice(2, 10)}`;
+const visibleCountStep = 4;
+const maxVisibleCount = Math.max(0, positioned.length);
+const hasData = positioned.length > 0;
+---
+
+<VaultGraphShared />
+
+<figure
+  class:list={[
+    'vault-graph-view',
+    !showLabels && 'vault-graph-view--no-labels',
+    !hasData && 'vault-graph-view--empty',
+  ]}
+  aria-label={title}
+  data-vault-graph-initial-visible={String(Math.min(initialVisibleCount, maxVisibleCount))}
+  data-vault-graph-step={String(visibleCountStep)}
+  data-vault-graph-max-visible={String(maxVisibleCount)}
+>
+  {hasData ? (
+    <>
+      <div class="vault-graph-view__toolbar" role="group" aria-label="Controles do grafo">
+        <button type="button" class="vault-graph-view__button" data-vault-graph-action="collapse" aria-label="Recolher grafo" title="Recolher grafo">
+          <svg aria-hidden="true" class="vault-graph-view__button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span class="vault-graph-view__button-label">Recolher grafo</span>
+        </button>
+        <button type="button" class="vault-graph-view__button" data-vault-graph-action="expand" aria-label="Expandir grafo" title="Expandir grafo">
+          <svg aria-hidden="true" class="vault-graph-view__button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span class="vault-graph-view__button-label">Expandir grafo</span>
+        </button>
+        <button type="button" class="vault-graph-view__button vault-graph-view__button--strong" data-vault-graph-action="recenter" aria-label="Recentrar grafo" title="Recentrar grafo">
+          <svg aria-hidden="true" class="vault-graph-view__button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-5.1"/></svg>
+          <span class="vault-graph-view__button-label">Recentrar grafo</span>
+        </button>
+      </div>
+      <div class="vault-graph-view__canvas-clip">
+      <svg
+        viewBox="0 0 200 200"
+        role="img"
+        aria-labelledby={graphTitleId}
+        aria-describedby={graphLegendId}
+        class="vault-graph-view__canvas"
+      >
+        <title id={graphTitleId}>{title}</title>
+        <g class="vault-graph-view__viewport" data-vault-graph-viewport aria-hidden="true">
+          <g class="vault-graph-view__links" aria-hidden="true">
+            {selectedLinks.map((link) => {
+              const source = byId.get(link.source);
+              const target = byId.get(link.target);
+              if (!source || !target) return null;
+              return (
+                <line
+                  data-vault-graph-edge=""
+                  data-vault-graph-source={link.source}
+                  data-vault-graph-target={link.target}
+                  x1={source.x}
+                  y1={source.y}
+                  x2={target.x}
+                  y2={target.y}
+                  stroke="var(--sl-color-accent, #95d5b2)"
+                  stroke-width="1"
+                />
+              );
+            })}
+          </g>
+          <g class="vault-graph-view__nodes">
+            {positioned.map((node) => (
+              <a
+                href={node.href}
+                aria-label={`${node.title}: ${node.degree} conexões`}
+                data-vault-graph-node-id={node.id}
+                data-vault-graph-node-label={node.title}
+                data-vault-graph-node-label-short={node.shortLabel}
+                data-vault-graph-node-size={node.size}
+                data-vault-graph-node-x={node.x}
+                data-vault-graph-node-y={node.y}
+                data-vault-graph-label-x={node.x}
+                data-vault-graph-label-y={node.y + node.size + 9}
+                data-vault-graph-node-degree={node.degree}
+                data-vault-graph-node-visible={node.visibleByDefault ? '1' : '0'}
+              >
+                <title>{node.title} · {node.degree} conexões</title>
+                <circle
+                  cx={node.x}
+                  cy={node.y}
+                  r={node.size}
+                  data-vault-graph-node-order={sortedNodes.indexOf(node)}
+                  style={`--vault-node-weight: ${node.weight}; fill: color-mix(in srgb, var(--sl-color-accent, #95d5b2) ${node.fillMix}, var(--sl-color-bg-nav, #111310)); stroke: var(--sl-color-accent, #95d5b2);`}
+                />
+                {showLabels && (
+                  <text
+                    class="vault-graph-view__label vault-graph-view__label--short"
+                    x={node.x}
+                    y={node.y + node.size + 9}
+                    text-anchor="middle"
+                    fill="var(--sl-color-gray-2, #edf0ec)"
+                    stroke="var(--sl-color-bg, #111310)"
+                  >
+                    {truncateLabel(node.title)}
+                  </text>
+                )}
+              </a>
+            ))}
+          </g>
+        </g>
+        <!-- hover-layer is outside the clipped viewport so labels can overflow the node boundary -->
+        <g class="vault-graph-view__hover-layer" aria-hidden="true">
+          <text class="vault-graph-view__hover-label" text-anchor="middle"></text>
+        </g>
+      </svg>
+      </div>
+      <figcaption data-vault-graph-caption>
+        {initialVisibleCount} nós em destaque · {selectedLinks.length} relações renderizadas localmente em SVG.
+      </figcaption>
+      <details class="vault-graph-view__accessible-list">
+        <summary>Lista de notas e legenda visual</summary>
+        <p id={graphLegendId} class="vault-graph-view__legend">
+          Círculos maiores têm mais conexões (hubs). Círculos menores têm menos conexões ou são notas folha. Todos os nós são links navegáveis.
+        </p>
+        <ol class="vault-graph-view__node-list">
+          {sortedNodes.map((node) => (
+            <li>
+              <a href={`${base}/${node.id}`}>{node.title}</a>
+              <span>{node.degree} {node.degree === 1 ? 'conexão' : 'conexões'}</span>
+            </li>
+          ))}
+        </ol>
+      </details>
+    </>
+  ) : (
+    <p class="vault-graph-view__empty" role="status">
+      Nenhum nó disponível para renderizar o grafo neste momento.
+    </p>
+  )}
+</figure>
+
+<script is:inline>
+  (() => {
+    const VIEWBOX_SIZE = 200;
+    const FORCE_STEPS = 80;
+    const REPULSION_FORCE = 2400;
+    const SPRING_FORCE = 0.013;
+    const CENTER_FORCE = 0.001;
+    const DAMPING = 0.80;
+    const MAX_REPULSION_FORCE = 3.2;
+    const MAX_SPRING_FORCE = 0.72;
+    const FOCUS_INTERACTION_RADIUS = 150;
+    const GLOBAL_INTERACTION_RADIUS = 190;
+    const MAX_NODE_VELOCITY = 1.05;
+    const MIN_SCALE = 0.68;
+    const MAX_SCALE = 3.2;
+    // Updated after recenter() to the current fit-scale so zoom-out never
+    // reveals the empty simulation margin beyond the node layout bounds.
+    let minScale = MIN_SCALE;
+    const DRAG_THRESHOLD_PX = 3;
+    const VIEWPORT_BOUNDS_PADDING = 14;
+    const POST_DRAG_SETTLE_STEPS = 60;
+    const DRAG_REPULSE_STEPS = 2;
+    const INITIAL_EDGE_IDEAL_GAP = 60;
+    const RUNTIME_EDGE_IDEAL_GAP = 44;
+    const EDGE_FOCUS_SCALE = 0.42;
+    const EDGE_RESTORE_SCALE = 0.08;
+
+    const sharedGraph = window.__vaultGraphShared || {};
+    const LABEL_OFFSET_Y = Number(sharedGraph.LABEL_OFFSET_Y || 9);
+    const LABEL_MARGIN = Number(sharedGraph.LABEL_MARGIN || 6);
+    const LABEL_MARGIN_Y = Number(sharedGraph.LABEL_MARGIN_Y || 1);
+    const clamp = typeof sharedGraph.clamp === 'function'
+      ? sharedGraph.clamp
+      : (value, min, max) => Math.min(max, Math.max(min, value));
+    const estimateLabelHalfWidth = typeof sharedGraph.estimateLabelHalfWidth === 'function'
+      ? sharedGraph.estimateLabelHalfWidth
+      : (text, fontSize) => {
+        const safeFontSize = Number(fontSize) || 6;
+        return Math.max(5, Math.min(18, String(text || '').length * safeFontSize * 0.52));
+      };
+    const placeLabel = typeof sharedGraph.placeLabel === 'function'
+      ? (rawX, rawY, halfWidth, preferAbove = false) => {
+        return sharedGraph.placeLabel(
+          rawX,
+          rawY,
+          halfWidth,
+          preferAbove,
+          {
+            viewboxSize: VIEWBOX_SIZE,
+            offsetY: LABEL_OFFSET_Y,
+            margin: LABEL_MARGIN,
+            marginY: LABEL_MARGIN_Y,
+            visibleMinX: 0,
+            visibleMaxX: VIEWBOX_SIZE,
+            visibleMinY: 0,
+            visibleMaxY: VIEWBOX_SIZE,
+          },
+        );
+      }
+      : (rawX, rawY, halfWidth, preferAbove = false) => {
+        const safeHalf = Math.min(Number(halfWidth) || 10, VIEWBOX_SIZE / 2 - LABEL_MARGIN - 1);
+        const minX = Math.max(safeHalf, LABEL_MARGIN);
+        const maxX = Math.min(VIEWBOX_SIZE - safeHalf - LABEL_MARGIN, VIEWBOX_SIZE - LABEL_MARGIN);
+        const clampedX = clamp(rawX, Math.min(minX, maxX), Math.max(minX, maxX));
+
+        const textAnchor =
+          minX === maxX
+            ? 'middle'
+            : clampedX <= minX + 0.001
+              ? 'start'
+              : clampedX >= maxX - 0.001
+                ? 'end'
+                : 'middle';
+
+        const minY = LABEL_OFFSET_Y + LABEL_MARGIN_Y;
+        const maxY = VIEWBOX_SIZE - LABEL_OFFSET_Y - LABEL_MARGIN_Y;
+        const preferredY = preferAbove
+          ? rawY - (LABEL_OFFSET_Y + LABEL_MARGIN_Y + 4)
+          : rawY;
+
+        let clampedY = clamp(preferredY, minY, maxY);
+        if (preferAbove && preferredY < minY) {
+          clampedY = clamp(rawY, minY, maxY);
+        }
+
+        return {
+          x: clampedX,
+          y: clampedY,
+          anchor: textAnchor,
+        };
+      };
+
+    const fitLabelToViewport = typeof sharedGraph.fitLabelToViewport === 'function'
+      ? (
+          labelElement,
+          text,
+          rawX,
+          rawY,
+          preferAbove = false,
+        ) => {
+        return sharedGraph.fitLabelToViewport(
+          labelElement,
+          text,
+          rawX,
+          rawY,
+          preferAbove,
+          {
+            viewboxSize: VIEWBOX_SIZE,
+            offsetY: LABEL_OFFSET_Y,
+            margin: LABEL_MARGIN,
+            marginY: LABEL_MARGIN_Y,
+            visibleMinX: 0,
+            visibleMaxX: VIEWBOX_SIZE,
+            visibleMinY: 0,
+            visibleMaxY: VIEWBOX_SIZE,
+          },
+        );
+      }
+      : (labelElement, text, rawX, rawY, preferAbove = false) => {
+        if (!labelElement) {
+          return {
+            x: rawX,
+            y: rawY,
+            anchor: 'middle',
+            fontSize: '',
+          };
+        }
+
+        labelElement.textContent = String(text || '');
+        const estimatedHalfWidth = estimateLabelHalfWidth(String(text || ''), 7);
+        const fallbackPlacement = placeLabel(rawX, rawY, estimatedHalfWidth, preferAbove);
+        return {
+          ...fallbackPlacement,
+          fontSize: '',
+        };
+      };
+
+    const renderWrappedLabel = typeof sharedGraph.renderWrappedLabel === 'function'
+      ? (
+          labelElement,
+          placement,
+        ) => sharedGraph.renderWrappedLabel(labelElement, placement)
+      : (labelElement, placement) => {
+        if (!labelElement) return;
+
+        const lines = Array.isArray(placement?.lines)
+          ? placement.lines.filter((line) => line !== undefined && line !== null)
+          : [];
+        if (lines.length <= 1) {
+          return;
+        }
+
+        const x = Number(placement?.x);
+        const y = Number(placement?.y);
+        const lineHeight = Number.isFinite(Number(placement?.lineHeight))
+          ? Number(placement.lineHeight)
+          : Number.parseFloat(String(placement?.fontSize || '7px')) || 7;
+
+        while (labelElement.firstChild) {
+          labelElement.removeChild(labelElement.firstChild);
+        }
+
+        lines.forEach((line, index) => {
+          const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+          tspan.textContent = String(line);
+          tspan.setAttribute('x', String(Number.isFinite(x) ? x : 0));
+          if (index === 0) {
+            tspan.setAttribute('y', String(Number.isFinite(y) ? y : 0));
+          } else {
+            tspan.setAttribute('dy', String(lineHeight));
+          }
+          labelElement.appendChild(tspan);
+        });
+      };
+    const computeForces = typeof sharedGraph.computeForces === 'function'
+      ? sharedGraph.computeForces
+      : (params = {}) => {
+        const nodeArr = Array.isArray(params.nodes) ? params.nodes : [];
+        return nodeArr.map(() => ({ x: 0, y: 0 }));
+      };
+    function setupGraphLayout(figure) {
+      const nodeElements = Array.from(figure.querySelectorAll('[data-vault-graph-node-id]'));
+      if (!nodeElements.length) return;
+
+      const nodes = nodeElements.map((nodeEl) => {
+        const size = Number.parseFloat(String(nodeEl.dataset.vaultGraphNodeSize || '6')) || 6;
+        const baseX = Number.parseFloat(String(nodeEl.dataset.vaultGraphNodeX || '100')) || 100;
+        const baseY = Number.parseFloat(String(nodeEl.dataset.vaultGraphNodeY || '100')) || 100;
+        const degree = Number.parseFloat(String(nodeEl.dataset.vaultGraphNodeDegree || '0')) || 0;
+
+        const id = nodeEl.dataset.vaultGraphNodeId || '';
+        const seed = id
+          .split('')
+          .reduce((acc, char) => (acc * 131 + char.codePointAt(0)) % 100000, 1);
+
+        return {
+          id,
+          x: baseX + (((seed % 100) - 50) / 100) * 1.6,
+          y: baseY + ((((seed * 11) % 100) - 50) / 100) * 1.6,
+          vx: (seed % 20 - 10) / 1000,
+          vy: (((seed * 3) % 20 - 10) / 1000),
+          size,
+          degree,
+          visible: nodeEl.dataset.vaultGraphNodeVisible === '1',
+          element: nodeEl,
+          circle: nodeEl.querySelector('circle'),
+          label: nodeEl.querySelector('.vault-graph-view__label--short'),
+        };
+      });
+
+      const nodeById = new Map(nodes.filter((item) => item.id).map((item) => [item.id, item]));
+      const edges = Array.from(figure.querySelectorAll('[data-vault-graph-edge]')).map((edge) => {
+        const source = nodeById.get(edge.getAttribute('data-vault-graph-source') || '');
+        const target = nodeById.get(edge.getAttribute('data-vault-graph-target') || '');
+        return {
+          edge,
+          source,
+          target,
+          visible: true,
+        };
+      });
+
+      const hoverLayer = figure.querySelector('.vault-graph-view__hover-layer');
+      const hoverLabel = hoverLayer ? hoverLayer.querySelector('.vault-graph-view__hover-label') : null;
+      const graphCaption = figure.querySelector('[data-vault-graph-caption]');
+      const viewport = figure.querySelector('[data-vault-graph-viewport]');
+      const svg = figure.querySelector('.vault-graph-view__canvas');
+
+      if (!svg || !viewport) return;
+
+      const initialVisible = Math.min(
+        nodes.length,
+        Number.parseInt(String(figure.dataset.vaultGraphInitialVisible || `${Math.min(8, nodes.length)}`), 10),
+      );
+      const step = Math.max(1, Number.parseInt(String(figure.dataset.vaultGraphStep || '4'), 10));
+      const maxVisible = Math.min(
+        nodes.length,
+        Number.parseInt(String(figure.dataset.vaultGraphMaxVisible || `${nodes.length}`), 10),
+      );
+
+      let visibleCount = clamp(initialVisible, 1, nodes.length);
+      const initialVisibleForUi = initialVisible;
+
+      nodes.sort((a, b) => (b.degree - a.degree) || String(a.id).localeCompare(String(b.id)));
+
+      const viewportState = {
+        scale: 1,
+        tx: 0,
+        ty: 0,
+      };
+
+      const pointerState = {
+        kind: null,
+        pointerId: null,
+        originX: 0,
+        originY: 0,
+        tx: 0,
+        ty: 0,
+        panAnchorX: 0,
+        panAnchorY: 0,
+        dragOffsetX: 0,
+        dragOffsetY: 0,
+        item: null,
+        moved: false,
+      };
+
+      // All active pointers (id → {x, y}) — enables pinch-to-zoom detection.
+      const activePointers = new Map();
+      const pinchState = {
+        active: false,
+        id1: null,
+        id2: null,
+        dist0: 1,
+        scale0: 1,
+        midLocal: null,
+      };
+
+      let renderFrameId = null;
+      let needsPaint = false;
+      let needsTransform = false;
+      let settleFrameId = null;
+      let settleSteps = 0;
+      let hoveredNode = null;
+
+      function requestRaf() {
+        if (renderFrameId !== null) return;
+
+        renderFrameId = window.requestAnimationFrame(() => {
+          renderFrameId = null;
+          if (needsPaint) {
+            paint();
+            needsPaint = false;
+          }
+          if (needsTransform) {
+            applyViewportTransform();
+            needsTransform = false;
+          }
+        });
+      }
+
+      function queueTransformRender() {
+        needsTransform = true;
+        requestRaf();
+      }
+
+      function queuePaint() {
+        needsPaint = true;
+        requestRaf();
+      }
+
+      function flushQueuedVisuals() {
+        if (renderFrameId !== null) {
+          window.cancelAnimationFrame(renderFrameId);
+          renderFrameId = null;
+        }
+        if (needsPaint) {
+          paint();
+          needsPaint = false;
+        }
+        if (needsTransform) {
+          applyViewportTransform();
+          needsTransform = false;
+        }
+      }
+
+      function stopViewportSettle() {
+        settleSteps = 0;
+        if (settleFrameId !== null) {
+          window.cancelAnimationFrame(settleFrameId);
+          settleFrameId = null;
+        }
+      }
+
+      function scheduleViewportSettle(focusItem = null) {
+        if (!focusItem) return;
+        stopViewportSettle();
+        settleSteps = POST_DRAG_SETTLE_STEPS;
+        settleFrameId = window.requestAnimationFrame(() => {
+          settleFrameId = null;
+          if (settleSteps <= 0) return;
+
+          settleSteps -= 1;
+          runPhysicsRelaxation(1, null);
+          clampViewportToContent();
+          queueTransformRender();
+          queuePaint();
+          if (settleSteps > 0) {
+            scheduleViewportSettle(focusItem);
+          }
+        });
+      }
+
+      function boundsForViewport() {
+        const visibleNodes = nodes.filter((item) => item.visible);
+        const items = visibleNodes.length ? visibleNodes : nodes;
+
+        let minX = Number.POSITIVE_INFINITY;
+        let maxX = Number.NEGATIVE_INFINITY;
+        let minY = Number.POSITIVE_INFINITY;
+        let maxY = Number.NEGATIVE_INFINITY;
+
+        for (const item of items) {
+          const labelText = item.element?.dataset?.vaultGraphNodeLabelShort || item.element?.dataset?.vaultGraphNodeLabel || '';
+          const halfLabelWidth = Math.max(6, Math.min(34, estimateLabelHalfWidth(labelText, 6)));
+          const textRadius = Math.max(halfLabelWidth, item.size + 2);
+
+          minX = Math.min(minX, item.x - textRadius - LABEL_MARGIN);
+          maxX = Math.max(maxX, item.x + textRadius + LABEL_MARGIN);
+
+          minY = Math.min(minY, item.y - item.size - LABEL_MARGIN);
+          maxY = Math.max(maxY, item.y + item.size + LABEL_OFFSET_Y + LABEL_MARGIN);
+        }
+
+        if (!Number.isFinite(minX) || !Number.isFinite(maxX) || !Number.isFinite(minY) || !Number.isFinite(maxY)) {
+          return {
+            minX: 0,
+            maxX: VIEWBOX_SIZE,
+            minY: 0,
+            maxY: VIEWBOX_SIZE,
+          };
+        }
+
+        return {
+          minX,
+          maxX,
+          minY,
+          maxY,
+        };
+      }
+
+      function clampViewportToContent() {
+        const bounds = boundsForViewport();
+        const minTx = VIEWPORT_BOUNDS_PADDING - bounds.maxX * viewportState.scale;
+        const maxTx = VIEWBOX_SIZE - VIEWPORT_BOUNDS_PADDING - bounds.minX * viewportState.scale;
+        const minTy = VIEWPORT_BOUNDS_PADDING - bounds.maxY * viewportState.scale;
+        const maxTy = VIEWBOX_SIZE - VIEWPORT_BOUNDS_PADDING - bounds.minY * viewportState.scale;
+
+        if (minTx > maxTx) {
+          viewportState.tx = (minTx + maxTx) / 2;
+        } else {
+          viewportState.tx = clamp(viewportState.tx, minTx, maxTx);
+        }
+
+        if (minTy > maxTy) {
+          viewportState.ty = (minTy + maxTy) / 2;
+        } else {
+          viewportState.ty = clamp(viewportState.ty, minTy, maxTy);
+        }
+      }
+
+      function runPhysicsRelaxation(steps = 1, focusItem = null, options = {}) {
+        const shouldConstrainFocus = options.shouldConstrainFocus !== false;
+        if (nodes.length < 2) return;
+
+        for (let step = 0; step < steps; step += 1) {
+          const forces = computeForces({
+            nodes,
+            edges,
+            focusItem,
+            repulsionForce: REPULSION_FORCE,
+            springForce: SPRING_FORCE,
+            repulsionMode: 'explorer',
+            maxRepulsionForce: MAX_REPULSION_FORCE,
+            maxSpringForce: MAX_SPRING_FORCE,
+            globalInteractionRadius: GLOBAL_INTERACTION_RADIUS,
+            focusInteractionRadius: FOCUS_INTERACTION_RADIUS,
+            edgeScale: focusItem ? EDGE_FOCUS_SCALE : EDGE_RESTORE_SCALE,
+            edgeIdealGap: focusItem ? RUNTIME_EDGE_IDEAL_GAP : INITIAL_EDGE_IDEAL_GAP,
+            edgeDistanceLimit: GLOBAL_INTERACTION_RADIUS,
+            nodeActivePredicate: (node) => node.visible,
+            includeInvisibleForces: false,
+            edgeActivePredicate: (edgeObj, focused) => {
+              if (!edgeObj?.source || !edgeObj?.target) return false;
+              if (!edgeObj.source.visible || !edgeObj.target.visible) return false;
+              if (!focused) return true;
+              return edgeObj.source === focused || edgeObj.target === focused;
+            },
+          });
+
+          for (let i = 0; i < nodes.length; i += 1) {
+            const item = nodes[i];
+            if (focusItem && item !== focusItem && !item.visible) continue;
+            if (!item.visible) continue;
+            if (!focusItem && !Number.isFinite(item.vx + item.vy)) {
+              item.vx = 0;
+              item.vy = 0;
+              continue;
+            }
+
+            // Pinned drag target: position is set by cursor, not physics.
+            // Zero velocity so accumulated impulse doesn't teleport the node on release.
+            if (focusItem && item === focusItem && !shouldConstrainFocus) {
+              item.vx = 0;
+              item.vy = 0;
+              continue;
+            }
+
+            const dx = VIEWBOX_SIZE / 2 - item.x;
+            const dy = VIEWBOX_SIZE / 2 - item.y;
+            item.vx = clamp(
+              (item.vx + forces[i].x + dx * (focusItem ? CENTER_FORCE : CENTER_FORCE * 0.22)) * DAMPING,
+              -MAX_NODE_VELOCITY,
+              MAX_NODE_VELOCITY,
+            );
+            item.vy = clamp(
+              (item.vy + forces[i].y + dy * (focusItem ? CENTER_FORCE : CENTER_FORCE * 0.22)) * DAMPING,
+              -MAX_NODE_VELOCITY,
+              MAX_NODE_VELOCITY,
+            );
+            item.x += item.vx;
+            item.y += item.vy;
+            constrain(item);
+          }
+        }
+      }
+      function visibleSetForCount(count) {
+        const ids = new Set();
+        for (let i = 0; i < Math.min(count, nodes.length); i += 1) {
+          ids.add(nodes[i].id);
+        }
+        return ids;
+      }
+
+      function constrain(item) {
+        const min = item.size + 2;
+        const max = VIEWBOX_SIZE - item.size - 2;
+        item.x = clamp(item.x, min, max);
+        item.y = clamp(item.y, min, max);
+      }
+
+      function runInitialLayout() {
+        if (nodes.length < 2) return;
+
+        for (let step = 0; step < FORCE_STEPS; step += 1) {
+          const forces = computeForces({
+            nodes,
+            edges,
+            focusItem: null,
+            repulsionForce: REPULSION_FORCE,
+            springForce: SPRING_FORCE,
+            repulsionMode: 'explorer',
+            globalInteractionRadius: Number.POSITIVE_INFINITY,
+            maxRepulsionForce: Number.POSITIVE_INFINITY,
+            maxSpringForce: Number.POSITIVE_INFINITY,
+            edgeScale: 1,
+            edgeIdealGap: RUNTIME_EDGE_IDEAL_GAP,
+            edgeDistanceLimit: Number.POSITIVE_INFINITY,
+            nodeActivePredicate: () => true,
+            includeInvisibleForces: true,
+          });
+
+          for (let i = 0; i < nodes.length; i += 1) {
+            const item = nodes[i];
+            const dx = VIEWBOX_SIZE / 2 - item.x;
+            const dy = VIEWBOX_SIZE / 2 - item.y;
+            item.vx = (item.vx + forces[i].x + dx * CENTER_FORCE) * DAMPING;
+            item.vy = (item.vy + forces[i].y + dy * CENTER_FORCE) * DAMPING;
+            item.x += item.vx;
+            item.y += item.vy;
+            constrain(item);
+          }
+        }
+      }
+      function paint() {
+        for (const item of nodes) {
+          if (!item.element || !item.circle) continue;
+
+          item.element.dataset.vaultGraphNodeX = item.x.toFixed(2);
+          item.element.dataset.vaultGraphNodeY = item.y.toFixed(2);
+
+          const shortLabelText = item.element.dataset.vaultGraphNodeLabelShort || item.element.dataset.vaultGraphNodeLabel || '';
+          const labelPlacement = placeLabel(
+            item.x,
+            item.y + item.size + LABEL_OFFSET_Y,
+            estimateLabelHalfWidth(shortLabelText, 6),
+          );
+
+          item.element.dataset.vaultGraphLabelX = labelPlacement.x.toFixed(2);
+          item.element.dataset.vaultGraphLabelY = labelPlacement.y.toFixed(2);
+
+          item.circle.setAttribute('cx', item.x.toFixed(2));
+          item.circle.setAttribute('cy', item.y.toFixed(2));
+
+          if (item.label) {
+            item.label.setAttribute('x', labelPlacement.x.toFixed(2));
+            item.label.setAttribute('y', labelPlacement.y.toFixed(2));
+            item.label.setAttribute('text-anchor', labelPlacement.anchor);
+          }
+        }
+
+        for (const edge of edges) {
+          if (!edge.source || !edge.target) continue;
+          edge.edge.setAttribute('x1', edge.source.x.toFixed(2));
+          edge.edge.setAttribute('y1', edge.source.y.toFixed(2));
+          edge.edge.setAttribute('x2', edge.target.x.toFixed(2));
+          edge.edge.setAttribute('y2', edge.target.y.toFixed(2));
+        }
+      }
+
+      function applyVisibility() {
+        const visibleIds = visibleSetForCount(visibleCount);
+        let visibleEdges = 0;
+
+        for (const item of nodes) {
+          const isVisible = visibleIds.has(item.id);
+          item.visible = isVisible;
+          if (isVisible) {
+            item.element.removeAttribute('data-vault-graph-node-hidden');
+            item.element.removeAttribute('hidden');
+            item.element.style.display = '';
+          } else {
+            item.element.setAttribute('data-vault-graph-node-hidden', '1');
+            item.element.setAttribute('hidden', '');
+            item.element.style.display = 'none';
+          }
+          item.element.dataset.vaultGraphNodeVisible = isVisible ? '1' : '0';
+        }
+
+        for (const edge of edges) {
+          if (!edge.source || !edge.target) {
+            edge.visible = false;
+            edge.edge.setAttribute('hidden', '');
+            continue;
+          }
+
+          edge.visible = visibleIds.has(edge.source.id) && visibleIds.has(edge.target.id);
+          if (edge.visible) {
+            edge.edge.removeAttribute('hidden');
+            visibleEdges += 1;
+          } else {
+            edge.edge.setAttribute('hidden', '');
+          }
+        }
+
+        if (graphCaption) {
+          graphCaption.textContent = `${visibleCount} nós em destaque · ${visibleEdges} relações renderizadas localmente em SVG.`;
+        }
+
+        figure.dataset.vaultGraphVisible = String(visibleCount);
+
+        const expandButton = figure.querySelector('[data-vault-graph-action="expand"]');
+        const collapseButton = figure.querySelector('[data-vault-graph-action="collapse"]');
+        if (expandButton) {
+          expandButton.disabled = visibleCount >= maxVisible;
+          expandButton.setAttribute('aria-label', `Expandir grafo em ${step}`);
+        }
+        if (collapseButton) {
+          collapseButton.disabled = visibleCount <= initialVisibleForUi;
+          collapseButton.setAttribute('aria-label', `Recolher grafo em ${step}`);
+        }
+      }
+
+      function applyViewportTransform() {
+        if (!viewport) return;
+        clampViewportToContent();
+        viewport.setAttribute(
+          'transform',
+          `translate(${viewportState.tx.toFixed(3)} ${viewportState.ty.toFixed(3)}) scale(${viewportState.scale.toFixed(3)})`,
+        );
+      }
+
+      function toGraphCoordinates(clientX, clientY) {
+        const point = svg.createSVGPoint();
+        point.x = clientX;
+        point.y = clientY;
+
+        const matrix = svg.getScreenCTM();
+        if (!matrix) return null;
+
+        try {
+          const local = point.matrixTransform(matrix.inverse());
+          const scaledViewportX = (local.x - viewportState.tx) / viewportState.scale;
+          const scaledViewportY = (local.y - viewportState.ty) / viewportState.scale;
+
+          return {
+            x: scaledViewportX,
+            y: scaledViewportY,
+            localX: local.x,
+            localY: local.y,
+          };
+        } catch {
+          return null;
+        }
+      }
+
+      function recenter() {
+        const bounds = boundsForViewport();
+        const contentW = bounds.maxX - bounds.minX;
+        const contentH = bounds.maxY - bounds.minY;
+        const usable = VIEWBOX_SIZE - 2 * VIEWPORT_BOUNDS_PADDING;
+        const fitScale = clamp(
+          Math.min(usable / Math.max(contentW, 1), usable / Math.max(contentH, 1)),
+          MIN_SCALE,
+          MAX_SCALE,
+        );
+        viewportState.scale = fitScale;
+        viewportState.tx = (VIEWBOX_SIZE - (bounds.minX + bounds.maxX) * fitScale) / 2;
+        viewportState.ty = (VIEWBOX_SIZE - (bounds.minY + bounds.maxY) * fitScale) / 2;
+        // Prevent zoom-out past this fit: at fitScale the layout fills the viewport,
+        // so any lower scale would reveal empty simulation space as an "invisible box".
+        minScale = fitScale * 0.95;
+        clampViewportToContent();
+        queueTransformRender();
+        if (hoveredNode) {
+          activateHover(hoveredNode);
+        }
+      }
+
+      function startPan(event) {
+        if (pointerState.kind) return;
+        stopViewportSettle();
+
+        const target = event.target;
+        if (target instanceof Element && target.closest('button[data-vault-graph-action]')) {
+          return;
+        }
+
+        const graphPoint = toGraphCoordinates(event.clientX, event.clientY);
+        if (!graphPoint) return;
+
+        pointerState.kind = 'pan';
+        pointerState.pointerId = event.pointerId;
+        pointerState.originX = event.clientX;
+        pointerState.originY = event.clientY;
+        pointerState.panAnchorX = graphPoint.x;
+        pointerState.panAnchorY = graphPoint.y;
+        pointerState.tx = viewportState.tx;
+        pointerState.ty = viewportState.ty;
+        pointerState.moved = false;
+        svg.classList.add('is-panning');
+
+        if (svg.setPointerCapture) {
+          svg.setPointerCapture(event.pointerId);
+        }
+        event.preventDefault();
+      }
+
+      function doPan(event) {
+        if (pointerState.kind !== 'pan' || pointerState.pointerId !== event.pointerId) return;
+
+        const graphPoint = toGraphCoordinates(event.clientX, event.clientY);
+        if (!graphPoint) return;
+
+        const deltaX = event.clientX - pointerState.originX;
+        const deltaY = event.clientY - pointerState.originY;
+
+        if (!pointerState.moved && Math.hypot(deltaX, deltaY) > DRAG_THRESHOLD_PX) {
+          pointerState.moved = true;
+        }
+
+        viewportState.tx = graphPoint.localX - pointerState.panAnchorX * viewportState.scale;
+        viewportState.ty = graphPoint.localY - pointerState.panAnchorY * viewportState.scale;
+        clampViewportToContent();
+        queueTransformRender();
+        if (hoveredNode) {
+          activateHover(hoveredNode);
+        }
+      }
+
+      function stopPan(event) {
+        if (pointerState.kind !== 'pan' || pointerState.pointerId !== event.pointerId) return;
+        pointerState.kind = null;
+        pointerState.pointerId = null;
+        pointerState.item = null;
+        pointerState.panAnchorX = 0;
+        pointerState.panAnchorY = 0;
+        pointerState.moved = false;
+        clampViewportToContent();
+        queueTransformRender();
+        if (hoveredNode) {
+          activateHover(hoveredNode);
+        }
+        svg.classList.remove('is-panning');
+        flushQueuedVisuals();
+
+        if (svg.releasePointerCapture) {
+          svg.releasePointerCapture(event.pointerId);
+        }
+      }
+
+      function startDrag(event, item) {
+        if (!item) return;
+        stopViewportSettle();
+        pointerState.kind = 'drag';
+        pointerState.pointerId = event.pointerId;
+        pointerState.item = item;
+        pointerState.originX = event.clientX;
+        pointerState.originY = event.clientY;
+        pointerState.dragOffsetX = 0;
+        pointerState.dragOffsetY = 0;
+        pointerState.moved = false;
+
+        const graphPoint = toGraphCoordinates(event.clientX, event.clientY);
+        if (graphPoint) {
+          pointerState.dragOffsetX = graphPoint.x - item.x;
+          pointerState.dragOffsetY = graphPoint.y - item.y;
+        }
+
+        item.element.classList.add('is-dragged');
+        activateHover(item);
+        if (event.preventDefault) event.preventDefault();
+        if (svg.setPointerCapture) {
+          svg.setPointerCapture(event.pointerId);
+        }
+      }
+
+      function doDrag(event) {
+        if (pointerState.kind !== 'drag' || pointerState.pointerId !== event.pointerId || !pointerState.item) return;
+
+        const dragItem = pointerState.item;
+        const dx = event.clientX - pointerState.originX;
+        const dy = event.clientY - pointerState.originY;
+
+        if (!pointerState.moved && Math.hypot(dx, dy) > DRAG_THRESHOLD_PX) {
+          pointerState.moved = true;
+        }
+        if (!pointerState.moved) return;
+
+        const graphPos = toGraphCoordinates(event.clientX, event.clientY);
+        if (!graphPos) return;
+
+        dragItem.x = graphPos.x - pointerState.dragOffsetX;
+        dragItem.y = graphPos.y - pointerState.dragOffsetY;
+        // Keep containment smooth: skip viewport clamping during live drag.
+        // Let the physics settle pass reconcile both node position and viewport after mouse-up.
+        if (dragItem.visible) {
+          runPhysicsRelaxation(DRAG_REPULSE_STEPS, dragItem, { shouldConstrainFocus: false });
+        }
+        queueTransformRender();
+        queuePaint();
+        activateHover(dragItem);
+      }
+
+      function stopDrag(event) {
+        if (pointerState.kind !== 'drag' || pointerState.pointerId !== event.pointerId || !pointerState.item) return;
+
+        const item = pointerState.item;
+        const wasMoved = pointerState.moved;
+        item.element.classList.remove('is-dragged');
+
+        // Clear state before any navigation so subsequent pointer events see kind=null
+        pointerState.kind = null;
+        pointerState.pointerId = null;
+        pointerState.item = null;
+        pointerState.moved = false;
+        flushQueuedVisuals();
+
+        if (svg.releasePointerCapture) {
+          svg.releasePointerCapture(event.pointerId);
+        }
+
+        if (!wasMoved) {
+          // SVGAElement doesn't inherit HTMLElement.click() — navigate via a
+          // temporary HTML anchor so Astro's SPA router intercepts correctly.
+          const href = item.element.getAttribute('href');
+          if (href) {
+            const a = document.createElement('a');
+            a.href = href;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+          }
+        } else {
+          scheduleViewportSettle(item);
+        }
+
+        deactivateHover(item);
+      }
+
+      function zoom(event) {
+        event.preventDefault();
+        stopViewportSettle();
+        const pointerBefore = toGraphCoordinates(event.clientX, event.clientY);
+        if (!pointerBefore) return;
+
+        const direction = event.deltaY < 0 ? 1.12 : 0.89;
+        const nextScale = clamp(viewportState.scale * direction, minScale, MAX_SCALE);
+        viewportState.scale = nextScale;
+
+        viewportState.tx = pointerBefore.localX - pointerBefore.x * viewportState.scale;
+        viewportState.ty = pointerBefore.localY - pointerBefore.y * viewportState.scale;
+
+        queueTransformRender();
+        if (hoveredNode) {
+          activateHover(hoveredNode);
+        }
+      }
+
+      function setVisibleCount(nextCount) {
+        visibleCount = clamp(Math.round(nextCount), initialVisibleForUi, maxVisible);
+        applyVisibility();
+        if (hoveredNode && !hoveredNode.visible) {
+          clearHoverState();
+        } else if (hoveredNode) {
+          activateHover(hoveredNode);
+        }
+      }
+
+      function setupInteractions() {
+        const onPointerDown = (event) => {
+          activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+          // Second active touch/pointer: switch to pinch-to-zoom
+          if (activePointers.size >= 2 && !pinchState.active) {
+            const ids = Array.from(activePointers.keys());
+            const p1 = activePointers.get(ids[0]);
+            const p2 = activePointers.get(ids[1]);
+            const midScreen = { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
+            const midLocal = toGraphCoordinates(midScreen.x, midScreen.y);
+            if (midLocal) {
+              // Cancel ongoing single-pointer interaction without side effects
+              pointerState.kind = null;
+              pointerState.pointerId = null;
+              svg.classList.remove('is-panning');
+              stopViewportSettle();
+
+              pinchState.active = true;
+              pinchState.id1 = ids[0];
+              pinchState.id2 = ids[1];
+              pinchState.dist0 = Math.hypot(p2.x - p1.x, p2.y - p1.y) || 1;
+              pinchState.scale0 = viewportState.scale;
+              pinchState.midLocal = midLocal;
+            }
+            event.preventDefault();
+            return;
+          }
+
+          if (event.button !== 0 && event.button !== 2) return;
+
+          const node = event.target?.closest?.('[data-vault-graph-node-id]');
+          const button = event.target?.closest?.('[data-vault-graph-action]');
+
+          if (node instanceof Element && event.button === 0) {
+            const id = node.getAttribute('data-vault-graph-node-id');
+            const item = nodes.find((item) => item.id === id);
+            if (item) {
+              startDrag(event, item);
+              return;
+            }
+          }
+
+          if (button instanceof Element) return;
+          if (node instanceof Element && event.button !== 2) return;
+          startPan(event);
+        };
+
+        const onPointerMove = (event) => {
+          if (activePointers.has(event.pointerId)) {
+            activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+          }
+
+          // Pinch-to-zoom: recalculate scale from new finger distance
+          if (pinchState.active && (event.pointerId === pinchState.id1 || event.pointerId === pinchState.id2)) {
+            const p1 = activePointers.get(pinchState.id1);
+            const p2 = activePointers.get(pinchState.id2);
+            if (p1 && p2) {
+              const newDist = Math.hypot(p2.x - p1.x, p2.y - p1.y) || 1;
+              const nextScale = clamp(pinchState.scale0 * (newDist / pinchState.dist0), minScale, MAX_SCALE);
+              viewportState.scale = nextScale;
+              viewportState.tx = pinchState.midLocal.localX - pinchState.midLocal.x * nextScale;
+              viewportState.ty = pinchState.midLocal.localY - pinchState.midLocal.y * nextScale;
+              clampViewportToContent();
+              queueTransformRender();
+              if (hoveredNode) {
+                activateHover(hoveredNode);
+              }
+            }
+            event.preventDefault();
+            return;
+          }
+
+          if (!pointerState.kind || pointerState.pointerId !== event.pointerId) return;
+
+          if (pointerState.kind === 'pan') {
+            doPan(event);
+          }
+
+          if (pointerState.kind === 'drag') {
+            doDrag(event);
+          }
+        };
+
+        const onPointerUp = (event) => {
+          activePointers.delete(event.pointerId);
+
+          if (pinchState.active && (event.pointerId === pinchState.id1 || event.pointerId === pinchState.id2)) {
+            pinchState.active = false;
+            pinchState.id1 = null;
+            pinchState.id2 = null;
+            pinchState.midLocal = null;
+            clampViewportToContent();
+            queueTransformRender();
+            return;
+          }
+
+          if (pointerState.kind === 'pan') {
+            stopPan(event);
+            return;
+          }
+
+          if (pointerState.kind === 'drag') {
+            stopDrag(event);
+          }
+        };
+
+        const onPointerCancel = (event) => {
+          activePointers.delete(event.pointerId);
+          onPointerUp(event);
+        };
+
+        svg.addEventListener('pointerdown', onPointerDown, { passive: false });
+        svg.addEventListener('pointermove', onPointerMove, { passive: false });
+        svg.addEventListener('pointerup', onPointerUp);
+        svg.addEventListener('pointercancel', onPointerCancel);
+        svg.addEventListener('contextmenu', (event) => event.preventDefault());
+        svg.addEventListener('dblclick', () => {
+          recenter();
+        });
+        svg.addEventListener('wheel', zoom, { passive: false });
+
+        // Pointer updates can fire on the document while the pointer is outside
+        // the svg bounds. Keep this in sync to make panning and dragging stable.
+        window.addEventListener('pointermove', onPointerMove, { passive: false });
+        window.addEventListener('pointerup', onPointerUp);
+        window.addEventListener('pointercancel', onPointerCancel);
+
+        figure.querySelectorAll('[data-vault-graph-action="expand"]').forEach((element) => {
+          element.addEventListener('click', () => setVisibleCount(visibleCount + step));
+        });
+        figure.querySelectorAll('[data-vault-graph-action="collapse"]').forEach((element) => {
+          element.addEventListener('click', () => setVisibleCount(visibleCount - step));
+        });
+        figure.querySelectorAll('[data-vault-graph-action="recenter"]').forEach((element) => {
+          element.addEventListener('click', () => {
+            recenter();
+          });
+        });
+      }
+
+      const clearHoverState = () => {
+        if (!hoveredNode) return;
+
+        hoveredNode.element.classList.remove('is-hovered');
+        delete figure.dataset.vaultGraphHover;
+
+        if (hoverLabel) {
+          hoverLabel.textContent = '';
+          hoverLabel.removeAttribute('x');
+          hoverLabel.removeAttribute('y');
+          hoverLabel.removeAttribute('text-anchor');
+          hoverLabel.style.removeProperty('font-size');
+        }
+
+        for (const edge of edges) {
+          edge.edge.classList.remove('is-connected');
+        }
+        for (const item of nodes) {
+          item.element.classList.remove('is-neighbor');
+        }
+
+        hoveredNode = null;
+      };
+
+      const renderHoverLabel = (node) => {
+        if (!hoverLabel || !node || !node.visible) return;
+
+        const fullLabel = node.element.dataset.vaultGraphNodeLabel || '';
+        const nodeSize = Number.parseFloat(String(node.element.dataset.vaultGraphNodeSize || String(node.size) || '6')) || node.size || 6;
+
+        // hover-layer is outside the viewport group, so we apply the viewport
+        // transform manually to position the label in SVG user coordinates
+        const s = viewportState.scale;
+        const scaledNodeY = node.y * s + viewportState.ty;
+        const scaledNodeSize = nodeSize * s;
+        const svgX = node.x * s + viewportState.tx;
+        const preferAbove = scaledNodeY - scaledNodeSize - LABEL_OFFSET_Y > LABEL_OFFSET_Y + LABEL_MARGIN_Y + 4;
+        const svgY = preferAbove
+          ? scaledNodeY - scaledNodeSize - LABEL_OFFSET_Y
+          : scaledNodeY + scaledNodeSize + LABEL_OFFSET_Y;
+
+        const hoverPlacement = fitLabelToViewport(
+          hoverLabel,
+          fullLabel,
+          svgX,
+          svgY,
+          preferAbove,
+        );
+
+        if (Array.isArray(hoverPlacement.lines) && hoverPlacement.lines.length > 1) {
+          renderWrappedLabel(hoverLabel, hoverPlacement);
+        } else {
+          hoverLabel.textContent = fullLabel;
+        }
+
+        if (hoverPlacement.fontSize) {
+          hoverLabel.style.fontSize = hoverPlacement.fontSize;
+        } else {
+          hoverLabel.style.removeProperty('font-size');
+        }
+        hoverLabel.setAttribute('x', String(hoverPlacement.x.toFixed(2)));
+        hoverLabel.setAttribute('y', String(hoverPlacement.y.toFixed(2)));
+        hoverLabel.setAttribute('text-anchor', hoverPlacement.anchor);
+        node.element.classList.add('is-hovered');
+        figure.dataset.vaultGraphHover = '1';
+      };
+
+      const activateHover = (node) => {
+        if (!hoverLabel || !node || !node.visible) return;
+
+        const nodeChanged = hoveredNode !== node;
+        if (nodeChanged) {
+          clearHoverState();
+          hoveredNode = node;
+        }
+
+        renderHoverLabel(node);
+
+        if (!nodeChanged) return;
+
+        for (const edge of edges) {
+          if (!edge.visible) continue;
+          if (edge.source === node || edge.target === node) {
+            edge.edge.classList.add('is-connected');
+            const neighbor = edge.source === node ? edge.target : edge.source;
+            neighbor.element.classList.add('is-neighbor');
+          }
+        }
+      };
+
+      const deactivateHover = (node) => {
+        if (!hoveredNode) return;
+        if (node && hoveredNode !== node) return;
+        clearHoverState();
+      };
+
+
+      for (const node of nodes) {
+        node.element.addEventListener('pointerenter', () => {
+          if (pointerState.kind === 'drag' && pointerState.item !== node) {
+            return;
+          }
+          activateHover(node);
+        });
+        node.element.addEventListener('pointerleave', () => {
+          if (pointerState.kind === 'drag' && pointerState.item === node) return;
+          deactivateHover(node);
+        });
+        node.element.addEventListener('focus', () => activateHover(node));
+        node.element.addEventListener('blur', () => deactivateHover(node));
+      }
+
+      runInitialLayout();
+
+      for (const node of nodes) {
+        constrain(node);
+      }
+
+      applyVisibility();
+      paint();
+      recenter();
+      setupInteractions();
+    }
+
+    function setupAllGraphs() {
+      document.querySelectorAll('.vault-graph-view').forEach((figure) => {
+        if (figure.dataset.vaultGraphReady === '1') return;
+        figure.dataset.vaultGraphReady = '1';
+        setupGraphLayout(figure);
+      });
+    }
+
+    setupAllGraphs();
+    document.addEventListener('astro:page-load', setupAllGraphs);
+  })();
+</script>
