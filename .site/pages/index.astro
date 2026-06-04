@@ -41,10 +41,10 @@ function graphHeroHtml() {
     `<a href="${base}/${escapeHtml(node.id)}/" aria-label="${escapeHtml(node.title)}: ${node.degree} conexões" data-vault-graph-node-id="${escapeHtml(node.id)}" data-vault-graph-node-label="${escapeHtml(node.title)}" data-vault-graph-node-size="${node.size.toFixed(1)}" data-vault-graph-node-x="${node.x.toFixed(1)}" data-vault-graph-node-y="${node.y.toFixed(1)}" data-vault-graph-label-x="${node.x.toFixed(1)}" data-vault-graph-label-y="${(node.y + node.size + 8).toFixed(1)}">` +
     `<title>${escapeHtml(node.title)} · ${node.degree} conexões</title>` +
     `<circle cx="${node.x.toFixed(1)}" cy="${node.y.toFixed(1)}" r="${node.size.toFixed(1)}" style="--vault-node-weight:${node.weight.toFixed(2)}" />` +
-    `<text class="vault-graph-view__label vault-graph-view__label--short" x="${node.x.toFixed(1)}" y="${(node.y + node.size + 8).toFixed(1)}" text-anchor="middle" style="font-size: var(--hero-graph-label-font, 6px); font-weight: 800;">${escapeHtml(truncateLabel(node.title))}</text>` +
+    `<text class="vault-graph-view__label vault-graph-view__label--short" x="${node.x.toFixed(1)}" y="${(node.y + node.size + 8).toFixed(1)}" text-anchor="middle" style="font-size: var(--hero-graph-label-font, 0.375rem); font-weight: 800;">${escapeHtml(truncateLabel(node.title))}</text>` +
     `</a>`
   )).join('');
-  return `<figure class="vault-graph-view vault-graph-view--hero" aria-label="Graph view do vault"><svg class="vault-graph-view__canvas" viewBox="0 0 200 200" role="img"><title>Graph view do vault</title><g class="vault-graph-view__links" aria-hidden="true">${lines}</g><g class="vault-graph-view__nodes">${circles}</g><g class="vault-graph-view__hover-layer" aria-hidden="true"><text class="vault-graph-view__hover-label" text-anchor="middle" style="font-size: var(--hero-graph-hover-label-font, 7px); stroke-width: var(--hero-graph-hover-label-stroke, 3px);"></text></g></svg><figcaption>Toque em um nó (ou passe o mouse) para ver o nome completo</figcaption></figure>`;
+  return `<figure class="vault-graph-view vault-graph-view--hero" aria-label="Graph view do vault"><svg class="vault-graph-view__canvas" viewBox="0 0 200 200" role="img"><title>Graph view do vault</title><g class="vault-graph-view__links" aria-hidden="true">${lines}</g><g class="vault-graph-view__nodes">${circles}</g><g class="vault-graph-view__hover-layer" aria-hidden="true"><text class="vault-graph-view__hover-label" text-anchor="middle" style="font-size: var(--hero-graph-hover-label-font, 0.438rem); stroke-width: var(--hero-graph-hover-label-stroke, 0.1875rem);"></text></g></svg><figcaption>Toque em um nó (ou passe o mouse) para ver o nome completo</figcaption></figure>`;
 }
 const heroGraphHtml = graphHeroHtml();
 ---
@@ -187,8 +187,10 @@ const heroGraphHtml = graphHeroHtml();
   (() => {
     const MOBILE_GRAPH_BREAKPOINT = 44;
     const isMobileHeroGraph = window.matchMedia(`(max-width: ${MOBILE_GRAPH_BREAKPOINT}rem)`).matches;
+    const rootFontPx = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
     const heroGraphNodeScale = isMobileHeroGraph ? 1.10 : 1;
-    const heroGraphLabelFont = isMobileHeroGraph ? 20 : 6;
+    const heroGraphLabelFont = isMobileHeroGraph ? rootFontPx * 1.25 : rootFontPx * 0.375;
+    const heroGraphHoverLabelFont = isMobileHeroGraph ? rootFontPx * 1.5 : rootFontPx * 0.4375;
     const heroGraphRadiusBoost = isMobileHeroGraph ? 1 : 0;
     const heroGraphLayoutScale = isMobileHeroGraph ? 1.2 : 1;
 
@@ -381,9 +383,9 @@ const heroGraphHtml = graphHeroHtml();
       document.querySelectorAll('.vault-graph-view--hero').forEach((figure) => {
         if (figure.dataset.vaultGraphReady === '1') return;
         figure.dataset.vaultGraphReady = '1';
-        figure.style.setProperty('--hero-graph-label-font', `${heroGraphLabelFont}px`);
-        figure.style.setProperty('--hero-graph-hover-label-font', `${heroGraphLabelFont + 4}px`);
-        figure.style.setProperty('--hero-graph-hover-label-stroke', isMobileHeroGraph ? '3.8px' : '3.2px');
+        figure.style.setProperty('--hero-graph-label-font', isMobileHeroGraph ? '1.25rem' : '0.375rem');
+        figure.style.setProperty('--hero-graph-hover-label-font', isMobileHeroGraph ? '1.5rem' : '0.4375rem');
+        figure.style.setProperty('--hero-graph-hover-label-stroke', isMobileHeroGraph ? '0.2375rem' : '0.2rem');
 
         const hoverLabel = figure.querySelector('.vault-graph-view__hover-label');
         const nodes = figure.querySelectorAll('[data-vault-graph-node-label]');
@@ -397,7 +399,7 @@ const heroGraphHtml = graphHeroHtml();
             const nodeSize = (Number.parseFloat(String(node.dataset.vaultGraphNodeSize || '6')) || 6) * heroGraphNodeScale;
             const baseX = Number.parseFloat(String(node.dataset.vaultGraphLabelX || node.dataset.vaultGraphNodeX || '0')) || 0;
             const baseY = Number.parseFloat(String(node.dataset.vaultGraphLabelY || node.dataset.vaultGraphNodeY || '0')) || 0;
-            const hoverPlacement = placeLabel(baseX, baseY - (nodeSize + LABEL_OFFSET_Y), estimateLabelHalfWidth(fullLabel, heroGraphLabelFont + 1), true);
+            const hoverPlacement = placeLabel(baseX, baseY - (nodeSize + LABEL_OFFSET_Y), estimateLabelHalfWidth(fullLabel, heroGraphHoverLabelFont), true);
 
             hoverLabel.textContent = fullLabel;
             hoverLabel.setAttribute('x', hoverPlacement.x.toFixed(2));
@@ -491,25 +493,5 @@ const heroGraphHtml = graphHeroHtml();
     -webkit-line-clamp: unset;
   }
 
-  @media (max-width: 44rem) {
-    .vault-graph-view--hero {
-      width: min(100%, 100dvw);
-      max-width: min(100%, 100dvw);
-    }
 
-    .vault-graph-view--hero .vault-graph-view__canvas {
-      margin-inline: auto;
-      max-height: min(76dvh, 620px);
-    }
-
-    .vault-graph-view--hero .vault-graph-view__label {
-      font-size: 20px;
-      font-weight: 800;
-    }
-
-    .vault-graph-view--hero .vault-graph-view__hover-label {
-      font-size: 24px;
-      stroke-width: 3.8px;
-    }
-  }
 </style>
