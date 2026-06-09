@@ -277,6 +277,28 @@ test('Accessibility foundations: skip link, lang, and license link are present',
   assert.match(astroConfig, /href: '\/LICENSE\.md'/);
 });
 
+test('Homepage cards render body text without interactive gating', () => {
+  const home = read('.site/pages/index.astro');
+  const css = read('.site/styles/custom.css');
+
+  // Body text must be in a plain <p>, never locked behind a <details> expand pattern.
+  assert.doesNotMatch(home, /class="vault-card__details"/);
+  assert.doesNotMatch(home, /vault-card__body-full/);
+  assert.doesNotMatch(home, /<summary[^>]*vault-card__body/);
+
+  // Each card section must contain a direct <p class="vault-card__body">.
+  const cardBodies = home.match(/<p class="vault-card__body">/g);
+  assert.ok(cardBodies && cardBodies.length >= 6, 'Expected at least 6 card body paragraphs in the homepage grid');
+
+  // The homepage section must override the global line-clamp so no body text is truncated.
+  assert.match(home, /vault-home-section[\s\S]*vault-card__body[\s\S]*-webkit-line-clamp:\s*unset/);
+  assert.match(home, /vault-home-section[\s\S]*vault-card__body[\s\S]*overflow:\s*visible/);
+
+  // The global component CSS defines the clamp variable; the homepage overrides it per-section.
+  assert.match(css, /--vault-card-body-lines/);
+  assert.match(css, /vault-card__body[\s\S]*-webkit-line-clamp: var\(--vault-card-body-lines\)/);
+});
+
 test('Package license fields align with LICENSE.md (GPL-3.0-only)', () => {
   const rootPkg = read('package.json');
   const cliPkg = read('packages/cli/package.json');
