@@ -28,9 +28,8 @@ jobs:
 
       - name: Setup
         uses: ./.github/actions/setup
-
-      - name: Install Playwright browsers
-        run: pnpm exec playwright install chromium
+        with:
+          install-playwright: "true"
 
       - name: Validate release tree
         run: pnpm run validate
