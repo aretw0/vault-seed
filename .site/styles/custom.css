@@ -454,6 +454,8 @@
 .vault-compact-list span,
 .vault-timeline time {
   flex: none;
+  min-width: 0;
+  overflow-wrap: anywhere;
   color: var(--sl-color-gray-3);
   font-size: var(--sl-text-xs);
 }

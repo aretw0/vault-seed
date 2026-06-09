@@ -44,7 +44,7 @@
     "manter": {
       "label": "Manter",
       "description": "Setup, sincronização, Git, ambiente local e manutenção do vault.",
-      "tags": ["meta/setup", "meta/git", "meta/github", "meta/sincronizacao", "meta/devops", "meta/devenv", "meta/devcontainer", "meta/mobile", "meta/desktop", "meta/ferramentas", "meta/vscode", "meta/foam", "obsidian/plugin"]
+      "tags": ["meta/setup", "meta/git", "meta/github", "meta/sincronizacao", "meta/devops", "meta/devenv", "meta/devcontainer", "meta/mobile", "meta/desktop", "meta/ferramentas", "meta/vscode", "meta/foam", "obsidian/plugin", "meta/ci", "meta/qualidade"]
     }
   }
 }
