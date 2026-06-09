@@ -1,6 +1,6 @@
 {
   "name": "@aretw0/dgk-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Digital Gardening Kit — CLI para operação do vault",
   "type": "module",
   "bin": {
