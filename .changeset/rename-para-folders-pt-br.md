@@ -1,5 +1,5 @@
 ---
-"digital-gardening-kit": major
+"digital-gardening-kit": minor
 ---
 
 Breaking change: pastas PARA renomeadas para português.
