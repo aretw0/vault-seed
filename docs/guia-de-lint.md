@@ -54,7 +54,11 @@ pnpm run lint:docs     # docs/
 pnpm run lint:templates # 90 - Modelos/
 ```
 
-Todos fazem parte do `pnpm run validate` que o CI executa.
+Todos fazem parte do `pnpm run validate` que o CI executa. Além do lint de Markdown, o `validate` inclui:
+
+- Auditoria de arquitetura de informação: detecta **notas publicadas fora da navegação** (sem intenção derivada ou category inválida), links de onboarding quebrados e derivadas ausentes
+- Auditoria da sidebar: verifica que as seções do site têm entradas corretas
+- Testes de contrato: verificam estrutura HTML, CSS e comportamento de scripts
 
 ---
 
