@@ -45,9 +45,8 @@ jobs:
 
       - name: Setup
         uses: ./.github/actions/setup
-
-      - name: Install Playwright browsers
-        run: pnpm exec playwright install chromium
+        with:
+          install-playwright: "true"
 
       - name: Validate vault quality gates
         run: pnpm run validate
@@ -56,6 +55,7 @@ jobs:
         uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
         with:
           version: "0.11.11"
+          enable-cache: true
 
       - name: Detect site URL and base path
         id: pages-url
