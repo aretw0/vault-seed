@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Digital Gardening Kit — Lab notebook runtime utilities for Marimo notebooks in Obsidian vaults"
 readme = "README.md"
 requires-python = ">=3.11"
-license = { spdx-expression = "GPL-3.0-only" }
+license = { text = "GPL-3.0-only" }
 keywords = ["marimo", "obsidian", "vault", "notebook", "digital-garden"]
 classifiers = [
   "Development Status :: 3 - Alpha",
