@@ -17,7 +17,7 @@ jobs:
     name: Create GitHub release
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    if: github.repository == 'aretw0/vault-seed' && contains(github.event.head_commit.message, 'chore(release):')
+    if: github.repository == 'aretw0/vault-seed' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'chore(release):'))
 
     steps:
       - name: Checkout
