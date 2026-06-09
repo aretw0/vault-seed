@@ -1,73 +1,86 @@
-# Guia de Lint: Mantendo a Qualidade do seu Jardim Digital
+# Guia de Lint do Vault
 
-Este guia explica como funciona o processo de *linting* no seu vault, garantindo que suas notas mantenham um padrão de qualidade consistente sem impedir seu fluxo de trabalho criativo.
+## Filosofia
 
-## O que é Lint?
+O lint usa **opt-in por padrão**: `"default": false` no `.markdownlint.json`. Isso significa que apenas as regras _explicitamente listadas_ são ativas. Upgrades do `markdownlint-cli` nunca introduzem novas regras automaticamente no CI do usuário.
 
-*Linting* é o processo de análise de código (ou, no nosso caso, de texto em Markdown) para encontrar erros de formatação, inconsistências e desvios de estilo. Pense nele como um revisor automático que ajuda a manter a organização e a legibilidade do seu conhecimento.
+A alternativa (opt-out com `"default": true` + lista de exceções) foi abandonada porque cada nova versão da ferramenta poderia quebrar o CI de usuários sem que eles tivessem feito nada.
 
-**Analogia:** Imagine que cada nota é um livro em uma biblioteca. O linter é o bibliotecário que verifica se a capa, a lombada e a formatação interna de cada livro seguem o padrão da biblioteca, facilitando a vida de quem for consultá-lo no futuro.
+---
 
-## A Filosofia do Lint Gradual
+## Regras ativas e o porquê de cada uma
 
-Adotamos uma abordagem de "lint gradual", que aplica diferentes níveis de rigor dependendo de onde a nota se encontra no seu vault. A ideia é dar liberdade total na captura de ideias e aumentar a exigência de organização à medida que o conhecimento é refinado.
+Estas são as únicas regras que vão com o usuário. Todas existem porque evitam **bugs de renderização** ou **ambiguidades de parsing** — não são preferências de estilo.
 
-1.  **`00 - Entrada` (Caixa de Entrada):** Nenhuma regra de lint é aplicada aqui. Este é seu espaço para capturar ideias livremente, sem se preocupar com formatação.
-2.  **Pastas de Conteúdo (`10` a `50`, `99`):** Ao mover uma nota do Inbox para uma das pastas do método PARA, regras de lint mais estritas são aplicadas. Isso garante que o conhecimento consolidado seja bem estruturado.
-3.  **`docs/` e `90 - Modelos/`:** Essas pastas possuem um conjunto de regras mais flexível, pois servem a propósitos diferentes (documentação e modelos), onde certas regras de formatação de notas não se aplicam.
+| Regra | Nome | Motivo |
+|-------|------|--------|
+| `MD009` | no-trailing-spaces | Espaços no fim da linha criam `<br>` em HTML. Obsidian não os insere, mas copy-paste pode. |
+| `MD010` | no-hard-tabs | Tabs renderizam de forma inconsistente entre ferramentas. Obsidian usa espaços em prosa. |
+| `MD011` | no-reversed-links | `](url)[texto]` em vez de `[texto](url)` — typo que renderiza como texto literal. |
+| `MD018` | no-missing-space-atx | `#título` sem espaço não renderiza como heading em muitos parsers. |
+| `MD019` | no-multiple-space-atx | `##  título` com múltiplos espaços é inconsistente mas ainda parseia; evita surpresas. |
+| `MD023` | headings-start-left | Um heading indentado (`  ## h`) não renderiza como heading. |
+| `MD042` | no-empty-links | `[texto]()` ou `[texto][]` sem destino é sempre um bug. |
+| `MD046` | code-block-style: fenced | Obsidian só cria blocos cercados; indentado seria texto editado à mão de forma incomum. |
+| `MD048` | code-fence-style: backtick | Obsidian usa crases; tilde seria edição manual incomum. Consistência com o editor. |
 
-## Como Funciona na Prática (CI/CD)
+### O que foi deliberadamente _não_ ativado
 
-O processo de lint é automatizado através de um workflow de Integração Contínua (CI) no GitHub Actions (`.github/workflows/ci.yml`). Toda vez que você envia uma alteração (`push`) ou abre uma Proposta de Melhoria (`pull request`), o workflow instala as dependências com `pnpm` e executa a régua canônica:
+- **MD049/MD050** (emphasis/strong style): `_itálico_` e `*itálico*` são equivalentes. Forçar asteriscos quebraria notas que mostram ambas as sintaxes como exemplo.
+- **MD026** (trailing punctuation in headings): `### Por que usar isso?` é escrita natural.
+- **MD051–MD054** (link fragments, reference links, link style): wikilinks Obsidian `[[file#heading]]` causam falsos positivos.
+- **MD055–MD058** (table formatting): pedantismo sem impacto no usuário final.
+- **MD013** (line length): Obsidian não tem controle de linha automático.
 
-```bash
-pnpm run validate
+---
+
+## Estrutura de configs
+
+```
+.markdownlint.json          ← usuário: notas do vault (10–50, 99)
+docs/.markdownlint.json     ← devs: extends root + MD056 (coluna de tabela)
+90 - Modelos/               ← extends root apenas
 ```
 
-Essa régua inclui o lint do vault principal, lint dos modelos, auditoria de arquitetura de informação, auditoria da sidebar, testes dos scripts, validação de onboarding, revisão de português, contraste dos temas e Mermaid. No repositório original do template, a validação também cobre documentação técnica e smokes internos do template.
+Os subconfigs herdam via `"extends"`. Para adaptar ao contexto do vault final, edite só o root — os outros pegam automaticamente.
 
-Se qualquer etapa encontrar um erro, o workflow falhará, impedindo que alterações fora do padrão sejam integradas. Isso serve como um "Rascunho Seguro" (Branch) que protege a qualidade do seu repositório principal.
+---
 
-## Como Lidar com Erros de Lint
-
-Se o workflow apontar um erro, você pode:
-
-1.  **Corrigir o Erro:** A melhor abordagem é ajustar a formatação da sua nota para seguir a regra.
-2.  **Desabilitar uma Regra Temporariamente:** Se uma regra específica não faz sentido para uma linha ou um arquivo inteiro, você pode desabilitá-la localmente.
-
-    *   **Para uma única linha:**
-
-        ```markdown
-        <!-- markdownlint-disable-next-line MD013 -->
-        Esta linha é muito, muito, muito, muito, muito, muito, muito, muito longa.
-        ```
-
-    *   **Para um arquivo inteiro:** Adicione no topo do arquivo.
-
-        ```markdown
-        <!-- markdownlint-disable MD013 -->
-        ```
-
-    *   **Para múltiplas regras:**
-
-        ```markdown
-        <!-- markdownlint-disable-file MD013 MD041 -->
-        ```
-
-## Configuração Avançada
-
-Você pode personalizar o comportamento do lint editando os arquivos de configuração:
-
-*   **`.markdownlint.json`:** Contém as regras principais para as notas do dia a dia.
-*   **`docs/.markdownlint.json`:** Regras para a documentação. Ele herda as regras do arquivo principal através da chave `"extends": "../.markdownlint.json"` e apenas modifica o que for necessário.
-*   **`90 - Modelos/.markdownlint.json`:** Mesma lógica, para os templates.
-
-Para ignorar uma pasta inteira, você pode ajustar os comandos nos scripts `lint:*` dentro do `package.json` ou no workflow `ci.yml`.
-
-Antes de abrir uma Proposta de Melhoria, rode:
+## Como o CI usa
 
 ```bash
-pnpm run validate
+pnpm run lint:main     # 10 - Diário, 20 - Projetos, …, 99 - Meta e Anexos
+pnpm run lint:docs     # docs/
+pnpm run lint:templates # 90 - Modelos/
 ```
 
-Esse comando combina lint, auditorias de arquitetura de informação e sidebar, testes dos scripts, validação de onboarding, revisão de português, contraste dos temas e Mermaid. O objetivo é pegar problemas que afetam o usuário final, como links quebrados no onboarding, notas publicadas fora da navegação, metadados incompletos ou diagramas que deixariam de renderizar.
+Todos fazem parte do `pnpm run validate` que o CI executa.
+
+---
+
+## Personalização pelo usuário
+
+Para **desativar uma regra pontualmente** em um arquivo específico:
+
+```markdown
+<!-- markdownlint-disable MD009 -->
+```
+
+Para **uma linha específica**:
+
+```markdown
+<!-- markdownlint-disable-next-line MD042 -->
+[rascunho]()
+```
+
+Para **remover uma regra permanentemente** do seu vault, edite `.markdownlint.json` e remova ou defina como `false`.
+
+---
+
+## Adicionando regras ao seu vault
+
+A lista completa está em [markdownlint/Rules](https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md). Antes de ativar qualquer regra nova, teste contra o seu conteúdo atual:
+
+```bash
+npx markdownlint --config .markdownlint.json "**/*.md" 2>&1 | head -30
+```

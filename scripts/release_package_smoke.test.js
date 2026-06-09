@@ -3,6 +3,33 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 
+test("markdownlint config uses opt-in (default: false) to prevent surprise rule activations on upgrades", () => {
+  const rootLint = JSON.parse(fs.readFileSync(path.join(process.cwd(), ".markdownlint.json"), "utf8"));
+
+  // default: false means only explicitly listed rules are active.
+  // Changing to true would silently activate new rules on markdownlint-cli upgrades,
+  // breaking user CI without them having changed anything.
+  assert.equal(
+    rootLint.default,
+    false,
+    "Root .markdownlint.json must use 'default: false' (opt-in). See docs/guia-de-lint.md.",
+  );
+
+  // Every active rule must be listed explicitly (either true or an object with options).
+  const activeRules = Object.entries(rootLint)
+    .filter(([k, v]) => k !== "default" && v !== false)
+    .map(([k]) => k);
+
+  assert.ok(
+    activeRules.length > 0,
+    "At least one rule must be explicitly enabled in .markdownlint.json.",
+  );
+  assert.ok(
+    activeRules.length <= 15,
+    `Too many active rules (${activeRules.length}). Prefer a focused set; see docs/guia-de-lint.md.`,
+  );
+});
+
 test("root package.json version is aligned with the published release baseline", () => {
   const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8"));
   const version = pkg.version;
