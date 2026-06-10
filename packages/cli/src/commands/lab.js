@@ -38,7 +38,7 @@ function printHelp() {
   console.log(`dgk lab <subcomando> [opções]
 
 Subcomandos:
-  etl                  Executa o pipeline ETL completo (feeds, outbox, datasets)
+  etl                  Executa o pipeline ETL (node direto, sem dependência de pnpm)
   open [notebook]      Abre um notebook no marimo (liste nomes com dgk lab list)
   export               Exporta notebooks para HTML empacotado
   curate               Classifica feeds com Claude API (requer ANTHROPIC_API_KEY)
@@ -55,7 +55,10 @@ Exemplos:
 }
 
 async function etl(_args, runner) {
-  await runner('pnpm', ['run', 'notebooks:etl']);
+  await runner('node', ['scripts/lab_etl_demo.mjs']);
+  await runner('node', ['scripts/prepare_feed_sources.mjs']);
+  await runner('node', ['scripts/prepare_publication_outbox.mjs']);
+  await runner('node', ['scripts/prepare_lab_datasets.mjs']);
 }
 
 async function openNotebook(args, runner, root) {
@@ -74,7 +77,7 @@ async function openNotebook(args, runner, root) {
 }
 
 async function exportNotebooks(_args, runner) {
-  await runner('pnpm', ['run', 'notebooks:export']);
+  await runner('node', ['scripts/export_notebooks.mjs']);
 }
 
 async function curate(_args, runner) {

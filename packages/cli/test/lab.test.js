@@ -67,16 +67,20 @@ test('resolveNotebook retorna null para nome desconhecido', () => {
 
 // --- lab subcommands ---
 
-test('lab etl chama pnpm run notebooks:etl', async () => {
+test('lab etl chama os 4 scripts do pipeline via node', async () => {
   const { calls, runner } = captureRun();
   await lab(['etl'], runner);
-  assert.deepEqual(calls, [{ cmd: 'pnpm', args: ['run', 'notebooks:etl'] }]);
+  assert.equal(calls.length, 4, 'deve chamar 4 scripts em sequência');
+  assert.ok(calls.every((c) => c.cmd === 'node'), 'todos os calls devem usar node');
+  const scripts = calls.map((c) => c.args[0]);
+  assert.ok(scripts.includes('scripts/lab_etl_demo.mjs'), 'deve incluir lab_etl_demo');
+  assert.ok(scripts.includes('scripts/prepare_lab_datasets.mjs'), 'deve incluir prepare_lab_datasets');
 });
 
-test('lab export chama pnpm run notebooks:export', async () => {
+test('lab export chama export_notebooks.mjs via node', async () => {
   const { calls, runner } = captureRun();
   await lab(['export'], runner);
-  assert.deepEqual(calls, [{ cmd: 'pnpm', args: ['run', 'notebooks:export'] }]);
+  assert.deepEqual(calls, [{ cmd: 'node', args: ['scripts/export_notebooks.mjs'] }]);
 });
 
 test('lab curate chama uv run com anthropic e defusedxml', async () => {
