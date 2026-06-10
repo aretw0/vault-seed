@@ -1,6 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { lab, listNotebooks, resolveNotebook } from '../src/commands/lab.js';
+
+// Vault root is two levels up from packages/cli/
+const VAULT_ROOT = join(fileURLToPath(import.meta.url), '..', '..', '..', '..');
 
 function captureRun() {
   const calls = [];
@@ -19,13 +24,13 @@ test('listNotebooks retorna array vazio quando diretório não existe', () => {
 });
 
 test('listNotebooks exclui _lab_notebook_runtime.py', () => {
-  const notebooks = listNotebooks(process.cwd());
+  const notebooks = listNotebooks(VAULT_ROOT);
   const names = notebooks.map((n) => n.name);
   assert.ok(!names.includes('_lab_notebook_runtime'), 'runtime helper não deve aparecer na lista');
 });
 
 test('listNotebooks inclui notebooks conhecidos', () => {
-  const notebooks = listNotebooks(process.cwd());
+  const notebooks = listNotebooks(VAULT_ROOT);
   const names = notebooks.map((n) => n.name);
   for (const expected of ['analise-feeds', 'analise-outbox', 'etl-demo']) {
     assert.ok(names.includes(expected), `${expected} deve estar na lista`);
@@ -33,7 +38,7 @@ test('listNotebooks inclui notebooks conhecidos', () => {
 });
 
 test('listNotebooks retorna objetos com name e path', () => {
-  const notebooks = listNotebooks(process.cwd());
+  const notebooks = listNotebooks(VAULT_ROOT);
   if (notebooks.length > 0) {
     const first = notebooks[0];
     assert.ok('name' in first, 'deve ter name');
@@ -45,18 +50,18 @@ test('listNotebooks retorna objetos com name e path', () => {
 // --- resolveNotebook ---
 
 test('resolveNotebook resolve nome exato', () => {
-  const path = resolveNotebook('analise-feeds', process.cwd());
+  const path = resolveNotebook('analise-feeds', VAULT_ROOT);
   assert.ok(path !== null, 'deve resolver analise-feeds');
   assert.ok(path.endsWith('analise-feeds.py'));
 });
 
 test('resolveNotebook resolve nome parcial único', () => {
-  const path = resolveNotebook('leitura', process.cwd());
+  const path = resolveNotebook('leitura', VAULT_ROOT);
   assert.ok(path !== null, 'deve resolver analise-leitura via parcial');
 });
 
 test('resolveNotebook retorna null para nome desconhecido', () => {
-  const path = resolveNotebook('notebook-que-nao-existe', process.cwd());
+  const path = resolveNotebook('notebook-que-nao-existe', VAULT_ROOT);
   assert.equal(path, null);
 });
 
@@ -86,13 +91,13 @@ test('lab curate chama uv run com anthropic e defusedxml', async () => {
 
 test('lab list não chama runner (apenas imprime)', async () => {
   const { calls, runner } = captureRun();
-  await lab(['list'], runner);
+  await lab(['list'], runner, undefined, undefined, VAULT_ROOT);
   assert.equal(calls.length, 0);
 });
 
 test('lab open abre notebook pelo nome curto', async () => {
   const { calls, runner } = captureRun();
-  await lab(['open', 'etl-demo'], runner);
+  await lab(['open', 'etl-demo'], runner, undefined, undefined, VAULT_ROOT);
   assert.equal(calls.length, 1);
   assert.equal(calls[0].cmd, 'uv');
   assert.ok(calls[0].args.includes('marimo'), 'deve usar marimo');
@@ -114,6 +119,49 @@ test('lab note falha quando Obsidian não está disponível', async () => {
       process.exit = (code) => { throw new Error(`exit:${code}`); };
       try {
         await lab(['note', 'search', 'query=pkm'], runner, obsidianNotFound);
+      } finally {
+        process.exit = origExit;
+      }
+    },
+    (err) => {
+      assert.ok(err.message.startsWith('exit:'), 'deve chamar process.exit');
+      return true;
+    },
+  );
+});
+
+// --- lab open-vault ---
+
+function mockLauncher(found, launched = []) {
+  return {
+    detectObsidian: () => (found ? { path: '/usr/bin/obsidian', platform: 'linux' } : null),
+    launchVault: async (name) => { launched.push(name); },
+  };
+}
+
+test('lab open-vault abre o vault pelo nome do cwd quando sem args', async () => {
+  const launched = [];
+  const { runner } = captureRun();
+  await lab(['open-vault'], runner, undefined, mockLauncher(true, launched));
+  assert.equal(launched.length, 1);
+  assert.ok(typeof launched[0] === 'string' && launched[0].length > 0);
+});
+
+test('lab open-vault abre o vault pelo nome passado como arg', async () => {
+  const launched = [];
+  const { runner } = captureRun();
+  await lab(['open-vault', 'meu-vault'], runner, undefined, mockLauncher(true, launched));
+  assert.equal(launched[0], 'meu-vault');
+});
+
+test('lab open-vault falha quando Obsidian não está instalado', async () => {
+  const { runner } = captureRun();
+  await assert.rejects(
+    async () => {
+      const origExit = process.exit;
+      process.exit = (code) => { throw new Error(`exit:${code}`); };
+      try {
+        await lab(['open-vault'], runner, undefined, mockLauncher(false));
       } finally {
         process.exit = origExit;
       }

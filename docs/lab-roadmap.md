@@ -20,159 +20,139 @@ esse fluxo com notebooks progressivos (WASM → local → CI/cloud).
 
 ---
 
-## Status das correções já entregues (v0.3.1)
+## Ecossistema e divisão de responsabilidades
+
+O vault-seed é a **interface de distribuição**: template versionado, Lab de
+análise, outbox multi-canal e CLI de orquestração (`dgk-cli`). Ele produz
+*distribuições personalizadas* — cada fork/init é uma instância soberana.
+
+O **refarm** é a infraestrutura de identidade e protocolo: microkernel WASM
+(Tractor), identidade autodeclarada via Nostr, e CRDT (Loro) para colaboração
+offline. O vault-seed converge com refarm a partir da fase 5 (canal Nostr no
+outbox, `dgk-lab` como ponto de entrada compartilhado).
+
+O **rcdc5** é a integração empresarial: vault de equipe que raspa IBM ALM/RM em
+Markdown. Converge com vault-seed na fase 0.7.x como instância de distribuição
+corporativa.
+
+### Vocabulário Tema 3 (Prêmio Serpro)
+
+- **arcabouço modular**: o conjunto vault-seed + refarm + rcdc5 como POC
+- **distribuições personalizadas**: vaults inicializados a partir do template
+- **soberania de dados**: formato aberto, local-first, sem lock-in de plataforma
+- **grafo semântico**: notas + links exportados em JSON-LD com vocabulário `dgk:`
+- **orquestrador**: `dgk-cli` que une ETL, exportação e publicação em subcomandos
+
+---
+
+## Entregues
+
+### v0.3.1 — correções de infraestrutura
 
 - [x] Células invisíveis nos notebooks (marimo last-expression rule)
 - [x] `app._unparsable_cell` no WASM (wildcard import removido do helper injetado)
 - [x] `pnpm ERR_PNPM_MINIMUM_RELEASE_AGE_VIOLATION` no CI do usuário
-      → `pnpm-workspace.yaml` com `policies.minimumReleaseAge.severity: warn`
 - [x] Warning de deprecação do Astro (`markdown.remarkPlugins`)
-      → migrado para `markdown.processor: unified({...})`
 - [x] Pasta legada `Attachments/` removida do git
 - [x] Smoke tests para configuração de anexos e presença do lint test
 
----
+### Fase 1 — Base
 
-## Fase 1 — Base (próxima sessão)
+- [x] Runtime WASM: `fetch_local_url_text`, `read_lab_dataset`, `write_local_json_snapshot`
+- [x] `feeds.opml` com 12 feeds públicos reais
+- [x] `outbox-publicação` com notas de exemplo realistas (canal instagram, mastodon, newsletter)
+- [x] `.github/workflows/refresh-lab-data.yml` — trigger `schedule` + `workflow_dispatch`
 
-### 1.1 Runtime WASM async HTTP
-- [ ] Adicionar `fetch_wasm_json(url)` ao `_lab_notebook_runtime.py`
-      usando `pyodide.http.pyfetch` (async, funciona no worker WASM)
-- [ ] Adicionar `fetch_wasm_feed(url)` — busca e parseia RSS/Atom no browser
-      (apenas URLs CORS-ok: RSS públicos, APIs abertas)
-- [ ] Adicionar `fetch_wasm_json` e `fetch_wasm_feed` à lista `LAB_RUNTIME_HELPER_EXPORT_NAMES`
-      em `notebook_export_runtime_helpers.mjs`
-- [ ] Testes unitários no `notebook_export_runtime_helpers.test.mjs`
+### Fase 2 — Notebooks reescritos
 
-### 1.2 Dados de exemplo mais ricos
+- [x] `analise-feeds.py` — 3 blocos WASM/local/CI com Altair e dropdown interativo
+- [x] `analise-outbox.py` — multi-canal com Altair, prévia de thread, checklist, Instagram caption
+- [x] `analise-grafo.py` — scatter de centralidade, hubs, órfãs, broken links
+- [x] `analise-publicacao.py` — distribuição de status, evolução temporal
 
-#### feeds.opml — 12 feeds públicos reais
-- [ ] Adicionar feeds: GitHub blog, Hacker News (RSS), Simon Willison,
-      Cassidy Williams, Julia Evans, Thoughtbot, CSS-Tricks, Lobsters,
-      Astro blog, Marimo blog, The Morning Paper, Segurança digital BR
-- [ ] Regenerar `dados/lab/feeds-assinados.json` com `pnpm run feeds:opml`
-- [ ] Commitar dados atualizados
+### Fase 3 — ETL write-back e soberania
 
-#### outbox-publicação — itens realistas
-- [ ] Criar 3-5 notas de exemplo com frontmatter de publicação real
-      (audiences, channels, status, canonical_url etc.)
-- [ ] Incluir exemplos com canal `site: true`, `instagram: true`, `newsletter: true`
-- [ ] Regenerar com `pnpm run outbox:prepare`
+- [x] `etl-demo.py` — ciclo Extract/Transform/Load explicado, `get_local_secret` para GitHub API
+- [x] `analise-leitura.py` — lista curada, OpenGraph local, criação de notas no vault
+- [x] `perfil-do-vault.json` com `collectedAt` para rastreamento temporal
 
-### 1.3 Workflow CI: refresh automático de dados
-- [ ] Criar `.github/workflows/refresh-lab-data.yml`
-  - Trigger: `schedule` (diário) + `workflow_dispatch`
-  - Steps: `pnpm run notebooks:etl` → commit `dados/lab/*.json` de volta
-  - Usa `github.actor` para o commit identity
-  - Condição: só commita se houver diff em `dados/lab/`
-  - Dispara `deploy-site.yml` via `workflow_run` ou `repository_dispatch`
-- [ ] Adicionar `VAULT_ETL_TOKEN` como secret de doc (PAT para push)
-- [ ] Smoke test: workflow deve completar sem erro no repo de teste
+### Fase 4 — Integrações externas
 
----
+- [x] `analise-outbox.py`: prévia de caption Instagram (2200 chars) + extração de hashtags
+- [x] `publicar-thread.py` — Mastodon API, Bluesky AT Protocol, newsletter HTML, Buttondown
+- [x] `curadoria-feeds-ia.py` — notebook com Claude API (haiku), gate de checkbox
+- [x] `scripts/curate_feeds_ia.py` — headless CI, `continue-on-error: true`
+- [x] `refresh-lab-data.yml` — step de AI curation com `ANTHROPIC_API_KEY` optional
+- [x] `defusedxml` substituindo `xml.etree.ElementTree` (XXE safety) em todos os pontos
 
-## Fase 2 — Notebooks reescritos
+### dgk-cli (lab subcommands)
 
-### 2.1 `analise-feeds.py` — 3 blocos progressivos
-```
-Bloco WASM   → mostra subscrições do bundle + busca itens ao vivo de 1 feed público
-Bloco Local  → busca todos os feeds assinados, analisa itens, conta por domínio/tag
-Bloco CI     → mostra timestamp do último refresh automático + diff de novos itens
-```
-- [ ] Célula de progressão explícita (tipo "o que este notebook pode fazer em cada modo")
-- [ ] Gráfico Altair: itens por feed por semana (timeline)
-- [ ] `fetch_wasm_feed` para buscar GitHub blog ao vivo no browser
-- [ ] `fetch_local_feed` para buscar todos os feeds em modo local
-- [ ] Candidatas para inbox com triagem sugerida
+- [x] `dgk lab etl` — ETL completo via `pnpm run notebooks:etl`
+- [x] `dgk lab open [notebook]` — abre notebook no Marimo (com `root` injetável para testes)
+- [x] `dgk lab export` — exporta notebooks para HTML/WASM
+- [x] `dgk lab curate` — AI curation via `uv run` + `--with anthropic`
+- [x] `dgk lab list` — lista notebooks disponíveis
+- [x] `dgk lab note <cmd>` — passa para Obsidian CLI (IPC, requer instância rodando)
+- [x] `dgk lab open-vault [nome]` — abre vault no Obsidian via URI scheme (multi-OS)
+- [x] `packages/cli/src/launcher.js` — detecta Obsidian em macOS/Windows/Linux
+- [x] `dgk setup` — detecta Obsidian e exibe instruções de registro do CLI
 
-### 2.2 `analise-publicacao.py` — visualizações reais
-- [ ] Gráfico Altair: distribuição de status das notas (barra empilhada)
-- [ ] Gráfico Altair: evolução de notas ao longo do tempo (linha por mês)
-- [ ] Tabela interativa: filtro por pasta/tag/status (mo.ui.dropdown)
-- [ ] Métrica de "pronto para publicar" (notas com `status: ready`)
+### Apresentação e grafo semântico
 
-### 2.3 `analise-grafo.py` — análise de conectividade
-- [ ] Altair: scatter plot de centralidade vs. número de links (bolhas por pasta)
-- [ ] Tabela de "hubs" (notas mais referenciadas)
-- [ ] Tabela de "orphans" melhorada (sugestão de link relacionado)
-- [ ] Célula local: detectar links quebrados (notas que referenciam slugs inexistentes)
-
-### 2.4 `analise-outbox.py` — multi-canal
-- [ ] Tabela por canal: quantas notas estão "prontas" para cada plataforma
-- [ ] Bloco de prévia: como a nota apareceria no Instagram (aspect ratio, caption preview)
-- [ ] Bloco de prévia: thread formato X/Mastodon (280 chars chunks)
-- [ ] Bloco local: chamar API do canal (ex: Instagram Graph API via secret)
-- [ ] Checklist de publicação interativo (mo.ui.checkbox por item)
+- [x] `apresentacao-vault-seed.py` — reescrito com padrão 3-tier, vocabulário Tema 3,
+      `read_lab_dataset("perfil-do-vault")`, sem "Lane de entendimento"
+- [x] `grafo-do-vault.jsonld` — JSON-LD com `@context` `dgk:` + `schema.org`, gerado pelo ETL
+- [x] `lab.datasets.json` — entrada `grafo-do-vault-jsonld` registrada e publicada
 
 ---
 
-## Fase 3 — ETL write-back e soberania
+## Fase 5 — Convergência com refarm e Nostr
 
-### 3.1 `etl-demo.py` — ciclo completo
-- [ ] Célula "Extract" mostra snapshot atual do vault
-- [ ] Célula "Transform" filtra notas publicáveis, classifica por canal
-- [ ] Célula "Load" local: `write_local_json_snapshot` → `dados/lab/` → commit
-- [ ] Célula "CI" explica que o refresh-lab-data.yml repete esse ciclo
-- [ ] Demonstração de `get_local_secret` para GitHub API com token
+### 5.1 Canal Nostr no outbox
 
-### 3.2 Novo: `analise-leitura.py` — lista de leitura
-- [ ] WASM: mostra lista curada pré-empacotada (URLs + metadata)
-- [ ] Local: `fetch_local_url_text` para buscar OpenGraph metadata de cada URL
-- [ ] Local: `write_local_json_snapshot` para salvar lista enriquecida
-- [ ] Candidatas: transformar URLs em notas de leitura no vault
-
----
-
-## Fase 4 — Integrações externas
-
-### 4.1 Instagram como outbox canal
-- [ ] Definir schema de nota para Instagram:
+- [ ] Adicionar `nostr` como canal de saída no frontmatter
       ```yaml
       channels:
-        instagram:
-          status: ready
-          caption: "..."
-          hashtags: [...]
-          image: "99 - Meta e Anexos/Anexos/imagem-post.jpg"
+        nostr: { status: ready, kind: 30023 }
       ```
-- [ ] `analise-outbox.py`: célula de prévia do post (caption + dimensões de imagem)
-- [ ] Script/notebook local: publicar via Instagram Graph API
-      (requer `instagram_access_token` em secret local)
-- [ ] Workflow CI opcional: publicar ao fazer merge de PR com nota marcada `ready`
+- [ ] `publicar-thread.py`: célula de publicação Nostr via WebSocket
+      (usa identidade do refarm — `nsec` em `get_local_secret("NOSTR_NSEC")`)
+- [ ] `analise-outbox.py`: coluna Nostr na tabela de canais
 
-### 4.2 Thread multi-plataforma
-- [ ] Definir schema `thread`:
-      ```yaml
-      channels:
-        mastodon: { status: ready, instance: "fosstodon.org" }
-        bluesky:  { status: ready }
-        linkedin: { status: draft }
-      ```
-- [ ] Notebook: dividir nota em thread de 280 chars (Mastodon/Bluesky)
-- [ ] Script local: postar via API (requer tokens)
+### 5.2 dgk-lab como ponto de entrada compartilhado
 
-### 4.3 Newsletter
-- [ ] Schema: `channels.newsletter: { status: ready, list: "principal" }`
-- [ ] Notebook: gerar HTML da newsletter a partir de notas selecionadas
-- [ ] Integração com Buttondown/Mailchimp via API (opcional)
+- [ ] Decidir se `dgk lab` vira `dgk` sozinho ou se mantemos o subcomando
+      (`dgk lab etl` → `dgk etl`?) — avaliar impacto no rename
+- [ ] Avaliar agnosticismo de package manager:
+      `dgk lab etl` chama `pnpm run notebooks:etl` — considerar
+      chamar `node scripts/lab_etl_demo.mjs` diretamente para remover
+      dependência implícita de pnpm como runtime (mantendo pnpm como
+      gerenciador de instalação é diferente de requerer pnpm para executar)
+- [ ] `packages/lab-runtime` publicado como distribuível no npm para reuso pelo refarm
 
-### 4.4 LLM-assisted curation
-- [ ] Notebook: classifica feed items por relevância usando Claude API
-      (WASM com key em `mo.ui.text` temporário; local com `get_local_secret`)
-- [ ] Workflow CI com `ANTHROPIC_API_KEY` secret para curadoria automática
+### 5.3 Testes de contrato para o pipeline de exportação
+
+- [ ] `scripts/generate_vault_data.mjs` — schema test: output tem `notes`, `generated`,
+      cada nota tem `id`, `title`, `folder`, `links`
+- [ ] `scripts/export_notebooks.mjs` — contract test: helper injection no HTML exportado
+      contém `__lab_manifest` e `__lab_dataset_*` conforme consumido pelo Astro
+
+### 5.4 rcdc5 como distribuição empresarial
+
+- [ ] Documentar como rcdc5 é uma instância do template vault-seed
+      (para o texto do Tema 3 — sem citar nome do projeto real)
+- [ ] Verificar se `initialize.yml` suporta o fluxo de inicialização corporativo
 
 ---
 
 ## Bugs e dívidas técnicas
 
-- [ ] Verificar se `pnpm-workspace.yaml: policies.minimumReleaseAge.severity: warn`
-      realmente silencia o exit code (testar em `aretw0/teste` após push do v0.3.1)
 - [ ] `analise-grafo.py` e `analise-publicacao.py` ainda usam `try/except` direto
-      para carregar dados em vez do `_lab_notebook_runtime` helper —
-      unificar para o padrão dos outros notebooks
-- [ ] Cache de export de notebooks não invalida quando `notebook_export_runtime_helpers.mjs`
-      muda (resolvido: adicionado ao `notebookExportDependencies`)
-- [ ] `apresentacao-vault-seed.py` também usa `try/except` direto — mesma dívida
+      para carregar dados — unificar para `read_lab_dataset` como os outros notebooks
+- [ ] Setup test tem stdout poluído: `detectObsidian()` imprime mensagem de encontrado
+      durante testes — considerar separar detecção de output (silent mode)
+- [ ] `dgk lab open-vault` lança o vault mas não espera Obsidian abrir completamente
+      — adicionar timeout ou flag `--wait` para scripts que dependem do vault aberto
 
 ---
 
@@ -187,3 +167,5 @@ Bloco CI     → mostra timestamp do último refresh automático + diff de novos
    não o notebook — o notebook apenas audita e executa
 5. **Soberania digital visível**: o usuário vê o dado sendo coletado, transformado
    e escrito de volta — sem caixas pretas
+6. **Distribuições personalizadas, não instâncias gerenciadas**: o vault do usuário
+   é seu, não um serviço controlado pelo template

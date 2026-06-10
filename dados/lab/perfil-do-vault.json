@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
   "source": "scripts/lab_etl_demo.mjs",
+  "collectedAt": "2026-06-10T22:01:55.991Z",
   "noteCount": 64,
   "totalWords": 22522,
   "averageWords": 352,

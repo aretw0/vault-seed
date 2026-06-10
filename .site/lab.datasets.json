@@ -45,6 +45,15 @@
     "publish": true
   },
   {
+    "id": "grafo-do-vault-jsonld",
+    "title": "Grafo do vault (JSON-LD)",
+    "description": "Grafo semântico do vault com vocabulário dgk: e schema.org, exportado em JSON-LD",
+    "source": "dados/lab/grafo-do-vault.jsonld",
+    "output": "grafo-do-vault.jsonld",
+    "format": "json",
+    "publish": true
+  },
+  {
     "id": "lista-leitura",
     "title": "Lista de leitura",
     "description": "URLs curadas para leitura, com tópico e status, enriquecidas localmente com OpenGraph",

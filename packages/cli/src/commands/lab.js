@@ -2,6 +2,12 @@ import { readdirSync, existsSync } from 'node:fs';
 import { join, basename } from 'node:path';
 import { run } from '../utils.js';
 import { findObsidianCli, OBSIDIAN_SETUP_HINT } from '../obsidian.js';
+import {
+  detectObsidian as _detectObsidian,
+  launchVault as _launchVault,
+  vaultNameFromCwd,
+  INSTALL_HINTS,
+} from '../launcher.js';
 
 const NOTEBOOKS_DIR = '99 - Meta e Anexos/Notebooks';
 const PRIVATE_FILES = new Set(['_lab_notebook_runtime.py']);
@@ -32,16 +38,18 @@ function printHelp() {
   console.log(`dgk lab <subcomando> [opções]
 
 Subcomandos:
-  etl              Executa o pipeline ETL completo (feeds, outbox, datasets)
-  open [notebook]  Abre um notebook no marimo (liste nomes com dgk lab list)
-  export           Exporta notebooks para HTML empacotado
-  curate           Classifica feeds com Claude API (requer ANTHROPIC_API_KEY)
-  list             Lista notebooks disponíveis
-  note <cmd> ...   Passa um comando para o Obsidian CLI (requer Obsidian 1.12+)
+  etl                  Executa o pipeline ETL completo (feeds, outbox, datasets)
+  open [notebook]      Abre um notebook no marimo (liste nomes com dgk lab list)
+  export               Exporta notebooks para HTML empacotado
+  curate               Classifica feeds com Claude API (requer ANTHROPIC_API_KEY)
+  list                 Lista notebooks disponíveis
+  open-vault [nome]    Abre o vault no Obsidian via URI scheme
+  note <cmd> ...       Passa um comando para o Obsidian CLI (requer Obsidian 1.12+)
 
 Exemplos:
   dgk lab etl
   dgk lab open analise-feeds
+  dgk lab open-vault
   dgk lab note search query="jardim digital"
   dgk lab note create name="Nova nota" content="# Rascunho"`);
 }
@@ -50,15 +58,15 @@ async function etl(_args, runner) {
   await runner('pnpm', ['run', 'notebooks:etl']);
 }
 
-async function openNotebook(args, runner) {
+async function openNotebook(args, runner, root) {
   const [name] = args;
   if (!name) {
     console.error('dgk lab open: informe o nome do notebook. Use dgk lab list para ver opções.');
     process.exit(1);
   }
-  const path = resolveNotebook(name);
+  const path = resolveNotebook(name, root);
   if (!path) {
-    const available = listNotebooks().map((n) => `  ${n.name}`).join('\n');
+    const available = listNotebooks(root).map((n) => `  ${n.name}`).join('\n');
     console.error(`dgk lab open: notebook '${name}' não encontrado.\nDisponíveis:\n${available}`);
     process.exit(1);
   }
@@ -79,8 +87,8 @@ async function curate(_args, runner) {
   ]);
 }
 
-async function list(_args, _runner) {
-  const notebooks = listNotebooks();
+async function list(_args, _runner, root) {
+  const notebooks = listNotebooks(root);
   if (!notebooks.length) {
     console.log('Nenhum notebook encontrado em', NOTEBOOKS_DIR);
     return;
@@ -89,6 +97,22 @@ async function list(_args, _runner) {
   for (const { name, path } of notebooks) {
     console.log(`  ${name.padEnd(30)} ${path}`);
   }
+}
+
+async function openVault(args, _runner, launcher) {
+  const { detectObsidian, launchVault } = launcher ?? {
+    detectObsidian: _detectObsidian,
+    launchVault: _launchVault,
+  };
+  const vaultName = args[0] || vaultNameFromCwd();
+  const found = detectObsidian();
+  if (!found) {
+    const hint = INSTALL_HINTS[process.platform] ?? 'Instale o Obsidian em https://obsidian.md';
+    console.error(`dgk lab open-vault: Obsidian não encontrado.\n${hint}`);
+    process.exit(1);
+  }
+  await launchVault(vaultName);
+  console.log(`Abrindo vault '${vaultName}' no Obsidian...`);
 }
 
 async function note(args, runner, obsidianFinder) {
@@ -113,10 +137,11 @@ const SUBCOMMANDS = {
   export: exportNotebooks,
   curate,
   list,
+  'open-vault': openVault,
   note,
 };
 
-export async function lab(args, runner = run, obsidianFinder) {
+export async function lab(args, runner = run, obsidianFinder, launcher, root) {
   const [subcommand, ...rest] = args;
 
   if (!subcommand || subcommand === '--help' || subcommand === '-h') {
@@ -132,6 +157,12 @@ export async function lab(args, runner = run, obsidianFinder) {
 
   if (subcommand === 'note') {
     await note(rest, runner, obsidianFinder);
+  } else if (subcommand === 'open-vault') {
+    await openVault(rest, runner, launcher);
+  } else if (subcommand === 'open') {
+    await openNotebook(rest, runner, root);
+  } else if (subcommand === 'list') {
+    await list(rest, runner, root);
   } else {
     await SUBCOMMANDS[subcommand](rest, runner);
   }
