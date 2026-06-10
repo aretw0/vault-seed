@@ -20,6 +20,12 @@ const LAB_RUNTIME_HELPER_EXPORT_NAMES = [
 	"fetch_local_url_text",
 	"scrape_local_page_text",
 	"extract_local_image_text",
+	"parse_feed_xml",
+	"fetch_local_feed",
+	"fetch_wasm_json",
+	"fetch_wasm_feed",
+	"with_data_provenance",
+	"write_local_markdown_note",
 ];
 
 function collectRuntimeImports(sourceCode, runtimeImportPrefix) {

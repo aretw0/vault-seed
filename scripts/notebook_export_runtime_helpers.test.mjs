@@ -80,13 +80,32 @@ test("notebook runtime helper import is removed from exported source", () => {
 	);
 	assert.match(
 		transformed,
-		/return clean_lab_text, extract_local_image_text, fetch_local_url_text, fingerprint_data, get_local_secret, lab_runtime_context, load_lab_manifest, read_lab_dataset, read_lab_json, read_local_text_file, scrape_local_page_text, write_local_dataframe_snapshot, write_local_json_snapshot/,
+		/return clean_lab_text, extract_local_image_text, fetch_local_feed, fetch_local_url_text, fingerprint_data, get_local_secret, lab_runtime_context, load_lab_manifest, read_lab_dataset, read_lab_json, read_local_text_file, scrape_local_page_text, write_local_dataframe_snapshot, write_local_json_snapshot/,
 		"injected helper cell should return the helpers imported by the notebook",
 	);
 	assert.doesNotMatch(
 		transformed,
 		/^\s+lab_runtime_context,\s*$/m,
 		"multiline helper import members must also be removed from exported source",
+	);
+});
+
+test("wasm async fetch helpers are present in injected cell body", () => {
+	const transformed = transformEtcDemo();
+	assert.match(
+		transformed,
+		/async def fetch_wasm_json\(/,
+		"fetch_wasm_json must be present in the injected helper cell",
+	);
+	assert.match(
+		transformed,
+		/async def fetch_wasm_feed\(/,
+		"fetch_wasm_feed must be present in the injected helper cell",
+	);
+	assert.match(
+		transformed,
+		/pyfetch/,
+		"fetch_wasm_json and fetch_wasm_feed must use pyodide pyfetch",
 	);
 });
 

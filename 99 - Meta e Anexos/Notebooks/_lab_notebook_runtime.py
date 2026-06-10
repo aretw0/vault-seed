@@ -335,6 +335,19 @@ except ImportError:
                 "source": source_url, "title": feed_title, "itemCount": len(items), "items": items}
 
 
+    async def fetch_wasm_json(url: str):
+        from pyodide.http import pyfetch  # type: ignore
+        response = await pyfetch(url)
+        return await response.json()
+
+
+    async def fetch_wasm_feed(url: str, *, limit: int = 50):
+        from pyodide.http import pyfetch  # type: ignore
+        response = await pyfetch(url)
+        xml_text = await response.string()
+        return parse_feed_xml(xml_text, source_url=url, limit=limit)
+
+
     def fetch_local_feed(url: str, *, timeout: int = 20, user_agent: str = "vault-seed-lab/1.0", limit: int = 50):
         from urllib.request import Request as _Request, urlopen as _urlopen
         require_local_runtime("coletar feed RSS/Atom localmente")
