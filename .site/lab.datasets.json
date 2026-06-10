@@ -36,6 +36,15 @@
     "publish": true
   },
   {
+    "id": "grafo-do-vault",
+    "title": "Grafo do vault",
+    "description": "Dados de conectividade por nota: links de entrada e saída, órfãs e hubs",
+    "source": "dados/lab/grafo-do-vault.json",
+    "output": "grafo-do-vault.json",
+    "format": "json",
+    "publish": true
+  },
+  {
     "id": "json-remoto-opcional",
     "title": "JSON remoto opcional",
     "description": "Exemplo de fonte que um notebook WASM pode carregar no navegador quando houver CORS e rede",

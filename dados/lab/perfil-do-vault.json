@@ -88,6 +88,7 @@
   ],
   "largestNotes": [
     {
+      "id": "meta-e-anexos/992-workflows/usando-o-lab-notebooks-marimo",
       "title": "Usando o Lab (Notebooks Marimo)",
       "folder": "99 - Meta e Anexos",
       "status": "published",
@@ -96,9 +97,16 @@
         "meta/notebooks",
         "meta/automacao"
       ],
-      "words": 2183
+      "words": 2183,
+      "links": [
+        "Preparando Dados para o Lab",
+        "Coletando Dados Locais com Scraping e OCR",
+        "Publicando e Consumindo RSS no Vault",
+        "Outbox Soberana de Publicação"
+      ]
     },
     {
+      "id": "meta-e-anexos/991-onboarding/preparando-seu-computador-para-o-vault",
       "title": "Preparando seu Computador para o Vault",
       "folder": "99 - Meta e Anexos",
       "status": "published",
@@ -107,9 +115,17 @@
         "meta/git",
         "iniciante"
       ],
-      "words": 914
+      "words": 914,
+      "links": [
+        "Configurando Localmente",
+        "Configurando com Devcontainer",
+        "Usando com Agentes de IA",
+        "Configurando o Obsidian Git",
+        "Guia do Jardineiro Digital"
+      ]
     },
     {
+      "id": "meta-e-anexos/992-workflows/preparando-dados-para-o-lab",
       "title": "Preparando Dados para o Lab",
       "folder": "99 - Meta e Anexos",
       "status": "published",
@@ -117,9 +133,14 @@
         "meta/notebooks",
         "meta/dados"
       ],
-      "words": 849
+      "words": 849,
+      "links": [
+        "Coletando Dados Locais com Scraping e OCR",
+        "Publicando e Consumindo RSS no Vault"
+      ]
     },
     {
+      "id": "meta-e-anexos/992-workflows/criando-seu-painel-de-controle-dashboard",
       "title": "Criando seu Painel de Controle (Dashboard)",
       "folder": "99 - Meta e Anexos",
       "status": "published",
@@ -129,9 +150,14 @@
         "obsidian/dashboard",
         "obsidian/canvas"
       ],
-      "words": 700
+      "words": 700,
+      "links": [
+        "Bases",
+        "Dataview"
+      ]
     },
     {
+      "id": "meta-e-anexos/992-workflows/usando-o-git-e-o-github-para-sincronizar-seu-vault",
       "title": "Usando o Git e o GitHub para Sincronizar seu Vault",
       "folder": "99 - Meta e Anexos",
       "status": "published",
@@ -140,9 +166,20 @@
         "meta/github",
         "meta/workflow"
       ],
-      "words": 660
+      "words": 660,
+      "links": [
+        "Preparando seu Computador para o Vault",
+        "Configurando o Obsidian Git",
+        "Configurando o Obsidian Git",
+        "Preparando seu Computador para o Vault",
+        "Configurando o Obsidian Git",
+        "Usando o Vault no Celular vs. Desktop",
+        "Plugins Essenciais e Recomendados",
+        "Guia do Jardineiro Digital"
+      ]
     },
     {
+      "id": "recursos/markdown-e-obsidian",
       "title": "Markdown e Obsidian",
       "folder": "40 - Recursos",
       "status": "published",
@@ -151,9 +188,24 @@
         "pkm/conceito",
         "obsidian/markdown"
       ],
-      "words": 589
+      "words": 589,
+      "links": [
+        "vault-seed-banner.svg",
+        "Nome da Nota",
+        "Nome da Nota",
+        "Nome da Nota#Seção",
+        "nome-do-arquivo.png",
+        "nome-do-arquivo.png",
+        "imagem.png",
+        "...",
+        "Outra Nota",
+        "...",
+        "Nota",
+        "MOC Vault Seed"
+      ]
     },
     {
+      "id": "meta-e-anexos/992-workflows/publicando-e-consumindo-rss-no-vault",
       "title": "Publicando e Consumindo RSS no Vault",
       "folder": "99 - Meta e Anexos",
       "status": "published",
@@ -163,9 +215,15 @@
         "meta/lab",
         "meta/automacao"
       ],
-      "words": 587
+      "words": 587,
+      "links": [
+        "\"title\", \"url\", \"published\"",
+        "Inbox Soberana de Fontes",
+        "Outbox Soberana de Publicação"
+      ]
     },
     {
+      "id": "meta-e-anexos/992-workflows/coletando-dados-locais-com-scraping-e-ocr",
       "title": "Coletando Dados Locais com Scraping e OCR",
       "folder": "99 - Meta e Anexos",
       "status": "published",
@@ -174,9 +232,11 @@
         "meta/dados",
         "meta/automacao"
       ],
-      "words": 580
+      "words": 580,
+      "links": []
     },
     {
+      "id": "meta-e-anexos/993-referencia/integrando-com-vscode-foam",
       "title": "Integrando com VSCode (Foam)",
       "folder": "99 - Meta e Anexos",
       "status": "published",
@@ -185,9 +245,16 @@
         "meta/vscode",
         "meta/foam"
       ],
-      "words": 572
+      "words": 572,
+      "links": [
+        "wikilinks",
+        "wikilinks",
+        "../40 - Recursos/O que sao system prompts de IA",
+        "Guia do Jardineiro Digital"
+      ]
     },
     {
+      "id": "meta-e-anexos/991-onboarding/entendendo-a-estrutura-de-pastas",
       "title": "Entendendo a Estrutura de Pastas",
       "folder": "99 - Meta e Anexos",
       "status": "published",
@@ -196,7 +263,16 @@
         "meta/organizacao",
         "iniciante"
       ],
-      "words": 571
+      "words": 571,
+      "links": [
+        "Links",
+        "O que são MOCs (Mapas de Conteúdo)",
+        "Daily Note",
+        "Templater",
+        "Links",
+        "O que são MOCs (Mapas de Conteúdo)",
+        "Guia do Jardineiro Digital"
+      ]
     }
   ]
 }
