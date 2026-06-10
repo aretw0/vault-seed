@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { join } from "node:path";
@@ -142,8 +142,13 @@ test("lint: mo.output.append() is excluded (imperative multi-output API)", () =>
 
 for (const relPath of ANALYSIS_NOTEBOOKS) {
 	const name = relPath.split("/").pop();
-	test(`notebook cell output contract: ${name}`, () => {
-		const source = readFileSync(join(ROOT, relPath), "utf8");
+	test(`notebook cell output contract: ${name}`, (t) => {
+		const absPath = join(ROOT, relPath);
+		if (!existsSync(absPath)) {
+			t.skip(`${name} not present in this vault`);
+			return;
+		}
+		const source = readFileSync(absPath, "utf8");
 		const issues = cellsWithMultipleTopLevelMoCalls(source);
 		assert.equal(
 			issues.length,

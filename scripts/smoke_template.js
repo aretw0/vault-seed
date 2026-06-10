@@ -508,6 +508,26 @@ for (const actionFile of actionFiles) {
   }
 }
 
+// Obsidian attachment config
+const obsidianApp = readJson(".obsidian/app.json");
+requireCondition(
+  obsidianApp.attachmentFolderPath === "99 - Meta e Anexos/Anexos",
+  ".obsidian/app.json must configure attachmentFolderPath as '99 - Meta e Anexos/Anexos' (global sink for all vault attachments).",
+);
+
+// Legacy English-named folder must not be tracked (renamed to Anexos/)
+const legacyAttachments = gitLsFiles(["99 - Meta e Anexos/Attachments"]);
+requireCondition(
+  legacyAttachments.length === 0,
+  `Legacy '99 - Meta e Anexos/Attachments/' folder must not be tracked; use 'Anexos/' instead. Found: ${legacyAttachments.join(", ")}`,
+);
+
+// Notebook cell output lint test must ship with the generated vault
+requireCondition(
+  exists("scripts/notebook_cell_output_lint.test.mjs"),
+  "scripts/notebook_cell_output_lint.test.mjs must be present so generated vaults guard against invisible notebook output.",
+);
+
 if (errors.length > 0) {
   console.error("Template smoke failed:");
   for (const error of errors) {
