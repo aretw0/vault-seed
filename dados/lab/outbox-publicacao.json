@@ -69,7 +69,71 @@
       "notes": "Bom para changelogs, releases e discussões técnicas."
     }
   ],
-  "itemCount": 0,
-  "items": [],
-  "sha256": "043c629e49dd35290dee7853d793e7ebe2def375b4e71e40d911b8914f84eb9a"
+  "itemCount": 3,
+  "items": [
+    {
+      "id": "recursos-jardim-digital",
+      "title": "Jardim digital",
+      "path": "40 - Recursos/Jardim digital.md",
+      "status": "ready",
+      "publicationStatus": "ready",
+      "canonical": "40 - Recursos/Jardim digital.md",
+      "source": "40 - Recursos/Jardim digital.md",
+      "collectedAt": null,
+      "sha256": "2e91f978f5b108a6c6bafc837750e44f5c807e1783cab9a1c6036d0f913dcb16",
+      "license": "verificar",
+      "privacy": "private-until-published",
+      "channels": [
+        "site",
+        "rss",
+        "mastodon",
+        "bluesky"
+      ],
+      "channelCount": 4,
+      "audience": "todos",
+      "excerpt": "Um jardim digital é um espaço de escrita em público onde as notas crescem ao longo do tempo. Diferente de um blog com posts finalizados, um jardim expõe o processo — notas em rascunho coexistem com textos maduros. - **Crescimento contínuo** — notas são atualizadas, não substituíd"
+    },
+    {
+      "id": "recursos-o-que-e-publicacao-multi-canal",
+      "title": "O que é publicação multi-canal",
+      "path": "40 - Recursos/O que é publicação multi-canal.md",
+      "status": "published",
+      "publicationStatus": "published",
+      "canonical": "40 - Recursos/O que é publicação multi-canal.md",
+      "source": "40 - Recursos/O que é publicação multi-canal.md",
+      "collectedAt": null,
+      "sha256": "775217853e23bd7670ab5ba7169e94d5058843639e828b68c2c1b40df2fb8d37",
+      "license": "verificar",
+      "privacy": "private-until-published",
+      "channels": [
+        "site",
+        "rss",
+        "newsletter"
+      ],
+      "channelCount": 3,
+      "audience": "todos",
+      "excerpt": "Uma nota do vault pode ser publicada em múltiplos lugares a partir de uma única fonte. O frontmatter controla os destinos — o conteúdo permanece em um só lugar. O notebook `analise-outbox` lê o frontmatter de todas as notas do vault e identifica quais estão prontas para cada cana"
+    },
+    {
+      "id": "recursos-pkm-com-obsidian-e-vs-code",
+      "title": "PKM com Obsidian e VS Code",
+      "path": "40 - Recursos/PKM com Obsidian e VS Code.md",
+      "status": "draft",
+      "publicationStatus": "draft",
+      "canonical": "40 - Recursos/PKM com Obsidian e VS Code.md",
+      "source": "40 - Recursos/PKM com Obsidian e VS Code.md",
+      "collectedAt": null,
+      "sha256": "77a1359416047c29a742bad55c23cb737e37dd7473e956d4ea192ecc0c6ac01c",
+      "license": "verificar",
+      "privacy": "private-until-published",
+      "channels": [
+        "site",
+        "newsletter"
+      ],
+      "channelCount": 2,
+      "audience": "todos",
+      "excerpt": "Gerenciamento de conhecimento pessoal (PKM) pode usar ferramentas diferentes. O vault-seed suporta dois editores principais: Obsidian e VS Code com Foam. Obsidian usa o vault como pasta local. Plugins como Dataview, Templater e Bases adicionam funcionalidades de banco de dados e "
+    }
+  ],
+  "sha256": "642f8ac3fa5f70bcaea60fb6458a422788aa42e171edea1295662ef4450260fc"
 }

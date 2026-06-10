@@ -7,9 +7,13 @@
   "privacy": "public-feed-list",
   "groups": [
     "Jardim digital",
-    "Tecnologia"
+    "Tecnologia",
+    "Engenharia de software",
+    "Ferramentas e web",
+    "Ciência de dados e IA",
+    "Privacidade e segurança"
   ],
-  "subscriptionCount": 2,
+  "subscriptionCount": 13,
   "subscriptions": [
     {
       "id": "rss-xml",
@@ -34,7 +38,139 @@
         "Tecnologia",
         "tecnologia"
       ]
+    },
+    {
+      "id": "news-ycombinator-com-rss",
+      "title": "Hacker News",
+      "xmlUrl": "https://news.ycombinator.com/rss",
+      "htmlUrl": "https://news.ycombinator.com/",
+      "type": "rss",
+      "description": null,
+      "categories": [
+        "Tecnologia",
+        "tecnologia"
+      ]
+    },
+    {
+      "id": "lobste-rs-rss",
+      "title": "Lobste.rs",
+      "xmlUrl": "https://lobste.rs/rss",
+      "htmlUrl": "https://lobste.rs/",
+      "type": "rss",
+      "description": null,
+      "categories": [
+        "Tecnologia",
+        "tecnologia"
+      ]
+    },
+    {
+      "id": "simonwillison-net-atom-everything",
+      "title": "Simon Willison",
+      "xmlUrl": "https://simonwillison.net/atom/everything/",
+      "htmlUrl": "https://simonwillison.net/",
+      "type": "rss",
+      "description": null,
+      "categories": [
+        "Engenharia de software",
+        "engenharia"
+      ]
+    },
+    {
+      "id": "jvns-ca-atom-xml",
+      "title": "Julia Evans",
+      "xmlUrl": "https://jvns.ca/atom.xml",
+      "htmlUrl": "https://jvns.ca/",
+      "type": "rss",
+      "description": null,
+      "categories": [
+        "Engenharia de software",
+        "engenharia"
+      ]
+    },
+    {
+      "id": "thoughtbot-com-blog-atom",
+      "title": "Thoughtbot",
+      "xmlUrl": "https://thoughtbot.com/blog.atom",
+      "htmlUrl": "https://thoughtbot.com/blog/",
+      "type": "rss",
+      "description": null,
+      "categories": [
+        "Engenharia de software",
+        "engenharia"
+      ]
+    },
+    {
+      "id": "blog-acolyer-org-feed",
+      "title": "The Morning Paper",
+      "xmlUrl": "https://blog.acolyer.org/feed/",
+      "htmlUrl": "https://blog.acolyer.org/",
+      "type": "rss",
+      "description": null,
+      "categories": [
+        "Engenharia de software",
+        "engenharia"
+      ]
+    },
+    {
+      "id": "astro-build-rss-xml",
+      "title": "Astro Blog",
+      "xmlUrl": "https://astro.build/rss.xml",
+      "htmlUrl": "https://astro.build/blog/",
+      "type": "rss",
+      "description": null,
+      "categories": [
+        "Ferramentas e web",
+        "ferramentas"
+      ]
+    },
+    {
+      "id": "cassidoo-co-feed-xml",
+      "title": "Cassidy Williams",
+      "xmlUrl": "https://cassidoo.co/feed.xml",
+      "htmlUrl": "https://cassidoo.co/",
+      "type": "rss",
+      "description": null,
+      "categories": [
+        "Ferramentas e web",
+        "ferramentas"
+      ]
+    },
+    {
+      "id": "marimo-io-blog-rss-xml",
+      "title": "Marimo Blog",
+      "xmlUrl": "https://marimo.io/blog/rss.xml",
+      "htmlUrl": "https://marimo.io/blog/",
+      "type": "rss",
+      "description": null,
+      "categories": [
+        "Ciência de dados e IA",
+        "ia"
+      ]
+    },
+    {
+      "id": "www-deeplearning-ai-the-batch-feed",
+      "title": "The Batch (DeepLearning.AI)",
+      "xmlUrl": "https://www.deeplearning.ai/the-batch/feed/",
+      "htmlUrl": "https://www.deeplearning.ai/the-batch/",
+      "type": "rss",
+      "description": null,
+      "categories": [
+        "Ciência de dados e IA",
+        "ia"
+      ]
+    },
+    {
+      "id": "cartilha-cert-br-rss",
+      "title": "Cartilha de Segurança para Internet (CERT.br)",
+      "xmlUrl": "https://cartilha.cert.br/rss/",
+      "htmlUrl": "https://cartilha.cert.br/",
+      "type": "rss",
+      "description": null,
+      "categories": [
+        "Privacidade e segurança",
+        "seguranca"
+      ]
     }
   ],
-  "sha256": "638a996e6f11b804875bb1608bf490bc8b6197f1ec36c29c70fe1dd7ccc81121"
+  "sha256": "a675b20a3d2c08b1d28521962e8ebd0b7015866b28c9efbab4d6d264b1d9e368"
 }
