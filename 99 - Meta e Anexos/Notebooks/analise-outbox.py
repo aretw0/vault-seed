@@ -38,6 +38,7 @@ Modo atual: **{"WASM · browser" if context["isPackaged"] else "local · Python"
 |---|:---:|:---:|:---:|
 | Itens por canal e status | ✓ | ✓ | ✓ |
 | Tabela de candidatos com filtro | ✓ | ✓ | ✓ |
+| Prévia de caption Instagram | ✓ | ✓ | ✓ |
 | Modelo mínimo de frontmatter | ✓ | ✓ | ✓ |
 | Prévia de thread social (conteúdo real) | — | ✓ | — |
 | Checklist interativo de publicação | — | ✓ | — |
@@ -237,6 +238,55 @@ def _(context, items, mo):
         ])
 
     checklist_result
+    return
+
+
+@app.cell
+def _(items, mo):
+    import re as _re
+
+    _instagram_items = [i for i in items if "instagram" in (i.get("channels") or [])]
+
+    def _make_caption(item, max_chars=2200):
+        text = item.get("excerpt") or item.get("title") or ""
+        text = _re.sub(r"\[\[([^\]|#]+)(?:\|[^\]]+)?\]\]", r"\1", text).strip()
+        if len(text) > max_chars - 50:
+            text = text[:max_chars - 50].rsplit(" ", 1)[0] + "…"
+        return text
+
+    def _make_hashtags(item):
+        raw = [t.replace("/", "-").replace(" ", "-").lower() for t in (item.get("tags") or [])]
+        return " ".join(f"#{t}" for t in raw[:15]) if raw else ""
+
+    previews_ig = []
+    for _item in _instagram_items[:3]:
+        _caption = _make_caption(_item)
+        _hashtags = _make_hashtags(_item)
+        _path = _item.get("path", "")
+        _image_hint = "Defina `instagram_image` no frontmatter da nota com o caminho da imagem."
+        previews_ig.append(mo.vstack([
+            mo.md(f"### {_item.get('title')}"),
+            mo.md(
+                f"**Caption** ({len(_caption)} chars / 2200 max):\n\n"
+                f"> {_caption[:500]}{'…' if len(_caption) > 500 else ''}\n\n"
+                f"**Hashtags:** {_hashtags or '_nenhuma tag no frontmatter_'}\n\n"
+                f"**Imagem:** _{_image_hint}_"
+            ),
+        ]))
+
+    ig_section = mo.vstack([
+        mo.md("## Prévia Instagram"),
+        *(previews_ig if previews_ig else [
+            mo.callout(
+                mo.md(
+                    "Nenhum item com canal `instagram`. "
+                    "Adicione `- instagram` ao frontmatter `channels` de uma nota."
+                ),
+                kind="info",
+            )
+        ]),
+    ])
+    ig_section
     return
 
 

@@ -303,7 +303,7 @@ except ImportError:
 
 
     def parse_feed_xml(xml_text: str, *, source_url: str = None, limit: int = 50):
-        import xml.etree.ElementTree as _ET
+        import defusedxml.ElementTree as _ET
         root = _ET.fromstring(xml_text)
         items = []
         channel = root.find("channel")

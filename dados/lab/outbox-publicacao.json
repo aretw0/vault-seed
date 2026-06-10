@@ -80,16 +80,17 @@
       "canonical": "40 - Recursos/Jardim digital.md",
       "source": "40 - Recursos/Jardim digital.md",
       "collectedAt": null,
-      "sha256": "2e91f978f5b108a6c6bafc837750e44f5c807e1783cab9a1c6036d0f913dcb16",
+      "sha256": "b785992825823d83bc333f394e4c934edccce7c4794ece02a84b3ec69fac8522",
       "license": "verificar",
       "privacy": "private-until-published",
       "channels": [
         "site",
         "rss",
         "mastodon",
-        "bluesky"
+        "bluesky",
+        "instagram"
       ],
-      "channelCount": 4,
+      "channelCount": 5,
       "audience": "todos",
       "excerpt": "Um jardim digital é um espaço de escrita em público onde as notas crescem ao longo do tempo. Diferente de um blog com posts finalizados, um jardim expõe o processo — notas em rascunho coexistem com textos maduros. - **Crescimento contínuo** — notas são atualizadas, não substituíd"
     },
@@ -135,5 +136,5 @@
       "excerpt": "Gerenciamento de conhecimento pessoal (PKM) pode usar ferramentas diferentes. O vault-seed suporta dois editores principais: Obsidian e VS Code com Foam. Obsidian usa o vault como pasta local. Plugins como Dataview, Templater e Bases adicionam funcionalidades de banco de dados e "
     }
   ],
-  "sha256": "642f8ac3fa5f70bcaea60fb6458a422788aa42e171edea1295662ef4450260fc"
+  "sha256": "d91d7366ca3fcb332792451c56d122b1f9e8b4581ab2f7a8d91f9bacae7ef5e0"
 }

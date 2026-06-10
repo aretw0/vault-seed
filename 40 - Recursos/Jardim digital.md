@@ -11,6 +11,7 @@ channels:
   - rss
   - mastodon
   - bluesky
+  - instagram
 canonical_url: /recursos/jardim-digital
 category: conceito
 audience: todos

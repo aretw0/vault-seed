@@ -403,7 +403,7 @@ def _xml_atom_link(element):
 
 def parse_feed_xml(xml_text: str, *, source_url: str = None, limit: int = 50):
     """Converte RSS ou Atom em registros pequenos e versionáveis."""
-    import xml.etree.ElementTree as _ET
+    import defusedxml.ElementTree as _ET
 
     root = _ET.fromstring(xml_text)
     items = []
