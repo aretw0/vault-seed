@@ -156,8 +156,10 @@ def _(inverse_index, mo, notes):
         key=lambda x: x["inbound"],
         reverse=True,
     )[:10]
-    mo.md("## ⭐ Top 10 Mais Referenciadas")
-    mo.ui.table(_pd5.DataFrame(_top))
+    mo.vstack([
+        mo.md("## ⭐ Top 10 Mais Referenciadas"),
+        mo.ui.table(_pd5.DataFrame(_top)),
+    ])
     return ()
 
 
@@ -165,29 +167,17 @@ def _(inverse_index, mo, notes):
 def _(mo):
     mo.md(
         "## 🧭 Lane de entendimento\n\n"
-        "Conduza esse notebook como uma trilha de maturação da visão estrutural do vault:"
-    )
-
-    mo.md(
+        "Conduza esse notebook como uma trilha de maturação da visão estrutural do vault:\n\n"
         "### Nível inicial — topologia\n\n"
         "- Ler hubs e órfãs para perceber lacunas;\n"
-        "- Identificar notas com links quebrados e priorizar reparos simples."
-    )
-
-    mo.md(
+        "- Identificar notas com links quebrados e priorizar reparos simples.\n\n"
         "### Nível intermediário — métrica\n\n"
         "- Acompanhar densidade por pasta e distribuição de inbound para mapear "
         "fronteiras de conhecimento;\n"
-        "- Relacionar outliers a perguntas de arquitetura antes de mexer no conteúdo."
-    )
-
-    mo.md(
+        "- Relacionar outliers a perguntas de arquitetura antes de mexer no conteúdo.\n\n"
         "### Nível avançado — intervenção\n\n"
         "- Usar os sinais deste painel para propor refatorações de estrutura;\n"
-        "- Repetir a análise após cada ciclo para medir redução de nós órfãos e melhoria de cobertura."
-    )
-
-    mo.md(
+        "- Repetir a análise após cada ciclo para medir redução de nós órfãos e melhoria de cobertura.\n\n"
         "### Nível de excelência — arquitetura de coesão\n\n"
         "- Consolidar um glossário de hubs por domínio e manter uma regra de exceção para grafos locais;\n"
         "- Criar alertas de regressão (queda abrupta de densidade ou explosão de órfãos);\n"

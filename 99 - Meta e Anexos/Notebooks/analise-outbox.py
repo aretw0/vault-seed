@@ -44,8 +44,10 @@ def _(mo, outbox):
     import pandas as pd
 
     channels_df = pd.DataFrame(outbox.get("channels", []))
-    mo.md("## Canais como adaptadores")
-    mo.ui.table(channels_df)
+    mo.vstack([
+        mo.md("## Canais como adaptadores"),
+        mo.ui.table(channels_df),
+    ])
     return channels_df, pd
 
 
@@ -67,13 +69,15 @@ def _(mo, outbox, pd):
             }
         )
     items_df = pd.DataFrame(rows)
-    mo.md(
-        "## Rascunhos candidatos\n\n"
-        "Itens aparecem aqui quando uma nota declara `outbox: true`, "
-        "`publicationStatus` ou `channels` no frontmatter. Se a tabela estiver "
-        "vazia, o solo está pronto, mas ainda não há nada para distribuir."
-    )
-    mo.ui.table(items_df)
+    mo.vstack([
+        mo.md(
+            "## Rascunhos candidatos\n\n"
+            "Itens aparecem aqui quando uma nota declara `outbox: true`, "
+            "`publicationStatus` ou `channels` no frontmatter. Se a tabela estiver "
+            "vazia, o solo está pronto, mas ainda não há nada para distribuir."
+        ),
+        mo.ui.table(items_df),
+    ])
     return items_df
 
 
@@ -147,28 +151,16 @@ def _(mo):
 def _(mo):
     mo.md(
         "## 🧭 Lane de entendimento\n\n"
-        "Evolua esse notebook até virar um painel operacional de publicação:"
-    )
-
-    mo.md(
+        "Evolua esse notebook até virar um painel operacional de publicação:\n\n"
         "### Nível inicial — observação\n\n"
         "- Mapear itens com status pendente e identificar sinais de risco;\n"
-        "- Entender política de licença e privacidade antes de qualquer distribuição."
-    )
-
-    mo.md(
+        "- Entender política de licença e privacidade antes de qualquer distribuição.\n\n"
         "### Nível intermediário — curadoria\n\n"
         "- Organizar candidatos por canal, revisar tom e referências;\n"
-        "- Garantir vínculo reverso para a nota canônica de origem."
-    )
-
-    mo.md(
+        "- Garantir vínculo reverso para a nota canônica de origem.\n\n"
         "### Nível avançado — operação repetível\n\n"
         "- Integrar com rotinas locais de publicação em lotes;\n"
-        "- Fechar evidência de revisão para cada saída (status, timestamp, operador)."
-    )
-
-    mo.md(
+        "- Fechar evidência de revisão para cada saída (status, timestamp, operador).\n\n"
         "### Nível de excelência — governança ativa\n\n"
         "- Definir SLA mínimo para revisão da rotina e monitorar SLAs por campanha;\n"
         "- Publicar um checklist de risco antes da publicação em lote e registrar revisão no changelog;\n"

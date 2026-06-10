@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.23.8"
+__generated_with = "0.23.9"
 app = marimo.App(width="medium")
 
 
@@ -22,21 +22,19 @@ def _():
 
 @app.cell
 def _(feeds, mo):
-    mo.md(
-        f"""
-        # Radar de feeds
+    mo.md(f"""
+    # Radar de feeds
 
-        Este notebook lê a lista OPML normalizada em `feeds-assinados.json` e
-        transforma assinaturas RSS/Atom em uma superfície auditável para o Lab.
+    Este notebook lê a lista OPML normalizada em `feeds-assinados.json` e
+    transforma assinaturas RSS/Atom em uma superfície auditável para o Lab.
 
-        - feeds assinados: **{feeds['subscriptionCount']}**
-        - grupos OPML: **{len(feeds.get('groups', []))}**
-        - fonte: `{feeds['source']}`
-        - coletado em: `{feeds['collectedAt']}`
-        - privacidade: `{feeds['privacy']}`
-        - fingerprint: `{feeds['sha256']}`
-        """
-    )
+    - feeds assinados: **{feeds['subscriptionCount']}**
+    - grupos OPML: **{len(feeds.get('groups', []))}**
+    - fonte: `{feeds['source']}`
+    - coletado em: `{feeds['collectedAt']}`
+    - privacidade: `{feeds['privacy']}`
+    - fingerprint: `{feeds['sha256']}`
+    """)
     return
 
 
@@ -69,8 +67,10 @@ def _(feeds):
 
 @app.cell
 def _(feeds_df, mo):
-    mo.md("## Assinaturas")
-    mo.ui.table(feeds_df)
+    mo.vstack([
+        mo.md("## Assinaturas"),
+        mo.ui.table(feeds_df),
+    ])
     return
 
 
@@ -102,9 +102,11 @@ def _(feeds_df, mo, pd):
             else pd.DataFrame(columns=["categoria", "feeds"])
         )
 
-    mo.md("## Cobertura editorial")
-    mo.ui.table(domain_df)
-    mo.ui.table(category_df)
+    mo.vstack([
+        mo.md("## Cobertura editorial"),
+        mo.ui.table(domain_df),
+        mo.ui.table(category_df),
+    ])
     return
 
 
@@ -122,12 +124,14 @@ def _(feeds_df, mo, pd):
             }
         )
     candidates_df = pd.DataFrame(candidates)
-    mo.md(
-        "## Candidatas para inbox soberana\n\n"
-        "A tabela abaixo não cria notas automaticamente. Ela mostra o formato de "
-        "triagem: feed observado → evidência → decisão humana ou agente assistido."
-    )
-    mo.ui.table(candidates_df)
+    mo.vstack([
+        mo.md(
+            "## Candidatas para inbox soberana\n\n"
+            "A tabela abaixo não cria notas automaticamente. Ela mostra o formato de "
+            "triagem: feed observado → evidência → decisão humana ou agente assistido."
+        ),
+        mo.ui.table(candidates_df),
+    ])
     return (candidates_df,)
 
 
@@ -176,31 +180,19 @@ def _(mo):
     mo.md(
         "## 🧭 Lane de entendimento\n\n"
         "Use esta trilha para evoluir o notebook de um uso pontual para uma rotina de "
-        "curadoria contínua:"
-    )
-
-    mo.md(
+        "curadoria contínua:\n\n"
         "### Nível inicial — leitura rápida\n\n"
         "- Mapear quais fontes realmente aparecem na trilha atual;\n"
         "- Classificar por domínio e tag para reduzir ruído;\n"
-        "- Preparar notas candidatas sem publicar ou enviar nada automaticamente."
-    )
-
-    mo.md(
+        "- Preparar notas candidatas sem publicar ou enviar nada automaticamente.\n\n"
         "### Nível intermediário — decisão local\n\n"
         "- Cruzar candidatas com prioridade por frequência e privacidade;\n"
         "- Transformar listas em critérios de revisão humana por pasta/público;\n"
-        "- Criar checklists de triagem para revisão rápida antes de abrir o outbox."
-    )
-
-    mo.md(
+        "- Criar checklists de triagem para revisão rápida antes de abrir o outbox.\n\n"
         "### Nível avançado — operação em ciclo\n\n"
         "- Rodar esse notebook em `notebooks:extract:local` durante o sync;\n"
         "- Comparar snapshots para detectar deriva em fontes e sinais novos;\n"
-        "- Conectar os resultados ao pipeline de templates e revisão editorial."
-    )
-
-    mo.md(
+        "- Conectar os resultados ao pipeline de templates e revisão editorial.\n\n"
         "### Nível de excelência — curadoria como sistema\n\n"
         "- Fechar os pontos com trilha de decisão explícita para aprovar fontes, revisão e publicação;\n"
         "- Transformar descobertas repetidas em uma política de limpeza de ruído e uma rotina de auditoria semanal;\n"

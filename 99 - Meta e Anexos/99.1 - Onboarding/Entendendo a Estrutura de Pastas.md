@@ -39,7 +39,7 @@ graph LR
     Vault --> R["40 - Recursos - Base de conhecimento"]
     Vault --> Arq["50 - Arquivo - Histórico inativo"]
     Vault --> M["90 - Modelos - Templates"]
-    Vault --> Meta["99 - Meta e Anexos - Configuração e guias"]
+    Vault --> Meta["99 - Meta e Anexos - Guias, configuração e anexos globais"]
 ```
 <!-- {/para-structure} -->
 
@@ -54,9 +54,9 @@ graph LR
 6.  **`40 - Recursos/`**: O coração do seu Second Brain. Aqui as notas devem ser atômicas e densamente interligadas (`[[Links]]`). A organização pode começar plana e evoluir com subpastas ou [[O que são MOCs (Mapas de Conteúdo)]].
 7.  **`50 - Arquivo/`**: Mantém o vault principal focado no que é ativo ou relevante, sem perder o histórico.
 8.  **`90 - Modelos/`**: Centraliza os modelos de notas.
-9. **`99 - Meta e Anexos/`**: Separa arquivos de configuração/suporte e anexos das notas de conteúdo.
+9. **`99 - Meta e Anexos/`**: Guias, convenções e configuração do vault. A subpasta `Anexos/` é o **repositório global para todos os anexos do vault** — imagens e arquivos inseridos em qualquer nota, independente da pasta onde a nota está, são armazenados aqui.
     - `Manual do Vault.md`: Uma nota interna explicando as convenções do vault, estrutura, como usar tags, etc. É o manual interno do vault.
-    - Configure o Obsidian em `Settings > Files & Links > Default location for new attachments` para usar `99 - Meta e Anexos/Attachments/`.
+    - O Obsidian já vem pré-configurado para salvar todos os anexos em `99 - Meta e Anexos/Anexos/`. Para alterar, vá em `Settings > Files & Links > Default location for new attachments`.
 
 ## Distinção entre `docs/` e `99 - Meta e Anexos/`
 

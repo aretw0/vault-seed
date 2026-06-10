@@ -280,14 +280,16 @@ def _(mo, pd):
             },
         ]
     )
-    mo.md(
-        "## Primitivas locais vs publicadas\n\n"
-        "A regra é: transformação pura e leitura de snapshots ficam no notebook; "
-        "filesystem, segredos, navegador headless, OCR e formatos pesados ficam "
-        "atrás de helpers locais ou scripts CLI. Assim o HTML publicado continua "
-        "leve, reprodutível e sem credenciais."
-    )
-    mo.ui.table(primitives)
+    mo.vstack([
+        mo.md(
+            "## Primitivas locais vs publicadas\n\n"
+            "A regra é: transformação pura e leitura de snapshots ficam no notebook; "
+            "filesystem, segredos, navegador headless, OCR e formatos pesados ficam "
+            "atrás de helpers locais ou scripts CLI. Assim o HTML publicado continua "
+            "leve, reprodutível e sem credenciais."
+        ),
+        mo.ui.table(primitives),
+    ])
     return primitives,
 
 
@@ -311,21 +313,23 @@ def _(mo, runtime_context):
         value=False,
     )
     status = "disponível" if runtime_context["isLocal"] else "bloqueado no HTML publicado"
-    mo.md(
-        "## Extract local, carga publicada\n\n"
-        f"Status da etapa local: **{status}**. A primitiva `write_local_json_snapshot` "
-        "permite que um notebook rode coleta local quando estiver no computador da "
-        "pessoa e grave um snapshot JSON versionável. Depois, o site publicado lê o "
-        "snapshot empacotado pelo manifesto, sem duplicar a interface do notebook."
-    )
-    mo.hstack(
-        [
-            run_file_probe,
-            run_static_web_probe,
-            static_web_url,
-            run_tabular_snapshot,
-        ]
-    )
+    mo.vstack([
+        mo.md(
+            "## Extract local, carga publicada\n\n"
+            f"Status da etapa local: **{status}**. A primitiva `write_local_json_snapshot` "
+            "permite que um notebook rode coleta local quando estiver no computador da "
+            "pessoa e grave um snapshot JSON versionável. Depois, o site publicado lê o "
+            "snapshot empacotado pelo manifesto, sem duplicar a interface do notebook."
+        ),
+        mo.hstack(
+            [
+                run_file_probe,
+                run_static_web_probe,
+                static_web_url,
+                run_tabular_snapshot,
+            ]
+        ),
+    ])
     return (
         run_file_probe,
         run_local_extract,
@@ -386,13 +390,15 @@ def _(
             {"probe": "web estática local", "resultado": "bloqueado no HTML publicado"}
         )
 
-    mo.md(
-        "### Probes locais opcionais\n\n"
-        "Estas ações só rodam quando a pessoa marca explicitamente no modo local. "
-        "No HTML publicado, os helpers bloqueiam filesystem, rede de coleta local "
-        "e segredos."
-    )
-    mo.ui.table(local_probe_rows)
+    mo.vstack([
+        mo.md(
+            "### Probes locais opcionais\n\n"
+            "Estas ações só rodam quando a pessoa marca explicitamente no modo local. "
+            "No HTML publicado, os helpers bloqueiam filesystem, rede de coleta local "
+            "e segredos."
+        ),
+        mo.ui.table(local_probe_rows),
+    ])
     return local_probe_rows,
 
 
@@ -471,13 +477,15 @@ def _(mo, pd, runtime_context):
             },
         ]
     )
-    mo.md(
-        "## Curadoria ETL em uma única interface\n\n"
-        f"Operações locais agora estão **{local_status}**. O ponto é evitar drift: "
-        "o notebook continua sendo a bancada de trabalho, mas células que exigem "
-        "capacidades não empacotáveis ficam protegidas por `require_local_runtime`."
-    )
-    mo.ui.table(capabilities)
+    mo.vstack([
+        mo.md(
+            "## Curadoria ETL em uma única interface\n\n"
+            f"Operações locais agora estão **{local_status}**. O ponto é evitar drift: "
+            "o notebook continua sendo a bancada de trabalho, mas células que exigem "
+            "capacidades não empacotáveis ficam protegidas por `require_local_runtime`."
+        ),
+        mo.ui.table(capabilities),
+    ])
     return capabilities, local_status
 
 
@@ -494,20 +502,24 @@ def _(manifest, mo, pd):
                 "sha256": (dataset.get("sha256") or "")[:16],
             }
         )
-    mo.md("## Extract: fontes declaradas e rastreáveis")
-    mo.ui.table(pd.DataFrame(manifest_rows))
+    mo.vstack([
+        mo.md("## Extract: fontes declaradas e rastreáveis"),
+        mo.ui.table(pd.DataFrame(manifest_rows)),
+    ])
     return
 
 
 @app.cell
 def _(dimensions_df, mo, notes_df):
-    mo.md(
-        "## Transform: tabelas derivadas do snapshot\n\n"
-        "A transformação abaixo converte JSON aninhado em tabelas pequenas. "
-        "Cada regra está no notebook e pode ser revisada pela pessoa dona do vault."
-    )
-    mo.ui.table(dimensions_df)
-    mo.ui.table(notes_df)
+    mo.vstack([
+        mo.md(
+            "## Transform: tabelas derivadas do snapshot\n\n"
+            "A transformação abaixo converte JSON aninhado em tabelas pequenas. "
+            "Cada regra está no notebook e pode ser revisada pela pessoa dona do vault."
+        ),
+        mo.ui.table(dimensions_df),
+        mo.ui.table(notes_df),
+    ])
     return
 
 
@@ -543,9 +555,7 @@ def _(export_csv, export_json, mo, snapshot_hash):
         "## Load: artefatos portáveis\n\n"
         f"Fingerprint SHA-256 do snapshot bruto: `{snapshot_hash}`\n\n"
         "O resultado transformado pode ser salvo como JSON/CSV pelo pipeline local "
-        "ou copiado daqui durante uma exploração manual."
-    )
-    mo.md(
+        "ou copiado daqui durante uma exploração manual.\n\n"
         "### Prévia CSV\n\n"
         f"```csv\n{export_csv[:1200]}\n```\n\n"
         "### Prévia JSON\n\n"
@@ -560,12 +570,15 @@ def _(mo, runtime_sources):
         label="Carregar exemplo remoto no navegador",
         value=False,
     )
-    mo.md(
-        "## Fonte remota opcional\n\n"
-        "O notebook publicado também pode buscar JSON remoto em runtime, desde que "
-        "a fonte aceite CORS e o visitante tenha rede. Essa etapa é opt-in para "
-        "não vazar intenção de análise nem depender de terceiros por padrão."
-    )
+    mo.vstack([
+        mo.md(
+            "## Fonte remota opcional\n\n"
+            "O notebook publicado também pode buscar JSON remoto em runtime, desde que "
+            "a fonte aceite CORS e o visitante tenha rede. Essa etapa é opt-in para "
+            "não vazar intenção de análise nem depender de terceiros por padrão."
+        ),
+        load_remote,
+    ])
     return load_remote
 
 
@@ -590,28 +603,16 @@ def _(load_remote, mo, read_lab_json, runtime_sources):
 def _(mo):
     mo.md(
         "## 🧭 Lane de entendimento\n\n"
-        "Converta este notebook em uma trilha prática para pipeline ETL local + pacote publicado:"
-    )
-
-    mo.md(
+        "Converta este notebook em uma trilha prática para pipeline ETL local + pacote publicado:\n\n"
         "### Nível inicial — transparência\n\n"
         "- Ler contrato de datasets e validar fontes disponíveis;\n"
-        "- Confirmar snapshots como fonte única da fonte publicada."
-    )
-
-    mo.md(
+        "- Confirmar snapshots como fonte única da fonte publicada.\n\n"
         "### Nível intermediário — proteção\n\n"
         "- Separar primitivas locais (acesso ao disco, OCR, secrects) das transformações publicadas;\n"
-        "- Testar modos de extração com e sem rede para reduzir falhas de ambiente."
-    )
-
-    mo.md(
+        "- Testar modos de extração com e sem rede para reduzir falhas de ambiente.\n\n"
         "### Nível avançado — automação\n\n"
         "- Transformar esse fluxo em rotina cron/CI local;\n"
-        "- Assinar artefatos versionáveis (JSON/CSV) e reusar em exports futuros."
-    )
-
-    mo.md(
+        "- Assinar artefatos versionáveis (JSON/CSV) e reusar em exports futuros.\n\n"
         "### Nível de excelência — sustentabilidade operacional\n\n"
         "- Automatizar validações de schema, checksum e retenção antes de publicar artefatos;\n"
         "- Criar rollback explícito por fonte e registrar causa raiz de cada correção;\n"

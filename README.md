@@ -9,7 +9,7 @@ Esta "semente" (seed) de cofre (vault) é uma base flexível para conhecimento l
 
 ## Para Quem Quer Criar Um Vault
 
-Use este repositório como template quando você quer começar um vault versionado sem montar toda a estrutura do zero. Ele pode virar site pessoal, blog simples, documentação coletiva ou cartão de visita. O conteúdo principal para usuários está nas notas dentro do vault, especialmente em `99 - Meta e Anexos/`.
+Use este repositório como template quando você quer começar um vault versionado sem montar toda a estrutura do zero. Ele pode virar site pessoal, blog simples, documentação coletiva ou cartão de visita. Os guias de orientação ficam em `99 - Meta e Anexos/` — seu conteúdo de conhecimento vai nas pastas PARA (`40 - Recursos/`, `20 - Projetos/`, `30 - Áreas/` e afins).
 
 ## Pré-requisitos
 

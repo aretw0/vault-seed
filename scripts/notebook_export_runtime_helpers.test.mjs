@@ -89,3 +89,24 @@ test("notebook runtime helper import is removed from exported source", () => {
 		"multiline helper import members must also be removed from exported source",
 	);
 });
+
+test("injected runtime helper cell must not contain wildcard imports", () => {
+	// Marimo's AST parser converts cells with `import *` to app._unparsable_cell(),
+	// which is never executed in the WASM runtime — causing NameError in dependent cells.
+	const transformed = transformEtcDemo();
+	assert.doesNotMatch(
+		transformed,
+		/import \*/,
+		"injected helper cell must not use wildcard imports that marimo cannot statically analyze",
+	);
+	assert.doesNotMatch(
+		transformed,
+		/_unparsable_cell/,
+		"injected helper cell must not produce an _unparsable_cell in the exported notebook",
+	);
+	assert.match(
+		transformed,
+		/def is_pyodide_runtime\(\)/,
+		"inline fallback functions must be present in the injected cell",
+	);
+});

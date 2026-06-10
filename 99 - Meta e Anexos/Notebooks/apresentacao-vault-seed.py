@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.23.8"
+__generated_with = "0.23.9"
 app = marimo.App(
     width="medium",
     layout_file="layouts/apresentacao-vault-seed.slides.json",
@@ -52,15 +52,13 @@ def _(Counter, notes):
 
 @app.cell
 def _(data, mo, notes):
-    mo.md(
-        f"""
-        # vault-seed
+    mo.md(f"""
+    # vault-seed
 
-        Um vault local-first com site, automação e notebooks no mesmo repositório.
+    Um vault local-first com site, automação e notebooks no mesmo repositório.
 
-        **{len(notes)} notas** no snapshot atual · gerado em `{data['generated'][:10]}`
-        """
-    )
+    **{len(notes)} notas** no snapshot atual · gerado em `{data['generated'][:10]}`
+    """)
     return
 
 
@@ -137,18 +135,16 @@ def _(dedent, mo):
 
 @app.cell
 def _(folder_counts, mo, notes, status_counts, tag_counts):
-    mo.md(
-        f"""
-        ## Snapshot atual
+    mo.md(f"""
+    ## Snapshot atual
 
-        | Métrica | Valor |
-        | --- | ---: |
-        | Notas no vault | {len(notes)} |
-        | Pastas com notas | {len(folder_counts)} |
-        | Status distintos | {len(status_counts)} |
-        | Tags distintas | {len(tag_counts)} |
-        """
-    )
+    | Métrica | Valor |
+    | --- | ---: |
+    | Notas no vault | {len(notes)} |
+    | Pastas com notas | {len(folder_counts)} |
+    | Status distintos | {len(status_counts)} |
+    | Tags distintas | {len(tag_counts)} |
+    """)
     return
 
 

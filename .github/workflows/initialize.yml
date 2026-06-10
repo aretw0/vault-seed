@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pages: write
     steps:
       - name: 🏗️ Initialize Project from Template
         uses: aretw0/template-initializer@cf2249f8a97563d5bf3bc82bec5d3bcc3c816469 # v1.0.1
@@ -19,3 +20,14 @@ jobs:
           workflow_filename: ".github/workflows/initialize.yml"
           files_to_rename: "README.template.md:README.md CONTRIBUTING.template.md:CONTRIBUTING.md AGENTS.template.md:AGENTS.md package.template.json:package.json pnpm-lock.template.yaml:pnpm-lock.yaml"
           files_to_remove: "docs ROADMAP.md AGENTS.template.md README.template.md CONTRIBUTING.template.md packages/cli .changeset mdt.toml .github/workflows/template-ci.yml .github/workflows/prepare-release-pr.yml .github/workflows/release.yml .github/workflows/security-audit.yml .github/workflows/sync-develop-with-main.yml .github/workflows/validate-mdt.yml .github/workflows/publish-cli.yml CNAME scripts/audience_boundary.test.js scripts/deploy_site_workflow.test.js scripts/mermaid_render_contract.test.js scripts/mermaid_toggle.test.js scripts/release_package_smoke.test.js scripts/release_package_smoke.mjs"
+
+      - name: 🌐 Enable GitHub Pages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            /repos/${{ github.repository }}/pages \
+            -f build_type=workflow \
+            || echo "Pages already enabled — no action needed"

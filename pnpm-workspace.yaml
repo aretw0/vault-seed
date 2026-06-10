@@ -4,3 +4,10 @@ packages:
 allowBuilds:
   esbuild: false
   sharp: false
+# Supply-chain policy: downgrade from error to warn so that recently-published
+# packages (e.g. Astro ecosystem updates) don't block template users' CI.
+# The template maintainer curates all packages; pnpm v11 defaults are too
+# strict for a curated template repo where new dependencies are expected.
+policies:
+  minimumReleaseAge:
+    severity: warn

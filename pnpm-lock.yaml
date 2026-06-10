@@ -12,6 +12,9 @@ importers:
         specifier: workspace:^
         version: link:packages/astro-plugins
     devDependencies:
+      '@astrojs/markdown-remark':
+        specifier: ^7.2.0
+        version: 7.2.0
       '@astrojs/starlight':
         specifier: ^0.39.3
         version: 0.39.3(astro@6.4.4(@types/node@24.13.1)(rollup@4.61.1))(typescript@6.0.3)

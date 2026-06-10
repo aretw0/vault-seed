@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.23.8"
+__generated_with = "0.23.9"
 app = marimo.App(width="medium")
 
 
@@ -9,6 +9,7 @@ def _():
     import marimo as mo
     import json
     import os
+
     return json, mo, os
 
 
@@ -34,7 +35,7 @@ def _(data, mo, notes):
         f"# 📊 Análise de Publicação\n\n"
         f"**{len(notes)} notas** no vault · gerado em `{data['generated'][:10]}`"
     )
-    return ()
+    return
 
 
 @app.cell
@@ -80,7 +81,7 @@ def _(Counter, alt, mo, notes, pd):
         .properties(title="Notas por Pasta", height=250)
     )
     mo.ui.altair_chart(_chart)
-    return ()
+    return
 
 
 @app.cell
@@ -99,14 +100,14 @@ def _(Counter, alt, mo, notes, pd):
         .properties(title="Top 20 Tags", height=400)
     )
     mo.ui.altair_chart(_chart)
-    return ()
+    return
 
 
 @app.cell
 def _(mo, notes):
     _no_title = [n for n in notes if n["title"] == n["id"].split("/")[-1].replace("-", " ")]
     mo.md(f"## 🏷️ Notas sem título explícito\n\n{len(_no_title)} notas usam o basename como título.")
-    return ()
+    return
 
 
 @app.cell
@@ -124,35 +125,23 @@ def _(dropdown, mo, notes):
     _filtered = notes if dropdown.value == "Todas" else [n for n in notes if n["folder"] == dropdown.value]
     _df = _pd2.DataFrame(_filtered)[["id", "title", "folder", "status"]]
     mo.ui.table(_df)
-    return ()
+    return
 
 
 @app.cell
 def _(mo):
     mo.md(
         "## 🧭 Lane de entendimento\n\n"
-        "Passe da leitura de distribuição para uma disciplina editorial contínua:"
-    )
-
-    mo.md(
+        "Passe da leitura de distribuição para uma disciplina editorial contínua:\n\n"
         "### Nível inicial — visão\n\n"
         "- Entender a composição do corpus por status, pasta e tag;\n"
-        "- Detectar notas com título fraco que exigem padronização.",
-    )
-
-    mo.md(
+        "- Detectar notas com título fraco que exigem padronização.\n\n"
         "### Nível intermediário — higiene\n\n"
         "- Aplicar filtros por pasta/área antes da revisão final;\n"
-        "- Preparar plano para reduzir inconsistências de metadata e status." 
-    )
-
-    mo.md(
+        "- Preparar plano para reduzir inconsistências de metadata e status.\n\n"
         "### Nível avançado — governança\n\n"
         "- Estabelecer meta de publicação por etapa e medir evolução por sprints;\n"
-        "- Consolidar regras de revisão cruzada e validar contratos de export.",
-    )
-
-    mo.md(
+        "- Consolidar regras de revisão cruzada e validar contratos de export.\n\n"
         "### Nível de excelência — maturidade editorial\n\n"
         "- Mapear gargalos por etapa e automatizar sinalização de bloqueios recorrentes;\n"
         "- Criar playbook de revisão final com critérios de cobertura, qualidade e consistência;\n"

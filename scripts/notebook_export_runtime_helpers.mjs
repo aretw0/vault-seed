@@ -79,10 +79,33 @@ function parseRuntimeImportNames(importStatements, runtimeImportPrefix) {
 	return parsedImportNames;
 }
 
+/**
+ * Strips the compatibility shim wrapper (`try: from dgk_lab_runtime import *`)
+ * and returns only the inline fallback function definitions.
+ *
+ * Marimo's AST parser converts cells with wildcard imports (`import *`) to
+ * `app._unparsable_cell(...)`, which is never executed in the WASM runtime.
+ * The fallback content starts at the line after `except ImportError:` and is
+ * indented 4 spaces — we dedent it to the top level so it can be placed
+ * directly inside `def _():`.
+ */
+function extractFallbackSource(source) {
+	const lines = source.split(/\r?\n/);
+	const exceptIdx = lines.findIndex((l) =>
+		l.trimStart().startsWith("except ImportError:"),
+	);
+	if (exceptIdx === -1) return source;
+	return lines
+		.slice(exceptIdx + 1)
+		.map((line) => (line.startsWith("    ") ? line.slice(4) : line))
+		.join("\n");
+}
+
 function buildRuntimeHelperCell(runtimeHelperSource, helperExportNames) {
+	const injectionSource = extractFallbackSource(runtimeHelperSource);
 	return `@app.cell
 def _():
-${runtimeHelperSource
+${injectionSource
 		.split(/\r?\n/)
 		.map((line) => `    ${line}`)
 		.join("\n")}
