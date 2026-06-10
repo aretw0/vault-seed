@@ -125,13 +125,13 @@ async function note(args, runner, obsidianFinder) {
     console.error(`\n${OBSIDIAN_SETUP_HINT}`);
     process.exit(1);
   }
-  const available = await finder();
-  if (!available) {
+  const cmd = await finder();
+  if (!cmd) {
     console.error('dgk lab note: Obsidian CLI não encontrado ou Obsidian não está em execução.');
     console.error(`\n${OBSIDIAN_SETUP_HINT}`);
     process.exit(1);
   }
-  await runner('obsidian', args);
+  await runner(cmd, args);
 }
 
 const SUBCOMMANDS = {

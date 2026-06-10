@@ -13,8 +13,8 @@ function captureRun() {
   return { calls, runner };
 }
 
-const obsidianFound = async () => true;
-const obsidianNotFound = async () => false;
+const obsidianFound = async () => 'obsidian';
+const obsidianNotFound = async () => null;
 
 // --- listNotebooks ---
 
@@ -112,6 +112,13 @@ test('lab note passa args para obsidian quando disponível', async () => {
   const { calls, runner } = captureRun();
   await lab(['note', 'search', 'query=pkm'], runner, obsidianFound);
   assert.deepEqual(calls, [{ cmd: 'obsidian', args: ['search', 'query=pkm'] }]);
+});
+
+test('lab note usa o caminho completo quando findObsidianCli retorna path absoluto', async () => {
+  const { calls, runner } = captureRun();
+  const fullPath = async () => '/usr/bin/obsidian';
+  await lab(['note', 'tags', 'total'], runner, fullPath);
+  assert.deepEqual(calls, [{ cmd: '/usr/bin/obsidian', args: ['tags', 'total'] }]);
 });
 
 test('lab note falha quando Obsidian não está disponível', async () => {
