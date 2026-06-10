@@ -11,3 +11,5 @@ Fix invisible and broken content in published notebooks, clarify attachment fold
 **Docs:** Corrected `Attachments/` → `Anexos/` naming in `organizacao-do-projeto.md`, `Entendendo a Estrutura de Pastas.md`, and `README.md`. Clarified that `99 - Meta e Anexos/Anexos/` is the global attachment sink configured for the entire vault.
 
 **Astro:** Migrated `markdown.remarkPlugins` to `markdown.processor: unified({...})` from `@astrojs/markdown-remark` to silence the Astro 6 deprecation warning.
+
+**pnpm supply-chain policy:** Added `pnpm-workspace.yaml` with `policies.minimumReleaseAge.severity: warn` so that template users' CI doesn't fail with `ERR_PNPM_MINIMUM_RELEASE_AGE_VIOLATION` when pnpm v11 considers recently-published packages (including Astro ecosystem updates) too new. The template maintainer curates all dependencies; the pnpm v11 `error` default is too strict for a curated template repo.
