@@ -6,8 +6,8 @@ updated: 2026-06-10
 
 # Lab Roadmap
 
-Documento de trabalho cross-sessão para o desenvolvimento ambicioso do Lab
-e do sistema de outbox multi-canal do vault-seed.
+Documento de trabalho cross-sessão para o Lab e o sistema de outbox
+multi-canal do vault-seed.
 
 ---
 
@@ -53,7 +53,7 @@ esse fluxo com notebooks progressivos (WASM → local → CI/cloud).
 - [ ] Regenerar `dados/lab/feeds-assinados.json` com `pnpm run feeds:opml`
 - [ ] Commitar dados atualizados
 
-#### outbox-publicacao — itens realistas
+#### outbox-publicação — itens realistas
 - [ ] Criar 3-5 notas de exemplo com frontmatter de publicação real
       (audiences, channels, status, canonical_url etc.)
 - [ ] Incluir exemplos com canal `site: true`, `instagram: true`, `newsletter: true`
