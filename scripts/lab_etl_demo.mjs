@@ -10,6 +10,8 @@ const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const PROFILE_OUTPUT = join(ROOT, "dados", "lab", "perfil-do-vault.json");
 const CURATION_OUTPUT = join(ROOT, "dados", "lab", "curadoria-ia.json");
 const GRAPH_OUTPUT = join(ROOT, "dados", "lab", "grafo-do-vault.json");
+const READING_LIST_SOURCE = join(ROOT, "dados", "fontes", "lista-leitura.json");
+const READING_LIST_OUTPUT = join(ROOT, "dados", "lab", "lista-leitura.json");
 
 function countWords(text) {
   return text
@@ -104,10 +106,35 @@ const graphData = {
   notes: graphNotes,
 };
 
+const readingSource = JSON.parse(readFileSync(READING_LIST_SOURCE, "utf8"));
+const topicCount = new Map();
+const statusCount = new Map();
+for (const item of readingSource) {
+  const t = item.topic || "sem tópico";
+  const s = item.status || "sem status";
+  topicCount.set(t, (topicCount.get(t) ?? 0) + 1);
+  statusCount.set(s, (statusCount.get(s) ?? 0) + 1);
+}
+const readingData = {
+  schemaVersion: 1,
+  source: "dados/fontes/lista-leitura.json",
+  collectedAt: new Date().toISOString(),
+  itemCount: readingSource.length,
+  items: readingSource,
+  topicSummary: Array.from(topicCount.entries())
+    .sort((a, b) => b[1] - a[1])
+    .map(([topic, count]) => ({ topic, count })),
+  statusSummary: Array.from(statusCount.entries())
+    .sort((a, b) => b[1] - a[1])
+    .map(([status, count]) => ({ status, count })),
+};
+
 mkdirSync(join(ROOT, "dados", "lab"), { recursive: true });
 writeFileSync(PROFILE_OUTPUT, `${JSON.stringify(profileData, null, 2)}\n`, "utf8");
 writeFileSync(CURATION_OUTPUT, `${JSON.stringify(curationData, null, 2)}\n`, "utf8");
 writeFileSync(GRAPH_OUTPUT, `${JSON.stringify(graphData, null, 2)}\n`, "utf8");
+writeFileSync(READING_LIST_OUTPUT, `${JSON.stringify(readingData, null, 2)}\n`, "utf8");
 console.log(`lab etl demo: ${notes.length} notas -> ${PROFILE_OUTPUT}`);
 console.log(`lab etl demo: curadoria IA -> ${CURATION_OUTPUT}`);
 console.log(`lab etl demo: grafo (${graphData.linkCount} links) -> ${GRAPH_OUTPUT}`);
+console.log(`lab etl demo: leitura (${readingData.itemCount} itens) -> ${READING_LIST_OUTPUT}`);

@@ -45,6 +45,15 @@
     "publish": true
   },
   {
+    "id": "lista-leitura",
+    "title": "Lista de leitura",
+    "description": "URLs curadas para leitura, com tópico e status, enriquecidas localmente com OpenGraph",
+    "source": "dados/lab/lista-leitura.json",
+    "output": "lista-leitura.json",
+    "format": "json",
+    "publish": true
+  },
+  {
     "id": "json-remoto-opcional",
     "title": "JSON remoto opcional",
     "description": "Exemplo de fonte que um notebook WASM pode carregar no navegador quando houver CORS e rede",
