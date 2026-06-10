@@ -549,6 +549,7 @@ function notebookExportDependencies(source) {
 		notebookRuntimeHelperPath,
 		manifestPath,
 		SCRIPT_PATH,
+		join(ROOT, "scripts", "notebook_export_runtime_helpers.mjs"),
 		join(ROOT, "pyproject.toml"),
 		join(ROOT, ".site", "styles", "marimo-vault.css"),
 		...listFilesRecursive(join(dirname(source), "layouts")),

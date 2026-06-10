@@ -1,5 +1,6 @@
 // astro.config.mjs
 import { defineConfig } from 'astro/config';
+import { unified } from '@astrojs/markdown-remark';
 import starlight from '@astrojs/starlight';
 import remarkDirective from 'remark-directive';
 import { remarkCallouts, remarkWikiImages, remarkWikiLinks } from '@aretw0/dgk-astro-plugins';
@@ -407,12 +408,14 @@ export default defineConfig({
   site,
   base,
   markdown: {
-    remarkPlugins: [
-      remarkDirective,
-      remarkCallouts,
-      [remarkWikiImages, { base }],
-      [remarkWikiLinks, { publishedSlugs, base }],
-    ],
+    processor: unified({
+      remarkPlugins: [
+        remarkDirective,
+        remarkCallouts,
+        [remarkWikiImages, { base }],
+        [remarkWikiLinks, { publishedSlugs, base }],
+      ],
+    }),
   },
   integrations: [
     copyVaultAttachments(),
