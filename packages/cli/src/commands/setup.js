@@ -1,4 +1,4 @@
-import { run } from '../utils.js';
+import { run } from '../runner.js';
 import { detectObsidian, INSTALL_HINTS } from '../launcher.js';
 
 export async function setup(_args, runner = run) {

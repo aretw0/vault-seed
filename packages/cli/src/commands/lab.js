@@ -1,6 +1,6 @@
 import { readdirSync, existsSync } from 'node:fs';
 import { join, basename } from 'node:path';
-import { run } from '../utils.js';
+import { run } from '../runner.js';
 import { findObsidianCli, OBSIDIAN_SETUP_HINT } from '../obsidian.js';
 import {
   detectObsidian as _detectObsidian,

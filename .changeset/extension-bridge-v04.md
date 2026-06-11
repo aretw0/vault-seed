@@ -1,6 +1,7 @@
 ---
 "@aretw0/dgk-cli": minor
 "@aretw0/dgk-skills": minor
+"@aretw0/dgk-runner": minor
 ---
 
 Add extension bridge: Pi skills package and dgk publish scaffold command.
