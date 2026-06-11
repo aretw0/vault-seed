@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "publication-outbox",
   "source": "markdown-frontmatter:outbox|publicationStatus|channels",
-  "collectedAt": "1970-01-01T00:00:00.000Z",
+  "collectedAt": "2026-06-11T16:23:41.890Z",
   "license": "derived-from-vault-notes",
   "privacy": "review-before-publish",
   "policy": {
@@ -69,72 +69,28 @@
       "notes": "Bom para changelogs, releases e discussões técnicas."
     }
   ],
-  "itemCount": 3,
+  "itemCount": 1,
   "items": [
     {
-      "id": "recursos-jardim-digital",
-      "title": "Jardim digital",
-      "path": "40 - Recursos/Jardim digital.md",
-      "status": "ready",
-      "publicationStatus": "ready",
-      "canonical": "40 - Recursos/Jardim digital.md",
-      "source": "40 - Recursos/Jardim digital.md",
-      "collectedAt": null,
-      "sha256": "b785992825823d83bc333f394e4c934edccce7c4794ece02a84b3ec69fac8522",
-      "license": "verificar",
-      "privacy": "private-until-published",
-      "channels": [
-        "site",
-        "rss",
-        "mastodon",
-        "bluesky",
-        "instagram"
-      ],
-      "channelCount": 5,
-      "audience": "todos",
-      "excerpt": "Um jardim digital é um espaço de escrita em público onde as notas crescem ao longo do tempo. Diferente de um blog com posts finalizados, um jardim expõe o processo — notas em rascunho coexistem com textos maduros. - **Crescimento contínuo** — notas são atualizadas, não substituíd"
-    },
-    {
-      "id": "recursos-o-que-e-publicacao-multi-canal",
-      "title": "O que é publicação multi-canal",
-      "path": "40 - Recursos/O que é publicação multi-canal.md",
+      "id": "areas-blog-jardim-digital-por-onde-comecar",
+      "title": "Jardim digital: por onde começar",
+      "path": "30 - Áreas/Blog/Jardim digital - por onde começar.md",
       "status": "published",
-      "publicationStatus": "published",
-      "canonical": "40 - Recursos/O que é publicação multi-canal.md",
-      "source": "40 - Recursos/O que é publicação multi-canal.md",
+      "publicationStatus": "ready",
+      "canonical": "30 - Áreas/Blog/Jardim digital - por onde começar.md",
+      "source": "30 - Áreas/Blog/Jardim digital - por onde começar.md",
       "collectedAt": null,
-      "sha256": "775217853e23bd7670ab5ba7169e94d5058843639e828b68c2c1b40df2fb8d37",
+      "sha256": "1d6e32dc5ec053648f20dfbfff44dc14d38af946fc82336a37f0fcfca1515d05",
       "license": "verificar",
       "privacy": "private-until-published",
       "channels": [
-        "site",
-        "rss",
-        "newsletter"
-      ],
-      "channelCount": 3,
-      "audience": "todos",
-      "excerpt": "Uma nota do vault pode ser publicada em múltiplos lugares a partir de uma única fonte. O frontmatter controla os destinos — o conteúdo permanece em um só lugar. O notebook `analise-outbox` lê o frontmatter de todas as notas do vault e identifica quais estão prontas para cada cana"
-    },
-    {
-      "id": "recursos-pkm-com-obsidian-e-vs-code",
-      "title": "PKM com Obsidian e VS Code",
-      "path": "40 - Recursos/PKM com Obsidian e VS Code.md",
-      "status": "draft",
-      "publicationStatus": "draft",
-      "canonical": "40 - Recursos/PKM com Obsidian e VS Code.md",
-      "source": "40 - Recursos/PKM com Obsidian e VS Code.md",
-      "collectedAt": null,
-      "sha256": "77a1359416047c29a742bad55c23cb737e37dd7473e956d4ea192ecc0c6ac01c",
-      "license": "verificar",
-      "privacy": "private-until-published",
-      "channels": [
-        "site",
-        "newsletter"
+        "mastodon",
+        "bluesky"
       ],
       "channelCount": 2,
       "audience": "todos",
-      "excerpt": "Gerenciamento de conhecimento pessoal (PKM) pode usar ferramentas diferentes. O vault-seed suporta dois editores principais: Obsidian e VS Code com Foam. Obsidian usa o vault como pasta local. Plugins como Dataview, Templater e Bases adicionam funcionalidades de banco de dados e "
+      "excerpt": "Existe uma ideia simples e poderosa escondida na metáfora do \"jardim digital\". Um arquivo você cria e esquece. Um jardim exige cuidado contínuo — você planta sementes, poda o que não funciona, conecta o que se beneficia da proximidade. No jardim digital, uma nota nasce como rascu"
     }
   ],
-  "sha256": "d91d7366ca3fcb332792451c56d122b1f9e8b4581ab2f7a8d91f9bacae7ef5e0"
+  "sha256": "09be4545fa9bc315d997f2bef9180b40f547d234ff5278e34e670fee1b4a01fe"
 }

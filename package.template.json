@@ -47,6 +47,7 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "@aretw0/dgk-cli": "latest",
     "@astrojs/starlight": "^0.39.2",
     "@playwright/test": "^1.60.0",
     "astro": "^6.3.5",

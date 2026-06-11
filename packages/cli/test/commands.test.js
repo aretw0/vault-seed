@@ -28,10 +28,15 @@ test('lint chama markdownlint diretamente via node (sem pnpm)', async () => {
   );
 });
 
-test('setup chama bash scripts/setup.sh', async () => {
+test('setup não usa bash — apenas pnpm/uv via runner quando necessário', async () => {
   const { calls, runner } = captureRun();
   await setup([], runner);
-  assert.deepEqual(calls, [{ cmd: 'bash', args: ['scripts/setup.sh'] }]);
+  // git config and path-checks use execFileSync directly, not the injected runner
+  assert.ok(calls.every((c) => c.cmd !== 'bash'), 'setup não deve chamar bash');
+  assert.ok(
+    calls.every((c) => c.cmd === 'pnpm' || c.cmd === 'uv'),
+    'runner só deve ser chamado com pnpm ou uv',
+  );
 });
 
 test('check executa onboarding, IA audit e pt-text sem pnpm', async () => {

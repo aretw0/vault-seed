@@ -1,13 +1,6 @@
 import { readdirSync, existsSync } from 'node:fs';
 import { join, basename } from 'node:path';
 import { run } from '../runner.js';
-import { findObsidianCli, OBSIDIAN_SETUP_HINT } from '../obsidian.js';
-import {
-  detectObsidian as _detectObsidian,
-  launchVault as _launchVault,
-  vaultNameFromCwd,
-  INSTALL_HINTS,
-} from '../launcher.js';
 import { injectSiloEnv } from '../silo.js';
 
 const NOTEBOOKS_DIR = '99 - Meta e Anexos/Notebooks';
@@ -39,29 +32,26 @@ function printHelp() {
   console.log(`dgk lab <subcomando> [opções]
 
 Subcomandos:
-  etl                  Executa o pipeline ETL completo (dados, feeds, outbox, datasets)
-  open [notebook]      Abre um notebook no marimo (liste nomes com dgk lab list)
-  export               Exporta notebooks para HTML empacotado
-  curate               Classifica feeds com IA (requer ANTHROPIC_API_KEY via dgk sow ou env)
-  evaluate [nota]      Avalia qualidade de escrita das notas (determinístico, sem API)
-  list                 Lista notebooks disponíveis
-  open-vault [nome]    Abre o vault no Obsidian via URI scheme
-  note <cmd> ...       Passa um comando para o Obsidian CLI (requer Obsidian 1.12+)
+  etl              Executa o pipeline ETL completo (dados, feeds, outbox, datasets)
+  export           Exporta notebooks para HTML empacotado
+  curate           Classifica feeds com IA (requer ANTHROPIC_API_KEY via dgk sow ou env)
+  evaluate [nota]  Avalia qualidade de escrita das notas (determinístico, sem API)
+
+Para abrir notebooks ou o Obsidian, use dgk open.
 
 Fluxo típico:
   dgk sow mastodon          → configura credenciais (uma vez)
   dgk lab etl               → processa dados do vault
-  dgk lab open publicar-thread → abre notebook de publicação
-  dgk lab open-vault        → abre o vault no Obsidian
+  dgk open publicar-thread  → abre notebook de publicação
+  dgk open obsidian         → abre o vault no Obsidian
 
 Exemplos:
   dgk lab etl
   dgk lab evaluate
   dgk lab evaluate "40 - Recursos/Jardim digital.md"
   dgk lab evaluate --profile ultra-rigor
-  dgk lab open analise-feeds
-  dgk lab open-vault
-  dgk lab note search query="jardim digital"`);
+  dgk lab export
+  dgk lab curate`);
 }
 
 async function evaluate(args, runner) {
@@ -81,21 +71,6 @@ async function etl(_args, runner) {
   await runner('node', ['scripts/prepare_lab_datasets.mjs']);
 }
 
-async function openNotebook(args, runner, root) {
-  const [name] = args;
-  if (!name) {
-    console.error('dgk lab open: informe o nome do notebook. Use dgk lab list para ver opções.');
-    process.exit(1);
-  }
-  const path = resolveNotebook(name, root);
-  if (!path) {
-    const available = listNotebooks(root).map((n) => `  ${n.name}`).join('\n');
-    console.error(`dgk lab open: notebook '${name}' não encontrado.\nDisponíveis:\n${available}`);
-    process.exit(1);
-  }
-  await runner('uv', ['run', 'marimo', 'edit', path]);
-}
-
 async function exportNotebooks(_args, runner) {
   await runner('node', ['scripts/export_notebooks.mjs']);
 }
@@ -110,62 +85,9 @@ async function curate(_args, runner) {
   ]);
 }
 
-async function list(_args, _runner, root) {
-  const notebooks = listNotebooks(root);
-  if (!notebooks.length) {
-    console.log('Nenhum notebook encontrado em', NOTEBOOKS_DIR);
-    return;
-  }
-  console.log(`Notebooks disponíveis em ${NOTEBOOKS_DIR}:\n`);
-  for (const { name, path } of notebooks) {
-    console.log(`  ${name.padEnd(30)} ${path}`);
-  }
-}
+const SUBCOMMANDS = { etl, export: exportNotebooks, curate, evaluate };
 
-async function openVault(args, _runner, launcher) {
-  const { detectObsidian, launchVault } = launcher ?? {
-    detectObsidian: _detectObsidian,
-    launchVault: _launchVault,
-  };
-  const vaultName = args[0] || vaultNameFromCwd();
-  const found = detectObsidian();
-  if (!found) {
-    const hint = INSTALL_HINTS[process.platform] ?? 'Instale o Obsidian em https://obsidian.md';
-    console.error(`dgk lab open-vault: Obsidian não encontrado.\n${hint}`);
-    process.exit(1);
-  }
-  await launchVault(vaultName);
-  console.log(`Abrindo vault '${vaultName}' no Obsidian...`);
-}
-
-async function note(args, runner, obsidianFinder) {
-  const finder = obsidianFinder ?? findObsidianCli;
-  if (!args.length) {
-    console.error('dgk lab note: informe um comando do Obsidian CLI (ex: search, read, create).');
-    console.error(`\n${OBSIDIAN_SETUP_HINT}`);
-    process.exit(1);
-  }
-  const cmd = await finder();
-  if (!cmd) {
-    console.error('dgk lab note: Obsidian CLI não encontrado ou Obsidian não está em execução.');
-    console.error(`\n${OBSIDIAN_SETUP_HINT}`);
-    process.exit(1);
-  }
-  await runner(cmd, args);
-}
-
-const SUBCOMMANDS = {
-  etl,
-  open: openNotebook,
-  export: exportNotebooks,
-  curate,
-  evaluate,
-  list,
-  'open-vault': openVault,
-  note,
-};
-
-export async function lab(args, runner = run, obsidianFinder, launcher, root) {
+export async function lab(args, runner = run) {
   injectSiloEnv();
   const [subcommand, ...rest] = args;
 
@@ -180,17 +102,5 @@ export async function lab(args, runner = run, obsidianFinder, launcher, root) {
     process.exit(1);
   }
 
-  if (subcommand === 'note') {
-    await note(rest, runner, obsidianFinder);
-  } else if (subcommand === 'open-vault') {
-    await openVault(rest, runner, launcher);
-  } else if (subcommand === 'open') {
-    await openNotebook(rest, runner, root);
-  } else if (subcommand === 'list') {
-    await list(rest, runner, root);
-  } else if (subcommand === 'evaluate') {
-    await evaluate(rest, runner);
-  } else {
-    await SUBCOMMANDS[subcommand](rest, runner);
-  }
+  await SUBCOMMANDS[subcommand](rest, runner);
 }

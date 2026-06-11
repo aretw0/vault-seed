@@ -12,6 +12,9 @@ importers:
         specifier: workspace:^
         version: link:packages/astro-plugins
     devDependencies:
+      '@aretw0/dgk-cli':
+        specifier: workspace:*
+        version: link:packages/cli
       '@astrojs/markdown-remark':
         specifier: ^7.2.0
         version: 7.2.0

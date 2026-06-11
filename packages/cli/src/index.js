@@ -5,10 +5,12 @@ import { lint } from './commands/lint.js';
 import { setup } from './commands/setup.js';
 import { check } from './commands/check.js';
 import { lab } from './commands/lab.js';
+import { open } from './commands/open.js';
+import { note } from './commands/note.js';
 import { publish } from './commands/publish.js';
 import { sow } from './commands/sow.js';
 
-const COMMANDS = { validate, lint, setup, check, lab, publish, sow };
+const COMMANDS = { validate, lint, setup, check, lab, open, note, publish, sow };
 
 export function resolveCommand(name) {
   return name in COMMANDS ? name : null;
