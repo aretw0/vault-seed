@@ -8,6 +8,7 @@ import {
   vaultNameFromCwd,
   INSTALL_HINTS,
 } from '../launcher.js';
+import { injectSiloEnv } from '../silo.js';
 
 const NOTEBOOKS_DIR = '99 - Meta e Anexos/Notebooks';
 const PRIVATE_FILES = new Set(['_lab_notebook_runtime.py']);
@@ -162,6 +163,7 @@ const SUBCOMMANDS = {
 };
 
 export async function lab(args, runner = run, obsidianFinder, launcher, root) {
+  injectSiloEnv();
   const [subcommand, ...rest] = args;
 
   if (!subcommand || subcommand === '--help' || subcommand === '-h') {

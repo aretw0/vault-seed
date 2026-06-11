@@ -24,10 +24,10 @@ Seu vault foi inicializado com sucesso. Aqui está um mapa rápido do que foi pr
 
 Seu vault segue o método PARA para organizar o conhecimento:
 
-- `10 - Projetos/` — trabalho ativo com prazo e objetivo
-- `20 - Áreas/` — responsabilidades contínuas sem prazo definido
-- `30 - Arquivo/` — material inativo para referência futura
+- `20 - Projetos/` — trabalho ativo com prazo e objetivo
+- `30 - Áreas/` — responsabilidades contínuas (blog, áreas de interesse)
 - `40 - Recursos/` — notas de conceitos e ferramentas (em rascunho — edite e publique o que fizer sentido)
+- `50 - Arquivo/` — material inativo para referência futura
 - `99 - Meta e Anexos/` — documentação do próprio vault
 
 ## Primeiros passos
