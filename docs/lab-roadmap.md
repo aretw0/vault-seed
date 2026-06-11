@@ -79,8 +79,10 @@ na fase 0.7.x como instância de produção corporativa.
 
 ### POC Readiness — vault-seed vs. Tema 3
 
-O Tema 3 descreve um "arcabouço modular para gestão soberana do conhecimento"
-com as seguintes capacidades. Status atual no vault-seed:
+O Tema 3 descreve um "arcabouço modular para gestão soberana do conhecimento".
+O texto do trabalho **não pode citar vault-seed nem rcdc5 pelo nome** — apresenta
+como POC anônima. Tudo que falta deve ser entregue no vault-seed para que a
+tradução para o texto seja fiel ao que foi construído.
 
 | Capacidade citada no Tema 3 | Status no vault-seed |
 | --- | --- |
@@ -92,13 +94,30 @@ com as seguintes capacidades. Status atual no vault-seed:
 | Classificação automática com regras | ✓ `curadoria-feeds-ia.py` (Claude API) |
 | Publicação local-first | ✓ Astro/Starlight site |
 | Governança editorial (manifesto) | ✓ `lab.notebooks.json` |
-| JSON-LD para interoperabilidade semântica | ✓ `grafo-do-vault.jsonld` (adicionado 2026-06-10) |
+| JSON-LD para interoperabilidade semântica | ✓ `grafo-do-vault.jsonld` |
 | Outbox multi-canal | ✓ Mastodon, Bluesky, newsletter, Instagram |
-| Orquestrador CLI | ✓ `dgk lab` (7 subcomandos) |
+| Orquestrador CLI | ✓ `dgk lab` (8 subcomandos + `dgk publish`) |
 | Obsidian + VS Code/Foam | ✓ `dgk lab open-vault` + `dgk lab note` |
+| Extensibilidade e distribuição de plugins | ✓ `packages/dgk-skills` + `dgk publish skill\|extension` |
+| Distribuições personalizadas (instâncias) | ✓ `initialize.yml` (rcdc5 é instância real) |
 
-**Conclusão:** vault-seed já cobre todas as capacidades descritas no Tema 3.
-O JSON-LD foi o último item faltante — adicionado nesta sessão.
+**Lacunas pendentes para fechar antes do texto:**
+
+- [x] `analise-grafo.py` e `analise-publicacao.py`: já usam `read_lab_dataset`
+      — `try/except` remanescente é I/O de arquivo individual (correto, não é
+      padrão de carregamento de dataset)
+- [x] Guia de criação de distribuição documentado em
+      `docs/creating-a-distribution.md` — cobre o fluxo `initialize.yml →
+      vault personalizado` que o texto cita como "distribuições personalizadas"
+- [ ] `dgk-skills`: publicar no npm antes do prazo para que a instalação
+      `pi install npm:@aretw0/dgk-skills` seja demonstrável no texto
+      (requer `npm publish --provenance` pelo mantenedor)
+
+**Não é responsabilidade do vault-seed** (são lacunas do refarm, lidas como
+referência):
+- Integração `nostr-tools` em `identity-nostr` (Tema 2)
+- Validação SQLite OPFS — ADR-015 (Tema 1)
+- Níveis de maturidade 3-4 do rcdc5 (distribuição real, read-only)
 
 ### Vocabulário Tema 3 (para uso em documentação e apresentações)
 
@@ -113,6 +132,30 @@ O JSON-LD foi o último item faltante — adicionado nesta sessão.
 | orquestrador | `dgk-cli` (`dgk lab etl/export/curate/...`) |
 | governança editorial | `lab.notebooks.json` + CI |
 | microkernel para conhecimento | estrutura mínima + módulos opcionais |
+
+### Convergência de ecossistema (vault-seed + agents-lab + refarm)
+
+O vault-seed é a **superfície de distribuição** do ecossistema. A convergência
+esperada segue três camadas:
+
+| Camada | Projeto | Papel no texto do prêmio |
+| --- | --- | --- |
+| Distribuição | vault-seed | "arcabouço modular" / "caixa de notas governável" |
+| Runtime de agentes | agents-lab (Pi) | "orquestrador de agentes com skills declarativas" |
+| Protocolo soberano | refarm (Tractor + Nostr) | "microkernel" / "identidade digital soberana" |
+
+**Naming futuro (pós-07/07/2026):** avaliar `vault-lab` ou `nostr-lab` como
+denominação do conjunto quando a integração Nostr estiver operacional.
+NÃO renomear o repo vault-seed antes da submissão do prêmio — o URL
+`github.com/aretw0/vault-seed` não pode mudar mid-process.
+
+**Caminho de convergência engine:**
+1. Hoje: `dgk-skills` declara `"pi": { "skills": [...] }` para o runtime Pi
+2. Quando refarm tiver runtime estável: adicionar `"refarm": { "skills": [...] }`
+   ao mesmo `package.json` — sem reescrever as SKILL.md (são Markdown puro)
+3. Refarm como engine canônico: `"pi"` vira campo legado; skills permanecem
+
+---
 
 ### Sobre anonimização (para o texto do trabalho)
 
@@ -169,6 +212,27 @@ O texto usa termos genéricos:
 - [x] `scripts/curate_feeds_ia.py` — headless CI, `continue-on-error: true`
 - [x] `refresh-lab-data.yml` — step de AI curation com `ANTHROPIC_API_KEY` opcional
 - [x] `defusedxml` substituindo `xml.etree.ElementTree` (XXE safety) em todos os pontos
+
+### Fase 6 — Extension Bridge (v0.4.0)
+
+- [x] `packages/vault-skills/` — pacote Pi (`@aretw0/dgk-skills`) com 5 skills declarativas
+      para agentes: `vault-context`, `vault-search`, `vault-read`, `vault-create`, `vault-daily`
+- [x] `dgk publish skill <nome>` — scaffold de pacote Pi de skill em `packages/<nome>/`
+- [x] `dgk publish extension <nome>` — scaffold de extensão Pi TypeScript em `packages/<nome>/`
+- [x] 7 testes de contrato para `scaffoldSkill` e `scaffoldExtension` (38 testes CLI no total)
+
+**Instalação:** `pi install npm:@aretw0/dgk-skills`
+
+**Caso de uso:** usuário cria skill a partir do próprio trabalho curado e publica:
+
+```bash
+dgk publish skill ocr-leitura
+# edita packages/ocr-leitura/skills/ocr-leitura/SKILL.md
+npm publish --provenance
+# → pi install npm:@aretw0/ocr-leitura
+```
+
+---
 
 ### dgk-cli
 
@@ -227,8 +291,8 @@ O texto usa termos genéricos:
 
 ### 5.4 Unificação de notebooks remanescentes
 
-- [ ] `analise-grafo.py` e `analise-publicacao.py` ainda usam `try/except` direto
-      para carregar dados — migrar para `read_lab_dataset`
+- [x] `analise-grafo.py` e `analise-publicacao.py`: usam `read_lab_dataset`
+      — padrão unificado concluído
 
 ---
 
