@@ -1,0 +1,30 @@
+{
+  "name": "@aretw0/dgk-skills",
+  "version": "0.1.0",
+  "description": "Pi skills para gerenciar um vault dgk — busca, leitura e criação de notas via Obsidian CLI",
+  "keywords": [
+    "pi-package",
+    "obsidian",
+    "vault",
+    "pkm",
+    "para"
+  ],
+  "pi": {
+    "skills": [
+      "skills/vault-context",
+      "skills/vault-search",
+      "skills/vault-read",
+      "skills/vault-create",
+      "skills/vault-daily"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aretw0/vault-seed.git",
+    "directory": "packages/dgk-skills"
+  },
+  "license": "GPL-3.0-only",
+  "publishConfig": {
+    "access": "public"
+  }
+}
