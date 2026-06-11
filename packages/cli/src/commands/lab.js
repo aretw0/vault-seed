@@ -46,6 +46,8 @@ Subcomandos:
   open-vault [nome]    Abre o vault no Obsidian via URI scheme
   note <cmd> ...       Passa um comando para o Obsidian CLI (requer Obsidian 1.12+)
 
+Veja também: dgk publish skill|extension <nome>  (cria pacotes Pi para o ecossistema)
+
 Exemplos:
   dgk lab etl
   dgk lab open analise-feeds

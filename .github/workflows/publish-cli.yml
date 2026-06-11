@@ -5,6 +5,7 @@ on:
     tags:
       - '@aretw0/dgk-cli@*'
       - '@aretw0/dgk-astro-plugins@*'
+      - '@aretw0/dgk-skills@*'
 
 permissions:
   contents: read
