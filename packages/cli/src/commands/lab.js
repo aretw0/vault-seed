@@ -39,16 +39,20 @@ function printHelp() {
   console.log(`dgk lab <subcomando> [opções]
 
 Subcomandos:
-  etl                  Executa o pipeline ETL (node direto, sem dependência de pnpm)
+  etl                  Executa o pipeline ETL completo (dados, feeds, outbox, datasets)
   open [notebook]      Abre um notebook no marimo (liste nomes com dgk lab list)
   export               Exporta notebooks para HTML empacotado
-  curate               Classifica feeds com Claude API (requer ANTHROPIC_API_KEY)
+  curate               Classifica feeds com IA (requer ANTHROPIC_API_KEY via dgk sow ou env)
   evaluate [nota]      Avalia qualidade de escrita das notas (determinístico, sem API)
   list                 Lista notebooks disponíveis
   open-vault [nome]    Abre o vault no Obsidian via URI scheme
   note <cmd> ...       Passa um comando para o Obsidian CLI (requer Obsidian 1.12+)
 
-Veja também: dgk publish skill|extension <nome>  (cria pacotes Pi para o ecossistema)
+Fluxo típico:
+  dgk sow mastodon          → configura credenciais (uma vez)
+  dgk lab etl               → processa dados do vault
+  dgk lab open publicar-thread → abre notebook de publicação
+  dgk lab open-vault        → abre o vault no Obsidian
 
 Exemplos:
   dgk lab etl
@@ -57,8 +61,7 @@ Exemplos:
   dgk lab evaluate --profile ultra-rigor
   dgk lab open analise-feeds
   dgk lab open-vault
-  dgk lab note search query="jardim digital"
-  dgk lab note create name="Nova nota" content="# Rascunho"`);
+  dgk lab note search query="jardim digital"`);
 }
 
 async function evaluate(args, runner) {

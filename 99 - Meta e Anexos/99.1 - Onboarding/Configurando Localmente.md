@@ -151,16 +151,18 @@ pnpm --version
 uv --version
 ```
 
-Depois rode a validação completa:
+Depois verifique o vault:
 
 ```bash
-pnpm run validate
+dgk check
 ```
 
-Resultado esperado: todos os checks terminam sem erro. A auditoria editorial
-pode mostrar avisos sobre notas curtas ou possíveis promoções de pasta; esses
-avisos orientam curadoria futura, mas não bloqueiam quando o comando termina
-com sucesso.
+Resultado esperado: onboarding, arquitetura de informação e checagem de texto
+terminam sem erro. Avisos sobre notas curtas ou promoções de pasta orientam
+curadoria futura mas não bloqueiam.
+
+> **Desenvolvedor do template:** use `pnpm run validate` para o pipeline
+> completo de CI (testes, lint, smoke de site, etc.).
 
 ---
 
