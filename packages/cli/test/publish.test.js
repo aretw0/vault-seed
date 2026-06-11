@@ -24,7 +24,7 @@ test('scaffoldSkill cria package.json com pi.skills', () => {
   );
   assert.deepEqual(pkg.pi.skills, ['skills/minha-skill']);
   assert.ok(pkg.keywords.includes('pi-package'), 'keywords deve incluir pi-package');
-  assert.equal(pkg.name, '@aretw0/minha-skill');
+  assert.equal(pkg.name, '@YOUR_NPM_USERNAME/minha-skill');
   assert.equal(pkg.version, '0.1.0');
 });
 
@@ -39,7 +39,7 @@ test('scaffoldSkill cria workflow de publicação em .github/workflows/', () => 
   const workflowPath = join(tmpDir, '.github', 'workflows', 'publish-minha-skill.yml');
   assert.ok(existsSync(workflowPath), 'workflow de publicação deve existir');
   const content = readFileSync(workflowPath, 'utf8');
-  assert.ok(content.includes('@aretw0/minha-skill@*'), 'workflow deve usar o padrão de tag correto');
+  assert.ok(content.includes('@YOUR_NPM_USERNAME/minha-skill@*'), 'workflow deve usar o padrão de tag correto');
   assert.ok(content.includes('NPM_TOKEN'), 'workflow deve referenciar NPM_TOKEN');
   assert.ok(content.includes('--provenance'), 'workflow deve publicar com provenance');
 });
@@ -82,7 +82,7 @@ test('scaffoldExtension cria workflow de publicação em .github/workflows/', ()
   const workflowPath = join(tmpDir, '.github', 'workflows', 'publish-minha-extensao.yml');
   assert.ok(existsSync(workflowPath), 'workflow de publicação deve existir');
   const content = readFileSync(workflowPath, 'utf8');
-  assert.ok(content.includes('@aretw0/minha-extensao@*'), 'workflow deve usar o padrão de tag correto');
+  assert.ok(content.includes('@YOUR_NPM_USERNAME/minha-extensao@*'), 'workflow deve usar o padrão de tag correto');
   assert.ok(content.includes('--provenance'), 'workflow deve publicar com provenance');
 });
 

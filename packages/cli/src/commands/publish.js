@@ -5,7 +5,7 @@ function skillPackageJson(name) {
   return (
     JSON.stringify(
       {
-        name: `@aretw0/${name}`,
+        name: `@YOUR_NPM_USERNAME/${name}`,
         version: '0.1.0',
         description: `Pi skill: ${name}`,
         keywords: ['pi-package'],
@@ -30,7 +30,7 @@ function extensionPackageJson(name) {
   return (
     JSON.stringify(
       {
-        name: `@aretw0/${name}`,
+        name: `@YOUR_NPM_USERNAME/${name}`,
         version: '0.1.0',
         description: `Pi extension: ${name}`,
         keywords: ['pi-package'],
@@ -96,6 +96,8 @@ export default function (pi: ExtensionAPI) {
 
 function publishWorkflowYml(name, packageName) {
   return `name: Publish ${name}
+# Triggered by: git tag ${packageName}@<version> && git push origin ${packageName}@<version>
+# Required secret: NPM_TOKEN (Settings → Secrets → Actions → New repository secret)
 
 on:
   push:
@@ -118,6 +120,26 @@ jobs:
         with:
           node-version: '22'
           registry-url: 'https://registry.npmjs.org'
+
+      - name: Preflight — verify configuration
+        working-directory: packages/${name}
+        env:
+          NODE_AUTH_TOKEN: \${{ secrets.NPM_TOKEN }}
+        run: |
+          set -euo pipefail
+          pkg_name=$(node -p "require('./package.json').name")
+          if echo "$pkg_name" | grep -q "YOUR_NPM_USERNAME"; then
+            echo "::error::O nome do pacote ainda contém o placeholder YOUR_NPM_USERNAME."
+            echo "::error::Edite packages/${name}/package.json e substitua @YOUR_NPM_USERNAME pelo seu usuário npm."
+            echo "::error::Depois atualize o padrão de tag neste workflow para refletir o novo nome."
+            exit 1
+          fi
+          if [ -z "\${NODE_AUTH_TOKEN:-}" ]; then
+            echo "::error::O secret NPM_TOKEN não está configurado neste repositório."
+            echo "::error::Adicione em: Settings → Secrets and variables → Actions → New repository secret"
+            echo "::error::Gere o token em: npmjs.com → seu perfil → Access Tokens → Generate New Token (Automation)"
+            exit 1
+          fi
 
       - name: Publish
         run: npm publish --provenance --access public
@@ -143,7 +165,7 @@ export function scaffoldSkill(name, root = process.cwd()) {
   if (existsSync(packageDir)) {
     throw new Error(`pacote '${name}' já existe em packages/${name}`);
   }
-  const packageName = `@aretw0/${name}`;
+  const packageName = `@YOUR_NPM_USERNAME/${name}`;
   mkdirSync(join(packageDir, 'skills', name), { recursive: true });
   writeFileSync(join(packageDir, 'package.json'), skillPackageJson(name), 'utf8');
   writeFileSync(join(packageDir, 'skills', name, 'SKILL.md'), skillMd(name), 'utf8');
@@ -156,7 +178,7 @@ export function scaffoldExtension(name, root = process.cwd()) {
   if (existsSync(packageDir)) {
     throw new Error(`pacote '${name}' já existe em packages/${name}`);
   }
-  const packageName = `@aretw0/${name}`;
+  const packageName = `@YOUR_NPM_USERNAME/${name}`;
   mkdirSync(join(packageDir, 'src'), { recursive: true });
   writeFileSync(join(packageDir, 'package.json'), extensionPackageJson(name), 'utf8');
   writeFileSync(join(packageDir, 'src', 'index.ts'), extensionTs(name), 'utf8');
@@ -196,21 +218,30 @@ export async function publish(args) {
     process.exit(1);
   }
 
+  const steps = (artifact) => `
+Próximos passos obrigatórios antes de publicar:
+
+  1. Edite ${artifact}
+  2. Substitua @YOUR_NPM_USERNAME em packages/${name}/package.json pelo seu usuário npm
+  3. Atualize o padrão de tag em .github/workflows/publish-${name}.yml para refletir o nome
+  4. Adicione NPM_TOKEN nos secrets do repositório:
+       github.com → Settings → Secrets and variables → Actions → New repository secret
+  5. Faça commit de tudo, depois crie e envie a tag:
+       git tag @SEU_USUARIO/${name}@0.1.0
+       git push origin @SEU_USUARIO/${name}@0.1.0
+
+O workflow no CI verificará a configuração antes de publicar e mostrará
+erros claros se algo estiver faltando.`;
+
   try {
     if (type === 'skill') {
       scaffoldSkill(name);
       console.log(`✓ Skill criada em packages/${name}/`);
-      console.log(`  Edite packages/${name}/skills/${name}/SKILL.md`);
-      console.log(`  Workflow de publicação: .github/workflows/publish-${name}.yml`);
-      console.log(`  Atualize o namespace npm em package.json e no workflow, depois:`);
-      console.log(`    git tag @aretw0/${name}@0.1.0 && git push origin @aretw0/${name}@0.1.0`);
+      console.log(steps(`packages/${name}/skills/${name}/SKILL.md`));
     } else {
       scaffoldExtension(name);
       console.log(`✓ Extensão criada em packages/${name}/`);
-      console.log(`  Edite packages/${name}/src/index.ts`);
-      console.log(`  Workflow de publicação: .github/workflows/publish-${name}.yml`);
-      console.log(`  Atualize o namespace npm em package.json e no workflow, depois:`);
-      console.log(`    git tag @aretw0/${name}@0.1.0 && git push origin @aretw0/${name}@0.1.0`);
+      console.log(steps(`packages/${name}/src/index.ts`));
     }
   } catch (err) {
     console.error(`dgk publish: ${err.message}`);
