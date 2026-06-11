@@ -28,30 +28,47 @@ export function resolveNotebook(nameOrPath, root = process.cwd()) {
   return partial.length === 1 ? partial[0].path : null;
 }
 
-function printHelp() {
-  console.log(`dgk lab <subcomando> [opções]
+function printHelp(root) {
+  const notebooks = listNotebooks(root);
+  const notebookList = notebooks.length
+    ? notebooks.map((n) => `  ${n.name}`).join('\n')
+    : '  (nenhum notebook encontrado)';
 
-Subcomandos:
-  etl              Executa o pipeline ETL completo (dados, feeds, outbox, datasets)
+  console.log(`dgk lab [notebook | subcomando] [opções]
+
+O laboratório: notebooks de exploração e pipeline de dados.
+
+Notebooks disponíveis:
+${notebookList}
+
+Subcomandos de pipeline:
+  etl              Executa o pipeline ETL (dados, feeds, outbox, datasets)
   export           Exporta notebooks para HTML empacotado
-  curate           Classifica feeds com IA (requer ANTHROPIC_API_KEY via dgk sow ou env)
-  evaluate [nota]  Avalia qualidade de escrita das notas (determinístico, sem API)
-
-Para abrir notebooks ou o Obsidian, use dgk open.
+  curate           Classifica feeds com IA (requer ANTHROPIC_API_KEY via dgk sow)
+  evaluate [nota]  Avalia qualidade de escrita (determinístico, sem API)
 
 Fluxo típico:
   dgk sow mastodon          → configura credenciais (uma vez)
   dgk lab etl               → processa dados do vault
-  dgk open publicar-thread  → abre notebook de publicação
-  dgk open obsidian         → abre o vault no Obsidian
+  dgk lab publicar-thread   → abre o notebook de publicação
+  dgk obsidian              → abre o vault no Obsidian
 
 Exemplos:
+  dgk lab analise-feeds
   dgk lab etl
   dgk lab evaluate
   dgk lab evaluate "40 - Recursos/Jardim digital.md"
-  dgk lab evaluate --profile ultra-rigor
-  dgk lab export
-  dgk lab curate`);
+  dgk lab evaluate --profile ultra-rigor`);
+}
+
+async function openNotebook(name, runner, root) {
+  const path = resolveNotebook(name, root);
+  if (!path) {
+    const available = listNotebooks(root).map((n) => `  ${n.name}`).join('\n');
+    console.error(`dgk lab: notebook '${name}' não encontrado.\nDisponíveis:\n${available}`);
+    process.exit(1);
+  }
+  await runner('uv', ['run', 'marimo', 'edit', path]);
 }
 
 async function evaluate(args, runner) {
@@ -85,22 +102,22 @@ async function curate(_args, runner) {
   ]);
 }
 
-const SUBCOMMANDS = { etl, export: exportNotebooks, curate, evaluate };
+const PIPELINE_COMMANDS = { etl, export: exportNotebooks, curate, evaluate };
 
-export async function lab(args, runner = run) {
+export async function lab(args, runner = run, root) {
   injectSiloEnv();
   const [subcommand, ...rest] = args;
 
   if (!subcommand || subcommand === '--help' || subcommand === '-h') {
-    printHelp();
+    printHelp(root);
     return;
   }
 
-  if (!(subcommand in SUBCOMMANDS)) {
-    console.error(`dgk lab: subcomando desconhecido '${subcommand}'`);
-    printHelp();
-    process.exit(1);
+  if (subcommand in PIPELINE_COMMANDS) {
+    await PIPELINE_COMMANDS[subcommand](rest, runner);
+    return;
   }
 
-  await SUBCOMMANDS[subcommand](rest, runner);
+  // Anything else is treated as a notebook name
+  await openNotebook(subcommand, runner, root);
 }

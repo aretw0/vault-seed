@@ -8,8 +8,9 @@ test('resolveCommand retorna o nome para comandos conhecidos', () => {
   assert.equal(resolveCommand('setup'), 'setup');
   assert.equal(resolveCommand('check'), 'check');
   assert.equal(resolveCommand('lab'), 'lab');
-  assert.equal(resolveCommand('open'), 'open');
+  assert.equal(resolveCommand('obsidian'), 'obsidian');
   assert.equal(resolveCommand('note'), 'note');
+  assert.equal(resolveCommand('open'), null);
   assert.equal(resolveCommand('publish'), 'publish');
   assert.equal(resolveCommand('sow'), 'sow');
   assert.equal(resolveCommand('release'), null);

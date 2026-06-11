@@ -7,12 +7,12 @@ import { lint } from './commands/lint.js';
 import { setup } from './commands/setup.js';
 import { check } from './commands/check.js';
 import { lab } from './commands/lab.js';
-import { open } from './commands/open.js';
+import { obsidian } from './commands/obsidian.js';
 import { note } from './commands/note.js';
 import { publish } from './commands/publish.js';
 import { sow } from './commands/sow.js';
 
-const COMMANDS = { validate, lint, setup, check, lab, open, note, publish, sow };
+const COMMANDS = { validate, lint, setup, check, lab, obsidian, note, publish, sow };
 
 export function resolveCommand(name) {
   return name in COMMANDS ? name : null;
@@ -41,7 +41,7 @@ Comandos:
   check              Verifica a saúde do vault (onboarding, IA, texto)
   lint               Valida o markdown do vault
   sow                Configura credenciais de publicação (~/.dgk/silo.json)
-  open <alvo>        Abre um notebook (marimo) ou o vault (obsidian)
+  obsidian [nome]    Abre o vault no Obsidian
   note <cmd>         Executa um comando no Obsidian CLI
   lab <sub>          Pipeline de dados: etl, curate, evaluate, export
   publish <sub>      Publica skills e extensões no npm

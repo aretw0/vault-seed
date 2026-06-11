@@ -119,23 +119,39 @@ test('lab evaluate com --profile passa o perfil ao script', async () => {
   assert.equal(args[profileIdx + 1], 'ultra-rigor');
 });
 
-test('lab rejeita subcomandos removidos (open, note, list, open-vault)', async () => {
-  for (const removed of ['open', 'note', 'list', 'open-vault']) {
-    const { runner } = captureRun();
-    await assert.rejects(
-      async () => {
-        const origExit = process.exit;
-        process.exit = (code) => { throw new Error(`exit:${code}`); };
-        try {
-          await lab([removed], runner);
-        } finally {
-          process.exit = origExit;
-        }
-      },
-      (err) => {
-        assert.ok(err.message.startsWith('exit:'), `lab ${removed} deve chamar process.exit`);
-        return true;
-      },
-    );
-  }
+// --- lab <notebook> como ação primária ---
+
+test('lab <nome-curto> abre notebook pelo nome via marimo', async () => {
+  const { calls, runner } = captureRun();
+  await lab(['etl-demo'], runner, VAULT_ROOT);
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].cmd, 'uv');
+  assert.ok(calls[0].args.includes('marimo'), 'deve usar marimo');
+  assert.ok(calls[0].args.some((a) => a.includes('etl-demo.py')), 'deve referenciar o notebook');
+});
+
+test('lab <nome-parcial> resolve por match único', async () => {
+  const { calls, runner } = captureRun();
+  await lab(['leitura'], runner, VAULT_ROOT);
+  assert.equal(calls[0].cmd, 'uv');
+  assert.ok(calls[0].args.some((a) => a.includes('leitura.py')));
+});
+
+test('lab <nome-inexistente> chama process.exit', async () => {
+  const { runner } = captureRun();
+  await assert.rejects(
+    async () => {
+      const origExit = process.exit;
+      process.exit = (code) => { throw new Error(`exit:${code}`); };
+      try {
+        await lab(['notebook-que-nao-existe'], runner, VAULT_ROOT);
+      } finally {
+        process.exit = origExit;
+      }
+    },
+    (err) => {
+      assert.ok(err.message.startsWith('exit:'));
+      return true;
+    },
+  );
 });
