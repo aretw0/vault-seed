@@ -1,6 +1,6 @@
 ---
 title: O que é o método PARA
-status: published
+status: draft
 category: conceito
 audience: iniciante
 tags:

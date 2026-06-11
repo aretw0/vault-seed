@@ -4,15 +4,7 @@ tags:
   - pkm/publicacao
   - recurso/ferramenta
   - meta/documentacao
-status: published
-publicationStatus: published
-outbox: true
-channels:
-  - site
-  - rss
-  - newsletter
-canonical_url: /recursos/o-que-e-publicacao-multi-canal
-published_at: 2026-05-01
+status: draft
 category: conceito
 audience: todos
 ---

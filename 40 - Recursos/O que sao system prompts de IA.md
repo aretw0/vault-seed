@@ -8,7 +8,7 @@ tags:
   - meta/documentacao
   - ia/configuracao
   - recurso/ferramenta
-status: published
+status: draft
 created: 2025-11-20
 updated: 2026-05-18
 category: conceito

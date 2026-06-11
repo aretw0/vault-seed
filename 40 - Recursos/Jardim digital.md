@@ -3,16 +3,7 @@ title: Jardim digital
 tags:
   - pkm/conceito
   - recurso/ferramenta
-status: ready
-publicationStatus: ready
-outbox: true
-channels:
-  - site
-  - rss
-  - mastodon
-  - bluesky
-  - instagram
-canonical_url: /recursos/jardim-digital
+status: draft
 category: conceito
 audience: todos
 ---

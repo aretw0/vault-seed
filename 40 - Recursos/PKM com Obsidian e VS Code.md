@@ -6,11 +6,6 @@ tags:
   - vscode
   - recurso/ferramenta
 status: draft
-publicationStatus: draft
-outbox: true
-channels:
-  - site
-  - newsletter
 category: conceito
 audience: todos
 ---

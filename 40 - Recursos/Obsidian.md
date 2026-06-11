@@ -4,7 +4,7 @@ tags:
   - ferramenta
   - obsidian
   - recurso/ferramenta
-status: published
+status: draft
 created: 2026-05-18
 updated: 2026-05-26
 category: ferramenta

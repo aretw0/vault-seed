@@ -1,6 +1,6 @@
 ---
 title: Filosofia e Conceitos Fundamentais
-status: published
+status: draft
 category: conceito
 audience: iniciante
 tags:
