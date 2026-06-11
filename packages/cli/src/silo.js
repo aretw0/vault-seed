@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 
@@ -39,8 +39,13 @@ export function loadSilo(siloPath = SILO_PATH) {
 }
 
 export function saveSilo(silo, siloPath = SILO_PATH) {
-  mkdirSync(dirname(siloPath), { recursive: true });
-  writeFileSync(siloPath, JSON.stringify(silo, null, 2) + '\n', 'utf8');
+  const dir = dirname(siloPath);
+  mkdirSync(dir, { recursive: true, mode: 0o700 });
+  // chmod explicitly: recursive mkdir does not apply mode to pre-existing dirs
+  try { chmodSync(dir, 0o700); } catch { /* no-op on Windows */ }
+  writeFileSync(siloPath, JSON.stringify(silo, null, 2) + '\n', { encoding: 'utf8', mode: 0o600 });
+  // chmod after write: mode in writeFileSync only applies on creation, not overwrite
+  try { chmodSync(siloPath, 0o600); } catch { /* no-op on Windows */ }
 }
 
 export function saveTokens(tokens, siloPath = SILO_PATH) {
