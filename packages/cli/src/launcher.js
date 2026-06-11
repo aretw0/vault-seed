@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs';
 import { join, basename } from 'node:path';
 import { spawn } from 'node:child_process';
 
-const { LOCALAPPDATA, HOME } = process.env;
+const { LOCALAPPDATA, USERPROFILE, HOME } = process.env;
 
 const PLATFORM_PATHS = {
   darwin: [
@@ -16,22 +16,34 @@ const PLATFORM_PATHS = {
           join(LOCALAPPDATA, 'Programs', 'Obsidian', 'Obsidian.exe'),
         ]
       : []),
+    // Scoop installation
+    ...(USERPROFILE
+      ? [join(USERPROFILE, 'scoop', 'apps', 'obsidian', 'current', 'Obsidian.exe')]
+      : []),
   ],
   linux: [
     '/snap/bin/obsidian',
     '/usr/bin/obsidian',
     '/usr/local/bin/obsidian',
-    ...(HOME ? [`${HOME}/.local/bin/obsidian`] : []),
+    ...(HOME
+      ? [
+          `${HOME}/.local/bin/obsidian`,
+          // AppImage — common user-level install location
+          `${HOME}/Applications/Obsidian.AppImage`,
+          `${HOME}/.local/share/applications/Obsidian.AppImage`,
+        ]
+      : []),
   ],
 };
 
 /**
  * Returns { path, platform } when Obsidian is found, or null.
- * The `platform` param exists for testing; defaults to process.platform.
+ * @param {string} platform - defaults to process.platform
+ * @param {(path: string) => boolean} existsChecker - injectable for tests; defaults to existsSync
  */
-export function detectObsidian(platform = process.platform) {
+export function detectObsidian(platform = process.platform, existsChecker = existsSync) {
   const paths = PLATFORM_PATHS[platform] ?? [];
-  const found = paths.find((p) => existsSync(p));
+  const found = paths.find((p) => existsChecker(p));
   return found ? { path: found, platform } : null;
 }
 

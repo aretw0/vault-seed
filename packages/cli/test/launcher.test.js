@@ -1,33 +1,75 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { join } from 'node:path';
 import { detectObsidian, vaultNameFromCwd, INSTALL_HINTS } from '../src/launcher.js';
 
+// existsChecker that returns true only for a specific set of paths
+function checkerFor(...existingPaths) {
+  const set = new Set(existingPaths.map((p) => p.replace(/\\/g, '/')));
+  return (p) => set.has(p.replace(/\\/g, '/'));
+}
+
+const neverExists = () => false;
+
 test('detectObsidian retorna null em plataforma sem paths configurados', () => {
-  const result = detectObsidian('freebsd');
-  assert.equal(result, null);
+  assert.equal(detectObsidian('freebsd', neverExists), null);
 });
 
-test('detectObsidian retorna null quando nenhum path existe na plataforma alvo', () => {
-  // Use a real platform but with paths that won't exist in test env
-  const result = detectObsidian('darwin');
-  // May be null (no Obsidian installed) or { path, platform }
-  if (result !== null) {
-    assert.ok('path' in result, 'deve ter path');
-    assert.ok('platform' in result, 'deve ter platform');
-    assert.equal(result.platform, 'darwin');
-    assert.ok(typeof result.path === 'string' && result.path.length > 0);
-  } else {
-    assert.equal(result, null);
-  }
+test('detectObsidian retorna null quando nenhum path existe', () => {
+  assert.equal(detectObsidian('darwin', neverExists), null);
+  assert.equal(detectObsidian('win32', neverExists), null);
+  assert.equal(detectObsidian('linux', neverExists), null);
 });
 
-test('detectObsidian retorna objeto com platform correto quando instalado', () => {
+test('detectObsidian encontra Obsidian no path padrão macOS', () => {
+  const result = detectObsidian('darwin', checkerFor('/Applications/Obsidian.app'));
+  assert.ok(result !== null);
+  assert.equal(result.platform, 'darwin');
+  assert.equal(result.path, '/Applications/Obsidian.app');
+});
+
+test('detectObsidian encontra Obsidian via LOCALAPPDATA no Windows', () => {
+  const { LOCALAPPDATA } = process.env;
+  if (!LOCALAPPDATA) return; // skip when env not set
+  // join imported at top of file
+  const expected = join(LOCALAPPDATA, 'Obsidian', 'Obsidian.exe');
+  const result = detectObsidian('win32', checkerFor(expected));
+  assert.ok(result !== null, 'deve encontrar via LOCALAPPDATA');
+  assert.equal(result.platform, 'win32');
+});
+
+test('detectObsidian encontra Obsidian via Scoop no Windows', () => {
+  const { USERPROFILE } = process.env;
+  if (!USERPROFILE) return;
+  // join imported at top of file
+  const scoopPath = join(USERPROFILE, 'scoop', 'apps', 'obsidian', 'current', 'Obsidian.exe');
+  const result = detectObsidian('win32', checkerFor(scoopPath));
+  assert.ok(result !== null, 'deve encontrar via Scoop');
+  assert.equal(result.path.toLowerCase(), scoopPath.toLowerCase());
+});
+
+test('detectObsidian encontra Obsidian via snap no Linux', () => {
+  const result = detectObsidian('linux', checkerFor('/snap/bin/obsidian'));
+  assert.ok(result !== null);
+  assert.equal(result.path, '/snap/bin/obsidian');
+});
+
+test('detectObsidian encontra Obsidian AppImage no Linux', () => {
+  const { HOME } = process.env;
+  if (!HOME) return;
+  const appImagePath = `${HOME}/Applications/Obsidian.AppImage`;
+  const result = detectObsidian('linux', checkerFor(appImagePath));
+  assert.ok(result !== null, 'deve encontrar AppImage');
+  assert.equal(result.path, appImagePath);
+});
+
+test('detectObsidian retorna objeto com platform correto quando instalado (ambiente real)', () => {
+  // Smoke test against real filesystem — null is valid in CI
   const result = detectObsidian(process.platform);
   if (result !== null) {
     assert.equal(result.platform, process.platform);
     assert.ok(typeof result.path === 'string');
   }
-  // null is valid — Obsidian may not be installed in CI
 });
 
 test('vaultNameFromCwd extrai nome da pasta de um caminho absoluto', () => {

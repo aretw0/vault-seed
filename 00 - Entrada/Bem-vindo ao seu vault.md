@@ -3,6 +3,8 @@ title: Bem-vindo ao seu vault
 tags:
   - meta/onboarding
 status: published
+category: guia
+audience: todos
 ---
 
 # Bem-vindo ao seu vault
