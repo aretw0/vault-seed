@@ -42,6 +42,7 @@ Subcomandos:
   open [notebook]      Abre um notebook no marimo (liste nomes com dgk lab list)
   export               Exporta notebooks para HTML empacotado
   curate               Classifica feeds com Claude API (requer ANTHROPIC_API_KEY)
+  evaluate [nota]      Avalia qualidade de escrita das notas (determinístico, sem API)
   list                 Lista notebooks disponíveis
   open-vault [nome]    Abre o vault no Obsidian via URI scheme
   note <cmd> ...       Passa um comando para o Obsidian CLI (requer Obsidian 1.12+)
@@ -50,10 +51,23 @@ Veja também: dgk publish skill|extension <nome>  (cria pacotes Pi para o ecossi
 
 Exemplos:
   dgk lab etl
+  dgk lab evaluate
+  dgk lab evaluate "40 - Recursos/Jardim digital.md"
+  dgk lab evaluate --profile ultra-rigor
   dgk lab open analise-feeds
   dgk lab open-vault
   dgk lab note search query="jardim digital"
   dgk lab note create name="Nova nota" content="# Rascunho"`);
+}
+
+async function evaluate(args, runner) {
+  const noteArg = args.find((a) => !a.startsWith('--'));
+  const profileIdx = args.indexOf('--profile');
+  const profile = profileIdx !== -1 ? args[profileIdx + 1] : null;
+  const pyArgs = ['scripts/avaliar_textos.py'];
+  if (noteArg) pyArgs.push('--note', noteArg);
+  if (profile) pyArgs.push('--profile', profile);
+  await runner('uv', ['run', 'python', ...pyArgs]);
 }
 
 async function etl(_args, runner) {
@@ -141,6 +155,7 @@ const SUBCOMMANDS = {
   open: openNotebook,
   export: exportNotebooks,
   curate,
+  evaluate,
   list,
   'open-vault': openVault,
   note,
@@ -168,6 +183,8 @@ export async function lab(args, runner = run, obsidianFinder, launcher, root) {
     await openNotebook(rest, runner, root);
   } else if (subcommand === 'list') {
     await list(rest, runner, root);
+  } else if (subcommand === 'evaluate') {
+    await evaluate(rest, runner);
   } else {
     await SUBCOMMANDS[subcommand](rest, runner);
   }
