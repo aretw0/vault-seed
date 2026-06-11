@@ -5,8 +5,11 @@ set -euo pipefail
 
 REQUIRED_NODE_MAJOR=22
 
-echo "dgk — Digital Gardening Kit"
-echo "----------------------------"
+echo "╭─────────────────────────────╮"
+echo "│             dgk             │"
+echo "│   digital gardening kit     │"
+echo "╰─────────────────────────────╯"
+echo ""
 
 # Check Node.js
 if ! command -v node &>/dev/null; then

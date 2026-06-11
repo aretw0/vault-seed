@@ -5,8 +5,11 @@ $ErrorActionPreference = 'Stop'
 
 $RequiredNodeMajor = 22
 
-Write-Host "dgk — Digital Gardening Kit"
-Write-Host "----------------------------"
+Write-Host "╭─────────────────────────────╮"
+Write-Host "│             dgk             │"
+Write-Host "│   digital gardening kit     │"
+Write-Host "╰─────────────────────────────╯"
+Write-Host ""
 
 # Check Node.js
 $nodeCmd = Get-Command node -ErrorAction SilentlyContinue

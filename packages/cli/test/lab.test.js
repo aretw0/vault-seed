@@ -13,9 +13,6 @@ function captureRun() {
   return { calls, runner };
 }
 
-const obsidianFound = async () => 'obsidian';
-const obsidianNotFound = async () => null;
-
 // --- listNotebooks ---
 
 test('listNotebooks retorna array vazio quando diretório não existe', () => {
@@ -65,7 +62,7 @@ test('resolveNotebook retorna null para nome desconhecido', () => {
   assert.equal(path, null);
 });
 
-// --- lab subcommands ---
+// --- lab pipeline subcommands ---
 
 test('lab etl chama os 4 scripts do pipeline via node', async () => {
   const { calls, runner } = captureRun();
@@ -92,99 +89,6 @@ test('lab curate chama uv run com anthropic e defusedxml', async () => {
   assert.ok(calls[0].args.includes('defusedxml'), 'deve incluir defusedxml');
   assert.ok(calls[0].args.some((a) => a.includes('curate_feeds_ia.py')), 'deve referenciar o script');
 });
-
-test('lab list não chama runner (apenas imprime)', async () => {
-  const { calls, runner } = captureRun();
-  await lab(['list'], runner, undefined, undefined, VAULT_ROOT);
-  assert.equal(calls.length, 0);
-});
-
-test('lab open abre notebook pelo nome curto', async () => {
-  const { calls, runner } = captureRun();
-  await lab(['open', 'etl-demo'], runner, undefined, undefined, VAULT_ROOT);
-  assert.equal(calls.length, 1);
-  assert.equal(calls[0].cmd, 'uv');
-  assert.ok(calls[0].args.includes('marimo'), 'deve usar marimo');
-  assert.ok(calls[0].args.some((a) => a.includes('etl-demo.py')), 'deve referenciar o notebook');
-});
-
-test('lab note passa args para obsidian quando disponível', async () => {
-  const { calls, runner } = captureRun();
-  await lab(['note', 'search', 'query=pkm'], runner, obsidianFound);
-  assert.deepEqual(calls, [{ cmd: 'obsidian', args: ['search', 'query=pkm'] }]);
-});
-
-test('lab note usa o caminho completo quando findObsidianCli retorna path absoluto', async () => {
-  const { calls, runner } = captureRun();
-  const fullPath = async () => '/usr/bin/obsidian';
-  await lab(['note', 'tags', 'total'], runner, fullPath);
-  assert.deepEqual(calls, [{ cmd: '/usr/bin/obsidian', args: ['tags', 'total'] }]);
-});
-
-test('lab note falha quando Obsidian não está disponível', async () => {
-  const { runner } = captureRun();
-  await assert.rejects(
-    async () => {
-      // Intercept process.exit to throw instead
-      const origExit = process.exit;
-      process.exit = (code) => { throw new Error(`exit:${code}`); };
-      try {
-        await lab(['note', 'search', 'query=pkm'], runner, obsidianNotFound);
-      } finally {
-        process.exit = origExit;
-      }
-    },
-    (err) => {
-      assert.ok(err.message.startsWith('exit:'), 'deve chamar process.exit');
-      return true;
-    },
-  );
-});
-
-// --- lab open-vault ---
-
-function mockLauncher(found, launched = []) {
-  return {
-    detectObsidian: () => (found ? { path: '/usr/bin/obsidian', platform: 'linux' } : null),
-    launchVault: async (name) => { launched.push(name); },
-  };
-}
-
-test('lab open-vault abre o vault pelo nome do cwd quando sem args', async () => {
-  const launched = [];
-  const { runner } = captureRun();
-  await lab(['open-vault'], runner, undefined, mockLauncher(true, launched));
-  assert.equal(launched.length, 1);
-  assert.ok(typeof launched[0] === 'string' && launched[0].length > 0);
-});
-
-test('lab open-vault abre o vault pelo nome passado como arg', async () => {
-  const launched = [];
-  const { runner } = captureRun();
-  await lab(['open-vault', 'meu-vault'], runner, undefined, mockLauncher(true, launched));
-  assert.equal(launched[0], 'meu-vault');
-});
-
-test('lab open-vault falha quando Obsidian não está instalado', async () => {
-  const { runner } = captureRun();
-  await assert.rejects(
-    async () => {
-      const origExit = process.exit;
-      process.exit = (code) => { throw new Error(`exit:${code}`); };
-      try {
-        await lab(['open-vault'], runner, undefined, mockLauncher(false));
-      } finally {
-        process.exit = origExit;
-      }
-    },
-    (err) => {
-      assert.ok(err.message.startsWith('exit:'), 'deve chamar process.exit');
-      return true;
-    },
-  );
-});
-
-// --- lab evaluate ---
 
 test('lab evaluate chama uv run python scripts/avaliar_textos.py sem args extras', async () => {
   const { calls, runner } = captureRun();
@@ -215,21 +119,23 @@ test('lab evaluate com --profile passa o perfil ao script', async () => {
   assert.equal(args[profileIdx + 1], 'ultra-rigor');
 });
 
-test('lab note falha sem argumentos mesmo com Obsidian disponível', async () => {
-  const { runner } = captureRun();
-  await assert.rejects(
-    async () => {
-      const origExit = process.exit;
-      process.exit = (code) => { throw new Error(`exit:${code}`); };
-      try {
-        await lab(['note'], runner, obsidianFound);
-      } finally {
-        process.exit = origExit;
-      }
-    },
-    (err) => {
-      assert.ok(err.message.startsWith('exit:'));
-      return true;
-    },
-  );
+test('lab rejeita subcomandos removidos (open, note, list, open-vault)', async () => {
+  for (const removed of ['open', 'note', 'list', 'open-vault']) {
+    const { runner } = captureRun();
+    await assert.rejects(
+      async () => {
+        const origExit = process.exit;
+        process.exit = (code) => { throw new Error(`exit:${code}`); };
+        try {
+          await lab([removed], runner);
+        } finally {
+          process.exit = origExit;
+        }
+      },
+      (err) => {
+        assert.ok(err.message.startsWith('exit:'), `lab ${removed} deve chamar process.exit`);
+        return true;
+      },
+    );
+  }
 });

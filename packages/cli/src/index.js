@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { fileURLToPath, URL } from 'node:url';
 import { readFileSync } from 'node:fs';
+import { printBanner } from './brand.js';
 import { validate } from './commands/validate.js';
 import { lint } from './commands/lint.js';
 import { setup } from './commands/setup.js';
@@ -31,8 +32,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   }
 
   if (!command || command === '--help' || command === '-h') {
-    console.log(`dgk v${getVersion()} — Digital Gardening Kit
-
+    printBanner(getVersion());
+    console.log(`
 Uso: dgk <comando> [opções]
 
 Comandos:
