@@ -15,7 +15,8 @@
       "skills/vault-search",
       "skills/vault-read",
       "skills/vault-create",
-      "skills/vault-daily"
+      "skills/vault-daily",
+      "skills/vault-evaluate"
     ]
   },
   "repository": {

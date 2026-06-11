@@ -63,6 +63,15 @@
     "publish": true
   },
   {
+    "id": "qualidade-textos",
+    "title": "Qualidade de escrita",
+    "description": "Relatório determinístico de vícios de escrita por nota: repetições, aberturas mecânicas, frases longas e artefatos sintéticos",
+    "source": "dados/lab/qualidade-textos.json",
+    "output": "qualidade-textos.json",
+    "format": "json",
+    "publish": true
+  },
+  {
     "id": "json-remoto-opcional",
     "title": "JSON remoto opcional",
     "description": "Exemplo de fonte que um notebook WASM pode carregar no navegador quando houver CORS e rede",
