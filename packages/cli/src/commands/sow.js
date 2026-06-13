@@ -12,8 +12,7 @@ function prompt(question, rlFactory = createInterface) {
   });
 }
 
-// TTY path: raw mode + '*' per keypress so the user sees typed/pasted length.
-// On Enter, the line is replaced with question + '••••••••tail'.
+// TTY path: raw mode + '*' per keypress; on Enter shows '••••••••tail' on next line.
 // Non-TTY path (tests, piped input): muted readline with same tail feedback.
 export function promptSecret(question, writeFn = (s) => process.stdout.write(s), rlFactory = createInterface) {
   return new Promise((resolve) => {
@@ -26,35 +25,39 @@ export function promptSecret(question, writeFn = (s) => process.stdout.write(s),
       process.stdin.setEncoding('utf8');
 
       let value = '';
+      let done = false;
 
-      const onData = (char) => {
-        if (char === '\r' || char === '\n') {
-          process.stdin.setRawMode(wasRaw ?? false);
-          process.stdin.pause();
-          process.stdin.removeListener('data', onData);
-          process.stdout.write('\r\x1b[K'); // clear the question + stars
-          const tail = value.length > 4 ? value.slice(-4) : '';
-          const dots = '•'.repeat(value.length > 4 ? 8 : value.length);
-          writeFn(`${question}${dots}${tail}\n`);
-          resolve(value);
-        } else if (char === '') { // Ctrl+C
-          process.stdin.setRawMode(wasRaw ?? false);
-          process.stdin.pause();
-          process.stdin.removeListener('data', onData);
-          writeFn('\n');
-          process.exit(130);
-        } else if (char === '' || char === '\b') { // backspace
-          if (value.length > 0) {
-            value = value.slice(0, -1);
-            process.stdout.write('\b \b');
-          }
-        } else {
-          for (const c of char) { // handles paste (burst of chars)
-            const code = c.charCodeAt(0);
-            if (code >= 32 && code !== 127) {
-              value += c;
-              process.stdout.write('*');
+      const onData = (chunk) => {
+        if (done) return;
+        // Iterate char-by-char so paste bursts and \r\n pairs are handled uniformly
+        for (const char of chunk) {
+          if (done) break;
+          const code = char.charCodeAt(0);
+          if (char === '\r' || char === '\n') {
+            done = true;
+            process.stdin.setRawMode(wasRaw ?? false);
+            process.stdin.pause();
+            process.stdin.removeListener('data', onData);
+            process.stdout.write('\n');
+            const tail = value.length > 4 ? value.slice(-4) : '';
+            const dots = '•'.repeat(value.length > 4 ? 8 : value.length);
+            writeFn(`${dots}${tail}\n`);
+            resolve(value);
+          } else if (char === '') { // Ctrl+C
+            done = true;
+            process.stdin.setRawMode(wasRaw ?? false);
+            process.stdin.pause();
+            process.stdin.removeListener('data', onData);
+            writeFn('\n');
+            process.exit(130);
+          } else if (char === '' || char === '\b') { // backspace
+            if (value.length > 0) {
+              value = value.slice(0, -1);
+              process.stdout.write('\b \b');
             }
+          } else if (code >= 32 && code !== 127) { // printable
+            value += char;
+            process.stdout.write('*');
           }
         }
       };
