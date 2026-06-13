@@ -84,6 +84,11 @@ dgk lab
 dgk lab analise-feeds
 ```
 
+> **Primeira execução em um dispositivo novo:** o uv baixa e instala o Marimo
+> e suas dependências (~26 pacotes, ~2s). Execuções seguintes usam o cache local
+> e iniciam imediatamente. A linha `Installed N packages` é normal e esperada
+> apenas na primeira vez por máquina.
+
 | # | O que verificar | Esperado |
 |---|---|---|
 | M1 | Marimo inicia e abre o browser | URL `http://localhost:2718` (ou porta disponível) |
