@@ -31,8 +31,10 @@ const KNOWN_TYPES = [
 ];
 
 // Pages that must contain at least one mermaid block.
+// Only pages that are published in the template developer vault (99 - Meta e Anexos/)
+// are listed here. User-facing resource notes (40 - Recursos/) are not included
+// because their publication status is the vault owner's decision.
 const MERMAID_PAGES = [
-  "recursos/mermaid",
   "meta-e-anexos/diagramas/exemplos",
   "meta-e-anexos/referencia/visualizacao-do-fluxo-do-vault",
 ];
