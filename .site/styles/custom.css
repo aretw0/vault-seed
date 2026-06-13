@@ -687,6 +687,9 @@
   color: var(--sl-color-text-accent);
   outline: none;
   cursor: grab;
+  /* Suppress iOS long-press callout — the graph is an exploration canvas,
+     not a link list; tap = navigate, long-press should not interrupt. */
+  -webkit-touch-callout: none;
 }
 
 .vault-graph-view__nodes a.is-dragged {
@@ -739,6 +742,12 @@
 }
 
 .vault-graph-view__nodes a:is(.is-hovered, :focus-visible) .vault-graph-view__label--short {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Hide labels on nodes that are neither hovered nor neighbors during hover */
+.vault-graph-view[data-vault-graph-hover='1'] .vault-graph-view__nodes a:not(.is-hovered):not(.is-neighbor) .vault-graph-view__label {
   opacity: 0;
   visibility: hidden;
 }

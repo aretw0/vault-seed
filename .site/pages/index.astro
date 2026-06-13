@@ -117,7 +117,6 @@ function formatDate(iso: string | null): string {
                   </time>
                 )}
               </div>
-              {note.summary && <p class="vault-post-item__excerpt">{note.summary}</p>}
               {note.tags.length > 0 && (
                 <div class="vault-post-item__tags">
                   {note.tags.slice(0, 5).map((tag) => (
