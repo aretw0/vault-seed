@@ -65,7 +65,7 @@ async function openNotebook(name, runner, root) {
     console.error(`dgk lab: notebook '${name}' não encontrado.\nDisponíveis:\n${available}`);
     process.exit(1);
   }
-  await runner('uv', ['run', 'marimo', 'edit', path]);
+  await runner('uv', ['run', '--with', 'marimo', 'marimo', 'edit', path]);
 }
 
 async function evaluate(args, runner) {

@@ -120,6 +120,18 @@ test('lab <nome-curto> abre notebook pelo nome via marimo', async () => {
   assert.ok(calls[0].args.some((a) => a.includes('etl-demo.py')), 'deve referenciar o notebook');
 });
 
+// Contrato: a invocação de marimo deve ser auto-suficiente em ambiente limpo.
+// Sem --with marimo, `uv run marimo edit` falha quando marimo não está em
+// pyproject.toml — o usuário vê "Failed to spawn: marimo / program not found".
+test('lab <notebook> usa --with marimo para não depender de uv sync prévio', async () => {
+  const { calls, runner } = captureRun();
+  await lab(['etl-demo'], runner, VAULT_ROOT);
+  const { args } = calls[0];
+  const withIdx = args.indexOf('--with');
+  assert.ok(withIdx !== -1, 'deve ter --with');
+  assert.equal(args[withIdx + 1], 'marimo', '--with deve ser seguido de marimo');
+});
+
 test('lab <nome-parcial> resolve por match único', async () => {
   const { calls, runner } = captureRun();
   await lab(['leitura'], runner, VAULT_ROOT);
