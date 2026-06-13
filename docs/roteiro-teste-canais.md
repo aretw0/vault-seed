@@ -78,7 +78,7 @@ apenas os últimos 4 caracteres do token (tail) precedidos de pontos — sem exp
 
 ```
 Verificando credenciais... @nomedoBot (Nome do Bot)
-✓ Salvo em /home/usuario/.dgk/silo.json
+✓ Salvo em C:\Users\usuario\.dgk\silo.json
 
   Buscando chats recentes do bot... 1 encontrado(s):
 
@@ -86,7 +86,16 @@ Verificando credenciais... @nomedoBot (Nome do Bot)
 
 Chat ID (número da lista ou ID manual): 1
   → Seu Nome — privado  [id: 123456789]
+  1 chat(s) salvos em C:\Users\usuario\.dgk\contacts
 ```
+
+> **Contatos fora do vault:** por padrão, o arquivo `contacts/telegram.json` é
+> salvo em `~/.dgk/contacts/` junto com as credenciais — não dentro do vault.
+> Isso evita que IDs e handles pessoais entrem no histórico git.
+> Para versionar a topologia no vault, execute:
+> ```bash
+> node -e "const {setContactsLocation}=require('./packages/cli/src/silo.js'); setContactsLocation('vault')"
+> ```
 
 ### Passo 0.4 — Confirmar configuração
 

@@ -112,9 +112,9 @@ export function injectSiloEnv(siloPath = SILO_PATH) {
 
 // contacts.location controls where channel topology (groups, chats, lists)
 // is persisted. Credentials stay in silo; topology travels separately.
-// Values: "vault" (default) | "local" (~/.dgk/contacts) | absolute path
+// Values: "local" (default, ~/.dgk/contacts) | "vault" | absolute path
 export function getContactsLocation(siloPath = SILO_PATH) {
-  return loadSilo(siloPath)?.contacts?.location ?? 'vault';
+  return loadSilo(siloPath)?.contacts?.location ?? 'local';
 }
 
 export function setContactsLocation(location, siloPath = SILO_PATH) {
