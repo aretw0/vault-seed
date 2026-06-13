@@ -12,10 +12,9 @@ function prompt(question, rlFactory = readline.createInterface) {
   });
 }
 
-// Same pattern as refarm/packages/prompt-contract-v1:
-//   - readline.emitKeypressEvents + 'keypress' for named keys (no \r vs \r\n ambiguity)
-//   - readline.clearLine + cursorTo for portable line redraw (no hardcoded ANSI)
-//   - maskSecret redraws on every keypress: '*' per char + last 4 chars visible
+// keypress detection: readline.emitKeypressEvents + 'keypress' (named keys, no \r/\n ambiguity)
+// line redraw: \r + space-padding — readline.clearLine/cursorTo use ANSI that PowerShell ignores
+// maskSecret: proportional '*' per char + last 4 chars visible (refarm pattern)
 // Non-TTY fallback: muted readline (tests / piped input).
 export function maskSecret(value, visibleTail = 4) {
   if (value.length <= visibleTail) return '*'.repeat(value.length);
@@ -41,12 +40,16 @@ export function promptSecret(question, writeFn = (s) => process.stdout.write(s),
     }
 
     let value = '';
+    let lastLen = 0;
     const wasRaw = input.isRaw;
 
+    // \r returns cursor to col 0; space-padding overwrites any chars left from a
+    // longer previous render (e.g. after backspace). Works on any terminal, no ANSI.
     const render = () => {
-      readline.clearLine(output, 0);
-      readline.cursorTo(output, 0);
-      output.write(`${question}${maskSecret(value)}`);
+      const content = `${question}${maskSecret(value)}`;
+      const pad = lastLen > content.length ? ' '.repeat(lastLen - content.length) : '';
+      lastLen = Math.max(lastLen, content.length);
+      output.write(`\r${content}${pad}`);
     };
 
     const cleanup = () => {
