@@ -41,9 +41,10 @@ export function promptSecret(question, writeFn = (s) => process.stdout.write(s),
 
     let value = '';
     let lastLen = 0;
+    let renderTimer = null;
     const wasRaw = input.isRaw;
 
-    // \r returns cursor to col 0; space-padding overwrites any chars left from a
+    // \r returns cursor to col 0; space-padding overwrites chars left from a
     // longer previous render (e.g. after backspace). Works on any terminal, no ANSI.
     const render = () => {
       const content = `${question}${maskSecret(value)}`;
@@ -52,7 +53,16 @@ export function promptSecret(question, writeFn = (s) => process.stdout.write(s),
       output.write(`\r${content}${pad}`);
     };
 
+    // Debounce renders via setImmediate: during a paste burst all keypress events
+    // fire synchronously, so only one render fires after the burst ends. Typing
+    // feels instant because setImmediate fires before the next I/O event.
+    const scheduleRender = () => {
+      if (renderTimer) clearImmediate(renderTimer);
+      renderTimer = setImmediate(() => { renderTimer = null; render(); });
+    };
+
     const cleanup = () => {
+      if (renderTimer) { clearImmediate(renderTimer); renderTimer = null; render(); }
       input.off('keypress', onKeypress);
       input.setRawMode(wasRaw ?? false);
       output.write('\n');
@@ -71,12 +81,12 @@ export function promptSecret(question, writeFn = (s) => process.stdout.write(s),
       }
       if (key.name === 'backspace') {
         value = value.slice(0, -1);
-        render();
+        scheduleRender();
         return;
       }
       if (!key.ctrl && !key.meta && str) {
         value += str;
-        render();
+        scheduleRender();
       }
     };
 
