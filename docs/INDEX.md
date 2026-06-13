@@ -42,6 +42,7 @@ Para preparar um computador de usuário final, use
 
 ## Testes e validação manual
 
+- [Trilha: site publicado e curadoria editorial](roteiro-teste-site.md) — estado inicial, publicar notas, site privado, auditoria completa
 - [Roteiro de teste manual — site e grafo](roteiro-de-teste-manual.md) — visual, mobile, touch, temas, docs técnicas (mantenedor)
 - [Trilha: editores](roteiro-teste-editores.md) — Obsidian e VS Code/Foam: abrir, wikilinks, configuração, `dgk note`
 - [Trilha: Lab de notebooks](roteiro-teste-lab.md) — WASM, Marimo local, evaluate, curate, export
