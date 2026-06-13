@@ -1,7 +1,6 @@
 {
   "schemaVersion": 1,
   "source": "dados/fontes/lista-leitura.json",
-  "collectedAt": "2026-06-10T15:52:11.814Z",
   "itemCount": 10,
   "items": [
     {
@@ -153,5 +152,6 @@
       "status": "lido",
       "count": 4
     }
-  ]
+  ],
+  "collectedAt": "2026-06-13T00:31:49.504Z"
 }

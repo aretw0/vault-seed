@@ -1,10 +1,9 @@
 {
   "schemaVersion": 1,
   "source": "scripts/lab_etl_demo.mjs",
-  "collectedAt": "2026-06-10T22:01:55.991Z",
-  "noteCount": 64,
-  "totalWords": 22522,
-  "averageWords": 352,
+  "noteCount": 66,
+  "totalWords": 23180,
+  "averageWords": 351,
   "folders": [
     {
       "name": "99 - Meta e Anexos",
@@ -17,24 +16,28 @@
     {
       "name": "90 - Modelos",
       "count": 8
+    },
+    {
+      "name": "00 - Entrada",
+      "count": 1
+    },
+    {
+      "name": "30 - Áreas",
+      "count": 1
     }
   ],
   "statuses": [
     {
       "name": "published",
-      "count": 52
+      "count": 38
     },
     {
       "name": "draft",
-      "count": 9
+      "count": 26
     },
     {
       "name": "sem status",
       "count": 2
-    },
-    {
-      "name": "ready",
-      "count": 1
     }
   ],
   "tags": [
@@ -63,6 +66,10 @@
       "count": 5
     },
     {
+      "name": "meta/onboarding",
+      "count": 5
+    },
+    {
       "name": "meta/organizacao",
       "count": 5
     },
@@ -81,10 +88,6 @@
     {
       "name": "meta/git",
       "count": 4
-    },
-    {
-      "name": "meta/guia",
-      "count": 4
     }
   ],
   "largestNotes": [
@@ -98,7 +101,7 @@
         "meta/notebooks",
         "meta/automacao"
       ],
-      "words": 2183,
+      "words": 2237,
       "links": [
         "Preparando Dados para o Lab",
         "Coletando Dados Locais com Scraping e OCR",
@@ -134,7 +137,7 @@
         "meta/notebooks",
         "meta/dados"
       ],
-      "words": 849,
+      "words": 853,
       "links": [
         "Coletando Dados Locais com Scraping e OCR",
         "Publicando e Consumindo RSS no Vault"
@@ -180,10 +183,28 @@
       ]
     },
     {
+      "id": "meta-e-anexos/992-workflows/publicando-e-consumindo-rss-no-vault",
+      "title": "Publicando e Consumindo RSS no Vault",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "tags": [
+        "meta/site",
+        "meta/dados",
+        "meta/lab",
+        "meta/automacao"
+      ],
+      "words": 594,
+      "links": [
+        "\"title\", \"url\", \"published\"",
+        "Inbox Soberana de Fontes",
+        "Outbox Soberana de Publicação"
+      ]
+    },
+    {
       "id": "recursos/markdown-e-obsidian",
       "title": "Markdown e Obsidian",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "tags": [
         "recurso/ferramenta",
         "pkm/conceito",
@@ -203,24 +224,6 @@
         "...",
         "Nota",
         "MOC Vault Seed"
-      ]
-    },
-    {
-      "id": "meta-e-anexos/992-workflows/publicando-e-consumindo-rss-no-vault",
-      "title": "Publicando e Consumindo RSS no Vault",
-      "folder": "99 - Meta e Anexos",
-      "status": "published",
-      "tags": [
-        "meta/site",
-        "meta/dados",
-        "meta/lab",
-        "meta/automacao"
-      ],
-      "words": 587,
-      "links": [
-        "\"title\", \"url\", \"published\"",
-        "Inbox Soberana de Fontes",
-        "Outbox Soberana de Publicação"
       ]
     },
     {
@@ -275,5 +278,6 @@
         "Guia do Jardineiro Digital"
       ]
     }
-  ]
+  ],
+  "collectedAt": "2026-06-13T00:31:49.480Z"
 }

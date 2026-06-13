@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "source": "scripts/lab_etl_demo.mjs",
-  "noteCount": 64,
-  "linkCount": 207,
+  "noteCount": 66,
+  "linkCount": 209,
   "notes": [
     {
       "id": "meta-e-anexos/992-workflows/usando-o-lab-notebooks-marimo",
@@ -76,10 +76,23 @@
       ]
     },
     {
+      "id": "meta-e-anexos/992-workflows/publicando-e-consumindo-rss-no-vault",
+      "title": "Publicando e Consumindo RSS no Vault",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "outbound": 3,
+      "inbound": 0,
+      "brokenLinks": [
+        "\"title\", \"url\", \"published\"",
+        "Inbox Soberana de Fontes",
+        "Outbox Soberana de Publicação"
+      ]
+    },
+    {
       "id": "recursos/markdown-e-obsidian",
       "title": "Markdown e Obsidian",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "outbound": 12,
       "inbound": 0,
       "brokenLinks": [
@@ -95,19 +108,6 @@
         "...",
         "Nota",
         "MOC Vault Seed"
-      ]
-    },
-    {
-      "id": "meta-e-anexos/992-workflows/publicando-e-consumindo-rss-no-vault",
-      "title": "Publicando e Consumindo RSS no Vault",
-      "folder": "99 - Meta e Anexos",
-      "status": "published",
-      "outbound": 3,
-      "inbound": 0,
-      "brokenLinks": [
-        "\"title\", \"url\", \"published\"",
-        "Inbox Soberana de Fontes",
-        "Outbox Soberana de Publicação"
       ]
     },
     {
@@ -222,6 +222,15 @@
       "brokenLinks": []
     },
     {
+      "id": "meta-e-anexos/992-workflows/rotina-de-curadoria-editorial",
+      "title": "Rotina de Curadoria Editorial",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "outbound": 0,
+      "inbound": 0,
+      "brokenLinks": []
+    },
+    {
       "id": "meta-e-anexos/993-referencia/usando-o-plugin-templates",
       "title": "Usando o Plugin Templates",
       "folder": "99 - Meta e Anexos",
@@ -247,19 +256,10 @@
       ]
     },
     {
-      "id": "meta-e-anexos/992-workflows/rotina-de-curadoria-editorial",
-      "title": "Rotina de Curadoria Editorial",
-      "folder": "99 - Meta e Anexos",
-      "status": "published",
-      "outbound": 0,
-      "inbound": 0,
-      "brokenLinks": []
-    },
-    {
       "id": "recursos/o-que-sao-system-prompts-de-ia",
       "title": "O que são system prompts de IA?",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "outbound": 0,
       "inbound": 0,
       "brokenLinks": []
@@ -344,6 +344,15 @@
       ]
     },
     {
+      "id": "meta-e-anexos/992-workflows/outbox-soberana-de-publicacao",
+      "title": "Outbox Soberana de Publicação",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "outbound": 0,
+      "inbound": 0,
+      "brokenLinks": []
+    },
+    {
       "id": "meta-e-anexos/991-onboarding/moc-vault-seed",
       "title": "MOC Vault Seed",
       "folder": "99 - Meta e Anexos",
@@ -395,15 +404,6 @@
         "Vault Seed Kitchen Sink.base",
         "Guia do Jardineiro Digital"
       ]
-    },
-    {
-      "id": "meta-e-anexos/992-workflows/outbox-soberana-de-publicacao",
-      "title": "Outbox Soberana de Publicação",
-      "folder": "99 - Meta e Anexos",
-      "status": "published",
-      "outbound": 0,
-      "inbound": 0,
-      "brokenLinks": []
     },
     {
       "id": "meta-e-anexos/991-onboarding/configurando-com-devcontainer",
@@ -524,6 +524,27 @@
       ]
     },
     {
+      "id": "areas/blog/jardim-digital-por-onde-comecar",
+      "title": "Jardim digital: por onde começar",
+      "folder": "30 - Áreas",
+      "status": "published",
+      "outbound": 0,
+      "inbound": 0,
+      "brokenLinks": []
+    },
+    {
+      "id": "entrada/bem-vindo-ao-seu-vault",
+      "title": "Bem-vindo ao seu vault",
+      "folder": "00 - Entrada",
+      "status": "published",
+      "outbound": 2,
+      "inbound": 0,
+      "brokenLinks": [
+        "O que é publicação multi-canal",
+        "Outbox Soberana de Publicação"
+      ]
+    },
+    {
       "id": "meta-e-anexos/993-referencia/licenca-e-uso-do-vault",
       "title": "Licença e Uso do Vault",
       "folder": "99 - Meta e Anexos",
@@ -536,7 +557,7 @@
       "id": "recursos/filosofia-e-conceitos-fundamentais",
       "title": "Filosofia e Conceitos Fundamentais",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "outbound": 6,
       "inbound": 0,
       "brokenLinks": [
@@ -563,7 +584,7 @@
       "id": "recursos/mermaid",
       "title": "Mermaid",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "outbound": 6,
       "inbound": 0,
       "brokenLinks": [
@@ -579,7 +600,7 @@
       "id": "recursos/dataview",
       "title": "Dataview",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "outbound": 2,
       "inbound": 0,
       "brokenLinks": [
@@ -591,7 +612,7 @@
       "id": "recursos/o-que-e-o-metodo-zettelkasten",
       "title": "O que é o método Zettelkasten",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "outbound": 2,
       "inbound": 0,
       "brokenLinks": [
@@ -603,7 +624,7 @@
       "id": "recursos/o-que-sao-mocs-mapas-de-conteudo",
       "title": "O que são MOCs (Mapas de Conteúdo)",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "outbound": 2,
       "inbound": 0,
       "brokenLinks": [
@@ -615,7 +636,7 @@
       "id": "recursos/o-que-e-o-metodo-para",
       "title": "O que é o método PARA",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "outbound": 1,
       "inbound": 0,
       "brokenLinks": [
@@ -626,7 +647,7 @@
       "id": "recursos/daily-note",
       "title": "Daily Note",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "outbound": 2,
       "inbound": 0,
       "brokenLinks": [
@@ -638,7 +659,7 @@
       "id": "recursos/obsidian",
       "title": "Obsidian",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "outbound": 3,
       "inbound": 0,
       "brokenLinks": [
@@ -651,7 +672,7 @@
       "id": "recursos/vs-code",
       "title": "VS Code",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "outbound": 1,
       "inbound": 0,
       "brokenLinks": [
@@ -662,7 +683,7 @@
       "id": "recursos/templater",
       "title": "Templater",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "outbound": 1,
       "inbound": 0,
       "brokenLinks": [
@@ -673,7 +694,7 @@
       "id": "recursos/o-que-e-publicacao-multi-canal",
       "title": "O que é publicação multi-canal",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "outbound": 0,
       "inbound": 0,
       "brokenLinks": []
@@ -682,7 +703,7 @@
       "id": "recursos/links",
       "title": "Links",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "outbound": 2,
       "inbound": 0,
       "brokenLinks": [
@@ -703,7 +724,7 @@
       "id": "recursos/jardim-digital",
       "title": "Jardim digital",
       "folder": "40 - Recursos",
-      "status": "ready",
+      "status": "draft",
       "outbound": 3,
       "inbound": 0,
       "brokenLinks": [
@@ -730,7 +751,7 @@
       "id": "recursos/tags",
       "title": "Tags",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "outbound": 1,
       "inbound": 0,
       "brokenLinks": [
@@ -741,7 +762,7 @@
       "id": "recursos/bases",
       "title": "Bases",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "outbound": 2,
       "inbound": 0,
       "brokenLinks": [

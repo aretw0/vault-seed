@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "publication-outbox",
   "source": "markdown-frontmatter:outbox|publicationStatus|channels",
-  "collectedAt": "2026-06-11T16:23:41.890Z",
+  "collectedAt": "1970-01-01T00:00:00.000Z",
   "license": "derived-from-vault-notes",
   "privacy": "review-before-publish",
   "policy": {
@@ -80,17 +80,18 @@
       "canonical": "30 - Áreas/Blog/Jardim digital - por onde começar.md",
       "source": "30 - Áreas/Blog/Jardim digital - por onde começar.md",
       "collectedAt": null,
-      "sha256": "1d6e32dc5ec053648f20dfbfff44dc14d38af946fc82336a37f0fcfca1515d05",
+      "sha256": "d04d347e14d17b967e1acfe625ac1e2c6fbd05d2546241b10887ddfd83fe2211",
       "license": "verificar",
       "privacy": "private-until-published",
       "channels": [
         "mastodon",
-        "bluesky"
+        "bluesky",
+        "telegram"
       ],
-      "channelCount": 2,
+      "channelCount": 3,
       "audience": "todos",
       "excerpt": "Existe uma ideia simples e poderosa escondida na metáfora do \"jardim digital\". Um arquivo você cria e esquece. Um jardim exige cuidado contínuo — você planta sementes, poda o que não funciona, conecta o que se beneficia da proximidade. No jardim digital, uma nota nasce como rascu"
     }
   ],
-  "sha256": "09be4545fa9bc315d997f2bef9180b40f547d234ff5278e34e670fee1b4a01fe"
+  "sha256": "70c261db52617f9b01d0f52076d31fabc9cbcdb911211c928bae45da48002a54"
 }

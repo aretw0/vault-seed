@@ -17,9 +17,8 @@
   "@type": "Vault",
   "@id": "vault:root",
   "name": "vault-seed",
-  "noteCount": 64,
-  "linkCount": 207,
-  "generatedAt": "2026-06-10T22:01:56.005Z",
+  "noteCount": 66,
+  "linkCount": 209,
   "@graph": [
     {
       "@type": "Note",
@@ -99,10 +98,24 @@
     },
     {
       "@type": "Note",
+      "@id": "note:meta-e-anexos/992-workflows/publicando-e-consumindo-rss-no-vault",
+      "name": "Publicando e Consumindo RSS no Vault",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 3,
+      "brokenLinks": [
+        "\"title\", \"url\", \"published\"",
+        "Inbox Soberana de Fontes",
+        "Outbox Soberana de Publicação"
+      ]
+    },
+    {
+      "@type": "Note",
       "@id": "note:recursos/markdown-e-obsidian",
       "name": "Markdown e Obsidian",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "inboundLinks": 0,
       "outboundLinks": 12,
       "brokenLinks": [
@@ -118,20 +131,6 @@
         "...",
         "Nota",
         "MOC Vault Seed"
-      ]
-    },
-    {
-      "@type": "Note",
-      "@id": "note:meta-e-anexos/992-workflows/publicando-e-consumindo-rss-no-vault",
-      "name": "Publicando e Consumindo RSS no Vault",
-      "folder": "99 - Meta e Anexos",
-      "status": "published",
-      "inboundLinks": 0,
-      "outboundLinks": 3,
-      "brokenLinks": [
-        "\"title\", \"url\", \"published\"",
-        "Inbox Soberana de Fontes",
-        "Outbox Soberana de Publicação"
       ]
     },
     {
@@ -255,6 +254,16 @@
     },
     {
       "@type": "Note",
+      "@id": "note:meta-e-anexos/992-workflows/rotina-de-curadoria-editorial",
+      "name": "Rotina de Curadoria Editorial",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
       "@id": "note:meta-e-anexos/993-referencia/usando-o-plugin-templates",
       "name": "Usando o Plugin Templates",
       "folder": "99 - Meta e Anexos",
@@ -282,20 +291,10 @@
     },
     {
       "@type": "Note",
-      "@id": "note:meta-e-anexos/992-workflows/rotina-de-curadoria-editorial",
-      "name": "Rotina de Curadoria Editorial",
-      "folder": "99 - Meta e Anexos",
-      "status": "published",
-      "inboundLinks": 0,
-      "outboundLinks": 0,
-      "brokenLinks": []
-    },
-    {
-      "@type": "Note",
       "@id": "note:recursos/o-que-sao-system-prompts-de-ia",
       "name": "O que são system prompts de IA?",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "inboundLinks": 0,
       "outboundLinks": 0,
       "brokenLinks": []
@@ -386,6 +385,16 @@
     },
     {
       "@type": "Note",
+      "@id": "note:meta-e-anexos/992-workflows/outbox-soberana-de-publicacao",
+      "name": "Outbox Soberana de Publicação",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
       "@id": "note:meta-e-anexos/991-onboarding/moc-vault-seed",
       "name": "MOC Vault Seed",
       "folder": "99 - Meta e Anexos",
@@ -437,16 +446,6 @@
         "Vault Seed Kitchen Sink.base",
         "Guia do Jardineiro Digital"
       ]
-    },
-    {
-      "@type": "Note",
-      "@id": "note:meta-e-anexos/992-workflows/outbox-soberana-de-publicacao",
-      "name": "Outbox Soberana de Publicação",
-      "folder": "99 - Meta e Anexos",
-      "status": "published",
-      "inboundLinks": 0,
-      "outboundLinks": 0,
-      "brokenLinks": []
     },
     {
       "@type": "Note",
@@ -578,6 +577,29 @@
     },
     {
       "@type": "Note",
+      "@id": "note:areas/blog/jardim-digital-por-onde-comecar",
+      "name": "Jardim digital: por onde começar",
+      "folder": "30 - Áreas",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
+      "@id": "note:entrada/bem-vindo-ao-seu-vault",
+      "name": "Bem-vindo ao seu vault",
+      "folder": "00 - Entrada",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 2,
+      "brokenLinks": [
+        "O que é publicação multi-canal",
+        "Outbox Soberana de Publicação"
+      ]
+    },
+    {
+      "@type": "Note",
       "@id": "note:meta-e-anexos/993-referencia/licenca-e-uso-do-vault",
       "name": "Licença e Uso do Vault",
       "folder": "99 - Meta e Anexos",
@@ -591,7 +613,7 @@
       "@id": "note:recursos/filosofia-e-conceitos-fundamentais",
       "name": "Filosofia e Conceitos Fundamentais",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "inboundLinks": 0,
       "outboundLinks": 6,
       "brokenLinks": [
@@ -620,7 +642,7 @@
       "@id": "note:recursos/mermaid",
       "name": "Mermaid",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "inboundLinks": 0,
       "outboundLinks": 6,
       "brokenLinks": [
@@ -637,7 +659,7 @@
       "@id": "note:recursos/dataview",
       "name": "Dataview",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "inboundLinks": 0,
       "outboundLinks": 2,
       "brokenLinks": [
@@ -650,7 +672,7 @@
       "@id": "note:recursos/o-que-e-o-metodo-zettelkasten",
       "name": "O que é o método Zettelkasten",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "inboundLinks": 0,
       "outboundLinks": 2,
       "brokenLinks": [
@@ -663,7 +685,7 @@
       "@id": "note:recursos/o-que-sao-mocs-mapas-de-conteudo",
       "name": "O que são MOCs (Mapas de Conteúdo)",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "inboundLinks": 0,
       "outboundLinks": 2,
       "brokenLinks": [
@@ -676,7 +698,7 @@
       "@id": "note:recursos/o-que-e-o-metodo-para",
       "name": "O que é o método PARA",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "inboundLinks": 0,
       "outboundLinks": 1,
       "brokenLinks": [
@@ -688,7 +710,7 @@
       "@id": "note:recursos/daily-note",
       "name": "Daily Note",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "inboundLinks": 0,
       "outboundLinks": 2,
       "brokenLinks": [
@@ -701,7 +723,7 @@
       "@id": "note:recursos/obsidian",
       "name": "Obsidian",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "inboundLinks": 0,
       "outboundLinks": 3,
       "brokenLinks": [
@@ -715,7 +737,7 @@
       "@id": "note:recursos/vs-code",
       "name": "VS Code",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "inboundLinks": 0,
       "outboundLinks": 1,
       "brokenLinks": [
@@ -727,7 +749,7 @@
       "@id": "note:recursos/templater",
       "name": "Templater",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "inboundLinks": 0,
       "outboundLinks": 1,
       "brokenLinks": [
@@ -739,7 +761,7 @@
       "@id": "note:recursos/o-que-e-publicacao-multi-canal",
       "name": "O que é publicação multi-canal",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "inboundLinks": 0,
       "outboundLinks": 0,
       "brokenLinks": []
@@ -749,7 +771,7 @@
       "@id": "note:recursos/links",
       "name": "Links",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "inboundLinks": 0,
       "outboundLinks": 2,
       "brokenLinks": [
@@ -772,7 +794,7 @@
       "@id": "note:recursos/jardim-digital",
       "name": "Jardim digital",
       "folder": "40 - Recursos",
-      "status": "ready",
+      "status": "draft",
       "inboundLinks": 0,
       "outboundLinks": 3,
       "brokenLinks": [
@@ -801,7 +823,7 @@
       "@id": "note:recursos/tags",
       "name": "Tags",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "inboundLinks": 0,
       "outboundLinks": 1,
       "brokenLinks": [
@@ -813,7 +835,7 @@
       "@id": "note:recursos/bases",
       "name": "Bases",
       "folder": "40 - Recursos",
-      "status": "published",
+      "status": "draft",
       "inboundLinks": 0,
       "outboundLinks": 2,
       "brokenLinks": [
@@ -913,5 +935,6 @@
       "outboundLinks": 0,
       "brokenLinks": []
     }
-  ]
+  ],
+  "generatedAt": "2026-06-13T00:31:49.502Z"
 }
