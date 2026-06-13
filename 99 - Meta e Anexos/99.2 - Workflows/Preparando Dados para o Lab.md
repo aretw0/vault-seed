@@ -77,7 +77,7 @@ que o notebook saiba onde buscar os dados quando estiver rodando no navegador.
 Para preparar apenas os datasets:
 
 ```bash
-pnpm run notebooks:etl
+dgk etl
 ```
 
 Esse comando escreve:
@@ -115,21 +115,17 @@ Receitas completas de scraping, OCR, APIs com token e snapshot local ficam em
 Os comandos do Lab também preparam os datasets automaticamente:
 
 ```bash
-pnpm run notebooks:dev
+dgk lab <nome-do-notebook>
 pnpm run notebooks:check
-pnpm run notebooks:export
+dgk lab export
 pnpm run site:dev:lab
 ```
 
 ## Exemplo incluído
 
-O comando `pnpm run notebooks:etl` roda primeiro um exemplo pequeno de ETL local:
+O comando `dgk etl` inclui automaticamente um exemplo pequeno de ETL local (equivalente ao antigo `pnpm run notebooks:etl:demo`).
 
-```bash
-pnpm run notebooks:etl:demo
-```
-
-Esse script lê as notas Markdown no computador, calcula um perfil simples do
+O ETL lê as notas Markdown no computador, calcula um perfil simples do
 vault e escreve `dados/lab/perfil-do-vault.json`. Ele também roda a auditoria
 compartilhada de arquitetura de informação e escreve
 `dados/lab/curadoria-ia.json`, um relatório JSON com notas avaliadas, avisos

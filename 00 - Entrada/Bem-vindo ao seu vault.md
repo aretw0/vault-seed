@@ -18,7 +18,7 @@ Seu vault foi inicializado com sucesso. Aqui está um mapa rápido do que foi pr
 | **GitHub Pages** | Publica este vault como site. Acesse em `https://<seu-usuario>.github.io/<repositório>/` |
 | **Pipeline ETL** | Coleta e processa dados do vault diariamente via GitHub Actions |
 | **Notebooks Marimo** | Ambiente de análise em Python em `99 - Meta e Anexos/Notebooks/` |
-| **dgk CLI** | Ferramentas de linha de comando — `dgk lab etl`, `dgk lab open`, `dgk check` |
+| **dgk CLI** | Ferramentas de linha de comando — `dgk etl`, `dgk obsidian`, `dgk check` |
 
 ## Estrutura PARA
 
@@ -34,8 +34,9 @@ Seu vault segue o método PARA para organizar o conhecimento:
 
 1. **Edite esta nota** — customize a apresentação do seu vault
 2. **Explore `99 - Meta e Anexos/99.1 - Onboarding/`** — guias detalhados de configuração
-3. **Crie sua primeira nota** — use `Ctrl+N` no Obsidian ou `dgk lab note create`
-4. **Promova uma nota** — quando quiser publicar, mude `status: draft` para `status: published` no frontmatter
+3. **Abra no seu editor preferido** — `dgk obsidian` para Obsidian, `dgk vscode` para VS Code (Foam pré-configurado)
+4. **Crie sua primeira nota** — use `Ctrl+N` no Obsidian, `Ctrl+Shift+P → Foam: Create New Note` no VS Code, ou `dgk note create`
+5. **Promova uma nota** — quando quiser publicar, mude `status: draft` para `status: published` no frontmatter
 
 ## Publicação
 

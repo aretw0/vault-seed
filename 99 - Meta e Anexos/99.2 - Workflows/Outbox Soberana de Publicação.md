@@ -53,10 +53,10 @@ Crie uma nota em `00 - Entrada/` com o template:
 O dataset do Lab é gerado por:
 
 ```bash
-pnpm run outbox:prepare
+dgk etl
 ```
 
-O script procura notas com pelo menos um destes sinais no frontmatter:
+O pipeline ETL inclui a preparação da outbox: procura notas com pelo menos um destes sinais no frontmatter:
 
 - `outbox: true`;
 - `publicationStatus`;

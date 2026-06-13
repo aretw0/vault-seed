@@ -53,10 +53,12 @@ Se estiver no devcontainer, as dependências Python já são instaladas na cria�
 Use:
 
 ```bash
-pnpm run notebooks:dev
+dgk lab <nome-do-notebook>
 ```
 
-O comando gera `public/lab/vault-data.json`, sobe apenas o servidor Marimo na porta `2718`, abre a pasta `99 - Meta e Anexos/Notebooks` e mantém o snapshot local atualizado enquanto você edita notas. Ele também usa `--watch`, então alterações feitas por VS Code, Codex, Claude ou Pi no arquivo `.py` podem ser recarregadas no editor do Marimo.
+Por exemplo, `dgk lab analise-feeds` abre o notebook `analise-feeds.py` diretamente no Marimo. Diferente do comando anterior `pnpm run notebooks:dev` — que subia um servidor com todos os notebooks — `dgk lab` abre um notebook específico pelo nome, sem extensão.
+
+O comando gera `public/lab/vault-data.json`, sobe o servidor Marimo na porta `2718` para o notebook escolhido e mantém o snapshot local atualizado enquanto você edita notas. Ele também usa `--watch`, então alterações feitas por VS Code, Codex, Claude ou Pi no arquivo `.py` podem ser recarregadas no editor do Marimo.
 
 Para encerrar o servidor local, use `Ctrl+C` no terminal onde ele está rodando. O comando passa `--yes` para o Marimo para evitar o prompt interativo de confirmação, que pode se comportar mal em wrappers de terminal no Windows.
 
@@ -76,7 +78,7 @@ Esse comando regenera `vault-data.json`, roda `marimo check` nos notebooks e exe
 
 ## Como Os Dados Chegam Ao Notebook
 
-No uso local, `pnpm run notebooks:dev` gera `public/lab/vault-data.json` diretamente a partir das notas do vault. Durante o build do site, a integração Astro usa o mesmo gerador para criar o snapshot que será publicado.
+No uso local, `dgk lab <nome>` gera `public/lab/vault-data.json` diretamente a partir das notas do vault. Durante o build do site, a integração Astro usa o mesmo gerador para criar o snapshot que será publicado.
 
 Isso mantém o Lab em modo leitura: ele ajuda a enxergar o vault, mas não modifica notas automaticamente.
 
@@ -110,7 +112,7 @@ No preview local do Astro, a página `/lab/` aparece, mas os notebooks exportado
 
 ```bash
 pnpm run site:build
-pnpm run notebooks:export
+dgk lab export
 pnpm run site:preview
 ```
 
@@ -120,7 +122,7 @@ Para ver os notebooks exportados enquanto usa o servidor de desenvolvimento do A
 pnpm run site:dev:lab
 ```
 
-Para desenvolver notebooks com Python rodando no seu computador, use `pnpm run notebooks:dev`.
+Para desenvolver notebooks com Python rodando no seu computador, use `dgk lab <nome-do-notebook>`.
 
 O HTML WebAssembly do Marimo carrega Pyodide no navegador. Em ambientes normais, como devcontainer, navegador local e GitHub Actions, isso exige acesso externo aos arquivos do Pyodide. Em sandboxes de agentes ou máquinas com política de rede restrita, a página pode carregar a estrutura do notebook sem hidratar o Python; nesse caso, trate o resultado como uma prévia parcial.
 
@@ -185,7 +187,7 @@ O Lab tem três modos com limites diferentes:
 
 | Modo | Onde o Python roda | Uso indicado |
 | --- | --- | --- |
-| `pnpm run notebooks:dev` | No seu computador | criação, depuração, acesso a arquivos locais e integração com agentes |
+| `dgk lab <nome>` | No seu computador | criação, depuração, acesso a arquivos locais e integração com agentes |
 | `marimo run` | Em um servidor Python | apps internos com backend, quando houver infraestrutura para isso |
 | `marimo export html-wasm` | No navegador, via WebAssembly/Pyodide | publicação estática, demos, exploração leve e interativa |
 
@@ -208,22 +210,22 @@ Essa separação mantém o site barato de hospedar, fácil de publicar e previs�
 
 O export do Lab copia `vault-data.json` para `/lab/vault-data.json` e `/lab/assets/vault-data.json`. O segundo caminho atende ao runtime WebAssembly do Marimo, que pode resolver arquivos relativos a partir da pasta de assets do pacote exportado.
 
-Datasets adicionais são declarados em `.site/lab.datasets.json` e preparados com `pnpm run notebooks:etl`. Veja [[Preparando Dados para o Lab]] para o contrato entre scripts de ingestão, snapshots publicados e notebooks. Para receitas práticas com scraping, OCR e APIs com token, veja [[Coletando Dados Locais com Scraping e OCR]]. Para usar feeds como fonte aberta de dados, veja [[Publicando e Consumindo RSS no Vault]]. Para revisar rascunhos antes de enviar a outros canais, veja [[Outbox Soberana de Publicação]].
+Datasets adicionais são declarados em `.site/lab.datasets.json` e preparados com `dgk etl`. Veja [[Preparando Dados para o Lab]] para o contrato entre scripts de ingestão, snapshots publicados e notebooks. Para receitas práticas com scraping, OCR e APIs com token, veja [[Coletando Dados Locais com Scraping e OCR]]. Para usar feeds como fonte aberta de dados, veja [[Publicando e Consumindo RSS no Vault]]. Para revisar rascunhos antes de enviar a outros canais, veja [[Outbox Soberana de Publicação]].
 
 ## Criando Um Notebook
 
 1. Copie um arquivo de `99 - Meta e Anexos/Notebooks/starters/`.
 2. Renomeie a cópia dentro de `99 - Meta e Anexos/Notebooks/`.
-3. Abra com `pnpm run notebooks:dev`.
+3. Abra com `dgk lab <nome-do-notebook>` (ex: `dgk lab meu-notebook`).
 4. Leia `vault-data.json` quando precisar analisar notas, tags, status ou links.
 
 Você pode criar quantos notebooks quiser nessa pasta. Eles são arquivos Python versionados junto com o vault e continuam locais até entrarem no manifesto de publicação.
 
 Fluxo recomendado:
 
-1. Trabalhe localmente com `pnpm run notebooks:dev`.
+1. Trabalhe localmente com `dgk lab <nome-do-notebook>`.
 2. Crie ou edite notebooks em `99 - Meta e Anexos/Notebooks/`.
-3. Rode `pnpm run notebooks:data` quando quiser regenerar apenas o snapshot.
+3. Rode `pnpm run notebooks:data` quando quiser regenerar apenas o snapshot (operação de desenvolvimento, sem equivalente em `dgk`).
 4. Revise `git diff` antes de commitar, especialmente depois de salvar pelo editor do Marimo.
 5. Publique apenas notebooks que entraram conscientemente no manifesto.
 
@@ -256,17 +258,17 @@ Depois rode pnpm run notebooks:check.
 Não publique o notebook sem atualizar conscientemente .site/lab.notebooks.json.
 ```
 
-Se o agente precisa de feedback do runtime vivo, abra o notebook com `pnpm run notebooks:dev` e gere o prompt de pareamento:
+Se o agente precisa de feedback do runtime vivo, abra o notebook com `dgk lab <nome-do-notebook>` e gere o prompt de pareamento:
 
 ```bash
 pnpm run notebooks:pair -- --url URL_DO_MARIMO --codex
 ```
 
-Troque `--codex` por `--claude` ou `--opencode` quando estiver usando outro agente compatível. Esse comando chama `marimo pair prompt`; ele não substitui o Git nem o diff, mas dá ao agente instruções para trabalhar com a sessão aberta.
+Troque `--codex` por `--claude` ou `--opencode` quando estiver usando outro agente compatível. Esse comando chama `marimo pair prompt`; ele não substitui o Git nem o diff, mas dá ao agente instruções para trabalhar com a sessão aberta. (`pnpm run notebooks:pair` é uma operação de desenvolvimento sem equivalente em `dgk`.)
 
 Camadas disponíveis:
 
-- `pnpm run notebooks:check`: feedback determinístico de arquivo e execução de sessão.
+- `pnpm run notebooks:check`: feedback determinístico de arquivo e execução de sessão (operação de desenvolvimento, sem equivalente em `dgk`).
 - `marimo pair`: acesso ao notebook em execução, incluindo variáveis, células e UI, quando a skill do agente está instalada.
 - ACP e MCP: integrações de editor/protocolo que devem ser tratadas como opcionais e verificadas contra a versão instalada do Marimo.
 - AI do editor: usa chaves próprias configuradas no Marimo e pode gerar/refatorar células com contexto de variáveis em memória.

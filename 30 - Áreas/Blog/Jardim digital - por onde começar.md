@@ -4,9 +4,14 @@ tags:
   - pkm
   - jardim-digital
   - gestao-conhecimento
-status: draft
+status: published
+publicationStatus: ready
 category: post
 audience: todos
+channels:
+  - mastodon
+  - bluesky
+  - telegram
 ---
 
 # Jardim digital: por onde começar

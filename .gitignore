@@ -22,9 +22,11 @@ Thumbs.db
 *.log
 .gemini/
 # Ignorar o restante do diretório .vscode/, por isso o *
+# Exceções rastreadas: extensões recomendadas e configurações do Foam
 .vscode/*
-# Exceção para .vscode/extensions.json
+# Exceções rastreadas: extensões recomendadas e configurações do Foam
 !.vscode/extensions.json
+!.vscode/settings.json
 
 # Pasta de lixo do Obsidian
 .trash/
