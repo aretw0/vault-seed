@@ -164,6 +164,50 @@ Checar em 5 minutos após deploy:
 
 ---
 
+## Seção 6 — Docs técnicas (mantenedor)
+
+> Esta seção aplica-se apenas ao ambiente do mantenedor onde `docs/INDEX.md` existe.
+> No vault do usuário `docs/` é removido pelo `initialize.yml` — a seção não aparece.
+
+```bash
+pnpm run site:dev   # ou site:build + site:preview
+```
+
+### 6.1 Seção de docs técnicas no sidebar
+
+| # | O que verificar | Esperado |
+|---|---|---|
+| T1 | Sidebar tem grupo "Documentação Técnica" | Aparece abaixo das notas do vault |
+| T2 | `docs/ARCHITECTURE.md` listado | Página acessível via `/docs/architecture/` |
+| T3 | `docs/diagrams/ECOSYSTEM.md` listado | Página acessível com diagrama Mermaid renderizado |
+| T4 | Arquivos `.t.md` de templates NÃO aparecem | `para-structure.t.md`, `vault-flow.t.md`, `dgk-ecosystem.t.md` ausentes do sidebar |
+| T5 | `docs/INDEX.md` é a raiz `/docs/` | Página de índice carrega com links para os outros docs |
+
+---
+
+### 6.2 Diagramas Mermaid nos docs
+
+| # | URL | O que verificar |
+|---|---|---|
+| D1 | `/docs/diagrams/ecosystem/` | Diagrama de camadas renderiza (vault-seed, agents-lab, refarm, instâncias) |
+| D2 | `/docs/architecture/` | Bloco `{=dgk-ecosystem}` renderiza o mesmo diagrama |
+| D3 | Zoom no diagrama | Subgraphs visíveis e legíveis; sem overflow de texto |
+
+**Por que manual:** Mermaid no Astro/Starlight depende do script de inicialização injetado no
+`<head>` — o smoke `validate:mermaid` valida a sintaxe mas não o rendering visual no browser.
+
+---
+
+### 6.3 Links internos dos docs
+
+| # | O que verificar | Esperado |
+|---|---|---|
+| L1 | Link `ROADMAP.md` em `docs/INDEX.md` removido | Não há link quebrado para `roadmap.md` |
+| L2 | Links em `docs/ARCHITECTURE.md` para `diagrams/ECOSYSTEM.md` | Navegação funciona |
+| L3 | Links em `ROADMAP.md` para `docs/ARCHITECTURE.md` | Navegação funciona |
+
+---
+
 ## Como reportar falhas
 
 Criar issue com:
