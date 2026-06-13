@@ -240,7 +240,7 @@ try {
       const devOnlyScripts = [
         'release:package:smoke', 'changeset', 'changeset:version',
         'changeset:publish', 'release:verify',
-        'smoke:template', 'smoke:user-vault', 'smoke:init:reset',
+        'smoke:template', 'smoke:user-vault', 'smoke:init:reset', 'smoke:e2e', 'smoke:e2e:full',
         'actions:pins', 'site:graph-smoke',
       ];
       for (const script of devOnlyScripts) {
