@@ -250,6 +250,77 @@ Ver trilha completa em [`roteiro-teste-outbox.md`](roteiro-teste-outbox.md).
 
 ---
 
+## Trilha E — Mesmo ciclo via HTTP (para Pi / agentes externos)
+
+Mesma sequência da Trilha D, mas usando a API do `dgk serve` em vez do CLI.
+É o que Pi (agents-lab) faz quando recebe comandos via Telegram.
+
+> **Pré-requisito:** `dgk serve` rodando em segundo plano (`dgk serve &`).
+
+```
+Pi recebe /inbox → POST /api/inbox/fetch → notas em 00 - Entrada/
+Pi recebe /etl   → POST /api/etl         → outbox atualizado
+Pi recebe /pub 2 → POST /api/outbox      → 2 notas publicadas
+Pi recebe /check → GET  /api/status      → responde com estado dos canais
+```
+
+### E1. Buscar mensagens
+
+```bash
+curl -s -X POST http://localhost:4322/api/inbox/fetch \
+  -H "Content-Type: application/json" -H "X-Dgk-Admin: 1" \
+  -d '{"channel":"telegram","limit":5}'
+```
+
+Esperado: `{"ok":true,"output":"5 update(s) importados..."}`.
+
+### E2. Indexar (ETL)
+
+```bash
+curl -s -X POST http://localhost:4322/api/etl \
+  -H "X-Dgk-Admin: 1"
+```
+
+Esperado: `{"ok":true,"output":"..."}` — output capturado dos 4 scripts ETL.
+
+### E3. Verificar o que está na fila
+
+```bash
+curl -s http://localhost:4322/api/outbox
+```
+
+Esperado: `{"items":[...]}` com notas que têm `publicationStatus: ready`.
+
+### E4. Dry-run
+
+```bash
+curl -s -X POST http://localhost:4322/api/outbox \
+  -H "Content-Type: application/json" -H "X-Dgk-Admin: 1" \
+  -d '{"channel":"telegram","dryRun":true}'
+```
+
+### E5. Publicar com limite
+
+```bash
+curl -s -X POST http://localhost:4322/api/outbox \
+  -H "Content-Type: application/json" -H "X-Dgk-Admin: 1" \
+  -d '{"channel":"telegram","limit":1}'
+```
+
+### E6. Verificar estado dos canais
+
+```bash
+curl -s http://localhost:4322/api/status
+```
+
+Esperado: array `channels` com `configured: true` para os canais ativos.
+Pi usa essa resposta para formatar uma mensagem de status e responder ao usuário.
+
+**Por que manual:** esta trilha valida a integração end-to-end com servidor real.
+Os testes unitários cobrem cada handler isoladamente com spawnFn mockado.
+
+---
+
 ## Como reportar falhas
 
 Criar issue com:

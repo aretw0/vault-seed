@@ -25,6 +25,14 @@
 | `DELETE /api/sow/:service` retorna 404 se não configurado | `serve.test.js` |
 | `POST /api/sow/telegram/chats` retorna lista de chats | `serve.test.js` |
 | `POST /api/sow/telegram/chats` retorna 400 sem token | `serve.test.js` |
+| `POST /api/etl` roda pipeline e retorna output capturado | `serve.test.js` |
+| `POST /api/etl` retorna 500 e `ok=false` quando script falha | `serve.test.js` |
+| `POST /api/outbox` publica no canal informado | `serve.test.js` |
+| `POST /api/outbox` retorna 400 para canal desconhecido | `serve.test.js` |
+| `GET /api/inbox` lista notas de `00 - Entrada/` com frontmatter | `serve.test.js` |
+| `GET /api/inbox` retorna `[]` quando pasta não existe | `serve.test.js` |
+| `POST /api/inbox/fetch` roda inbox_from_telegram e retorna output | `serve.test.js` |
+| `POST /api/inbox/fetch` retorna 400 para canal desconhecido | `serve.test.js` |
 | `parsePort` extrai porta de `--port N` | `serve.test.js` |
 | Rota desconhecida retorna 404 JSON | `serve.test.js` |
 
@@ -123,7 +131,80 @@ Disponível no painel de config do Telegram após inserir o Bot Token.
 
 ---
 
-## Etapa 7 — Segurança básica (local-first)
+## Etapa 7 — Endpoints de operação (API para automação)
+
+Estes endpoints permitem que agentes externos (Pi, scripts, integrações) operem
+o vault via HTTP sem acesso direto ao shell. Todos exigem `X-Dgk-Admin: 1`.
+
+### 7.1 ETL via API
+
+```bash
+curl -s -X POST http://localhost:4322/api/etl \
+  -H "X-Dgk-Admin: 1" | node -e \
+  "let d=''; process.stdin.on('data',c=>d+=c); process.stdin.on('end',()=>{ const j=JSON.parse(d); console.log('ok:', j.ok); if(j.output) console.log(j.output.slice(0,200)); })"
+```
+
+Esperado: `ok: true` + primeiras linhas do output do ETL.
+
+| # | Cenário | Esperado |
+|---|---|---|
+| E1 | ETL bem-sucedido | `{"ok": true, "output": "..."}` com status 200 |
+| E2 | Script ETL falha (ex: arquivo ausente) | `{"ok": false, "error": "..."}` com status 500 |
+| E3 | Sem `X-Dgk-Admin` | 403 |
+
+### 7.2 Publicar via API
+
+```bash
+# Dry-run — não envia nada
+curl -s -X POST http://localhost:4322/api/outbox \
+  -H "Content-Type: application/json" \
+  -H "X-Dgk-Admin: 1" \
+  -d '{"channel":"telegram","dryRun":true}'
+```
+
+```bash
+# Publicar até 2 notas
+curl -s -X POST http://localhost:4322/api/outbox \
+  -H "Content-Type: application/json" \
+  -H "X-Dgk-Admin: 1" \
+  -d '{"channel":"telegram","limit":2}'
+```
+
+| # | Cenário | Esperado |
+|---|---|---|
+| P1 | `dryRun: true` | Output mostra o que seria enviado; nada publicado |
+| P2 | `limit: N` | Só N notas processadas |
+| P3 | Canal desconhecido | 400 com `error` |
+
+### 7.3 Inbox via API
+
+```bash
+# Listar notas pendentes em 00 - Entrada/
+curl -s http://localhost:4322/api/inbox | \
+  node -e "let d=''; process.stdin.on('data',c=>d+=c); process.stdin.on('end',()=>{ const j=JSON.parse(d); console.log(j.items.length, 'nota(s)'); j.items.forEach(i=>console.log(' -', i.title)); })"
+```
+
+```bash
+# Buscar novas mensagens do Telegram
+curl -s -X POST http://localhost:4322/api/inbox/fetch \
+  -H "Content-Type: application/json" \
+  -H "X-Dgk-Admin: 1" \
+  -d '{"channel":"telegram","limit":5}'
+```
+
+| # | Cenário | Esperado |
+|---|---|---|
+| I1 | `GET /api/inbox` sem notas | `{"items": []}` |
+| I2 | `GET /api/inbox` com notas | Array com `title`, `status`, `source`, `created` por nota |
+| I3 | `POST /api/inbox/fetch` com token configurado | Output com número de updates importados |
+| I4 | Canal desconhecido em `/fetch` | 400 |
+
+**Por que manual:** os testes unitários cobrem o handler com mocks; esta etapa
+confirma que os scripts reais são invocados e que o output chega no response.
+
+---
+
+## Etapa 8 — Segurança básica (local-first)
 
 | # | Verificar | Esperado |
 |---|---|---|
