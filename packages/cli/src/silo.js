@@ -38,7 +38,7 @@ export const SERVICES = {
   },
   telegram: {
     label: 'Telegram',
-    hint: 'Crie um bot em: https://t.me/BotFather → /newbot → copie o token. Para CHAT_ID: encaminhe uma msg ao bot e chame getUpdates.',
+    hint: 'Crie um bot em: https://t.me/BotFather → /newbot → copie o token. Depois envie qualquer mensagem ao bot para que o Chat ID seja detectado automaticamente.',
     keys: ['TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID'],
     prompts: [
       { key: 'TELEGRAM_BOT_TOKEN', label: 'Bot Token (de @BotFather)', secret: true },
