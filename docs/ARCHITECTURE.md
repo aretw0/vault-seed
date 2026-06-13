@@ -171,6 +171,41 @@ fontes com rate limits (GitHub API, Telegram).
 
 ---
 
+## Ciclo de vida dos dados do Lab
+
+`dados/lab/` contém artefatos gerados pelo ETL — não é fonte de verdade, é
+saída de pipeline. O padrão de versionamento segue essa distinção:
+
+| Contexto | `dados/lab/` no git | Motivo |
+|---|---|---|
+| vault-seed (template) | **Rastreado** | Baseline de demo para notebooks WASM e site |
+| Vault do usuário | **Gitignore** | Regenerável com `dgk etl`; varia com cada vault |
+
+O `initialize.yml` remove `dados/lab/` do vault do usuário ao inicializar,
+e o `.gitignore` herdado impede commits acidentais após o primeiro `dgk etl`.
+
+### Quando migrar além do git
+
+Git funciona bem para `dados/lab/` enquanto:
+- O total de arquivos JSON cabe em ~1 MB.
+- O ETL roda manualmente (não diariamente em CI).
+- O número de notas indexadas fica abaixo de ~500.
+
+Quando ultrapassar esses limites, as opções naturais são:
+
+1. **SQLite local** (`dados/lab.db`) — `dgk etl` escreve no banco; notebooks
+   leem via DuckDB ou `sqlite3`. Nenhum JSON no git; queries mais rápidas.
+2. **Repositório de dados separado** — para vaults colaborativos onde o dado
+   histórico importa. O vault-seed aponta para o repo de dados; CI sincroniza.
+3. **Compactação por período** — arquivar snapshots mensais e manter apenas o
+   JSON mais recente no git. Padrão adequado para vaults de longo prazo com
+   histórico editorial relevante.
+
+A regra prática: se `git log --follow dados/lab/` virar ruído em vez de sinal,
+é hora de migrar.
+
+---
+
 ## Princípios de design
 
 1. **Cada notebook tem 3 blocos visuais:** "O que você vê agora" (WASM) →
