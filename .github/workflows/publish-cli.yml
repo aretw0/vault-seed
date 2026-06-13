@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - '@aretw0/dgk-cli@*'
+      - '@aretw0/dgk-channels@*'
       - '@aretw0/dgk-astro-plugins@*'
       - '@aretw0/dgk-skills@*'
       - '@aretw0/dgk-runner@*'
