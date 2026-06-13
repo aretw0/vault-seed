@@ -12,6 +12,9 @@ importers:
         specifier: workspace:^
         version: link:packages/astro-plugins
     devDependencies:
+      '@aretw0/dgk-channels':
+        specifier: workspace:*
+        version: link:packages/dgk-channels
       '@aretw0/dgk-cli':
         specifier: workspace:*
         version: link:packages/cli
@@ -79,9 +82,14 @@ importers:
 
   packages/cli:
     dependencies:
+      '@aretw0/dgk-channels':
+        specifier: workspace:*
+        version: link:../dgk-channels
       '@aretw0/dgk-runner':
         specifier: workspace:*
         version: link:../dgk-runner
+
+  packages/dgk-channels: {}
 
   packages/dgk-runner: {}
 

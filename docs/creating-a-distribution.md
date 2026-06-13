@@ -14,8 +14,8 @@ e a governança Git do template original.
 
 Uma distribuição é um repositório Git inicializado a partir do vault-seed que:
 
-- Mantém a estrutura PARA (`00 - Projects`, `10 - Areas`, `20 - Resources`,
-  `90 - Archive`, `99 - Meta e Anexos`)
+- Mantém a estrutura PARA (`00 - Entrada`, `10 - Diário`, `20 - Projetos`,
+  `30 - Áreas`, `40 - Recursos`, `50 - Arquivo`, `90 - Modelos`, `99 - Meta e Anexos`)
 - Herda o pipeline Lab (ETL, notebooks, outbox multi-canal)
 - Possui identidade própria: nome, README, CONTRIBUTING e AGENTS específicos
 - Pode estender o arcabouço com pacotes adicionais (ingestion, scraping, etc.)
@@ -115,11 +115,11 @@ tarefas do Jira e documentos do Notion:
 
 ```
 vault-produto/
-├── 00 - Projects/
+├── 20 - Projetos/
 │   └── v2.0/
 │       ├── historia-001.md           # frontmatter: source: jira, tipo: historia
 │       └── decisao-api.md
-├── 20 - Resources/
+├── 40 - Recursos/
 │   └── Design/
 │       └── guia-de-estilo.md         # importado do Notion
 ├── scripts/
@@ -138,7 +138,7 @@ uma distribuição que organiza e publica sua curadoria:
 
 ```
 vault-pesquisa/
-├── 20 - Resources/
+├── 40 - Recursos/
 │   └── Literatura/
 │       └── artigo-ocr-001.md         # nota gerada via OCR de PDF
 ├── scripts/

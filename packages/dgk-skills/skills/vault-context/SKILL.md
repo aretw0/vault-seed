@@ -39,7 +39,7 @@ O campo `status` controla o fluxo editorial. `channels` define onde a nota será
 ## Comandos CLI
 
 ```bash
-dgk lab etl                    # reconstrói todos os dados do vault (grafo, feeds, outbox)
+dgk etl                    # reconstrói todos os dados do vault (grafo, feeds, outbox)
 dgk lab list                   # lista notebooks disponíveis
 dgk lab open <notebook>        # abre notebook interativo
 dgk lab open-vault             # abre vault no Obsidian

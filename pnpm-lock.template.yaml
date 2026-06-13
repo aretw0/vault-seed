@@ -12,6 +12,9 @@ importers:
         specifier: workspace:^
         version: link:packages/astro-plugins
     devDependencies:
+      '@aretw0/dgk-channels':
+        specifier: latest
+        version: 0.1.0
       '@aretw0/dgk-cli':
         specifier: latest
         version: 0.1.1
@@ -72,6 +75,10 @@ importers:
         version: 3.2.4(@types/debug@4.1.13)(@types/node@24.12.4)
 
 packages:
+
+  '@aretw0/dgk-channels@0.1.0':
+    resolution: {integrity: sha512-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==}
+    engines: {node: '>=22'}
 
   '@aretw0/dgk-cli@0.1.1':
     resolution: {integrity: sha512-QSiaKjUxbVSSoZatmPjEIFMROwQlWgCSS7l1icGCf37tpZoc2GWVkV9Tg9deviwPlsF16L7PCtM1knymONebbg==}
@@ -2205,6 +2212,8 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
 snapshots:
+
+  '@aretw0/dgk-channels@0.1.0': {}
 
   '@aretw0/dgk-cli@0.1.1': {}
 
