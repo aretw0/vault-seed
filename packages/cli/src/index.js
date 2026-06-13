@@ -16,8 +16,9 @@ import { etl } from './commands/etl.js';
 import { outbox } from './commands/outbox.js';
 import { inbox } from './commands/inbox.js';
 import { vscode } from './commands/vscode.js';
+import { preview } from './commands/preview.js';
 
-const COMMANDS = { validate, lint, setup, check, lab, obsidian, vscode, note, publish, sow, serve, etl, outbox, inbox };
+const COMMANDS = { validate, lint, setup, check, lab, obsidian, vscode, note, publish, sow, serve, etl, outbox, inbox, preview };
 
 export function resolveCommand(name) {
   return name in COMMANDS ? name : null;
@@ -50,6 +51,7 @@ Comandos:
   etl                Executa o pipeline de dados do vault
   outbox <canal>     Publica notas da fila para o canal (ex: telegram)
   inbox <canal>      Importa mensagens do canal para o vault (ex: telegram)
+  preview [opções]   Abre o site em modo dev (--lab exporta notebooks, --network expõe na LAN, --port N)
   serve [--port N]   Inicia o painel admin local (padrão: porta 4322)
   obsidian [nome]    Abre o vault no Obsidian
   vscode             Abre o vault no VS Code (Foam pré-configurado)
