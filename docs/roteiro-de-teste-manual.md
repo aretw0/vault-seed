@@ -19,6 +19,7 @@
 | Expand/collapse/recenter/zoom/pan existem no DOM | `site_ux_contract.test.js` + `graph_interactions_smoke.mjs` |
 | Sidebar collapse state (left/right) | `site_ux_contract.test.js` |
 | Responsividade (4 viewports, 10 páginas) — screenshots | `smoke_responsive.mjs` |
+| `dgk preview` flags (--lab, --network, --port) | `packages/cli/test/preview.test.js` |
 | Nós dentro do viewBox após drag/zoom (coordenadas) | `graph_interactions_smoke.mjs` |
 | Marimo shell topbar + content gap | `lab_shell_contract.test.mjs` |
 | Skip link presente e com CSS de foco (WCAG 2.4.1) | `site_ux_contract.test.js` |
@@ -157,10 +158,14 @@ Checar em 5 minutos após deploy:
 | # | URL | Verificar |
 |---|-----|-----------|
 | R1 | `/` | Hero renderiza; graph SVG visível |
-| R2 | `/explorar/` | Filtros funcionam; graph responde a expand/collapse |
-| R3 | `/lab/` | Sidebar marimo; footer visível; sem JS error no console |
-| R4 | `/explorar/` mobile 390px | Graph não está colado à esquerda |
-| R5 | `/explorar/` + arrastar nó | Nós vizinhos se afastam ao soltar |
+| R2 | `/` | Lista de notas recentes em monospace abaixo do hero |
+| R3 | `/` | Tag cloud e seção de capacidades ao final |
+| R4 | `/explorar/` | Filtros funcionam; graph responde a expand/collapse |
+| R5 | `/explorar/` + hover em nó | Rótulos de nós não relacionados somem; vizinhos permanecem |
+| R6 | `/lab/` | Sidebar marimo; footer visível; sem JS error no console |
+| R7 | `/explorar/` mobile 390px | Graph não está colado à esquerda |
+| R8 | `/explorar/` mobile + segurar nó | Nenhum popup do browser aparece |
+| R9 | `/explorar/` + arrastar nó | Nós vizinhos se afastam ao soltar |
 
 ---
 
@@ -229,6 +234,171 @@ process.exit(d.noteCount > 0 ? 0 : 1)" && echo "ETL OK"
 | ET1 | ETL completa sem erro | Nenhum `Error:` na saída |
 | ET2 | `dados/lab/` ignorado no vault do usuário | `git status dados/lab/` vazio após `initialize.yml` |
 | ET3 | Segunda execução sem mudança de notas | Timestamps idênticos (`collectedAt` não avançou) |
+
+---
+
+## Seção 8 — Homepage (redesign cassidoo-style)
+
+> Cobre a homepage após o redesign: lista de notas recentes em fonte monospace,
+> seção de capacidades, tag cloud e grafo hero.
+
+### 8.1 Desktop — estrutura e legibilidade
+
+**Viewport:** 1280×900 Chrome. **URL:** `/`
+
+| # | O que verificar | Esperado |
+|---|---|---|
+| H1 | Hero acima da dobra | Grafo SVG visível à direita; título e tagline à esquerda |
+| H2 | Seção "Notas recentes" | Lista em fonte monospace; título sublinhado + data em itálico + `#tags` |
+| H3 | Sem parágrafos de excerpts | Apenas título, data e tags por item — sem bloco de texto truncado |
+| H4 | Datas no formato `25 de mai. de 2026` | Localização pt-BR aplicada |
+| H5 | Seção "Ver por tag" | Pills de tags clicáveis; clique abre `/explorar/` com filtro pré-selecionado |
+| H6 | "Assine via RSS" | Link aponta para `/rss.xml`; clique abre o feed |
+| H7 | Seção "O que este vault oferece" | Lista com `→` bullets; cada item é link para a doc correspondente |
+| H8 | Nota mais recente aparece no topo | Ordenação por `updated` desc, depois `created` |
+
+---
+
+### 8.2 Mobile — lista de notas e responsividade
+
+**Dispositivo:** iPhone Pro (390×844, DPR 3). **URL:** `/`
+
+| # | O que verificar | Esperado |
+|---|---|---|
+| M1 | Grafo hero visível sem scroll | SVG ocupa a largura da tela; rótulos legíveis |
+| M2 | Lista de notas abaixo do hero | Fonte monospace renderizada; título nunca ultrapassa a largura da tela |
+| M3 | Tags por nota | Pills em linha; quebra de linha natural quando não cabem |
+| M4 | Tag cloud "Ver por tag" | Pills centralizada; sem overflow horizontal |
+| M5 | Seção de capacidades | `→` bullets com links funcionando; sem quebra de layout |
+
+---
+
+### 8.3 Vault sem notas publicadas (estado vazio)
+
+> Simular removendo temporariamente o `status: published` de todas as notas,
+> ou criando uma instância de vault zerada.
+
+| # | O que verificar | Esperado |
+|---|---|---|
+| E1 | Página carrega sem erro | Sem `undefined`, `null` ou JS error no console |
+| E2 | Mensagem de estado vazio | Texto orientando a marcar notas com `status: published` |
+| E3 | Seção de capacidades presente | Ainda visível mesmo sem notas |
+| E4 | Seção de tags ausente | Não renderiza se não há tags (array vazio) |
+
+**Por que manual:** estado vazio só acontece no vault do usuário novo — a demo do template sempre tem notas publicadas.
+
+---
+
+## Seção 9 — Grafo: comportamento de hover e mobile
+
+### 9.1 Desktop — foco de labels durante hover
+
+**Viewport:** 1280×900 Chrome. **URL:** `/` ou `/explorar/`
+
+| # | Ação | Esperado |
+|---|------|----------|
+| G1 | Passar o mouse sobre um nó | Rótulo completo aparece na hover-layer; rótulo curto do próprio nó desaparece |
+| G2 | Nós vizinhos (com aresta direta) | Rótulos **permanecem visíveis**; círculos ficam mais saturados |
+| G3 | Nós não relacionados | Rótulos **desaparecem** (opacity 0); círculos ficam com opacity 0.45 |
+| G4 | Tirar o mouse do nó | Todos os rótulos voltam suavemente (transição 120ms) |
+| G5 | Foco via teclado (Tab) | Mesmo comportamento do mouse; nenhuma regressão de acessibilidade |
+
+---
+
+### 9.2 Mobile — long-press nos nós do grafo
+
+**Dispositivo:** iOS Safari (iPhone qualquer) ou Chrome Android.
+
+| # | Ação | Esperado |
+|---|------|----------|
+| LP1 | Toque curto em um nó | Navega para a nota |
+| LP2 | Segurar um nó por 1 segundo+ | **Nenhum** popup do browser ("Open in New Tab", "Copy Link", etc.) |
+| LP3 | Segurar o fundo do SVG | Nenhum popup; inicia pan se arrastar |
+| LP4 | Toque em link normal fora do grafo | Popup do browser aparece normalmente (comportamento padrão preservado) |
+
+**Por que manual:** `-webkit-touch-callout: none` é CSS mas só verificável em dispositivo iOS real; Android usa mecanismo diferente (menos problemático).
+
+---
+
+## Seção 10 — `dgk preview` (command)
+
+> Cobre o comando `dgk preview` que substitui os scripts `site:dev:lab:host`
+> para usuários do template.
+
+### 10.1 Preview básico (só o site)
+
+```bash
+dgk preview
+```
+
+| # | O que verificar | Esperado |
+|---|---|---|
+| P1 | Servidor inicia | Mensagem `astro dev` na saída; URL exibida (padrão `http://localhost:4321/`) |
+| P2 | Browser abre em `localhost:4321` | Homepage carrega; grafo hero visível |
+| P3 | Sem notebooks exportados | Não roda `export_notebooks.mjs` antes de iniciar |
+| P4 | `Ctrl+C` encerra | Terminal volta ao prompt; porta liberada |
+
+---
+
+### 10.2 Preview com Lab
+
+```bash
+dgk preview --lab
+```
+
+| # | O que verificar | Esperado |
+|---|---|---|
+| L1 | Mensagem de exportação | `[dgk] Exportando notebooks antes do preview...` aparece antes do Astro |
+| L2 | Notebooks exportados antes | `public/lab/` atualizado antes do servidor subir |
+| L3 | Astro sobe em seguida | Mesmo comportamento de P1 |
+| L4 | `/lab/` no browser | Notebooks WASM acessíveis; sem erro de "arquivo não encontrado" |
+
+---
+
+### 10.3 Preview na rede local
+
+```bash
+dgk preview --network
+```
+ou
+```bash
+dgk preview --lab --network
+```
+
+| # | O que verificar | Esperado |
+|---|---|---|
+| N1 | Astro escuta em `0.0.0.0` | Saída mostra URL de rede local além de `localhost` |
+| N2 | Acesso de outro dispositivo na rede | `http://<IP-local>:4321/` abre no celular (mesmo Wi-Fi) |
+| N3 | `--lab --network` combinados | Export acontece antes; site acessível na rede **com** notebooks |
+
+---
+
+### 10.4 Porta customizada
+
+```bash
+dgk preview --port 8080
+```
+
+| # | O que verificar | Esperado |
+|---|---|---|
+| C1 | Servidor sobe na porta informada | Saída mostra `localhost:8080` |
+| C2 | Porta padrão 4321 não usada | `localhost:4321` dá connection refused |
+
+---
+
+### 10.5 Help e comparação com scripts npm
+
+| Cenário | Comando usuário (`dgk`) | Script npm equivalente (dev) |
+|---|---|---|
+| Só o site | `dgk preview` | `pnpm run site:dev` |
+| Site + lab | `dgk preview --lab` | `pnpm run site:dev:lab` |
+| Site + lab + LAN | `dgk preview --lab --network` | `pnpm run site:dev:lab:host` |
+| Admin panel | `dgk serve` | — |
+| Notebook específico | `dgk lab analise-feeds` | — |
+
+**Por que o `dgk preview` existe:** a cadeia `site:dev:lab:host` não é autodescritiva para
+quem não conhece o projeto. `dgk preview --lab --network` declara o que acontece e é
+componível — cada flag é independente.
 
 ---
 
