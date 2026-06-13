@@ -208,6 +208,30 @@ pnpm run site:dev   # ou site:build + site:preview
 
 ---
 
+## Seção 7 — ETL e ciclo de dados (mantenedor + usuário avançado)
+
+> Cobre o pipeline `dgk etl`, idempotência de timestamps e comportamento
+> de `dados/lab/` no git. Aplica-se ao mantenedor e a usuários que querem
+> entender o fluxo de dados.
+
+Ver trilha detalhada: [`roteiro-teste-etl.md`](roteiro-teste-etl.md)
+
+Smoke de sanidade rápido para incluir no checklist pré-release:
+
+```bash
+dgk etl && node -e "
+const d=require('./dados/lab/perfil-do-vault.json');
+process.exit(d.noteCount > 0 ? 0 : 1)" && echo "ETL OK"
+```
+
+| # | O que verificar | Esperado |
+|---|---|---|
+| ET1 | ETL completa sem erro | Nenhum `Error:` na saída |
+| ET2 | `dados/lab/` ignorado no vault do usuário | `git status dados/lab/` vazio após `initialize.yml` |
+| ET3 | Segunda execução sem mudança de notas | Timestamps idênticos (`collectedAt` não avançou) |
+
+---
+
 ## Como reportar falhas
 
 Criar issue com:

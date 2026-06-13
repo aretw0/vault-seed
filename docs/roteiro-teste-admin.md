@@ -132,6 +132,57 @@ Disponível no painel de config do Telegram após inserir o Bot Token.
 | Sec3 | Inspecionar `GET /api/services` | Schema de campos sem nenhum valor de credencial |
 | Sec4 | Verificar `~/.dgk/silo.json` após save via dashboard | Tokens presentes com permissão `600` |
 
+### 7.1 Proteção contra DNS rebinding
+
+O servidor valida o header `Host` em todas as requisições. Só aceita
+`127.0.0.1:<porta>` e `localhost:<porta>` — qualquer outro host recebe 403.
+
+```bash
+# Simular requisição com Host externo (deve retornar 403)
+curl -s -o /dev/null -w "%{http_code}" \
+  -H "Host: evil.example.com" \
+  http://127.0.0.1:4322/api/status
+```
+
+Esperado: `403`.
+
+```bash
+# Requisição legítima (deve retornar 200)
+curl -s -o /dev/null -w "%{http_code}" http://localhost:4322/api/status
+```
+
+Esperado: `200`.
+
+### 7.2 Proteção CSRF em rotas de escrita
+
+Endpoints `POST` e `DELETE` exigem o header `X-Dgk-Admin: 1`.
+O dashboard HTML já envia o header automaticamente — esta seção verifica
+que uma requisição sem o header (ex: página maliciosa via CORS) é bloqueada.
+
+```bash
+# POST sem header CSRF (deve retornar 403)
+curl -s -o /dev/null -w "%{http_code}" \
+  -X POST http://localhost:4322/api/sow \
+  -H "Content-Type: application/json" \
+  -d '{"service":"mastodon","tokens":{"MASTODON_TOKEN":"x"}}'
+```
+
+Esperado: `403`.
+
+```bash
+# POST com header CSRF (deve processar normalmente — 400 por serviço inválido, não 403)
+curl -s -o /dev/null -w "%{http_code}" \
+  -X POST http://localhost:4322/api/sow \
+  -H "Content-Type: application/json" \
+  -H "X-Dgk-Admin: 1" \
+  -d '{"service":"plataforma-inexistente","tokens":{"X":"y"}}'
+```
+
+Esperado: `400` (serviço desconhecido — a requisição passou pela proteção CSRF).
+
+**Por que manual:** os testes unitários já cobrem os códigos de retorno; esta etapa
+confirma o comportamento num servidor real, não apenas num handler mockado.
+
 ---
 
 ## Smoke check rápido

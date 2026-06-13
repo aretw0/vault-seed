@@ -45,9 +45,10 @@ Para preparar um computador de usuário final, use
 - [Roteiro de teste manual — site e grafo](roteiro-de-teste-manual.md) — visual, mobile, touch, temas, docs técnicas (mantenedor)
 - [Trilha: editores](roteiro-teste-editores.md) — Obsidian e VS Code/Foam: abrir, wikilinks, configuração, `dgk note`
 - [Trilha: Lab de notebooks](roteiro-teste-lab.md) — WASM, Marimo local, evaluate, curate, export
+- [Trilha: ETL e dados do Lab](roteiro-teste-etl.md) — `dgk etl`, idempotência, gitignore em vaults de usuário, teto de migração
 - [Trilha: canais de publicação](roteiro-teste-canais.md) — configurar e validar Telegram, Mastodon, etc. via CLI e dashboard
 - [Trilha: ciclo do outbox](roteiro-teste-outbox.md) — ETL → revisar → dry-run → publicar → rate limits
-- [Trilha: painel admin local](roteiro-teste-admin.md) — `dgk serve`, UI de configuração, segurança
+- [Trilha: painel admin local](roteiro-teste-admin.md) — `dgk serve`, UI de configuração, segurança (CSRF + DNS rebinding)
 
 ## Como evitar drift
 
