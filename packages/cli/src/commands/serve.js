@@ -1,5 +1,6 @@
 import { createServer } from 'node:http';
-import { existsSync, readFileSync } from 'node:fs';
+import { spawn } from 'node:child_process';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
 import {
@@ -55,6 +56,47 @@ function readAllContacts(root, siloPath) {
     result[platform] = { count: contacts.length, contacts };
   }
   return result;
+}
+
+// Spawns a script and captures stdout+stderr. Used by operation endpoints
+// so Pi can receive the output and relay it back via Telegram.
+export function defaultSpawn(cmd, args, cwd) {
+  return new Promise((resolve) => {
+    let output = '';
+    const child = spawn(cmd, args, { cwd, stdio: ['ignore', 'pipe', 'pipe'], shell: false });
+    child.stdout?.on('data', (d) => { output += d; });
+    child.stderr?.on('data', (d) => { output += d; });
+    child.on('close', (code) => resolve({ ok: code === 0, output: output.trim() }));
+    child.on('error', (err) => resolve({ ok: false, output: err.message }));
+  });
+}
+
+const ETL_SCRIPTS = [
+  'scripts/lab_etl_demo.mjs',
+  'scripts/prepare_feed_sources.mjs',
+  'scripts/prepare_publication_outbox.mjs',
+  'scripts/prepare_lab_datasets.mjs',
+];
+
+function readInboxItems(root) {
+  const dir = join(root, '00 - Entrada');
+  try {
+    return readdirSync(dir)
+      .filter((f) => f.endsWith('.md'))
+      .map((f) => {
+        const content = readFileSync(join(dir, f), 'utf8');
+        const fm = content.match(/^---\n([\s\S]*?)\n---/);
+        const meta = {};
+        if (fm) {
+          for (const line of fm[1].split('\n')) {
+            const sep = line.indexOf(':');
+            if (sep < 1) continue;
+            meta[line.slice(0, sep).trim()] = line.slice(sep + 1).trim().replace(/^["']|["']$/g, '');
+          }
+        }
+        return { file: f, title: meta.title ?? f.replace('.md', ''), status: meta.status, source: meta.source, created: meta.created };
+      });
+  } catch { return []; }
 }
 
 // Returns service metadata (no credentials — just schema for UI form generation).
@@ -312,7 +354,7 @@ setInterval(load,30_000);
 </body>
 </html>`;
 
-async function handleAsync(req, res, root, siloPath, fetchFn) {
+async function handleAsync(req, res, root, siloPath, fetchFn, spawnFn) {
   const url = new URL(req.url, 'http://localhost');
   const { method } = req;
 
@@ -405,18 +447,66 @@ async function handleAsync(req, res, root, siloPath, fetchFn) {
     return;
   }
 
+  if (url.pathname === '/api/etl' && method === 'POST') {
+    let combined = '';
+    for (const script of ETL_SCRIPTS) {
+      const result = await spawnFn('node', [script], root);
+      if (result.output) combined += result.output + '\n';
+      if (!result.ok) {
+        jsonResponse(res, { ok: false, error: combined.trim() }, 500);
+        return;
+      }
+    }
+    jsonResponse(res, { ok: true, output: combined.trim() });
+    return;
+  }
+
+  if (url.pathname === '/api/outbox' && method === 'POST') {
+    const { channel = 'telegram', dryRun = false, limit } = await readBody(req);
+    const scriptMap = { telegram: 'scripts/publish_to_telegram.mjs' };
+    if (!(channel in scriptMap)) {
+      jsonResponse(res, { error: `Canal desconhecido: ${channel}` }, 400);
+      return;
+    }
+    const args = [scriptMap[channel]];
+    if (dryRun) args.push('--dry-run');
+    if (limit) args.push('--limit', String(limit));
+    const result = await spawnFn('node', args, root);
+    jsonResponse(res, result.ok ? { ok: true, output: result.output } : { ok: false, error: result.output }, result.ok ? 200 : 500);
+    return;
+  }
+
+  if (url.pathname === '/api/inbox' && method === 'GET') {
+    jsonResponse(res, { items: readInboxItems(root) });
+    return;
+  }
+
+  if (url.pathname === '/api/inbox/fetch' && method === 'POST') {
+    const { channel = 'telegram', limit } = await readBody(req);
+    const scriptMap = { telegram: 'scripts/inbox_from_telegram.mjs' };
+    if (!(channel in scriptMap)) {
+      jsonResponse(res, { error: `Canal desconhecido: ${channel}` }, 400);
+      return;
+    }
+    const args = [scriptMap[channel]];
+    if (limit) args.push('--limit', String(limit));
+    const result = await spawnFn('node', args, root);
+    jsonResponse(res, result.ok ? { ok: true, output: result.output } : { ok: false, error: result.output }, result.ok ? 200 : 500);
+    return;
+  }
+
   jsonResponse(res, { error: 'Not found' }, 404);
 }
 
-function handleRequest(req, res, root, siloPath, fetchFn) {
-  handleAsync(req, res, root, siloPath, fetchFn).catch((err) => {
+function handleRequest(req, res, root, siloPath, fetchFn, spawnFn) {
+  handleAsync(req, res, root, siloPath, fetchFn, spawnFn).catch((err) => {
     if (!res.headersSent) jsonResponse(res, { error: 'Internal error' }, 500);
     console.error('dgk serve:', err.message);
   });
 }
 
-export function createAdminServer(root = process.cwd(), siloPath = SILO_PATH, { fetchFn = fetch } = {}) {
-  return createServer((req, res) => handleRequest(req, res, root, siloPath, fetchFn));
+export function createAdminServer(root = process.cwd(), siloPath = SILO_PATH, { fetchFn = fetch, spawnFn = defaultSpawn } = {}) {
+  return createServer((req, res) => handleRequest(req, res, root, siloPath, fetchFn, spawnFn));
 }
 
 export async function serve(args, root = process.cwd(), siloPath = SILO_PATH) {

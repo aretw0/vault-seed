@@ -515,3 +515,157 @@ describe('CSRF header validation', () => {
     assert.equal(res.status, 200);
   });
 });
+
+// --- Operation endpoints (ETL, outbox, inbox) ---
+
+function mockSpawn(result) {
+  return async (_cmd, _args, _cwd) => result;
+}
+
+describe('POST /api/etl', () => {
+  let tmp, siloPath, server;
+  beforeEach(async () => {
+    tmp = tempDir();
+    siloPath = tempSilo(tmp);
+    server = await startServer(tmp, siloPath, { spawnFn: mockSpawn({ ok: true, output: 'ETL OK' }) });
+  });
+  afterEach(async () => { await server.close(); rmSync(tmp, { recursive: true }); });
+
+  test('retorna ok=true quando todos os scripts passam', async () => {
+    const res = await fetch(`${server.address}/api/etl`, {
+      method: 'POST',
+      headers: { 'X-Dgk-Admin': '1' },
+    });
+    assert.equal(res.status, 200);
+    const data = await res.json();
+    assert.equal(data.ok, true);
+  });
+
+  test('retorna 500 e ok=false quando um script falha', async () => {
+    const s = await startServer(tmp, siloPath, { spawnFn: mockSpawn({ ok: false, output: 'script error' }) });
+    try {
+      const res = await fetch(`${s.address}/api/etl`, {
+        method: 'POST',
+        headers: { 'X-Dgk-Admin': '1' },
+      });
+      assert.equal(res.status, 500);
+      const data = await res.json();
+      assert.equal(data.ok, false);
+      assert.ok(data.error);
+    } finally { await s.close(); }
+  });
+
+  test('requer X-Dgk-Admin', async () => {
+    const res = await fetch(`${server.address}/api/etl`, { method: 'POST' });
+    assert.equal(res.status, 403);
+  });
+});
+
+describe('POST /api/outbox', () => {
+  let tmp, siloPath, server;
+  beforeEach(async () => {
+    tmp = tempDir();
+    siloPath = tempSilo(tmp);
+    server = await startServer(tmp, siloPath, { spawnFn: mockSpawn({ ok: true, output: '1 nota publicada' }) });
+  });
+  afterEach(async () => { await server.close(); rmSync(tmp, { recursive: true }); });
+
+  test('publica no canal telegram com sucesso', async () => {
+    const res = await fetch(`${server.address}/api/outbox`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
+      body: JSON.stringify({ channel: 'telegram' }),
+    });
+    assert.equal(res.status, 200);
+    const data = await res.json();
+    assert.equal(data.ok, true);
+  });
+
+  test('retorna 400 para canal desconhecido', async () => {
+    const res = await fetch(`${server.address}/api/outbox`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
+      body: JSON.stringify({ channel: 'plataforma-inexistente' }),
+    });
+    assert.equal(res.status, 400);
+    const data = await res.json();
+    assert.ok(data.error);
+  });
+});
+
+describe('GET /api/inbox', () => {
+  let tmp, siloPath, server;
+  beforeEach(async () => {
+    tmp = tempDir();
+    siloPath = tempSilo(tmp);
+    server = await startServer(tmp, siloPath);
+  });
+  afterEach(async () => { await server.close(); rmSync(tmp, { recursive: true }); });
+
+  test('retorna lista vazia quando 00 - Entrada/ não existe', async () => {
+    const res = await fetch(`${server.address}/api/inbox`);
+    assert.equal(res.status, 200);
+    const data = await res.json();
+    assert.deepEqual(data.items, []);
+  });
+
+  test('retorna notas do inbox com metadados básicos', async () => {
+    const inboxDir = join(tmp, '00 - Entrada');
+    mkdirSync(inboxDir, { recursive: true });
+    writeFileSync(join(inboxDir, 'nota-teste.md'), [
+      '---',
+      'title: "Nota de teste"',
+      'status: draft',
+      'source: telegram',
+      '---',
+      'Conteúdo aqui.',
+    ].join('\n'));
+
+    const res = await fetch(`${server.address}/api/inbox`);
+    assert.equal(res.status, 200);
+    const data = await res.json();
+    assert.equal(data.items.length, 1);
+    assert.equal(data.items[0].title, 'Nota de teste');
+    assert.equal(data.items[0].status, 'draft');
+    assert.equal(data.items[0].source, 'telegram');
+  });
+});
+
+describe('POST /api/inbox/fetch', () => {
+  let tmp, siloPath, server;
+  beforeEach(async () => {
+    tmp = tempDir();
+    siloPath = tempSilo(tmp);
+    server = await startServer(tmp, siloPath, { spawnFn: mockSpawn({ ok: true, output: '2 update(s) importados' }) });
+  });
+  afterEach(async () => { await server.close(); rmSync(tmp, { recursive: true }); });
+
+  test('busca mensagens do telegram com sucesso', async () => {
+    const res = await fetch(`${server.address}/api/inbox/fetch`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
+      body: JSON.stringify({ channel: 'telegram' }),
+    });
+    assert.equal(res.status, 200);
+    const data = await res.json();
+    assert.equal(data.ok, true);
+    assert.ok(data.output);
+  });
+
+  test('retorna 400 para canal desconhecido', async () => {
+    const res = await fetch(`${server.address}/api/inbox/fetch`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
+      body: JSON.stringify({ channel: 'whatsapp' }),
+    });
+    assert.equal(res.status, 400);
+  });
+
+  test('requer X-Dgk-Admin', async () => {
+    const res = await fetch(`${server.address}/api/inbox/fetch`, {
+      method: 'POST',
+      body: JSON.stringify({ channel: 'telegram' }),
+    });
+    assert.equal(res.status, 403);
+  });
+});
