@@ -528,6 +528,50 @@ requireCondition(
   "scripts/notebook_cell_output_lint.test.mjs must be present so generated vaults guard against invisible notebook output.",
 );
 
+// Note status contract — two separate concerns:
+//
+// PUBLISHED: vault-seed ships these as published. They appear on the vault-seed
+// site AND arrive at the user already published. Changing to draft here will
+// break mermaid_render_contract.test.js and/or remove them from the user's site.
+//
+// DRAFT: example/concept content. Users receive it as draft and decide whether
+// to keep, edit, or delete. Must not be accidentally published by bulk resets.
+const NOTE_STATUS_CONTRACT = {
+  published: [
+    "00 - Entrada/Bem-vindo ao seu vault.md",
+    "40 - Recursos/Mermaid.md",
+  ],
+  draft: [
+    "40 - Recursos/Filosofia e Conceitos Fundamentais.md",
+    "40 - Recursos/O que é o método PARA.md",
+    "40 - Recursos/O que é o método Zettelkasten.md",
+    "40 - Recursos/O que são MOCs (Mapas de Conteúdo).md",
+  ],
+};
+
+function extractStatus(content) {
+  const m = content.match(/^---[\s\S]*?^status:\s*(\S+)/m);
+  return m ? m[1] : null;
+}
+
+for (const notePath of NOTE_STATUS_CONTRACT.published) {
+  const content = read(notePath);
+  const status = extractStatus(content);
+  requireCondition(
+    status === "published",
+    `${notePath} must have status: published (vault-seed reference content). Got: ${status ?? "(absent)"}`,
+  );
+}
+
+for (const notePath of NOTE_STATUS_CONTRACT.draft) {
+  const content = read(notePath);
+  const status = extractStatus(content);
+  requireCondition(
+    status === "draft",
+    `${notePath} must have status: draft (example content, user decides). Got: ${status ?? "(absent)"}`,
+  );
+}
+
 if (errors.length > 0) {
   console.error("Template smoke failed:");
   for (const error of errors) {
