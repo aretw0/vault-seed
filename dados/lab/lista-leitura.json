@@ -15,7 +15,7 @@
       ]
     },
     {
-      "url": "https://maggieappleton.com/roam",
+      "url": "https://maggieappleton.com/bidirectionals",
       "title": "A Short History of Bi-Directional Links",
       "topic": "pkm",
       "status": "lido",
@@ -80,7 +80,7 @@
       ]
     },
     {
-      "url": "https://marimo.io/blog/intro",
+      "url": "https://marimo.io/blog/introducing-marimo",
       "title": "Introducing marimo",
       "topic": "ferramentas",
       "status": "lido",
@@ -153,5 +153,5 @@
       "count": 4
     }
   ],
-  "collectedAt": "2026-06-13T00:31:49.504Z"
+  "collectedAt": "2026-06-13T01:35:44.261Z"
 }
