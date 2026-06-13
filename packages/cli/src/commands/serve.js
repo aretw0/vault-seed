@@ -257,7 +257,7 @@ async function saveConfig(e){
   for(const[k,v]of new FormData(e.target).entries()){
     if(v.trim())tokens[k]=v.trim();
   }
-  const res=await fetch('/api/sow',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:activeSvc,tokens})});
+  const res=await fetch('/api/sow',{method:'POST',headers:{'Content-Type':'application/json','X-Dgk-Admin':'1'},body:JSON.stringify({service:activeSvc,tokens})});
   if(res.ok){closeConfig();await load();}
   else{const d=await res.json();alert('Erro: '+(d.error??'Falha ao salvar'));}
 }
@@ -265,7 +265,7 @@ async function saveConfig(e){
 async function doRemove(id){
   const label=svcDefs[id]?.label??id;
   if(!confirm('Remover configuração de '+label+'?'))return;
-  const res=await fetch('/api/sow/'+id,{method:'DELETE'});
+  const res=await fetch('/api/sow/'+id,{method:'DELETE',headers:{'X-Dgk-Admin':'1'}});
   if(res.ok){if(activeSvc===id)closeConfig();await load();}
   else{const d=await res.json();alert('Erro: '+(d.error??'Falha ao remover'));}
 }
@@ -279,7 +279,7 @@ async function discoverChats(){
   const listEl=document.getElementById('chat-list');
   listEl.removeAttribute('hidden');listEl.innerHTML='<div class="empty" style="padding:.5rem">Aguardando...</div>';
   try{
-    const res=await fetch('/api/sow/telegram/chats',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token})});
+    const res=await fetch('/api/sow/telegram/chats',{method:'POST',headers:{'Content-Type':'application/json','X-Dgk-Admin':'1'},body:JSON.stringify({token})});
     const data=await res.json();
     const chats=data.chats??[];
     if(!chats.length){
@@ -316,9 +316,22 @@ async function handleAsync(req, res, root, siloPath, fetchFn) {
   const url = new URL(req.url, 'http://localhost');
   const { method } = req;
 
+  // DNS rebinding: reject requests whose Host doesn't match the local server
+  const host = req.headers.host || '';
+  if (!/^(127\.0\.0\.1|localhost)(:\d+)?$/.test(host)) {
+    jsonResponse(res, { error: 'forbidden host' }, 403);
+    return;
+  }
+
   if (method === 'OPTIONS') {
     res.writeHead(204, { Allow: 'GET, POST, DELETE, OPTIONS' });
     res.end();
+    return;
+  }
+
+  // CSRF: require custom header on all state-changing requests
+  if (['POST', 'DELETE'].includes(method) && req.headers['x-dgk-admin'] !== '1') {
+    jsonResponse(res, { error: 'missing csrf header' }, 403);
     return;
   }
 

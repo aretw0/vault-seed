@@ -3,7 +3,26 @@ import assert from 'node:assert/strict';
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
+import http from 'node:http';
 import { createAdminServer, parsePort } from '../src/commands/serve.js';
+
+/** Raw HTTP request allowing custom Host header (fetch() forbids this). */
+function rawRequest(address, { path = '/', method = 'GET', headers = {}, body } = {}) {
+  return new Promise((resolve, reject) => {
+    const u = new URL(address);
+    const req = http.request(
+      { hostname: u.hostname, port: u.port, path, method, headers },
+      (res) => {
+        let data = '';
+        res.on('data', (c) => { data += c; });
+        res.on('end', () => resolve({ status: res.statusCode, body: data }));
+      },
+    );
+    req.on('error', reject);
+    if (body) req.write(body);
+    req.end();
+  });
+}
 
 function tempDir() {
   const dir = join(tmpdir(), `serve-${Date.now()}-${Math.random().toString(36).slice(2)}`);
@@ -236,7 +255,7 @@ describe('POST /api/sow', () => {
   test('salva tokens para serviço conhecido', async () => {
     const res = await fetch(`${server.address}/api/sow`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
       body: JSON.stringify({ service: 'mastodon', tokens: { MASTODON_TOKEN: 'tok-test' } }),
     });
     assert.equal(res.status, 200);
@@ -252,7 +271,7 @@ describe('POST /api/sow', () => {
   test('retorna 400 para serviço desconhecido', async () => {
     const res = await fetch(`${server.address}/api/sow`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
       body: JSON.stringify({ service: 'plataforma-inexistente', tokens: { X: 'y' } }),
     });
     assert.equal(res.status, 400);
@@ -261,7 +280,7 @@ describe('POST /api/sow', () => {
   test('retorna 400 quando body não tem tokens', async () => {
     const res = await fetch(`${server.address}/api/sow`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
       body: JSON.stringify({ service: 'telegram' }),
     });
     assert.equal(res.status, 400);
@@ -270,14 +289,14 @@ describe('POST /api/sow', () => {
   test('não substitui tokens existentes não fornecidos (merge parcial)', async () => {
     const res1 = await fetch(`${server.address}/api/sow`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
       body: JSON.stringify({ service: 'telegram', tokens: { TELEGRAM_BOT_TOKEN: 'tok1', TELEGRAM_CHAT_ID: '-100' } }),
     });
     assert.equal(res1.status, 200);
 
     const res2 = await fetch(`${server.address}/api/sow`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
       body: JSON.stringify({ service: 'telegram', tokens: { TELEGRAM_BOT_TOKEN: 'tok2' } }),
     });
     assert.equal(res2.status, 200);
@@ -302,7 +321,7 @@ describe('DELETE /api/sow/:service', () => {
   });
 
   test('remove credenciais do serviço', async () => {
-    const res = await fetch(`${server.address}/api/sow/mastodon`, { method: 'DELETE' });
+    const res = await fetch(`${server.address}/api/sow/mastodon`, { method: 'DELETE', headers: { 'X-Dgk-Admin': '1' } });
     assert.equal(res.status, 200);
     const data = await res.json();
     assert.equal(data.ok, true);
@@ -313,7 +332,7 @@ describe('DELETE /api/sow/:service', () => {
   });
 
   test('retorna 404 para serviço não configurado', async () => {
-    const res = await fetch(`${server.address}/api/sow/telegram`, { method: 'DELETE' });
+    const res = await fetch(`${server.address}/api/sow/telegram`, { method: 'DELETE', headers: { 'X-Dgk-Admin': '1' } });
     assert.equal(res.status, 404);
   });
 });
@@ -341,7 +360,7 @@ describe('POST /api/sow/telegram/chats', () => {
     try {
       const res = await fetch(`${server.address}/api/sow/telegram/chats`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
         body: JSON.stringify({ token: 'fake-bot-token' }),
       });
       assert.equal(res.status, 200);
@@ -362,7 +381,7 @@ describe('POST /api/sow/telegram/chats', () => {
     try {
       const res = await fetch(`${server.address}/api/sow/telegram/chats`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
         body: JSON.stringify({ token: 'bad-token' }),
       });
       assert.equal(res.status, 200);
@@ -378,7 +397,7 @@ describe('POST /api/sow/telegram/chats', () => {
     try {
       const res = await fetch(`${server.address}/api/sow/telegram/chats`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
         body: JSON.stringify({}),
       });
       assert.equal(res.status, 400);
@@ -405,5 +424,94 @@ describe('rota desconhecida', () => {
     assert.equal(res.status, 404);
     const data = await res.json();
     assert.ok(data.error);
+  });
+});
+
+// --- Security: DNS rebinding and CSRF protection ---
+
+describe('Host header validation (DNS rebinding protection)', () => {
+  let tmp, siloPath, server;
+  beforeEach(async () => {
+    tmp = tempDir();
+    siloPath = tempSilo(tmp);
+    server = await startServer(tmp, siloPath);
+  });
+  afterEach(async () => {
+    await server.close();
+    rmSync(tmp, { recursive: true });
+  });
+
+  test('rejeita Host de origem externa com 403', async () => {
+    const url = new URL(server.address);
+    const r = await rawRequest(server.address, {
+      path: '/api/status',
+      method: 'GET',
+      headers: { host: 'evil.example.com' },
+    });
+    assert.equal(r.status, 403);
+    const data = JSON.parse(r.body);
+    assert.ok(data.error);
+  });
+
+  test('aceita Host 127.0.0.1:<port>', async () => {
+    const url = new URL(server.address);
+    const r = await rawRequest(server.address, {
+      path: '/api/status',
+      method: 'GET',
+      headers: { host: `127.0.0.1:${url.port}` },
+    });
+    assert.equal(r.status, 200);
+  });
+
+  test('aceita Host localhost:<port>', async () => {
+    const url = new URL(server.address);
+    const r = await rawRequest(server.address, {
+      path: '/api/status',
+      method: 'GET',
+      headers: { host: `localhost:${url.port}` },
+    });
+    assert.equal(r.status, 200);
+  });
+});
+
+describe('CSRF header validation', () => {
+  let tmp, siloPath, server;
+  beforeEach(async () => {
+    tmp = tempDir();
+    siloPath = tempSilo(tmp);
+    server = await startServer(tmp, siloPath);
+  });
+  afterEach(async () => {
+    await server.close();
+    rmSync(tmp, { recursive: true });
+  });
+
+  test('POST sem X-Dgk-Admin retorna 403', async () => {
+    const res = await fetch(`${server.address}/api/sow`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ service: 'mastodon', tokens: { MASTODON_TOKEN: 'x' } }),
+    });
+    assert.equal(res.status, 403);
+    const data = await res.json();
+    assert.ok(data.error);
+  });
+
+  test('DELETE sem X-Dgk-Admin retorna 403', async () => {
+    const siloWithToken = tempSilo(tmp, { MASTODON_TOKEN: 'tok' });
+    const s = await startServer(tmp, siloWithToken);
+    try {
+      const res = await fetch(`${s.address}/api/sow/mastodon`, { method: 'DELETE' });
+      assert.equal(res.status, 403);
+      const data = await res.json();
+      assert.ok(data.error);
+    } finally {
+      await s.close();
+    }
+  });
+
+  test('GET não requer X-Dgk-Admin', async () => {
+    const res = await fetch(`${server.address}/api/status`);
+    assert.equal(res.status, 200);
   });
 });
