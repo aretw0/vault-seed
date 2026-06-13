@@ -13,16 +13,15 @@ import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
-from urllib.request import Request, urlopen
 
 import defusedxml.ElementTree as ET
+from llm_client import call_llm, resolve_provider
 
 ROOT = Path(__file__).resolve().parent.parent
 FEEDS_SOURCE = ROOT / "dados" / "lab" / "feeds-assinados.json"
 OUTPUT = ROOT / "dados" / "lab" / "curadoria-feeds.json"
 MAX_FEEDS = 5
 MAX_ITEMS_PER_FEED = 10
-MODEL = "claude-haiku-4-5-20251001"
 USER_AGENT = "vault-seed-lab/1.0"
 
 
@@ -62,7 +61,7 @@ def fetch_feed(url):
     return items
 
 
-def call_claude(api_key, batch):
+def classify_batch(batch, env=None, http_post=None):
     items_text = "\n".join(
         f"{i + 1}. [{item['feed']}] {item['title']}: {item['summary'][:100]}"
         for i, item in enumerate(batch)
@@ -74,29 +73,17 @@ def call_claude(api_key, batch):
         "Retorne APENAS o JSON array, sem texto adicional.\n\n"
         f"Itens:\n{items_text}"
     )
-    req = Request(
-        "https://api.anthropic.com/v1/messages",
-        data=json.dumps({
-            "model": MODEL,
-            "max_tokens": 1024,
-            "messages": [{"role": "user", "content": prompt}],
-        }).encode(),
-        headers={
-            "x-api-key": api_key,
-            "anthropic-version": "2023-06-01",
-            "content-type": "application/json",
-        },
-        method="POST",
-    )
-    with urlopen(req, timeout=30) as resp:
-        response = json.loads(resp.read())
-    return json.loads(response["content"][0]["text"].strip())
+    kwargs = {"env": env} if env is not None else {}
+    if http_post is not None:
+        kwargs["http_post"] = http_post
+    return json.loads(call_llm(prompt, **kwargs))
 
 
 def main():
-    api_key = os.environ.get("ANTHROPIC_API_KEY", "")
-    if not api_key:
-        print("curate_feeds_ia: ANTHROPIC_API_KEY não configurada, pulando.", file=sys.stderr)
+    provider = resolve_provider()
+    if not provider:
+        print("curate_feeds_ia: nenhum provedor LLM configurado, pulando.", file=sys.stderr)
+        print("  Defina ANTHROPIC_API_KEY, GROQ_API_KEY, OPENAI_API_KEY ou DGK_LLM_BASE_URL.", file=sys.stderr)
         sys.exit(0)
 
     if not FEEDS_SOURCE.exists():
@@ -121,12 +108,12 @@ def main():
         print("curate_feeds_ia: nenhum item coletado.", file=sys.stderr)
         sys.exit(0)
 
-    print(f"curate_feeds_ia: classificando {len(collected)} itens com {MODEL}…")
+    print(f"curate_feeds_ia: classificando {len(collected)} itens via {provider}…")
     try:
-        classifications = call_claude(api_key, collected[:20])
+        classifications = classify_batch(collected[:20])
         class_map = {c["index"] - 1: c for c in classifications}
     except Exception as exc:
-        print(f"curate_feeds_ia: erro na Claude API: {exc}", file=sys.stderr)
+        print(f"curate_feeds_ia: erro no LLM: {exc}", file=sys.stderr)
         sys.exit(0)
 
     enriched = []
@@ -144,7 +131,7 @@ def main():
     payload = {
         "schemaVersion": 1,
         "source": "scripts/curate_feeds_ia.py",
-        "model": MODEL,
+        "provider": provider,
         "collectedAt": now,
         "itemCount": len(enriched),
         "items": enriched,
