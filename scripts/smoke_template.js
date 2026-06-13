@@ -125,6 +125,12 @@ requireCondition(
   "package.template.json scripts must not reference release-only changelog or version tooling.",
 );
 requireCondition(
+  !templatePkg.scripts?.["smoke:template"] &&
+    !templatePkg.scripts?.["smoke:user-vault"] &&
+    !templatePkg.scripts?.["smoke:init:reset"],
+  "package.template.json must not include template-dev smoke scripts — they read files removed by initialize.yml and would fail in user vaults.",
+);
+requireCondition(
   !templatePkg.scripts?.["lint:docs"] &&
     templatePkg.scripts?.lint === "pnpm run lint:main && pnpm run lint:templates" &&
     templatePkg.scripts?.test?.includes("scripts/*.test.mjs") &&
