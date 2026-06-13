@@ -528,17 +528,24 @@ requireCondition(
   "scripts/notebook_cell_output_lint.test.mjs must be present so generated vaults guard against invisible notebook output.",
 );
 
-// Note status contract — two separate concerns:
+// Note status contract — three categories:
 //
-// PUBLISHED: vault-seed ships these as published. They appear on the vault-seed
-// site AND arrive at the user already published. Changing to draft here will
-// break mermaid_render_contract.test.js and/or remove them from the user's site.
+// PUBLISHED (stay published for users): notes the user receives as published.
+//   Must NOT be in RESET_ON_INIT. The welcome note is the canonical example —
+//   it is the user's first published content.
 //
-// DRAFT: example/concept content. Users receive it as draft and decide whether
-// to keep, edit, or delete. Must not be accidentally published by bulk resets.
+// PUBLISHED → DRAFT on init (RESET_ON_INIT): published on the vault-seed site
+//   but reset to draft by initialize.yml before the user's first commit.
+//   Used for reference notes vault-seed wants on its own site but that belong
+//   to the user to decide about. Must be listed in initialize.yml's reset step.
+//
+// DRAFT: example/concept content that arrives as draft and stays draft.
+//   Must not be accidentally published by bulk resets.
 const NOTE_STATUS_CONTRACT = {
   published: [
     "00 - Entrada/Bem-vindo ao seu vault.md",
+  ],
+  publishedResetOnInit: [
     "40 - Recursos/Mermaid.md",
   ],
   draft: [
@@ -559,7 +566,20 @@ for (const notePath of NOTE_STATUS_CONTRACT.published) {
   const status = extractStatus(content);
   requireCondition(
     status === "published",
-    `${notePath} must have status: published (vault-seed reference content). Got: ${status ?? "(absent)"}`,
+    `${notePath} must have status: published (stays published for users). Got: ${status ?? "(absent)"}`,
+  );
+}
+
+for (const notePath of NOTE_STATUS_CONTRACT.publishedResetOnInit) {
+  const content = read(notePath);
+  const status = extractStatus(content);
+  requireCondition(
+    status === "published",
+    `${notePath} must have status: published in source (vault-seed site) — initialize.yml resets it to draft for users. Got: ${status ?? "(absent)"}`,
+  );
+  requireCondition(
+    initializeWorkflow.includes(notePath),
+    `${notePath} is in publishedResetOnInit but missing from initialize.yml's reset step — users would receive it as published.`,
   );
 }
 
