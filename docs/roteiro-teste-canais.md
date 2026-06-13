@@ -70,8 +70,13 @@ Configurar Telegram
   Crie um bot em: https://t.me/BotFather → /newbot → copie o token.
   Depois envie qualquer mensagem ao bot para que o Chat ID seja detectado automaticamente.
 
-Bot Token (de @BotFather): <oculto>
+Bot Token (de @BotFather): ••••••••5Yf2
+```
 
+O campo de token não ecoa os caracteres digitados. Ao pressionar Enter, o CLI confirma
+apenas os últimos 4 caracteres do token (tail) precedidos de pontos — sem expor o valor completo.
+
+```
 Verificando credenciais... @nomedoBot (Nome do Bot)
 ✓ Salvo em /home/usuario/.dgk/silo.json
 
@@ -120,8 +125,10 @@ dgk sow telegram
 | # | O que acontece | Esperado |
 |---|---|---|
 | C1 | Hint com URL do BotFather aparece antes dos prompts | Texto legível; instrução sobre enviar mensagem ao bot |
-| C2 | Após inserir token válido | `Verificando credenciais... @nomedoBot (Nome do Bot)` seguido de `✓ Salvo em ~/.dgk/silo.json` |
-| C3 | Após inserir token inválido | `Verificando credenciais... falhou.` + `Credenciais inválidas — token não salvo.` + processo encerra |
+| C2 | Digitando o token | Nenhum caractere aparece no terminal durante a digitação |
+| C3 | Após pressionar Enter no token | Linha mostra `••••••••XXXX` com os últimos 4 chars do token |
+| C4 | Token válido | `Verificando credenciais... @nomedoBot (Nome do Bot)` seguido de `✓ Salvo em ~/.dgk/silo.json` |
+| C5 | Token inválido | `Verificando credenciais... falhou.` + `Credenciais inválidas — token não salvo.` + processo encerra |
 | C4 | Prompt de CHAT_ID mostra lista numerada de chats | `[1] Meu Canal (@meucanal) — canal  [id: -100...]` |
 | C5 | Inserir número da lista (ex: `1`) | CHAT_ID preenchido automaticamente com o id do chat escolhido |
 | C6 | Nenhum chat encontrado | Instrução para enviar mensagem ao bot + prompt de ID manual |

@@ -5,6 +5,26 @@ function prompt(rl, question) {
   return new Promise((resolve) => rl.question(question, resolve));
 }
 
+export function promptSecret(rl, question, writeFn = (s) => process.stdout.write(s)) {
+  return new Promise((resolve) => {
+    let questionWritten = false;
+    rl._writeToOutput = (s) => {
+      if (!questionWritten) {
+        writeFn(s);
+        questionWritten = true;
+      }
+      // suppress each typed character
+    };
+    rl.question(question, (answer) => {
+      rl._writeToOutput = (s) => rl.output.write(s);
+      const tail = answer.length > 4 ? answer.slice(-4) : '';
+      const dots = '•'.repeat(answer.length > 4 ? 8 : answer.length);
+      writeFn(`${dots}${tail}\n`);
+      resolve(answer);
+    });
+  });
+}
+
 async function verifyMastodon(instance, token) {
   const { request: _req, urlopen: _urlopen } = await import('node:http').catch(() => ({}));
   try {
@@ -123,6 +143,9 @@ async function sowService(serviceId) {
     for (const p of service.prompts) {
       if (serviceId === 'telegram' && p.key === 'TELEGRAM_CHAT_ID') {
         collected[p.key] = await resolveTelegramChatId(rl, collected.TELEGRAM_BOT_TOKEN);
+      } else if (p.secret) {
+        const answer = await promptSecret(rl, `${p.label}: `);
+        collected[p.key] = answer.trim();
       } else {
         const answer = await prompt(rl, `${p.label}: `);
         collected[p.key] = answer.trim();

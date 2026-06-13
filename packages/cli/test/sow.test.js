@@ -1,6 +1,6 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { verifyTelegram, discoverTelegramChats, chatLabel } from '../src/commands/sow.js';
+import { verifyTelegram, discoverTelegramChats, chatLabel, promptSecret } from '../src/commands/sow.js';
 
 function mockFetch(body, ok = true) {
   return async (_url) => ({
@@ -8,6 +8,58 @@ function mockFetch(body, ok = true) {
     json: async () => body,
   });
 }
+
+// --- promptSecret ---
+
+describe('promptSecret', () => {
+  function mockRl(answer) {
+    const written = [];
+    const rl = {
+      _writeToOutput: null,
+      output: { write: (s) => written.push(s) },
+      question: (_q, cb) => cb(answer),
+    };
+    return { rl, written };
+  }
+
+  test('retorna o valor completo não mascarado', async () => {
+    const { rl, written } = mockRl('meu-token-secreto-1234');
+    const result = await promptSecret(rl, 'Token: ', (s) => written.push(s));
+    assert.equal(result, 'meu-token-secreto-1234');
+  });
+
+  test('exibe 8 pontos + últimos 4 chars para tokens longos', async () => {
+    const { rl, written } = mockRl('ABCDEFGHIJKLMNOPQRSTUVWX');
+    await promptSecret(rl, 'Token: ', (s) => written.push(s));
+    const feedback = written.find((s) => s.includes('•'));
+    assert.ok(feedback, 'deve exibir feedback mascarado');
+    assert.ok(feedback.includes('••••••••'), 'deve ter 8 pontos');
+    assert.ok(feedback.includes('UVWX'), 'deve expor os últimos 4 chars');
+  });
+
+  test('não expõe chars intermediários para tokens longos', async () => {
+    const { rl, written } = mockRl('secreto-completo-1234');
+    await promptSecret(rl, 'Token: ', (s) => written.push(s));
+    const allWritten = written.join('');
+    assert.ok(!allWritten.includes('secreto-completo'), 'não deve expor o meio do token');
+  });
+
+  test('exibe apenas pontos sem tail para tokens curtos (≤ 4 chars)', async () => {
+    const { rl, written } = mockRl('ab');
+    await promptSecret(rl, 'Token: ', (s) => written.push(s));
+    const feedback = written.find((s) => s.includes('•'));
+    assert.ok(feedback, 'deve exibir pontos');
+    assert.ok(!feedback.includes('ab'), 'não deve expor token curto');
+  });
+
+  test('restaura _writeToOutput após a entrada', async () => {
+    const { rl } = mockRl('qualquer');
+    const originalWrite = (s) => s;
+    rl._writeToOutput = originalWrite;
+    await promptSecret(rl, 'Token: ', () => {});
+    assert.notEqual(rl._writeToOutput, null, '_writeToOutput deve ter sido restaurado');
+  });
+});
 
 // --- chatLabel ---
 
