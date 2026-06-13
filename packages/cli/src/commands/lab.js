@@ -36,26 +36,23 @@ function printHelp(root) {
 
   console.log(`dgk lab [notebook | subcomando] [opções]
 
-O laboratório: notebooks de exploração e pipeline de dados.
+O laboratório: notebooks de exploração e análise do vault.
 
 Notebooks disponíveis:
 ${notebookList}
 
-Subcomandos de pipeline:
-  etl              Executa o pipeline ETL (dados, feeds, outbox, datasets)
+Subcomandos:
   export           Exporta notebooks para HTML empacotado
-  curate           Classifica feeds com IA (requer ANTHROPIC_API_KEY via dgk sow)
+  curate           Classifica feeds com IA (requer chave de LLM via dgk sow)
   evaluate [nota]  Avalia qualidade de escrita (determinístico, sem API)
 
-Fluxo típico:
-  dgk sow mastodon          → configura credenciais (uma vez)
-  dgk lab etl               → processa dados do vault
-  dgk lab publicar-thread   → abre o notebook de publicação
-  dgk obsidian              → abre o vault no Obsidian
+Para pipeline de dados e publicação, use os comandos top-level:
+  dgk etl                   → processa dados do vault
+  dgk outbox telegram       → publica notas da fila
+  dgk inbox telegram        → importa mensagens para 00 - Entrada/
 
 Exemplos:
   dgk lab analise-feeds
-  dgk lab etl
   dgk lab evaluate
   dgk lab evaluate "40 - Recursos/Jardim digital.md"
   dgk lab evaluate --profile ultra-rigor`);
@@ -81,13 +78,6 @@ async function evaluate(args, runner) {
   await runner('uv', ['run', 'python', ...pyArgs]);
 }
 
-async function etl(_args, runner) {
-  await runner('node', ['scripts/lab_etl_demo.mjs']);
-  await runner('node', ['scripts/prepare_feed_sources.mjs']);
-  await runner('node', ['scripts/prepare_publication_outbox.mjs']);
-  await runner('node', ['scripts/prepare_lab_datasets.mjs']);
-}
-
 async function exportNotebooks(_args, runner) {
   await runner('node', ['scripts/export_notebooks.mjs']);
 }
@@ -102,7 +92,11 @@ async function curate(_args, runner) {
   ]);
 }
 
-const PIPELINE_COMMANDS = { etl, export: exportNotebooks, curate, evaluate };
+const PIPELINE_COMMANDS = {
+  export: exportNotebooks,
+  curate,
+  evaluate,
+};
 
 export async function lab(args, runner = run, root) {
   injectSiloEnv();

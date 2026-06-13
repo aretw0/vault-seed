@@ -13,6 +13,10 @@ test('resolveCommand retorna o nome para comandos conhecidos', () => {
   assert.equal(resolveCommand('open'), null);
   assert.equal(resolveCommand('publish'), 'publish');
   assert.equal(resolveCommand('sow'), 'sow');
+  assert.equal(resolveCommand('etl'), 'etl');
+  assert.equal(resolveCommand('outbox'), 'outbox');
+  assert.equal(resolveCommand('inbox'), 'inbox');
+  assert.equal(resolveCommand('vscode'), 'vscode');
   assert.equal(resolveCommand('release'), null);
 });
 

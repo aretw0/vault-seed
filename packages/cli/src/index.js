@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { fileURLToPath, URL } from 'node:url';
-import { readFileSync } from 'node:fs';
+import { readFileSync, realpathSync } from 'node:fs';
 import { printBanner } from './brand.js';
 import { validate } from './commands/validate.js';
 import { lint } from './commands/lint.js';
@@ -11,8 +11,13 @@ import { obsidian } from './commands/obsidian.js';
 import { note } from './commands/note.js';
 import { publish } from './commands/publish.js';
 import { sow } from './commands/sow.js';
+import { serve } from './commands/serve.js';
+import { etl } from './commands/etl.js';
+import { outbox } from './commands/outbox.js';
+import { inbox } from './commands/inbox.js';
+import { vscode } from './commands/vscode.js';
 
-const COMMANDS = { validate, lint, setup, check, lab, obsidian, note, publish, sow };
+const COMMANDS = { validate, lint, setup, check, lab, obsidian, vscode, note, publish, sow, serve, etl, outbox, inbox };
 
 export function resolveCommand(name) {
   return name in COMMANDS ? name : null;
@@ -23,7 +28,8 @@ function getVersion() {
   return pkg.version;
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+const argv1Real = (() => { try { return realpathSync(process.argv[1]); } catch { return process.argv[1]; } })();
+if (argv1Real === fileURLToPath(import.meta.url)) {
   const [,, command, ...rest] = process.argv;
 
   if (command === '--version' || command === '-v') {
@@ -41,10 +47,15 @@ Comandos:
   check              Verifica a saúde do vault (onboarding, IA, texto)
   lint               Valida o markdown do vault
   sow                Configura credenciais de publicação (~/.dgk/silo.json)
+  etl                Executa o pipeline de dados do vault
+  outbox <canal>     Publica notas da fila para o canal (ex: telegram)
+  inbox <canal>      Importa mensagens do canal para o vault (ex: telegram)
+  serve [--port N]   Inicia o painel admin local (padrão: porta 4322)
   obsidian [nome]    Abre o vault no Obsidian
+  vscode             Abre o vault no VS Code (Foam pré-configurado)
   note <cmd>         Executa um comando no Obsidian CLI
-  lab <sub>          Pipeline de dados: etl, curate, evaluate, export
-  publish <sub>      Publica skills e extensões no npm
+  lab <sub>          Laboratório: notebooks, evaluate, curate, export
+  publish <sub>      Scaffolda skills e extensões Pi no npm
   validate           Pipeline de CI completo (dev)
 
 Instalação global:

@@ -64,16 +64,6 @@ test('resolveNotebook retorna null para nome desconhecido', () => {
 
 // --- lab pipeline subcommands ---
 
-test('lab etl chama os 4 scripts do pipeline via node', async () => {
-  const { calls, runner } = captureRun();
-  await lab(['etl'], runner);
-  assert.equal(calls.length, 4, 'deve chamar 4 scripts em sequência');
-  assert.ok(calls.every((c) => c.cmd === 'node'), 'todos os calls devem usar node');
-  const scripts = calls.map((c) => c.args[0]);
-  assert.ok(scripts.includes('scripts/lab_etl_demo.mjs'), 'deve incluir lab_etl_demo');
-  assert.ok(scripts.includes('scripts/prepare_lab_datasets.mjs'), 'deve incluir prepare_lab_datasets');
-});
-
 test('lab export chama export_notebooks.mjs via node', async () => {
   const { calls, runner } = captureRun();
   await lab(['export'], runner);
