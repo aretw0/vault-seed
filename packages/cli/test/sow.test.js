@@ -1,6 +1,6 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { verifyTelegram, discoverTelegramChats, chatLabel, promptSecret } from '../src/commands/sow.js';
+import { verifyTelegram, discoverTelegramChats, chatLabel, promptSecret, maskSecret } from '../src/commands/sow.js';
 
 function mockFetch(body, ok = true) {
   return async (_url) => ({
@@ -8,6 +8,26 @@ function mockFetch(body, ok = true) {
     json: async () => body,
   });
 }
+
+// --- maskSecret ---
+
+describe('maskSecret', () => {
+  test('mascara tudo quando valor ≤ tail', () => {
+    assert.equal(maskSecret('ab'), '**');
+    assert.equal(maskSecret('abcd'), '****');
+  });
+
+  test('expõe últimos 4 chars e mascara o restante', () => {
+    assert.equal(maskSecret('ABCDEFGHIJ'), '******GHIJ');
+  });
+
+  test('comprimento de estrelas é proporcional ao token', () => {
+    const result = maskSecret('A'.repeat(20));
+    assert.equal(result.length, 20);
+    assert.ok(result.startsWith('****************'));
+    assert.ok(result.endsWith('AAAA'));
+  });
+});
 
 // --- promptSecret ---
 
@@ -25,27 +45,27 @@ describe('promptSecret', () => {
     assert.equal(result, 'meu-token-secreto-1234');
   });
 
-  test('exibe 8 pontos + últimos 4 chars para tokens longos', async () => {
+  test('exibe * proporcionais + últimos 4 chars para tokens longos', async () => {
     const written = [];
     await promptSecret('Token: ', (s) => written.push(s), mockRlFactory('ABCDEFGHIJKLMNOPQRSTUVWX'));
-    const feedback = written.find((s) => s.includes('•'));
+    const feedback = written.find((s) => s.includes('*'));
     assert.ok(feedback, 'deve exibir feedback mascarado');
-    assert.ok(feedback.includes('••••••••'), 'deve ter 8 pontos');
     assert.ok(feedback.includes('UVWX'), 'deve expor os últimos 4 chars');
+    assert.ok(!feedback.includes('ABCDEFGHIJKLMNOPQRST'), 'não deve expor chars do meio');
   });
 
-  test('não expõe chars intermediários para tokens longos', async () => {
+  test('não expõe chars além do tail para tokens longos', async () => {
     const written = [];
     await promptSecret('Token: ', (s) => written.push(s), mockRlFactory('secreto-completo-1234'));
     const allWritten = written.join('');
     assert.ok(!allWritten.includes('secreto-completo'), 'não deve expor o meio do token');
   });
 
-  test('exibe apenas pontos sem tail para tokens curtos (≤ 4 chars)', async () => {
+  test('exibe apenas * sem tail para tokens curtos (≤ 4 chars)', async () => {
     const written = [];
     await promptSecret('Token: ', (s) => written.push(s), mockRlFactory('ab'));
-    const feedback = written.find((s) => s.includes('•'));
-    assert.ok(feedback, 'deve exibir pontos');
+    const feedback = written.find((s) => s.includes('*'));
+    assert.ok(feedback, 'deve exibir estrelas');
     assert.ok(!feedback.includes('ab'), 'não deve expor token curto');
   });
 

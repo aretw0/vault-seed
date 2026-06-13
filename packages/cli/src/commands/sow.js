@@ -1,8 +1,8 @@
-import { createInterface } from 'node:readline';
+import readline from 'node:readline';
 import { Writable } from 'node:stream';
 import { SERVICES, SILO_PATH, saveTokens, removeService, siloStatus, loadSilo } from '../silo.js';
 
-function prompt(question, rlFactory = createInterface) {
+function prompt(question, rlFactory = readline.createInterface) {
   return new Promise((resolve) => {
     const rl = rlFactory({ input: process.stdin, output: process.stdout });
     rl.question(question, (answer) => {
@@ -12,69 +12,76 @@ function prompt(question, rlFactory = createInterface) {
   });
 }
 
-// TTY path: raw mode + '*' per keypress; on Enter shows '••••••••tail' on next line.
-// Non-TTY path (tests, piped input): muted readline with same tail feedback.
-export function promptSecret(question, writeFn = (s) => process.stdout.write(s), rlFactory = createInterface) {
+// Same pattern as refarm/packages/prompt-contract-v1:
+//   - readline.emitKeypressEvents + 'keypress' for named keys (no \r vs \r\n ambiguity)
+//   - readline.clearLine + cursorTo for portable line redraw (no hardcoded ANSI)
+//   - maskSecret redraws on every keypress: '*' per char + last 4 chars visible
+// Non-TTY fallback: muted readline (tests / piped input).
+export function maskSecret(value, visibleTail = 4) {
+  if (value.length <= visibleTail) return '*'.repeat(value.length);
+  return '*'.repeat(value.length - visibleTail) + value.slice(-visibleTail);
+}
+
+export function promptSecret(question, writeFn = (s) => process.stdout.write(s), rlFactory = readline.createInterface) {
   return new Promise((resolve) => {
-    writeFn(question);
+    const input = process.stdin;
+    const output = process.stdout;
 
-    if (process.stdin.isTTY) {
-      const wasRaw = process.stdin.isRaw;
-      process.stdin.setRawMode(true);
-      process.stdin.resume();
-      process.stdin.setEncoding('utf8');
-
-      let value = '';
-      let done = false;
-
-      const onData = (chunk) => {
-        if (done) return;
-        // Iterate char-by-char so paste bursts and \r\n pairs are handled uniformly
-        for (const char of chunk) {
-          if (done) break;
-          const code = char.charCodeAt(0);
-          if (char === '\r' || char === '\n') {
-            done = true;
-            process.stdin.setRawMode(wasRaw ?? false);
-            process.stdin.pause();
-            process.stdin.removeListener('data', onData);
-            process.stdout.write('\n');
-            const tail = value.length > 4 ? value.slice(-4) : '';
-            const dots = '•'.repeat(value.length > 4 ? 8 : value.length);
-            writeFn(`${dots}${tail}\n`);
-            resolve(value);
-          } else if (char === '') { // Ctrl+C
-            done = true;
-            process.stdin.setRawMode(wasRaw ?? false);
-            process.stdin.pause();
-            process.stdin.removeListener('data', onData);
-            writeFn('\n');
-            process.exit(130);
-          } else if (char === '' || char === '\b') { // backspace
-            if (value.length > 0) {
-              value = value.slice(0, -1);
-              process.stdout.write('\b \b');
-            }
-          } else if (code >= 32 && code !== 127) { // printable
-            value += char;
-            process.stdout.write('*');
-          }
-        }
-      };
-
-      process.stdin.on('data', onData);
-    } else {
+    if (!input.isTTY || !output.isTTY || typeof input.setRawMode !== 'function') {
       // Non-TTY: muted readline (tests / piped input)
       const muted = new Writable({ write(_c, _e, cb) { cb(); } });
-      const rl = rlFactory({ input: process.stdin, output: muted, terminal: false });
+      const rl = rlFactory({ input, output: muted, terminal: false });
+      writeFn(question);
       rl.question(question, (answer) => {
         rl.close();
-        const tail = answer.length > 4 ? answer.slice(-4) : '';
-        const dots = '•'.repeat(answer.length > 4 ? 8 : answer.length);
-        writeFn(`${dots}${tail}\n`);
+        writeFn(`${maskSecret(answer)}\n`);
         resolve(answer);
       });
+      return;
     }
+
+    let value = '';
+    const wasRaw = input.isRaw;
+
+    const render = () => {
+      readline.clearLine(output, 0);
+      readline.cursorTo(output, 0);
+      output.write(`${question}${maskSecret(value)}`);
+    };
+
+    const cleanup = () => {
+      input.off('keypress', onKeypress);
+      input.setRawMode(wasRaw ?? false);
+      output.write('\n');
+    };
+
+    const onKeypress = (str, key) => {
+      if (key.ctrl && key.name === 'c') {
+        cleanup();
+        process.exit(130);
+        return;
+      }
+      if (key.name === 'return' || key.name === 'enter') {
+        cleanup();
+        resolve(value);
+        return;
+      }
+      if (key.name === 'backspace') {
+        value = value.slice(0, -1);
+        render();
+        return;
+      }
+      if (!key.ctrl && !key.meta && str) {
+        value += str;
+        render();
+      }
+    };
+
+    readline.emitKeypressEvents(input);
+    input.setRawMode(true);
+    input.resume();
+    input.on('keypress', onKeypress);
+    render();
   });
 }
 
