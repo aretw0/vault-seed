@@ -2,6 +2,18 @@ import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { detectObsidian, INSTALL_HINTS } from '../launcher.js';
 
+function checkNodeVersion() {
+  const major = parseInt(process.versions.node.split('.')[0], 10);
+  if (major < 22) {
+    console.log(`  Node.js ${process.version} encontrado — versão 22+ necessária.`);
+    console.log('  Instale via fnm: https://github.com/Schniz/fnm  →  fnm install 22');
+    console.log('  Ou via nvm:      nvm install 22');
+    return false;
+  }
+  console.log(`✓ Node.js ${process.version}`);
+  return true;
+}
+
 function git(args) {
   try {
     execFileSync('git', args, { stdio: 'pipe' });
@@ -63,6 +75,7 @@ export async function setup(args, runner) {
     return run(cmd, a);
   });
 
+  checkNodeVersion();
   configureGit();
   await checkDeps(_runner);
   await installPythonTools(_runner);

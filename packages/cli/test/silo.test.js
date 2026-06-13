@@ -75,6 +75,7 @@ describe('siloStatus', () => {
       assert.ok(ids.includes('mastodon'), 'deve incluir mastodon');
       assert.ok(ids.includes('bluesky'), 'deve incluir bluesky');
       assert.ok(ids.includes('buttondown'), 'deve incluir buttondown');
+      assert.ok(ids.includes('telegram'), 'deve incluir telegram');
     } finally { cleanup(); }
   });
 
@@ -103,11 +104,17 @@ describe('siloStatus', () => {
   });
 });
 
-test('SERVICES cobre mastodon, bluesky e buttondown com prompts corretos', () => {
+test('SERVICES cobre canais de publicação com prompts e hints', () => {
   assert.ok('mastodon' in SERVICES);
   assert.ok('bluesky' in SERVICES);
   assert.ok('buttondown' in SERVICES);
+  assert.ok('telegram' in SERVICES);
+  assert.ok(!('anthropic' in SERVICES), 'anthropic é domínio do refarm sow, não do dgk sow');
   assert.ok(SERVICES.mastodon.prompts.length >= 2);
   assert.ok(SERVICES.bluesky.prompts.length >= 2);
   assert.ok(SERVICES.buttondown.prompts.length >= 1);
+  assert.ok(SERVICES.telegram.prompts.length >= 2, 'telegram precisa de BOT_TOKEN e CHAT_ID');
+  for (const svc of Object.values(SERVICES)) {
+    assert.ok(typeof svc.hint === 'string' && svc.hint.length > 0, `${svc.label} deve ter hint`);
+  }
 });

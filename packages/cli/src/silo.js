@@ -5,9 +5,16 @@ import { dirname, join } from 'node:path';
 export const SILO_DIR = join(homedir(), '.dgk');
 export const SILO_PATH = join(SILO_DIR, 'silo.json');
 
+// dgk silo manages publishing-channel credentials only.
+// Model/AI credentials (ANTHROPIC_API_KEY, GROQ_API_KEY, etc.) come from
+// refarm sow and are injected via refarm's silo. Never add model keys here.
+// When refarm publishes @refarm.dev/silo, this file will delegate to it.
+export const SILO_SCOPE = 'publishing-channels';
+
 export const SERVICES = {
   mastodon: {
     label: 'Mastodon',
+    hint: 'Crie um token em: <instância>/settings/applications → Novo aplicativo → escopos: read+write+push',
     keys: ['MASTODON_INSTANCE', 'MASTODON_TOKEN'],
     prompts: [
       { key: 'MASTODON_INSTANCE', label: 'Instância (ex: mastodon.social)', secret: false },
@@ -16,6 +23,7 @@ export const SERVICES = {
   },
   bluesky: {
     label: 'Bluesky',
+    hint: 'Crie um App Password em: https://bsky.app/settings/app-passwords',
     keys: ['BLUESKY_HANDLE', 'BLUESKY_APP_PASSWORD'],
     prompts: [
       { key: 'BLUESKY_HANDLE', label: 'Handle (ex: aretw0.bsky.social)', secret: false },
@@ -24,8 +32,18 @@ export const SERVICES = {
   },
   buttondown: {
     label: 'Buttondown',
+    hint: 'Obtenha sua API Key em: https://buttondown.email/settings/api-key',
     keys: ['BUTTONDOWN_API_KEY'],
     prompts: [{ key: 'BUTTONDOWN_API_KEY', label: 'API Key', secret: true }],
+  },
+  telegram: {
+    label: 'Telegram',
+    hint: 'Crie um bot em: https://t.me/BotFather → /newbot → copie o token. Para CHAT_ID: encaminhe uma msg ao bot e chame getUpdates.',
+    keys: ['TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID'],
+    prompts: [
+      { key: 'TELEGRAM_BOT_TOKEN', label: 'Bot Token (de @BotFather)', secret: true },
+      { key: 'TELEGRAM_CHAT_ID', label: 'Chat ID (canal, grupo ou @username)', secret: false },
+    ],
   },
 };
 
@@ -60,6 +78,8 @@ export function removeService(serviceId, siloPath = SILO_PATH) {
   if (!service) return false;
   const silo = loadSilo(siloPath);
   if (!silo.tokens) return false;
+  const hadAny = service.keys.some((k) => k in silo.tokens);
+  if (!hadAny) return false;
   for (const key of service.keys) delete silo.tokens[key];
   silo.updatedAt = new Date().toISOString();
   saveSilo(silo, siloPath);
@@ -88,4 +108,18 @@ export function injectSiloEnv(siloPath = SILO_PATH) {
   for (const [k, v] of Object.entries(env)) {
     if (process.env[k] === undefined) process.env[k] = v;
   }
+}
+
+// contacts.location controls where channel topology (groups, chats, lists)
+// is persisted. Credentials stay in silo; topology travels separately.
+// Values: "vault" (default) | "local" (~/.dgk/contacts) | absolute path
+export function getContactsLocation(siloPath = SILO_PATH) {
+  return loadSilo(siloPath)?.contacts?.location ?? 'vault';
+}
+
+export function setContactsLocation(location, siloPath = SILO_PATH) {
+  const silo = loadSilo(siloPath);
+  silo.contacts = { ...(silo.contacts ?? {}), location };
+  silo.updatedAt = new Date().toISOString();
+  saveSilo(silo, siloPath);
 }

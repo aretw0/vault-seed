@@ -1,5 +1,5 @@
 import { createInterface } from 'node:readline';
-import { SERVICES, SILO_PATH, saveTokens, removeService, siloStatus } from '../silo.js';
+import { SERVICES, SILO_PATH, saveTokens, removeService, siloStatus, loadSilo } from '../silo.js';
 
 function prompt(rl, question) {
   return new Promise((resolve) => rl.question(question, resolve));
@@ -33,6 +33,72 @@ async function verifyBluesky(handle, password) {
   }
 }
 
+export async function verifyTelegram(token, fetchFn = fetch) {
+  try {
+    const res = await fetchFn(`https://api.telegram.org/bot${token}/getMe`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.ok ? `@${data.result.username} (${data.result.first_name})` : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function discoverTelegramChats(token, fetchFn = fetch) {
+  try {
+    const res = await fetchFn(`https://api.telegram.org/bot${token}/getUpdates?limit=100`);
+    if (!res.ok) return [];
+    const data = await res.json();
+    if (!data.ok) return [];
+    const seen = new Map();
+    for (const update of data.result ?? []) {
+      const chat =
+        update.message?.chat ??
+        update.channel_post?.chat ??
+        update.my_chat_member?.chat ??
+        update.chat_member?.chat;
+      if (chat && !seen.has(chat.id)) seen.set(chat.id, chat);
+    }
+    return [...seen.values()];
+  } catch {
+    return [];
+  }
+}
+
+export function chatLabel(chat) {
+  const typeMap = { private: 'privado', group: 'grupo', supergroup: 'supergrupo', channel: 'canal' };
+  const kind = typeMap[chat.type] ?? chat.type;
+  const name = chat.title ?? chat.first_name ?? chat.username ?? String(chat.id);
+  const handle = chat.username ? ` (@${chat.username})` : '';
+  return `${name}${handle} — ${kind}  [id: ${chat.id}]`;
+}
+
+async function resolveTelegramChatId(rl, token) {
+  process.stdout.write('  Buscando chats recentes do bot... ');
+  const chats = await discoverTelegramChats(token);
+
+  if (!chats.length) {
+    console.log('nenhum encontrado.');
+    console.log('  Envie qualquer mensagem ao bot e rode `dgk sow telegram` novamente,');
+    console.log('  ou informe o Chat ID manualmente (ex: -1001234567890 para canais).\n');
+    const raw = await prompt(rl, 'Chat ID (manual): ');
+    return raw.trim();
+  }
+
+  console.log(`${chats.length} encontrado(s):\n`);
+  chats.forEach((c, i) => console.log(`    [${i + 1}] ${chatLabel(c)}`));
+  console.log('');
+
+  const answer = await prompt(rl, `Chat ID (número da lista ou ID manual): `);
+  const idx = parseInt(answer.trim(), 10);
+  if (!isNaN(idx) && idx >= 1 && idx <= chats.length) {
+    const chosen = chats[idx - 1];
+    console.log(`  → ${chatLabel(chosen)}`);
+    return String(chosen.id);
+  }
+  return answer.trim();
+}
+
 async function sowService(serviceId) {
   if (!process.stdin.isTTY) {
     console.error('dgk sow: requer terminal interativo');
@@ -46,15 +112,21 @@ async function sowService(serviceId) {
     process.exit(1);
   }
 
-  console.log(`\nConfigurar ${service.label}\n`);
+  console.log(`\nConfigurar ${service.label}`);
+  if (service.hint) console.log(`  ${service.hint}`);
+  console.log('');
 
   const rl = createInterface({ input: process.stdin, output: process.stdout });
   const collected = {};
 
   try {
     for (const p of service.prompts) {
-      const answer = await prompt(rl, `${p.label}: `);
-      collected[p.key] = answer.trim();
+      if (serviceId === 'telegram' && p.key === 'TELEGRAM_CHAT_ID') {
+        collected[p.key] = await resolveTelegramChatId(rl, collected.TELEGRAM_BOT_TOKEN);
+      } else {
+        const answer = await prompt(rl, `${p.label}: `);
+        collected[p.key] = answer.trim();
+      }
     }
   } finally {
     rl.close();
@@ -72,6 +144,8 @@ async function sowService(serviceId) {
     identity = await verifyMastodon(collected.MASTODON_INSTANCE, collected.MASTODON_TOKEN);
   } else if (serviceId === 'bluesky') {
     identity = await verifyBluesky(collected.BLUESKY_HANDLE, collected.BLUESKY_APP_PASSWORD);
+  } else if (serviceId === 'telegram') {
+    identity = await verifyTelegram(collected.TELEGRAM_BOT_TOKEN);
   } else {
     identity = '(não verificado automaticamente)';
   }
@@ -85,6 +159,25 @@ async function sowService(serviceId) {
   console.log(`${identity}`);
   saveTokens(collected);
   console.log(`✓ Salvo em ${SILO_PATH}\n`);
+
+  if (serviceId === 'telegram') {
+    await saveTelegramContacts(collected.TELEGRAM_BOT_TOKEN);
+  }
+}
+
+async function saveTelegramContacts(token) {
+  try {
+    const { resolveContactsDir, discoverAndSaveTelegramContacts } =
+      await import('@aretw0/dgk-channels/contacts');
+    const silo = loadSilo();
+    const contactsDir = resolveContactsDir(process.cwd(), silo);
+    const saved = await discoverAndSaveTelegramContacts(token, contactsDir);
+    if (saved.length) {
+      console.log(`  ${saved.length} chat(s) salvos em ${contactsDir}`);
+    }
+  } catch {
+    // dgk-channels not available — no-op
+  }
 }
 
 function sowList() {
