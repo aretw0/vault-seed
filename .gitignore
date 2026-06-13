@@ -111,6 +111,7 @@ public/lab/
 # No template (vault-seed), os arquivos de exemplo permanecem rastreados
 # como baseline de demonstração e são removidos pelo initialize.yml ao
 # inicializar o vault do usuário.
+# Para atualizar o baseline no template, use: git add -f dados/lab/
 #
 # Quando dados/lab/ ultrapassar ~1 MB total, o ETL rodar diariamente ou
 # as notas indexadas excederem ~500, considere migrar para SQLite local
