@@ -12,25 +12,22 @@ function mockFetch(body, ok = true) {
 // --- promptSecret ---
 
 describe('promptSecret', () => {
-  function mockRl(answer) {
-    const written = [];
-    const rl = {
-      _writeToOutput: null,
-      output: { write: (s) => written.push(s) },
+  function mockRlFactory(answer) {
+    return () => ({
       question: (_q, cb) => cb(answer),
-    };
-    return { rl, written };
+      close: () => {},
+    });
   }
 
   test('retorna o valor completo não mascarado', async () => {
-    const { rl, written } = mockRl('meu-token-secreto-1234');
-    const result = await promptSecret(rl, 'Token: ', (s) => written.push(s));
+    const written = [];
+    const result = await promptSecret('Token: ', (s) => written.push(s), mockRlFactory('meu-token-secreto-1234'));
     assert.equal(result, 'meu-token-secreto-1234');
   });
 
   test('exibe 8 pontos + últimos 4 chars para tokens longos', async () => {
-    const { rl, written } = mockRl('ABCDEFGHIJKLMNOPQRSTUVWX');
-    await promptSecret(rl, 'Token: ', (s) => written.push(s));
+    const written = [];
+    await promptSecret('Token: ', (s) => written.push(s), mockRlFactory('ABCDEFGHIJKLMNOPQRSTUVWX'));
     const feedback = written.find((s) => s.includes('•'));
     assert.ok(feedback, 'deve exibir feedback mascarado');
     assert.ok(feedback.includes('••••••••'), 'deve ter 8 pontos');
@@ -38,26 +35,24 @@ describe('promptSecret', () => {
   });
 
   test('não expõe chars intermediários para tokens longos', async () => {
-    const { rl, written } = mockRl('secreto-completo-1234');
-    await promptSecret(rl, 'Token: ', (s) => written.push(s));
+    const written = [];
+    await promptSecret('Token: ', (s) => written.push(s), mockRlFactory('secreto-completo-1234'));
     const allWritten = written.join('');
     assert.ok(!allWritten.includes('secreto-completo'), 'não deve expor o meio do token');
   });
 
   test('exibe apenas pontos sem tail para tokens curtos (≤ 4 chars)', async () => {
-    const { rl, written } = mockRl('ab');
-    await promptSecret(rl, 'Token: ', (s) => written.push(s));
+    const written = [];
+    await promptSecret('Token: ', (s) => written.push(s), mockRlFactory('ab'));
     const feedback = written.find((s) => s.includes('•'));
     assert.ok(feedback, 'deve exibir pontos');
     assert.ok(!feedback.includes('ab'), 'não deve expor token curto');
   });
 
-  test('restaura _writeToOutput após a entrada', async () => {
-    const { rl } = mockRl('qualquer');
-    const originalWrite = (s) => s;
-    rl._writeToOutput = originalWrite;
-    await promptSecret(rl, 'Token: ', () => {});
-    assert.notEqual(rl._writeToOutput, null, '_writeToOutput deve ter sido restaurado');
+  test('escreve a pergunta antes de aguardar input', async () => {
+    const written = [];
+    await promptSecret('Bot Token: ', (s) => written.push(s), mockRlFactory('tok'));
+    assert.equal(written[0], 'Bot Token: ', 'a pergunta deve ser a primeira coisa escrita');
   });
 });
 

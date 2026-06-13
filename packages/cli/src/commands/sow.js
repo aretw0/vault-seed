@@ -1,22 +1,27 @@
 import { createInterface } from 'node:readline';
+import { Writable } from 'node:stream';
 import { SERVICES, SILO_PATH, saveTokens, removeService, siloStatus, loadSilo } from '../silo.js';
 
-function prompt(rl, question) {
-  return new Promise((resolve) => rl.question(question, resolve));
+function prompt(question, rlFactory = createInterface) {
+  return new Promise((resolve) => {
+    const rl = rlFactory({ input: process.stdin, output: process.stdout });
+    rl.question(question, (answer) => {
+      rl.close();
+      resolve(answer);
+    });
+  });
 }
 
-export function promptSecret(rl, question, writeFn = (s) => process.stdout.write(s)) {
+// Routes readline's display writes to a muted Writable so no escape sequences
+// (clear-line, cursor-move, echo) ever reach the terminal. The question is
+// written once directly; after Enter, the tail is shown as confirmation.
+export function promptSecret(question, writeFn = (s) => process.stdout.write(s), rlFactory = createInterface) {
   return new Promise((resolve) => {
-    let questionWritten = false;
-    rl._writeToOutput = (s) => {
-      if (!questionWritten) {
-        writeFn(s);
-        questionWritten = true;
-      }
-      // suppress each typed character
-    };
+    const muted = new Writable({ write(_chunk, _enc, cb) { cb(); } });
+    writeFn(question);
+    const rl = rlFactory({ input: process.stdin, output: muted, terminal: true });
     rl.question(question, (answer) => {
-      rl._writeToOutput = (s) => rl.output.write(s);
+      rl.close();
       const tail = answer.length > 4 ? answer.slice(-4) : '';
       const dots = '•'.repeat(answer.length > 4 ? 8 : answer.length);
       writeFn(`${dots}${tail}\n`);
@@ -93,7 +98,7 @@ export function chatLabel(chat) {
   return `${name}${handle} — ${kind}  [id: ${chat.id}]`;
 }
 
-async function resolveTelegramChatId(rl, token) {
+async function resolveTelegramChatId(token) {
   process.stdout.write('  Buscando chats recentes do bot... ');
   const chats = await discoverTelegramChats(token);
 
@@ -101,7 +106,7 @@ async function resolveTelegramChatId(rl, token) {
     console.log('nenhum encontrado.');
     console.log('  Envie qualquer mensagem ao bot e rode `dgk sow telegram` novamente,');
     console.log('  ou informe o Chat ID manualmente (ex: -1001234567890 para canais).\n');
-    const raw = await prompt(rl, 'Chat ID (manual): ');
+    const raw = await prompt('Chat ID (manual): ');
     return raw.trim();
   }
 
@@ -109,7 +114,7 @@ async function resolveTelegramChatId(rl, token) {
   chats.forEach((c, i) => console.log(`    [${i + 1}] ${chatLabel(c)}`));
   console.log('');
 
-  const answer = await prompt(rl, `Chat ID (número da lista ou ID manual): `);
+  const answer = await prompt(`Chat ID (número da lista ou ID manual): `);
   const idx = parseInt(answer.trim(), 10);
   if (!isNaN(idx) && idx >= 1 && idx <= chats.length) {
     const chosen = chats[idx - 1];
@@ -136,23 +141,18 @@ async function sowService(serviceId) {
   if (service.hint) console.log(`  ${service.hint}`);
   console.log('');
 
-  const rl = createInterface({ input: process.stdin, output: process.stdout });
   const collected = {};
 
-  try {
-    for (const p of service.prompts) {
-      if (serviceId === 'telegram' && p.key === 'TELEGRAM_CHAT_ID') {
-        collected[p.key] = await resolveTelegramChatId(rl, collected.TELEGRAM_BOT_TOKEN);
-      } else if (p.secret) {
-        const answer = await promptSecret(rl, `${p.label}: `);
-        collected[p.key] = answer.trim();
-      } else {
-        const answer = await prompt(rl, `${p.label}: `);
-        collected[p.key] = answer.trim();
-      }
+  for (const p of service.prompts) {
+    if (serviceId === 'telegram' && p.key === 'TELEGRAM_CHAT_ID') {
+      collected[p.key] = await resolveTelegramChatId(collected.TELEGRAM_BOT_TOKEN);
+    } else if (p.secret) {
+      const answer = await promptSecret(`${p.label}: `);
+      collected[p.key] = answer.trim();
+    } else {
+      const answer = await prompt(`${p.label}: `);
+      collected[p.key] = answer.trim();
     }
-  } finally {
-    rl.close();
   }
 
   if (Object.values(collected).some((v) => !v)) {
