@@ -1,10 +1,27 @@
 #!/usr/bin/env node
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
 import { buildInformationArchitectureReport } from "../.site/lib/information-architecture-audit.mjs";
 import { buildVaultData } from "./generate_vault_data.mjs";
+
+/**
+ * Returns the existing timestamp when the payload content (excluding the timestamp field)
+ * matches the already-written file. Advances to now only when content actually changed.
+ */
+function stableTimestamp(outputPath, payloadWithoutTs, tsKey = "collectedAt") {
+  if (existsSync(outputPath)) {
+    try {
+      const existing = JSON.parse(readFileSync(outputPath, "utf8"));
+      const { [tsKey]: _ts, ...restExisting } = existing;
+      if (JSON.stringify(restExisting) === JSON.stringify(payloadWithoutTs)) {
+        return _ts;
+      }
+    } catch { /* corrupt or missing — fall through */ }
+  }
+  return new Date().toISOString();
+}
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const PROFILE_OUTPUT = join(ROOT, "dados", "lab", "perfil-do-vault.json");
@@ -63,10 +80,9 @@ for (const entry of vault.notes) {
 
 notes.sort((a, b) => b.words - a.words || a.title.localeCompare(b.title, "pt"));
 
-const profileData = {
+const profileWithoutTs = {
   schemaVersion: 1,
   source: "scripts/lab_etl_demo.mjs",
-  collectedAt: new Date().toISOString(),
   noteCount: notes.length,
   totalWords: notes.reduce((sum, note) => sum + note.words, 0),
   averageWords: notes.length
@@ -76,6 +92,10 @@ const profileData = {
   statuses: top(statuses),
   tags: top(tags),
   largestNotes: notes.slice(0, 10),
+};
+const profileData = {
+  ...profileWithoutTs,
+  collectedAt: stableTimestamp(PROFILE_OUTPUT, profileWithoutTs),
 };
 
 const curationData = {
@@ -108,7 +128,7 @@ const graphData = {
   notes: graphNotes,
 };
 
-const jsonldData = {
+const jsonldWithoutTs = {
   "@context": {
     schema: "https://schema.org/",
     dgk: "https://aretw0.github.io/vault-seed/vocab/1.0#",
@@ -129,7 +149,6 @@ const jsonldData = {
   name: "vault-seed",
   noteCount: graphNotes.length,
   linkCount: graphData.linkCount,
-  generatedAt: new Date().toISOString(),
   "@graph": graphNotes.map((n) => ({
     "@type": "Note",
     "@id": `note:${n.id}`,
@@ -141,6 +160,10 @@ const jsonldData = {
     brokenLinks: n.brokenLinks,
   })),
 };
+const jsonldData = {
+  ...jsonldWithoutTs,
+  generatedAt: stableTimestamp(JSONLD_OUTPUT, jsonldWithoutTs, "generatedAt"),
+};
 
 const readingSource = JSON.parse(readFileSync(READING_LIST_SOURCE, "utf8"));
 const topicCount = new Map();
@@ -151,10 +174,9 @@ for (const item of readingSource) {
   topicCount.set(t, (topicCount.get(t) ?? 0) + 1);
   statusCount.set(s, (statusCount.get(s) ?? 0) + 1);
 }
-const readingData = {
+const readingWithoutTs = {
   schemaVersion: 1,
   source: "dados/fontes/lista-leitura.json",
-  collectedAt: new Date().toISOString(),
   itemCount: readingSource.length,
   items: readingSource,
   topicSummary: Array.from(topicCount.entries())
@@ -163,6 +185,10 @@ const readingData = {
   statusSummary: Array.from(statusCount.entries())
     .sort((a, b) => b[1] - a[1])
     .map(([status, count]) => ({ status, count })),
+};
+const readingData = {
+  ...readingWithoutTs,
+  collectedAt: stableTimestamp(READING_LIST_OUTPUT, readingWithoutTs),
 };
 
 mkdirSync(join(ROOT, "dados", "lab"), { recursive: true });
