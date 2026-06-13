@@ -98,11 +98,10 @@ export function promptSecret(question, writeFn = (s) => process.stdout.write(s),
   });
 }
 
-async function verifyMastodon(instance, token) {
-  const { request: _req, urlopen: _urlopen } = await import('node:http').catch(() => ({}));
+export async function verifyMastodon(instance, token, fetchFn = fetch) {
   try {
     const url = `https://${instance}/api/v1/accounts/verify_credentials`;
-    const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+    const res = await fetchFn(url, { headers: { Authorization: `Bearer ${token}` } });
     if (!res.ok) return null;
     const data = await res.json();
     return data.acct ? `@${data.acct}@${instance}` : null;
@@ -111,9 +110,9 @@ async function verifyMastodon(instance, token) {
   }
 }
 
-async function verifyBluesky(handle, password) {
+export async function verifyBluesky(handle, password, fetchFn = fetch) {
   try {
-    const res = await fetch('https://bsky.social/xrpc/com.atproto.server.createSession', {
+    const res = await fetchFn('https://bsky.social/xrpc/com.atproto.server.createSession', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ identifier: handle, password }),
@@ -121,6 +120,18 @@ async function verifyBluesky(handle, password) {
     if (!res.ok) return null;
     const data = await res.json();
     return data.handle ? `@${data.handle}` : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function verifyButtondown(apiKey, fetchFn = fetch) {
+  try {
+    const res = await fetchFn('https://api.buttondown.email/v1/emails', {
+      headers: { Authorization: `Token ${apiKey}` },
+    });
+    if (!res.ok) return null;
+    return '(conta verificada)';
   } catch {
     return null;
   }
@@ -237,6 +248,8 @@ async function sowService(serviceId) {
     identity = await verifyBluesky(collected.BLUESKY_HANDLE, collected.BLUESKY_APP_PASSWORD);
   } else if (serviceId === 'telegram') {
     identity = await verifyTelegram(collected.TELEGRAM_BOT_TOKEN);
+  } else if (serviceId === 'buttondown') {
+    identity = await verifyButtondown(collected.BUTTONDOWN_API_KEY);
   } else {
     identity = '(não verificado automaticamente)';
   }

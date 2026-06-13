@@ -1,6 +1,6 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { verifyTelegram, discoverTelegramChats, chatLabel, promptSecret, maskSecret } from '../src/commands/sow.js';
+import { verifyTelegram, discoverTelegramChats, chatLabel, promptSecret, maskSecret, verifyMastodon, verifyBluesky, verifyButtondown } from '../src/commands/sow.js';
 
 function mockFetch(body, ok = true) {
   return async (_url) => ({
@@ -205,5 +205,107 @@ describe('discoverTelegramChats', () => {
     const chats = await discoverTelegramChats('tok', fakeFetch);
     assert.equal(chats.length, 1);
     assert.equal(chats[0].id, 77);
+  });
+});
+
+// --- verifyMastodon ---
+
+describe('verifyMastodon', () => {
+  test('retorna @user@instance quando credenciais são válidas', async () => {
+    const fetch = mockFetch({ acct: 'jardineiro' });
+    const result = await verifyMastodon('mastodon.social', 'token-valido', fetch);
+    assert.equal(result, '@jardineiro@mastodon.social');
+  });
+
+  test('retorna null quando resposta não é ok', async () => {
+    const fetch = mockFetch({}, false);
+    const result = await verifyMastodon('mastodon.social', 'token-invalido', fetch);
+    assert.equal(result, null);
+  });
+
+  test('retorna null quando acct está ausente na resposta', async () => {
+    const fetch = mockFetch({ id: '123' });
+    const result = await verifyMastodon('mastodon.social', 'token', fetch);
+    assert.equal(result, null);
+  });
+
+  test('retorna null em caso de erro de rede', async () => {
+    const fetch = async () => { throw new Error('Network error'); };
+    const result = await verifyMastodon('mastodon.social', 'token', fetch);
+    assert.equal(result, null);
+  });
+});
+
+// --- verifyBluesky ---
+
+describe('verifyBluesky', () => {
+  test('retorna @handle quando credenciais são válidas', async () => {
+    const fetch = mockFetch({ handle: 'jardineiro.bsky.social', accessJwt: 'jwt' });
+    const result = await verifyBluesky('jardineiro.bsky.social', 'app-password', fetch);
+    assert.equal(result, '@jardineiro.bsky.social');
+  });
+
+  test('retorna null quando resposta não é ok', async () => {
+    const fetch = mockFetch({}, false);
+    const result = await verifyBluesky('jardineiro.bsky.social', 'senha-errada', fetch);
+    assert.equal(result, null);
+  });
+
+  test('retorna null quando handle está ausente na resposta', async () => {
+    const fetch = mockFetch({ did: 'did:plc:123' });
+    const result = await verifyBluesky('handle', 'pass', fetch);
+    assert.equal(result, null);
+  });
+
+  test('retorna null em caso de erro de rede', async () => {
+    const fetch = async () => { throw new Error('Network error'); };
+    const result = await verifyBluesky('handle', 'pass', fetch);
+    assert.equal(result, null);
+  });
+
+  test('usa método POST e Content-Type corretos', async () => {
+    let capturedInit;
+    const fetch = async (_url, init) => {
+      capturedInit = init;
+      return { ok: true, json: async () => ({ handle: 'test.bsky.social' }) };
+    };
+    await verifyBluesky('test.bsky.social', 'pass', fetch);
+    assert.equal(capturedInit.method, 'POST');
+    assert.equal(capturedInit.headers['Content-Type'], 'application/json');
+    const body = JSON.parse(capturedInit.body);
+    assert.equal(body.identifier, 'test.bsky.social');
+    assert.equal(body.password, 'pass');
+  });
+});
+
+// --- verifyButtondown ---
+
+describe('verifyButtondown', () => {
+  test('retorna string de confirmação quando API key é válida', async () => {
+    const fetch = mockFetch({ results: [] });
+    const result = await verifyButtondown('api-key-valida', fetch);
+    assert.equal(result, '(conta verificada)');
+  });
+
+  test('retorna null quando resposta não é ok (401)', async () => {
+    const fetch = mockFetch({}, false);
+    const result = await verifyButtondown('api-key-invalida', fetch);
+    assert.equal(result, null);
+  });
+
+  test('retorna null em caso de erro de rede', async () => {
+    const fetch = async () => { throw new Error('Network error'); };
+    const result = await verifyButtondown('key', fetch);
+    assert.equal(result, null);
+  });
+
+  test('usa header Authorization: Token correto', async () => {
+    let capturedHeaders;
+    const fetch = async (_url, init) => {
+      capturedHeaders = init.headers;
+      return { ok: true, json: async () => ({}) };
+    };
+    await verifyButtondown('minha-key-123', fetch);
+    assert.equal(capturedHeaders.Authorization, 'Token minha-key-123');
   });
 });

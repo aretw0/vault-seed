@@ -1,5 +1,5 @@
 import { run } from '../runner.js';
-import { injectSiloEnv } from '../silo.js';
+import { injectSiloEnv, SERVICES } from '../silo.js';
 
 const CHANNELS = {
   telegram: async (args, runner) => {
@@ -34,7 +34,13 @@ export async function outbox(args, runner = run) {
   }
 
   if (!(channel in CHANNELS)) {
-    console.error(`dgk outbox: canal desconhecido '${channel}'. Disponíveis: ${Object.keys(CHANNELS).join(', ')}`);
+    if (channel in SERVICES) {
+      console.error(`dgk outbox: publicação para '${channel}' ainda não implementada.`);
+      console.error(`  Canais com publicação disponível: ${Object.keys(CHANNELS).join(', ')}`);
+      console.error(`  As credenciais de '${channel}' foram salvas e podem ser usadas quando o suporte for adicionado.`);
+    } else {
+      console.error(`dgk outbox: canal desconhecido '${channel}'. Disponíveis: ${Object.keys(CHANNELS).join(', ')}`);
+    }
     process.exit(1);
   }
 
