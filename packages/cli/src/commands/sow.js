@@ -12,21 +12,66 @@ function prompt(question, rlFactory = createInterface) {
   });
 }
 
-// Routes readline's display writes to a muted Writable so no escape sequences
-// (clear-line, cursor-move, echo) ever reach the terminal. The question is
-// written once directly; after Enter, the tail is shown as confirmation.
+// TTY path: raw mode + '*' per keypress so the user sees typed/pasted length.
+// On Enter, the line is replaced with question + '••••••••tail'.
+// Non-TTY path (tests, piped input): muted readline with same tail feedback.
 export function promptSecret(question, writeFn = (s) => process.stdout.write(s), rlFactory = createInterface) {
   return new Promise((resolve) => {
-    const muted = new Writable({ write(_chunk, _enc, cb) { cb(); } });
     writeFn(question);
-    const rl = rlFactory({ input: process.stdin, output: muted, terminal: true });
-    rl.question(question, (answer) => {
-      rl.close();
-      const tail = answer.length > 4 ? answer.slice(-4) : '';
-      const dots = '•'.repeat(answer.length > 4 ? 8 : answer.length);
-      writeFn(`${dots}${tail}\n`);
-      resolve(answer);
-    });
+
+    if (process.stdin.isTTY) {
+      const wasRaw = process.stdin.isRaw;
+      process.stdin.setRawMode(true);
+      process.stdin.resume();
+      process.stdin.setEncoding('utf8');
+
+      let value = '';
+
+      const onData = (char) => {
+        if (char === '\r' || char === '\n') {
+          process.stdin.setRawMode(wasRaw ?? false);
+          process.stdin.pause();
+          process.stdin.removeListener('data', onData);
+          process.stdout.write('\r\x1b[K'); // clear the question + stars
+          const tail = value.length > 4 ? value.slice(-4) : '';
+          const dots = '•'.repeat(value.length > 4 ? 8 : value.length);
+          writeFn(`${question}${dots}${tail}\n`);
+          resolve(value);
+        } else if (char === '') { // Ctrl+C
+          process.stdin.setRawMode(wasRaw ?? false);
+          process.stdin.pause();
+          process.stdin.removeListener('data', onData);
+          writeFn('\n');
+          process.exit(130);
+        } else if (char === '' || char === '\b') { // backspace
+          if (value.length > 0) {
+            value = value.slice(0, -1);
+            process.stdout.write('\b \b');
+          }
+        } else {
+          for (const c of char) { // handles paste (burst of chars)
+            const code = c.charCodeAt(0);
+            if (code >= 32 && code !== 127) {
+              value += c;
+              process.stdout.write('*');
+            }
+          }
+        }
+      };
+
+      process.stdin.on('data', onData);
+    } else {
+      // Non-TTY: muted readline (tests / piped input)
+      const muted = new Writable({ write(_c, _e, cb) { cb(); } });
+      const rl = rlFactory({ input: process.stdin, output: muted, terminal: false });
+      rl.question(question, (answer) => {
+        rl.close();
+        const tail = answer.length > 4 ? answer.slice(-4) : '';
+        const dots = '•'.repeat(answer.length > 4 ? 8 : answer.length);
+        writeFn(`${dots}${tail}\n`);
+        resolve(answer);
+      });
+    }
   });
 }
 
