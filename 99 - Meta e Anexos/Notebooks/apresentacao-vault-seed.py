@@ -23,7 +23,7 @@ def _(lab_runtime_context, load_lab_manifest, read_lab_dataset):
     _ctx = lab_runtime_context()
     _manifest = load_lab_manifest()
     profile = read_lab_dataset("perfil-do-vault", _manifest)
-    tier = "WASM (navegador)" if _ctx["isWasm"] else "Local (desenvolvimento)"
+    tier = "WASM (navegador)" if not _ctx["isLocal"] else "Local (desenvolvimento)"
     return profile, tier
 
 

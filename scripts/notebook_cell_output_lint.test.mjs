@@ -1,18 +1,34 @@
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { join } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { join } from "node:path";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 
-const ANALYSIS_NOTEBOOKS = [
-	"99 - Meta e Anexos/Notebooks/analise-publicacao.py",
-	"99 - Meta e Anexos/Notebooks/analise-grafo.py",
-	"99 - Meta e Anexos/Notebooks/analise-feeds.py",
-	"99 - Meta e Anexos/Notebooks/analise-outbox.py",
-	"99 - Meta e Anexos/Notebooks/etl-demo.py",
-];
+/**
+ * Discovers all notebook .py files under the Notebooks directory, excluding
+ * files whose names start with "_" (runtime helpers, private modules).
+ * Returns forward-slash relative paths from ROOT.
+ */
+function discoverNotebooks(root) {
+	const notebooksDir = join(root, "99 - Meta e Anexos", "Notebooks");
+	if (!existsSync(notebooksDir)) return [];
+	const results = [];
+	function walk(absDir, relDir) {
+		for (const entry of readdirSync(absDir, { withFileTypes: true })) {
+			const absEntry = join(absDir, entry.name);
+			const relEntry = `${relDir}/${entry.name}`;
+			if (entry.isDirectory()) {
+				walk(absEntry, relEntry);
+			} else if (entry.name.endsWith(".py") && !entry.name.startsWith("_")) {
+				results.push(relEntry);
+			}
+		}
+	}
+	walk(notebooksDir, "99 - Meta e Anexos/Notebooks");
+	return results;
+}
 
 /**
  * Finds @app.cell bodies that have 2+ top-level mo.*() expression calls.
@@ -26,8 +42,9 @@ const ANALYSIS_NOTEBOOKS = [
  * function bodies. Top-level calls are at exactly 4 spaces; calls inside
  * mo.vstack([...]) arguments are at 8+ spaces and do not match.
  *
- * Exclusion: mo.output.append() is the imperative multi-output API and
- * is intentionally called multiple times.
+ * Exclusions:
+ *   - mo.output.append() — imperative multi-output API, intentionally multi-call.
+ *   - mo.stop()          — early-exit gate; may precede the actual output call.
  */
 function cellsWithMultipleTopLevelMoCalls(source) {
 	const issues = [];
@@ -38,7 +55,9 @@ function cellsWithMultipleTopLevelMoCalls(source) {
 			.split("\n")
 			.filter(
 				(line) =>
-					/^    mo\.[a-zA-Z]/.test(line) && !/^    mo\.output\./.test(line),
+					/^    mo\.[a-zA-Z]/.test(line) &&
+					!/^    mo\.output\./.test(line) &&
+					!/^    mo\.stop\(/.test(line),
 			);
 
 		if (topLevelMoCalls.length > 1) {
@@ -138,9 +157,74 @@ test("lint: mo.output.append() is excluded (imperative multi-output API)", () =>
 	);
 });
 
+test("lint: mo.stop() before another mo.*() is not flagged (early-exit gate)", () => {
+	const src = [
+		"import marimo",
+		"app = marimo.App()",
+		"",
+		"@app.cell",
+		"def _(mo, cond):",
+		'    mo.stop(cond, mo.md("bloqueado"))',
+		'    mo.md("continua")',
+		"    return",
+	].join("\n");
+
+	assert.equal(
+		cellsWithMultipleTopLevelMoCalls(src).length,
+		0,
+		"mo.stop() is an early-exit gate, not a display call",
+	);
+});
+
+// ── runtime key contract ──────────────────────────────────────────────────────
+
+test("no notebook references an undefined lab_runtime_context() key", () => {
+	const runtimePath = join(
+		ROOT,
+		"99 - Meta e Anexos",
+		"Notebooks",
+		"_lab_notebook_runtime.py",
+	);
+	if (!existsSync(runtimePath)) return;
+
+	const runtimeSrc = readFileSync(runtimePath, "utf8");
+	// Extract keys from the `return { ... }` block inside lab_runtime_context().
+	// The block spans multiple lines so we match up to the closing brace.
+	const returnMatch = runtimeSrc.match(/return \{([\s\S]*?)\}/m);
+	if (!returnMatch) return;
+	const validKeys = new Set(
+		[...returnMatch[1].matchAll(/"([^"]+)"\s*:/g)].map((m) => m[1]),
+	);
+
+	const notebooks = discoverNotebooks(ROOT);
+	const violations = [];
+	for (const relPath of notebooks) {
+		const absPath = join(ROOT, relPath);
+		if (!existsSync(absPath)) continue;
+		const src = readFileSync(absPath, "utf8");
+		// Match _ctx["key"], context["key"], _context["key"]
+		for (const [, key] of src.matchAll(
+			/(?:_ctx|context|_context)\["([^"]+)"\]/g,
+		)) {
+			if (!validKeys.has(key)) {
+				violations.push(
+					`${relPath.split("/").pop()}: chave "${key}" não existe em lab_runtime_context()`,
+				);
+			}
+		}
+	}
+	assert.equal(
+		violations.length,
+		0,
+		`Notebooks referenciam chaves indefinidas do runtime:\n${violations.join("\n")}`,
+	);
+});
+
 // ── contract tests against actual notebooks ───────────────────────────────────
 
-for (const relPath of ANALYSIS_NOTEBOOKS) {
+const NOTEBOOKS = discoverNotebooks(ROOT);
+
+for (const relPath of NOTEBOOKS) {
 	const name = relPath.split("/").pop();
 	test(`notebook cell output contract: ${name}`, (t) => {
 		const absPath = join(ROOT, relPath);

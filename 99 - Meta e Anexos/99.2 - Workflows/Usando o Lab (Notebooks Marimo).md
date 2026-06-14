@@ -9,7 +9,7 @@ tags:
   - meta/automacao
 status: published
 created: 2026-05-22
-updated: 2026-05-25
+updated: 2026-06-14
 category: guia
 audience: todos
 related:
@@ -192,6 +192,47 @@ O Lab tem três modos com limites diferentes:
 | `marimo export html-wasm` | No navegador, via WebAssembly/Pyodide | publicação estática, demos, exploração leve e interativa |
 
 O modo publicado não tem um computador remoto por baixo. Ele roda no navegador de quem abre a página. Por isso, notebooks publicados devem evitar dependências de sistema, automação de navegador, processos longos, credenciais locais e acesso direto ao filesystem da máquina.
+
+## O Contrato Do Runtime
+
+Os notebooks do Lab usam um módulo auxiliar chamado `_lab_notebook_runtime.py`, que fica junto com os notebooks em `99 - Meta e Anexos/Notebooks/`. Ele expõe as funções abaixo e tem uma camada de compatibilidade: quando o pacote `dgk-lab-runtime` está instalado, ele delega para esse pacote; caso contrário, usa uma implementação inline equivalente.
+
+A função central é `lab_runtime_context()`. Ela retorna um dicionário com as seguintes chaves:
+
+| Chave | Tipo | O que indica |
+| --- | --- | --- |
+| `runtime` | `str` | `"pyodide"` quando rodando no navegador, `"local"` nos demais casos |
+| `isPackaged` | `bool` | `True` no HTML WebAssembly exportado |
+| `isLocal` | `bool` | `True` quando rodando no seu computador ou servidor Python |
+| `canRunLocalEtl` | `bool` | `True` quando ETL local (filesystem, subprocess) está disponível |
+| `capabilities` | `dict` | Mapa de capacidades: `filesystem`, `secrets`, `subprocess`, `headlessBrowser`, `ocr`, `binaryFormats` — todas `True` em modo local |
+| `notebooksPath` | `str` | Segmento do caminho dos notebooks (padrão `"lab"`, sobrescrevível via `VAULT_NOTEBOOKS_PATH`) |
+| `cwd` | `str` | Diretório de trabalho atual em modo local; string vazia no WASM |
+
+O padrão para distinguir comportamento entre modos é verificar `isLocal`:
+
+```python
+from _lab_notebook_runtime import lab_runtime_context
+
+_ctx = lab_runtime_context()
+if _ctx["isLocal"]:
+    # acesso a arquivos, secrets, subprocess
+    ...
+else:
+    # versão WASM: leitura de dados pré-exportados ou APIs públicas
+    ...
+```
+
+Para operações que só fazem sentido em modo local e devem falhar com mensagem clara no WASM, use `require_local_runtime()`:
+
+```python
+from _lab_notebook_runtime import require_local_runtime
+
+_ctx = require_local_runtime("salvar snapshot local")
+# se estiver no WASM, levanta RuntimeError antes de chegar aqui
+```
+
+O teste `scripts/notebook_cell_output_lint.test.mjs` valida automaticamente que nenhum notebook referencia uma chave do dicionário que não existe em `lab_runtime_context()`. Esse contrato roda junto com o restante dos testes do vault e também está disponível em vaults inicializados a partir deste template.
 
 ## Dados E ETL
 

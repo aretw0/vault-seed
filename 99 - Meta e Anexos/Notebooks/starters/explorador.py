@@ -7,22 +7,32 @@ app = marimo.App(width="medium")
 @app.cell
 def _():
     import marimo as mo
-    import json
-    import os
-    return json, mo, os
+    return (mo,)
 
 
 @app.cell
-def _(json, os):
-    try:
-        import pyodide  # type: ignore
-        from pyodide.http import open_url  # type: ignore
-        data = json.loads(open_url("../vault-data.json").read())
-    except ImportError:
-        _notebooks_path = os.environ.get("VAULT_NOTEBOOKS_PATH", "lab")
-        _path = os.path.join(os.getcwd(), "public", _notebooks_path, "vault-data.json")
-        with open(_path, encoding="utf-8") as _f:
-            data = json.load(_f)
+def _():
+    import sys
+    from pathlib import Path
+
+    # Localiza _lab_notebook_runtime.py: na pasta pai quando rodando de starters/,
+    # ou na pasta atual quando o notebook for copiado para 99 - Meta e Anexos/Notebooks/.
+    _this_dir = Path(__file__).resolve().parent
+    _runtime_dir = (
+        _this_dir.parent
+        if (_this_dir.parent / "_lab_notebook_runtime.py").exists()
+        else _this_dir
+    )
+    if str(_runtime_dir) not in sys.path:
+        sys.path.insert(0, str(_runtime_dir))
+
+    from _lab_notebook_runtime import read_lab_json
+    return (read_lab_json,)
+
+
+@app.cell
+def _(read_lab_json):
+    data = read_lab_json("vault-data.json")
     notes = data["notes"]
     return data, notes
 
@@ -70,8 +80,10 @@ def _(folder_sel, mo, notes, status_sel, tags_sel):
         [{"título": n["title"], "pasta": n["folder"], "status": n.get("status") or "—", "tags": ", ".join(n.get("tags", []))}
          for n in _filtered]
     )
-    mo.md(f"**{len(_filtered)} notas** encontradas")
-    mo.ui.table(_df)
+    mo.vstack([
+        mo.md(f"**{len(_filtered)} notas** encontradas"),
+        mo.ui.table(_df),
+    ])
     return (pd,)
 
 

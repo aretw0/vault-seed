@@ -7,23 +7,31 @@ app = marimo.App(width="medium")
 @app.cell
 def _():
     import marimo as mo
-    import json
-    import os
     from datetime import date
-    return date, json, mo, os
+    return date, mo
 
 
 @app.cell
-def _(json, os):
-    try:
-        import pyodide  # type: ignore
-        from pyodide.http import open_url  # type: ignore
-        data = json.loads(open_url("../vault-data.json").read())
-    except ImportError:
-        _notebooks_path = os.environ.get("VAULT_NOTEBOOKS_PATH", "lab")
-        _path = os.path.join(os.getcwd(), "public", _notebooks_path, "vault-data.json")
-        with open(_path, encoding="utf-8") as _f:
-            data = json.load(_f)
+def _():
+    import sys
+    from pathlib import Path
+
+    _this_dir = Path(__file__).resolve().parent
+    _runtime_dir = (
+        _this_dir.parent
+        if (_this_dir.parent / "_lab_notebook_runtime.py").exists()
+        else _this_dir
+    )
+    if str(_runtime_dir) not in sys.path:
+        sys.path.insert(0, str(_runtime_dir))
+
+    from _lab_notebook_runtime import read_lab_json
+    return (read_lab_json,)
+
+
+@app.cell
+def _(read_lab_json):
+    data = read_lab_json("vault-data.json")
     notes = data["notes"]
     return data, notes
 
@@ -58,8 +66,10 @@ def _(mo, notes, today):
         if (n.get("created") or "")[:10] == today
         or (n.get("updated") or "")[:10] == today
     ]
-    mo.md("## Notas de Hoje")
-    mo.ui.table(pd.DataFrame(_today_notes)) if _today_notes else mo.md("_Nenhuma nota criada ou atualizada hoje._")
+    mo.vstack([
+        mo.md("## Notas de Hoje"),
+        mo.ui.table(pd.DataFrame(_today_notes)) if _today_notes else mo.md("_Nenhuma nota criada ou atualizada hoje._"),
+    ])
     return (pd,)
 
 
@@ -69,8 +79,10 @@ def _(mo, notes, pd):
         {"titulo": n["title"], "id": n["id"], "status": n.get("status")}
         for n in notes if "00 -" in n.get("folder", "")
     ]
-    mo.md("## 📥 Entrada")
-    mo.ui.table(pd.DataFrame(_inbox)) if _inbox else mo.md("_Entrada vazia._")
+    mo.vstack([
+        mo.md("## 📥 Entrada"),
+        mo.ui.table(pd.DataFrame(_inbox)) if _inbox else mo.md("_Entrada vazia._"),
+    ])
     return ()
 
 
