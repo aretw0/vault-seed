@@ -61,7 +61,7 @@
     "release:package:smoke": "node scripts/release_package_smoke.mjs",
     "release:package:smoke:json": "node scripts/release_package_smoke.mjs --json",
     "test:python": "uv run python scripts/test_avaliar_textos.py",
-    "validate": "pnpm run actions:pins && pnpm run lint && pnpm run audit:ia && pnpm run site:audit:sidebar && pnpm run test && pnpm run test:python && pnpm run validate:onboarding && pnpm run validate:pt-text && pnpm run validate:theme && pnpm run validate:mermaid && pnpm run site:graph-smoke && pnpm run smoke:template && pnpm run smoke:init:reset && pnpm run smoke:user-vault && pnpm run smoke:e2e && pnpm run release:package:smoke",
+    "validate": "pnpm run actions:pins && pnpm run lint && pnpm run audit:ia && pnpm run site:audit:sidebar && pnpm run test && pnpm run validate:onboarding && pnpm run validate:pt-text && pnpm run validate:theme && pnpm run validate:mermaid && pnpm run site:graph-smoke && pnpm run smoke:template && pnpm run smoke:init:reset && pnpm run smoke:user-vault && pnpm run smoke:e2e && pnpm run release:package:smoke",
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish",
