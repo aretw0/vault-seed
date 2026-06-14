@@ -254,8 +254,9 @@ async function sowService(serviceId) {
       const answer = await promptSecret(`${p.label}: `);
       collected[p.key] = answer.trim();
     } else {
-      const answer = await prompt(`${p.label}: `);
-      collected[p.key] = answer.trim();
+      const label = p.default ? `${p.label} [${p.default}]` : p.label;
+      const answer = await prompt(`${label}: `);
+      collected[p.key] = answer.trim() || p.default || '';
     }
   }
 

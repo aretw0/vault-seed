@@ -19,7 +19,7 @@ export const SERVICES = {
     hint: 'Você precisará criar um aplicativo na sua instância Mastodon para obter um token de acesso.',
     keys: ['MASTODON_INSTANCE', 'MASTODON_TOKEN'],
     prompts: [
-      { key: 'MASTODON_INSTANCE', label: 'Instância (ex: mastodon.social)', secret: false },
+      { key: 'MASTODON_INSTANCE', label: 'Instância', default: 'mastodon.social', secret: false },
       { key: 'MASTODON_TOKEN', label: 'Token de acesso', secret: true },
     ],
   },
