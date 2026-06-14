@@ -599,6 +599,7 @@ const NOTE_STATUS_CONTRACT = {
     "99 - Meta e Anexos/99.3 - Referência/Usando o Vault no Celular vs. Desktop.md",
     "99 - Meta e Anexos/99.3 - Referência/Visualização do Fluxo do Vault.md",
     // 99 - Meta e Anexos / Apresentações
+    "99 - Meta e Anexos/99.4 - Apresentações/Apresentações.md",
     "99 - Meta e Anexos/99.4 - Apresentações/Visão Geral do Vault Seed.md",
     "99 - Meta e Anexos/99.4 - Apresentações/O Lab — Notebooks e Dados.md",
     "99 - Meta e Anexos/99.4 - Apresentações/Fluxo de Publicação.md",

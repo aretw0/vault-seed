@@ -6,6 +6,7 @@ aliases:
 tags:
   - meta/apresentacao
   - meta/vault-seed
+  - meta/onboarding
 status: published
 created: 2026-06-14
 updated: 2026-06-14
