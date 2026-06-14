@@ -40,11 +40,22 @@ test("buildPublicationOutbox extracts only explicit publication candidates", () 
     "utf8",
   );
 
-  const { data } = buildPublicationOutbox({
-    cwd,
-    outputPath: join(cwd, "dados", "lab", "outbox-publicacao.json"),
-    now: "2026-05-26T00:00:00.000Z",
-  });
+  // Isolate from CI env vars that would make resolveSiteUrl() return a non-null URL.
+  const savedRepo = process.env.GITHUB_REPOSITORY;
+  const savedSite = process.env.ASTRO_SITE;
+  delete process.env.GITHUB_REPOSITORY;
+  delete process.env.ASTRO_SITE;
+  let data;
+  try {
+    ({ data } = buildPublicationOutbox({
+      cwd,
+      outputPath: join(cwd, "dados", "lab", "outbox-publicacao.json"),
+      now: "2026-05-26T00:00:00.000Z",
+    }));
+  } finally {
+    if (savedRepo !== undefined) process.env.GITHUB_REPOSITORY = savedRepo;
+    if (savedSite !== undefined) process.env.ASTRO_SITE = savedSite;
+  }
 
   assert.equal(data.kind, "publication-outbox");
   assert.equal(data.itemCount, 1);

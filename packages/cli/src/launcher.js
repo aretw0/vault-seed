@@ -71,7 +71,7 @@ export function launchVault(vaultName, platform = process.platform) {
 
 /** Derives a vault name from the cwd (folder basename). */
 export function vaultNameFromCwd(cwd = process.cwd()) {
-  return basename(cwd);
+  return basename(cwd.replace(/\\/g, '/'));
 }
 
 export const INSTALL_HINTS = {
