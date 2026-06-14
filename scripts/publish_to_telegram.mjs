@@ -37,13 +37,21 @@ function sha(str) {
 
 function formatMessage(note) {
   const title = note.title || note.path?.split("/").pop()?.replace(/\.md$/, "") || "Nota";
-  // excerpt comes from outbox ETL; summary/description kept for backward compat.
-  const body = note.excerpt || note.summary || note.description || "";
+  // description: author-crafted hook (og:description equivalent) — preferred.
+  // excerpt: auto-generated fallback from body content.
+  const body = note.description || note.excerpt || note.summary || "";
   const url = note.url || note.siteUrl || "";
-  // Tags from frontmatter become hashtags; spaces → underscores per Telegram convention.
-  // escapeMarkdown handles the '#' — MarkdownV2 requires it as '\#'.
+  // Tags become hashtags. Telegram allows only [a-zA-Z0-9_]; replace any
+  // other char (hyphens, spaces, dots…) with '_', then collapse and trim.
   const hashtags = (note.tags ?? [])
-    .map((t) => escapeMarkdown(`#${String(t).replace(/\s+/g, "_")}`))
+    .map((t) => {
+      const slug = String(t)
+        .replace(/[^a-zA-Z0-9_]/g, "_")
+        .replace(/_+/g, "_")
+        .replace(/^_|_$/g, "");
+      return slug ? escapeMarkdown(`#${slug}`) : null;
+    })
+    .filter(Boolean)
     .join(" ");
 
   let text = `*${escapeMarkdown(title)}*`;

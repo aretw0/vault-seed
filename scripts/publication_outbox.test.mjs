@@ -15,6 +15,7 @@ test("buildPublicationOutbox extracts only explicit publication candidates", () 
     [
       "---",
       "title: Post de Teste",
+      "description: Gancho de compartilhamento para todos os canais.",
       "status: draft",
       "outbox: true",
       "publicationStatus: draft",
@@ -50,6 +51,8 @@ test("buildPublicationOutbox extracts only explicit publication candidates", () 
   assert.equal(data.policy.humanReviewRequired, true);
   assert.deepEqual(data.items[0].channels, ["mastodon", "rss"]);
   assert.equal(data.items[0].license, "CC-BY-4.0");
+  // description: author-crafted sharing hook — preferred over excerpt in publish scripts.
+  assert.equal(data.items[0].description, "Gancho de compartilhamento para todos os canais.");
   assert.match(data.items[0].excerpt, /Resumo auditável/);
   assert.ok(data.channels.some((channel) => channel.id === "site"));
   // url is null when ASTRO_SITE is unset, CNAME absent, and GITHUB_REPOSITORY absent.

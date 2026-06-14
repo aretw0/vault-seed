@@ -164,6 +164,9 @@ export function buildPublicationOutbox({ cwd = ROOT, outputPath = DEFAULT_OUTPUT
         channelCount: channels.length,
         audience: data.audience ? String(data.audience) : null,
         tags: toArray(data.tags),
+        // description: author-crafted hook for social sharing (og:description).
+        // excerpt: auto-generated fallback from body content.
+        description: data.description ? String(data.description) : null,
         excerpt: excerpt(content),
       };
     })
