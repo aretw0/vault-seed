@@ -1,5 +1,6 @@
 ---
 title: "Jardim digital: por onde começar"
+description: "Um arquivo você cria e esquece. Um jardim exige cuidado — você planta sementes, poda o que não funciona, conecta ideias que se beneficiam da proximidade. Aqui, os primeiros passos."
 tags:
   - pkm
   - jardim-digital
