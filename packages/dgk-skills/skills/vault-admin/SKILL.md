@@ -19,7 +19,7 @@ dgk serve --port 8080
 ```
 
 O painel exibe:
-- Status de configuração de cada canal (Mastodon, Bluesky, Telegram, Buttondown)
+- Status de configuração de cada canal disponível (atualmente: Telegram)
 - Itens do outbox de publicação com status e canais alvo
 - Histórico de rate limits por plataforma
 
@@ -36,16 +36,18 @@ O servidor escuta apenas em `127.0.0.1` e não requer autenticação adicional e
 
 ## Configurar canais via CLI
 
-```bash
-# Configurar ou reconfigurar um canal
-dgk sow telegram
-dgk sow mastodon
-dgk sow bluesky
-dgk sow buttondown
+Canais com ciclo completo (sow → etl → outbox) disponíveis nesta versão:
 
-# Ver status de todos os canais
+```bash
+# Configurar ou reconfigurar o Telegram
+dgk sow telegram
+
+# Ver status dos canais configurados
 dgk check
 ```
+
+> Mastodon, Bluesky e Buttondown terão suporte completo em versões futuras.
+> Por enquanto `dgk sow` aceita apenas `telegram`.
 
 ## Gerenciar o outbox
 
