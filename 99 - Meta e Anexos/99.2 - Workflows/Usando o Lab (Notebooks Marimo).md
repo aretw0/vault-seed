@@ -140,7 +140,7 @@ O editor local do Marimo tem controles de visualização que ajudam durante a cr
 
 No Lab publicado, o export usa `marimo export html-wasm` em modo `run`. Esse modo entrega uma página interativa, sem depender de servidor Python, mas não leva todos os controles do editor local.
 
-Para apresentações publicadas no navegador, este vault usa o layout nativo de slides do Marimo via `layout_file`. O arquivo de layout fica em `99 - Meta e Anexos/Notebooks/layouts/apresentacao-vault-seed.slides.json`, versionado junto do notebook, e é copiado temporariamente durante o export para manter o HTML WebAssembly self-contained.
+Para apresentações publicadas no navegador, este vault usa o layout nativo de slides do Marimo via `layout_file`. Os arquivos de layout ficam em `99 - Meta e Anexos/Notebooks/apresentacoes/layouts/*.slides.json`, versionados junto dos notebooks, e são copiados durante o export para manter o HTML WebAssembly self-contained.
 
 O Marimo também exporta notebooks para outros formatos. Os caminhos mais úteis aqui são:
 
@@ -155,7 +155,7 @@ O Marimo também exporta notebooks para outros formatos. Os caminhos mais úteis
 | Script | `marimo export script` | gerar um Python plano |
 | Session | `marimo export session` | validar execução sem navegador |
 
-O vault já tem um notebook de apresentação em `99 - Meta e Anexos/Notebooks/apresentacao-vault-seed.py`. Ele declara `layout_file="layouts/apresentacao-vault-seed.slides.json"` para criar a navegação de apresentação no HTML publicado.
+O vault inclui quatro notebooks de apresentação em `99 - Meta e Anexos/Notebooks/apresentacoes/`. Cada um declara `layout_file="layouts/<nome>.slides.json"` para criar a navegação de slides no HTML publicado. O arquivo de layout fica em `apresentacoes/layouts/` ao lado do notebook.
 
 Para exportá-lo como HTML WebAssembly de apresentação:
 
@@ -163,7 +163,7 @@ Para exportá-lo como HTML WebAssembly de apresentação:
 pnpm run notebooks:export:slides
 ```
 
-Por padrão, o HTML é gerado em `dist/lab/vault-seed-slides.html`. Se você configurar `VAULT_NOTEBOOKS_PATH`, ele segue esse segmento, por exemplo `dist/notebooks/vault-seed-slides.html`. Esse arquivo é um artefato local de build, não uma nota do vault.
+Por padrão, os HTMLs são gerados em `dist/lab/` com o nome de cada apresentação (ex: `visao-geral-slides.html`). Esses arquivos são artefatos locais de build, não notas do vault.
 
 Para gerar um PDF de apresentação quando o ambiente suportar Playwright/WebPDF, use o fluxo próprio de PDF em slides:
 

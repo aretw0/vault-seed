@@ -60,7 +60,7 @@ const notebooksDevScript = read("scripts/notebooks_dev.mjs");
 const notebooksCheckScript = read("scripts/notebooks_check.mjs");
 const notebooksExportScript = read("scripts/export_notebooks.mjs");
 const notebooksSlidesScript = read("scripts/export_notebook_slides.mjs");
-const presentationNotebook = read("99 - Meta e Anexos/Notebooks/apresentacao-vault-seed.py");
+const presentationNotebook = read("99 - Meta e Anexos/Notebooks/apresentacoes/visao-geral.py");
 const etlNotebook = read("99 - Meta e Anexos/Notebooks/etl-demo.py");
 const labDatasetsManifest = readJson(".site/lab.datasets.json");
 const labNotebooksManifest = readJson(".site/lab.notebooks.json");
@@ -242,8 +242,8 @@ requireCondition(
   "Marimo exported notebooks must harden table, data-grid, and select colors for accessible dark/light themes.",
 );
 requireCondition(
-  /app = marimo\.App\(\r?\n    width="medium",\r?\n    layout_file="layouts\/apresentacao-vault-seed\.slides\.json",\r?\n\)/.test(presentationNotebook) &&
-    exists("99 - Meta e Anexos/Notebooks/layouts/apresentacao-vault-seed.slides.json") &&
+  /app = marimo\.App\(\r?\n    width="medium",\r?\n    layout_file="layouts\/visao-geral\.slides\.json",\r?\n\)/.test(presentationNotebook) &&
+    exists("99 - Meta e Anexos/Notebooks/apresentacoes/layouts/visao-geral.slides.json") &&
     !presentationNotebook.includes("mo.carousel") &&
     !presentationNotebook.includes("def slide(source):") &&
     notebooksExportScript.includes("cpSync(sourceLayoutsDir") &&
@@ -598,6 +598,11 @@ const NOTE_STATUS_CONTRACT = {
     "99 - Meta e Anexos/99.3 - Referência/Usando o Plugin Templates.md",
     "99 - Meta e Anexos/99.3 - Referência/Usando o Vault no Celular vs. Desktop.md",
     "99 - Meta e Anexos/99.3 - Referência/Visualização do Fluxo do Vault.md",
+    // 99 - Meta e Anexos / Apresentações
+    "99 - Meta e Anexos/99.4 - Apresentações/Visão Geral do Vault Seed.md",
+    "99 - Meta e Anexos/99.4 - Apresentações/O Lab — Notebooks e Dados.md",
+    "99 - Meta e Anexos/99.4 - Apresentações/Fluxo de Publicação.md",
+    "99 - Meta e Anexos/99.4 - Apresentações/Integração com Agentes de IA.md",
     // 99 - Meta e Anexos / Diagramas
     "99 - Meta e Anexos/Diagramas/Exemplos.md",
   ],

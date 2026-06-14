@@ -51,7 +51,7 @@ describe("replaceImportAndInjectRuntimeHelpers — App() call variants", () => {
     assert.doesNotMatch(result, /from _lab_notebook_runtime import/, "runtime import must be removed");
   });
 
-  test("multi-line App(): helper injected after closing ) — regression for apresentacao-vault-seed.py", () => {
+  test("multi-line App(): helper injected after closing ) — e.g. presentation notebooks with layout_file", () => {
     const source = makeNotebook({
       appArgs: '\n    width="medium",\n    layout_file="layouts/foo.slides.json",\n',
     });
