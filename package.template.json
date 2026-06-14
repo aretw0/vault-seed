@@ -14,7 +14,6 @@
     "lint:main": "markdownlint --config .markdownlint.json \"10 - Diário/**/*.md\" \"20 - Projetos/**/*.md\" \"30 - Áreas/**/*.md\" \"40 - Recursos/**/*.md\" \"50 - Arquivo/**/*.md\" \"99 - Meta e Anexos/**/*.md\"",
     "lint:templates": "markdownlint --config \"90 - Modelos/.markdownlint.json\" \"90 - Modelos/**/*.md\"",
     "lint": "pnpm run lint:main && pnpm run lint:templates",
-    "smoke:template": "node scripts/smoke_template.js",
     "validate:onboarding": "node scripts/validate_onboarding.js",
     "validate:pt-text": "node scripts/check_pt_text.js",
     "validate:theme": "node scripts/check_theme.js",
@@ -47,6 +46,8 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "@aretw0/dgk-channels": "latest",
+    "@aretw0/dgk-cli": "latest",
     "@astrojs/starlight": "^0.39.2",
     "@playwright/test": "^1.60.0",
     "astro": "^6.3.5",

@@ -17,20 +17,35 @@ test('validate chama pnpm run validate', async () => {
   assert.deepEqual(calls, [{ cmd: 'pnpm', args: ['run', 'validate'] }]);
 });
 
-test('lint chama pnpm run lint', async () => {
+test('lint chama markdownlint diretamente via node (sem pnpm)', async () => {
   const { calls, runner } = captureRun();
   await lint([], runner);
-  assert.deepEqual(calls, [{ cmd: 'pnpm', args: ['run', 'lint'] }]);
+  assert.equal(calls.length, 3, 'deve chamar markdownlint 3 vezes (main, docs, templates)');
+  assert.ok(calls.every((c) => c.cmd === 'node'), 'todos os calls devem usar node');
+  assert.ok(
+    calls.every((c) => c.args[0].includes('markdownlint')),
+    'todos os calls devem referenciar markdownlint',
+  );
 });
 
-test('setup chama bash scripts/setup.sh', async () => {
+test('setup não usa bash — apenas pnpm/uv via runner quando necessário', async () => {
   const { calls, runner } = captureRun();
   await setup([], runner);
-  assert.deepEqual(calls, [{ cmd: 'bash', args: ['scripts/setup.sh'] }]);
+  // git config and path-checks use execFileSync directly, not the injected runner
+  assert.ok(calls.every((c) => c.cmd !== 'bash'), 'setup não deve chamar bash');
+  assert.ok(
+    calls.every((c) => c.cmd === 'pnpm' || c.cmd === 'uv'),
+    'runner só deve ser chamado com pnpm ou uv',
+  );
 });
 
-test('check chama node scripts/validate_onboarding.js', async () => {
+test('check executa onboarding, IA audit e pt-text sem pnpm', async () => {
   const { calls, runner } = captureRun();
   await check([], runner);
-  assert.deepEqual(calls, [{ cmd: 'node', args: ['scripts/validate_onboarding.js'] }]);
+  assert.equal(calls.length, 3, 'deve executar 3 scripts de verificação');
+  assert.ok(calls.every((c) => c.cmd === 'node'), 'todos os calls devem usar node');
+  const scripts = calls.map((c) => c.args[0]);
+  assert.ok(scripts.includes('scripts/validate_onboarding.js'), 'deve incluir validate_onboarding');
+  assert.ok(scripts.some((s) => s.includes('audit_information_architecture')), 'deve incluir IA audit');
+  assert.ok(scripts.some((s) => s.includes('check_pt_text')), 'deve incluir pt-text check');
 });

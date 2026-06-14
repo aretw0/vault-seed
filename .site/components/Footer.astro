@@ -2,6 +2,27 @@
 import EditLink from 'virtual:starlight/components/EditLink';
 import LastUpdated from 'virtual:starlight/components/LastUpdated';
 import Pagination from 'virtual:starlight/components/Pagination';
+import { vaultLicense, versions, resolveLicense } from '../lib/vault-config.mjs';
+
+const { entry } = Astro.props;
+
+// License resolution: per-note frontmatter overrides vault.config.json site default.
+const noteType   = (entry?.data?.license as string | undefined) ?? null;
+const noteAuthor = (entry?.data?.author  as string | undefined) ?? null;
+const activeType   = noteType   ?? vaultLicense.type;
+const activeHolder = noteAuthor ?? vaultLicense.holder;
+const activeLicense = resolveLicense(activeType);
+
+// Attributions declared in note frontmatter for images, icons, and other assets.
+const attributions = (entry?.data?.attributions as Array<{file:string;license:string;author?:string;source?:string}> | undefined) ?? [];
+
+const year = new Date().getFullYear();
+
+// Version row — only show entries that resolved (before first pnpm install, some may be null).
+const versionParts: string[] = [];
+if (versions.dgkCli)   versionParts.push(`dgk v${versions.dgkCli}`);
+if (versions.astro)    versionParts.push(`Astro ${versions.astro}`);
+if (versions.starlight) versionParts.push(`Starlight ${versions.starlight}`);
 ---
 
 <footer class="sl-flex">
@@ -10,9 +31,46 @@ import Pagination from 'virtual:starlight/components/Pagination';
 		<LastUpdated />
 	</div>
 	<Pagination />
+
+	{activeLicense && (
+		<div class="license-row" lang="pt-BR">
+			<span class="license-copy">
+				© {year}{activeHolder ? <> · {activeHolder}</> : null}
+			</span>
+			{activeLicense.url
+				? <a class="license-badge" href={activeLicense.url} target="_blank" rel="noopener noreferrer license">{activeLicense.label}</a>
+				: <span class="license-badge">{activeLicense.label}</span>
+			}
+		</div>
+	)}
+
+	{attributions.length > 0 && (
+		<details class="attributions" lang="pt-BR">
+			<summary>Atribuições de conteúdo</summary>
+			<ul>
+				{attributions.map(a => (
+					<li>
+						<code>{a.file}</code> —
+						{a.author ? <>{a.author} · </> : null}
+						{a.source
+							? <a href={a.source} target="_blank" rel="noopener noreferrer">{a.license}</a>
+							: <span>{a.license}</span>
+						}
+					</li>
+				))}
+			</ul>
+		</details>
+	)}
+
 	<div class="kudos" lang="pt-BR">
-		Feito com ♥ por <a href="https://github.com/aretw0">@aretw0</a> · {new Date().getFullYear()}
+		Feito com ♥ por <a href="https://github.com/aretw0">@aretw0</a> · {year}
 	</div>
+
+	{versionParts.length > 0 && (
+		<div class="versions" aria-label="Versões">
+			{versionParts.join(' · ')}
+		</div>
+	)}
 </footer>
 
 <style>
@@ -21,8 +79,6 @@ import Pagination from 'virtual:starlight/components/Pagination';
 		gap: 0;
 		padding: 0;
 	}
-	/* Only add spacing when meta has real content (EditLink / LastUpdated rendered).
-	   :has(> *) is false for whitespace-only text nodes, so empty meta collapses. */
 	.meta:has(> *) {
 		gap: 0.75rem 3rem;
 		justify-content: space-between;
@@ -32,9 +88,63 @@ import Pagination from 'virtual:starlight/components/Pagination';
 		font-size: var(--sl-text-sm);
 		color: var(--sl-color-gray-3);
 	}
-	/* Pagination adds its own internal spacing; only add top margin when it renders links. */
 	:global(.pagination-links):has(> *) {
 		margin-bottom: 1.5rem;
+	}
+	.license-row {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		justify-content: center;
+		flex-wrap: wrap;
+		margin-block: 0.5rem;
+		font-size: 0.8125rem;
+		color: var(--sl-color-gray-3);
+	}
+	.license-copy {
+		opacity: 0.8;
+	}
+	.license-badge {
+		display: inline-flex;
+		align-items: center;
+		padding: 0.15rem 0.55rem;
+		font-size: 0.72rem;
+		font-weight: 600;
+		letter-spacing: 0.03em;
+		color: var(--sl-color-gray-2);
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: 999px;
+		text-decoration: none;
+		transition: border-color 0.15s, color 0.15s;
+	}
+	a.license-badge:hover {
+		border-color: var(--sl-color-accent);
+		color: var(--sl-color-accent);
+	}
+	.attributions {
+		font-size: 0.75rem;
+		color: var(--sl-color-gray-4);
+		margin-block: 0.5rem;
+		padding: 0.5rem 0.75rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: 6px;
+	}
+	.attributions summary {
+		cursor: pointer;
+		color: var(--sl-color-gray-3);
+		font-size: 0.75rem;
+		user-select: none;
+	}
+	.attributions ul {
+		margin: 0.5rem 0 0;
+		padding-left: 1rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+	}
+	.attributions a {
+		color: inherit;
+		text-underline-offset: 2px;
 	}
 	.kudos {
 		display: inline-flex;
@@ -57,5 +167,12 @@ import Pagination from 'virtual:starlight/components/Pagination';
 	}
 	.kudos a:hover {
 		color: var(--sl-color-white);
+	}
+	.versions {
+		text-align: center;
+		font-size: 0.7rem;
+		color: var(--sl-color-gray-5);
+		margin-bottom: 0.5rem;
+		letter-spacing: 0.02em;
 	}
 </style>

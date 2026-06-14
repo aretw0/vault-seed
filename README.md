@@ -18,6 +18,7 @@ Para utilizar este template e criar seu próprio cofre de conhecimento, você pr
 -   Git instalado no seu sistema ([https://git-scm.com/downloads](https://git-scm.com/downloads)).
 -   Uma conta no GitHub ([https://github.com/](https://github.com/)).
 -   Obsidian ([https://obsidian.md/](https://obsidian.md/)) ou Visual Studio Code ([https://code.visualstudio.com/](https://code.visualstudio.com/)) instalados.
+-   Node.js instalado ([https://nodejs.org/](https://nodejs.org/)) e o CLI `dgk` instalado via npm (veja abaixo).
 
 ## Primeiros Passos
 
@@ -48,7 +49,25 @@ git clone https://github.com/SEU-USUARIO/NOME-DO-SEU-REPOSITORIO.git
 
 ### 4. Abra e Explore
 
-Agora seu cofre está pronto. Abra a pasta no Obsidian ou Visual Studio Code.
+Agora seu cofre está pronto. Instale o CLI `dgk`, faça o bootstrap local e verifique a saúde do vault:
+
+```bash
+# macOS/Linux
+curl -fsSL https://raw.githubusercontent.com/aretw0/vault-seed/main/install.sh | sh
+
+# Windows PowerShell
+irm https://raw.githubusercontent.com/aretw0/vault-seed/main/install.ps1 | iex
+
+# ou diretamente
+npm install -g @aretw0/dgk-cli
+```
+
+```bash
+dgk setup   # configura git, dependências e ferramentas Python
+dgk check   # verifica onboarding, auditoria IA e revisão de texto
+```
+
+Abra a pasta no Obsidian ou Visual Studio Code.
 
 Para começar, abra a nota **[Guia do Jardineiro Digital](99%20-%20Meta%20e%20Anexos/Guia%20do%20Jardineiro%20Digital.md)**.
 Depois, siga **[Exploração Guiada do Vault](99%20-%20Meta%20e%20Anexos/Exploracao%20Guiada%20do%20Vault.md)** para uma primeira visita de
@@ -78,7 +97,17 @@ apenas texto.
 
 ## Qualidade do Onboarding
 
-Este template valida automaticamente o material de entrada para evitar drift:
+Para usuários do vault, o comando de verificação de saúde é:
+
+```bash
+dgk check
+```
+
+Esse comando roda auditoria IA, validação de onboarding e revisão de texto em
+português. É o ponto de entrada recomendado para confirmar que o vault está
+coerente.
+
+Para contribuidores do template, o pipeline completo de qualidade é:
 
 ```bash
 pnpm run validate
@@ -99,8 +128,9 @@ coerente antes de ir para o CI ou para o deploy do site.
 | Guia de contribuição | `CONTRIBUTING.md` |
 | Arquitetura e decisões | `docs/INDEX.md` |
 | Release e publish dry-run | `pnpm run release:package:smoke` |
+| Verificação de saúde (usuário) | `dgk check` |
 
-Contribuidores trabalham no template original. Usuários que geraram um vault a partir dele não precisam seguir o fluxo interno de release do template para usar suas próprias notas.
+Contribuidores trabalham no template original e usam `pnpm run validate` como pipeline de qualidade. Usuários que geraram um vault a partir dele usam `dgk check` para verificar a saúde do vault sem precisar seguir o fluxo interno de release do template.
 
 ---
 ## Contribuições e Traduções

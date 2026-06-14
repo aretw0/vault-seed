@@ -9,6 +9,11 @@ Para aprender a usar o vault como sistema de conhecimento, comece em
 Para preparar um computador de usuário final, use
 `99 - Meta e Anexos/99.1 - Onboarding/Preparando seu Computador para o Vault.md`.
 
+## Arquitetura e planejamento
+
+- [Arquitetura e ecossistema](ARCHITECTURE.md) — posicionamento, camadas, IaC de fontes, princípios de design
+- [Diagrama de camadas](diagrams/ECOSYSTEM.md) — mapa visual do ecossistema DGK
+
 ## Comece Aqui
 
 - [Organização técnica do projeto](organizacao-do-projeto.md)
@@ -34,6 +39,18 @@ Para preparar um computador de usuário final, use
 - [Removendo arquivos do histórico Git](removendo-arquivos-do-historico-git.md)
 - [Limpeza de histórico Git](limpeza-de-historico-git.md)
 - [Exemplo prático de limpeza de histórico](exemplo-pratico-limpeza-de-historico.md)
+
+## Testes e validação manual
+
+- [Trilha: site publicado e curadoria editorial](roteiro-teste-site.md) — estado inicial, publicar notas, site privado, auditoria completa
+- [Roteiro de teste manual — site e grafo](roteiro-de-teste-manual.md) — visual, mobile, touch, temas, docs técnicas (mantenedor)
+- [Trilha: editores](roteiro-teste-editores.md) — Obsidian e VS Code/Foam: abrir, wikilinks, configuração, `dgk note`
+- [Trilha: Lab de notebooks](roteiro-teste-lab.md) — WASM, Marimo local, evaluate, curate, export
+- [Trilha: ETL e dados do Lab](roteiro-teste-etl.md) — `dgk etl`, idempotência, gitignore em vaults de usuário, teto de migração
+- [Trilha: canais de publicação](roteiro-teste-canais.md) — configurar e validar Telegram, Mastodon, etc. via CLI e dashboard
+- [Trilha: operação diária](roteiro-teste-operacao.md) — `dgk check`, `dgk inbox`, `dgk note` e o ciclo captura → edição → publicação
+- [Trilha: ciclo do outbox](roteiro-teste-outbox.md) — ETL → revisar → dry-run → publicar → rate limits
+- [Trilha: painel admin local](roteiro-teste-admin.md) — `dgk serve`, UI de configuração, segurança (CSRF + DNS rebinding)
 
 ## Como evitar drift
 

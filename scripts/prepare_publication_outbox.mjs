@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { createHash } from "node:crypto";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { globSync } from "glob";
@@ -117,9 +117,27 @@ function isOutboxCandidate(data) {
   return data.outbox === true || Boolean(data.publicationStatus) || toArray(data.channels).length > 0;
 }
 
+// Derives the public site URL using the same priority order as astro.config.mjs:
+// ASTRO_SITE env → CNAME file → GITHUB_REPOSITORY → null (local dev / unknown).
+function resolveSiteUrl(cwd) {
+  if (process.env.ASTRO_SITE) return process.env.ASTRO_SITE.replace(/\/$/, "");
+  const cnamePath = join(cwd, "CNAME");
+  if (existsSync(cnamePath)) {
+    const host = readFileSync(cnamePath, "utf8").trim();
+    if (host) return `https://${host}`;
+  }
+  const repo = process.env.GITHUB_REPOSITORY;
+  if (repo) {
+    const [owner, name] = repo.split("/");
+    return `https://${owner}.github.io/${name}`;
+  }
+  return null;
+}
+
 export function buildPublicationOutbox({ cwd = ROOT, outputPath = DEFAULT_OUTPUT, now } = {}) {
   const files = globSync(OUTBOX_PATTERNS, { cwd, nodir: true });
   const generatedAt = now || new Date(0).toISOString();
+  const siteUrl = resolveSiteUrl(cwd);
   const items = files
     .map((file) => {
       const normalizedPath = file.replaceAll("\\", "/");
@@ -128,10 +146,12 @@ export function buildPublicationOutbox({ cwd = ROOT, outputPath = DEFAULT_OUTPUT
       if (!isOutboxCandidate(data)) return null;
 
       const channels = toArray(data.channels);
+      const id = slugify(normalizedPath.replace(/\.md$/, ""));
       return {
-        id: slugify(normalizedPath.replace(/\.md$/, "")),
+        id,
         title: data.title ? String(data.title) : basename(file, ".md"),
         path: normalizedPath,
+        url: siteUrl ? `${siteUrl}/${id}/` : null,
         status: data.status ? String(data.status) : "draft",
         publicationStatus: data.publicationStatus ? String(data.publicationStatus) : "draft",
         canonical: data.canonical ? String(data.canonical) : normalizedPath,
@@ -143,6 +163,10 @@ export function buildPublicationOutbox({ cwd = ROOT, outputPath = DEFAULT_OUTPUT
         channels,
         channelCount: channels.length,
         audience: data.audience ? String(data.audience) : null,
+        tags: toArray(data.tags),
+        // description: author-crafted hook for social sharing (og:description).
+        // excerpt: auto-generated fallback from body content.
+        description: data.description ? String(data.description) : null,
         excerpt: excerpt(content),
       };
     })

@@ -48,6 +48,23 @@ function graphHeroHtml() {
   return `<figure class="vault-graph-view vault-graph-view--hero" aria-label="Graph view do vault"><svg class="vault-graph-view__canvas" viewBox="0 0 200 200" role="img"><title>Graph view do vault</title><g class="vault-graph-view__links" aria-hidden="true">${lines}</g><g class="vault-graph-view__nodes">${circles}</g><g class="vault-graph-view__hover-layer" aria-hidden="true"><text class="vault-graph-view__hover-label" text-anchor="middle" style="font-size: var(--hero-graph-hover-label-font, var(--vault-graph-hover-label-font, 0.438rem)); stroke-width: var(--hero-graph-hover-label-stroke, var(--vault-graph-hover-label-stroke, 0.1875rem));"></text></g></svg><figcaption>Toque em um nó (ou passe o mouse) para ver o nome completo</figcaption></figure>`;
 }
 const heroGraphHtml = graphHeroHtml();
+
+// Recent notes — top 6 sorted by most-recently-updated
+const recentNotes = [...explore.notes]
+  .sort((a, b) => {
+    const aDate = a.updated || a.created || '';
+    const bDate = b.updated || b.created || '';
+    return bDate.localeCompare(aDate);
+  })
+  .slice(0, 6);
+
+// Top tags for the tag cloud
+const topTags = explore.facets.tags.slice(0, 14);
+
+function formatDate(iso: string | null): string {
+  if (!iso) return '';
+  return new Date(iso).toLocaleDateString('pt-BR', { year: 'numeric', month: 'short', day: 'numeric' });
+}
 ---
 
 <VaultGraphShared />
@@ -77,82 +94,72 @@ const heroGraphHtml = graphHeroHtml();
     },
   }}
 >
-  <section class="vault-home-section" aria-label="Possibilidades de uso do vault-seed">
+  <section class="vault-home-section vault-home-mono" aria-label="Notas e navegação do vault">
     <p class="vault-lead">
-      O vault-seed é um ponto de partida, não uma solução completa. Tudo que está aqui pode
-      ser apagado, adaptado ou ignorado — o vault é seu desde o primeiro commit.
+      Um ponto de partida para o seu jardim digital. Markdown, Git, IA e RSS — tudo junto, nada obrigatório.
+      O vault é seu desde o primeiro commit.
     </p>
 
-    <div class="vault-card-grid">
-      <article class="vault-card">
-        <span class="vault-card__eyebrow">Local first</span>
-        <h2 class="vault-card__title">Conhecimento que não depende da nuvem</h2>
-        <p class="vault-card__body">
-          Markdown puro e Git: funciona offline, em qualquer editor, sem lock-in.
-          Repo privado ou público — você decide o que compartilhar, se é que vai compartilhar algo.
-        </p>
-        <div class="vault-actions">
-          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/onboarding/entendendo-a-estrutura-de-pastas/`}>Estrutura</a>
+    {recentNotes.length > 0 ? (
+      <>
+        <div class="vault-post-header">
+          <span>Notas recentes</span>
+          <a class="vault-post-see-all" href={`${base}/explorar/`}>ver todas →</a>
         </div>
-      </article>
+        <ol class="vault-post-list">
+          {recentNotes.map((note) => (
+            <li class="vault-post-item">
+              <div class="vault-post-item__headline">
+                <a class="vault-post-item__title" href={`${base}${note.href}`}>{note.title}</a>
+                {(note.updated || note.created) && (
+                  <time class="vault-post-item__date" datetime={(note.updated || note.created) ?? undefined}>
+                    {formatDate(note.updated || note.created)}
+                  </time>
+                )}
+              </div>
+              {note.tags.length > 0 && (
+                <div class="vault-post-item__tags">
+                  {note.tags.slice(0, 5).map((tag) => (
+                    <a class="vault-post-tag" href={`${base}/explorar/?tags=${tag}`}>#{tag}</a>
+                  ))}
+                </div>
+              )}
+            </li>
+          ))}
+        </ol>
 
-      <article class="vault-card">
-        <span class="vault-card__eyebrow">AI-ready</span>
-        <h2 class="vault-card__title">Agentes de IA como coautores</h2>
-        <p class="vault-card__body">
-          AGENTS.md, CLAUDE.md e GEMINI.md entregam contexto do vault a qualquer assistente.
-          Zero configuração extra para começar a usar IA no repositório.
+        <p class="vault-subscribe-line">
+          Assine via <a href={`${base}/rss.xml`}>RSS</a> para acompanhar novidades do vault.
         </p>
-        <div class="vault-actions">
-          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/referencia/usando-com-agentes-de-ia/`}>Agentes</a>
-        </div>
-      </article>
+      </>
+    ) : (
+      <p class="vault-no-notes">
+        Nenhuma nota publicada ainda. Marque suas notas com <code>status: published</code> para aparecerem aqui.
+      </p>
+    )}
 
-      <article class="vault-card">
-        <span class="vault-card__eyebrow">Publicação opcional</span>
-        <h2 class="vault-card__title">Site quando você quiser</h2>
-        <p class="vault-card__body">
-          GitHub Pages com Astro e Starlight. Escolha quais notas ficam públicas,
-          use seu domínio, ative RSS. Nada é publicado por padrão.
-        </p>
-        <div class="vault-actions">
-          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/workflows/publicando-seu-vault-como-site/`}>Publicar</a>
+    {topTags.length > 0 && (
+      <>
+        <p class="vault-tags-header">Ver por tag</p>
+        <div class="vault-tag-cloud-home">
+          {topTags.map(({ name }) => (
+            <a class="vault-tag-link" href={`${base}/explorar/?tags=${name}`}>#{name}</a>
+          ))}
         </div>
-      </article>
+      </>
+    )}
 
-      <article class="vault-card">
-        <span class="vault-card__eyebrow">Conhecimento coletivo</span>
-        <h2 class="vault-card__title">Documentação viva para times</h2>
-        <p class="vault-card__body">
-          Use Git, PRs e notas Markdown para manter decisões, recursos e guias em um lugar auditável.
-        </p>
-        <div class="vault-actions">
-          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/referencia/convencoes-e-boas-praticas/`}>Convenções</a>
-        </div>
-      </article>
-
-      <article class="vault-card">
-        <span class="vault-card__eyebrow">Lab</span>
-        <h2 class="vault-card__title">Notebooks junto do vault</h2>
-        <p class="vault-card__body">
-          Use Marimo para extract local, transformação e análises que não pertencem ao site estático.
-        </p>
-        <div class="vault-actions">
-          <a class="vault-button vault-button--secondary" href={`${base}/lab/`}>Abrir Lab</a>
-        </div>
-      </article>
-
-      <article class="vault-card">
-        <span class="vault-card__eyebrow">Sindicação</span>
-        <h2 class="vault-card__title">RSS para publicar e auditar fontes</h2>
-        <p class="vault-card__body">
-          Gere um feed aberto do seu vault e consuma feeds externos como snapshots analisáveis no Lab.
-        </p>
-        <div class="vault-actions">
-          <a class="vault-button vault-button--secondary" href={`${base}/meta-e-anexos/workflows/publicando-e-consumindo-rss-no-vault/`}>Ver RSS</a>
-        </div>
-      </article>
-    </div>
+    <section class="vault-capabilities" aria-label="Capacidades do vault-seed">
+      <p class="vault-capabilities__heading">O que este vault oferece</p>
+      <ul class="vault-capabilities__list">
+        <li><a href={`${base}/meta-e-anexos/onboarding/entendendo-a-estrutura-de-pastas/`}>Local first</a> — Markdown + Git. Funciona offline, em qualquer editor, sem lock-in.</li>
+        <li><a href={`${base}/meta-e-anexos/referencia/usando-com-agentes-de-ia/`}>AI-ready</a> — AGENTS.md, CLAUDE.md e GEMINI.md entregam contexto a qualquer assistente.</li>
+        <li><a href={`${base}/meta-e-anexos/workflows/publicando-seu-vault-como-site/`}>Publicação opcional</a> — GitHub Pages com Astro. RSS gerado automaticamente.</li>
+        <li><a href={`${base}/meta-e-anexos/referencia/convencoes-e-boas-praticas/`}>Conhecimento coletivo</a> — Git, PRs e Markdown para times. Auditável por padrão.</li>
+        <li><a href={`${base}/lab/`}>Lab</a> — Notebooks Marimo junto do vault. Análises que não pertencem ao site estático.</li>
+        <li><a href={`${base}/meta-e-anexos/workflows/publicando-e-consumindo-rss-no-vault/`}>Sindicação</a> — Feed próprio + consumo de feeds externos como datasets no Lab.</li>
+      </ul>
+    </section>
   </section>
 </StarlightPage>
 
@@ -528,27 +535,6 @@ const heroGraphHtml = graphHeroHtml();
 
 <style>
   .vault-home-section {
-    --vault-card-min-height: auto;
-    --vault-card-title-lines: 2;
-    --vault-card-body-lines: 5;
-    --vault-card-column-min: 20rem;
     margin-block: clamp(2rem, 4vw, 4rem);
   }
-
-  .vault-home-section .vault-card-grid {
-    grid-auto-rows: auto;
-  }
-
-  .vault-home-section .vault-card {
-    min-height: auto;
-    height: auto;
-  }
-
-  .vault-home-section .vault-card__body {
-    overflow: visible;
-    -webkit-line-clamp: unset;
-    min-height: 0;
-  }
-
-
 </style>

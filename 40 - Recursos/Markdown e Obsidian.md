@@ -8,7 +8,7 @@ tags:
   - recurso/ferramenta
   - pkm/conceito
   - obsidian/markdown
-status: published
+status: draft
 created: 2026-05-21
 updated: 2026-05-21
 category: referência

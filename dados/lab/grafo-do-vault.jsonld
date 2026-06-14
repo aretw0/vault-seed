@@ -1,0 +1,960 @@
+{
+  "@context": {
+    "schema": "https://schema.org/",
+    "dgk": "https://aretw0.github.io/vault-seed/vocab/1.0#",
+    "name": "schema:name",
+    "Note": "dgk:Note",
+    "Vault": "dgk:Vault",
+    "folder": "dgk:folder",
+    "status": "dgk:status",
+    "inboundLinks": "dgk:inboundLinks",
+    "outboundLinks": "dgk:outboundLinks",
+    "brokenLinks": "dgk:brokenLinks",
+    "generatedAt": "schema:dateCreated",
+    "noteCount": "dgk:noteCount",
+    "linkCount": "dgk:linkCount"
+  },
+  "@type": "Vault",
+  "@id": "vault:root",
+  "name": "vault-seed",
+  "noteCount": 68,
+  "linkCount": 209,
+  "@graph": [
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/992-workflows/usando-o-lab-notebooks-marimo",
+      "name": "Usando o Lab (Notebooks Marimo)",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 4,
+      "brokenLinks": [
+        "Preparando Dados para o Lab",
+        "Coletando Dados Locais com Scraping e OCR",
+        "Publicando e Consumindo RSS no Vault",
+        "Outbox Soberana de Publicação"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/991-onboarding/preparando-seu-computador-para-o-vault",
+      "name": "Preparando seu Computador para o Vault",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 5,
+      "brokenLinks": [
+        "Configurando Localmente",
+        "Configurando com Devcontainer",
+        "Usando com Agentes de IA",
+        "Configurando o Obsidian Git",
+        "Guia do Jardineiro Digital"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/992-workflows/preparando-dados-para-o-lab",
+      "name": "Preparando Dados para o Lab",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 2,
+      "brokenLinks": [
+        "Coletando Dados Locais com Scraping e OCR",
+        "Publicando e Consumindo RSS no Vault"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/992-workflows/criando-seu-painel-de-controle-dashboard",
+      "name": "Criando seu Painel de Controle (Dashboard)",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 2,
+      "brokenLinks": [
+        "Bases",
+        "Dataview"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/992-workflows/usando-o-git-e-o-github-para-sincronizar-seu-vault",
+      "name": "Usando o Git e o GitHub para Sincronizar seu Vault",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 8,
+      "brokenLinks": [
+        "Preparando seu Computador para o Vault",
+        "Configurando o Obsidian Git",
+        "Configurando o Obsidian Git",
+        "Preparando seu Computador para o Vault",
+        "Configurando o Obsidian Git",
+        "Usando o Vault no Celular vs. Desktop",
+        "Plugins Essenciais e Recomendados",
+        "Guia do Jardineiro Digital"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/992-workflows/publicando-e-consumindo-rss-no-vault",
+      "name": "Publicando e Consumindo RSS no Vault",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 3,
+      "brokenLinks": [
+        "\"title\", \"url\", \"published\"",
+        "Inbox Soberana de Fontes",
+        "Outbox Soberana de Publicação"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:recursos/markdown-e-obsidian",
+      "name": "Markdown e Obsidian",
+      "folder": "40 - Recursos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 12,
+      "brokenLinks": [
+        "vault-seed-banner.svg",
+        "Nome da Nota",
+        "Nome da Nota",
+        "Nome da Nota#Seção",
+        "nome-do-arquivo.png",
+        "nome-do-arquivo.png",
+        "imagem.png",
+        "...",
+        "Outra Nota",
+        "...",
+        "Nota",
+        "MOC Vault Seed"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/992-workflows/coletando-dados-locais-com-scraping-e-ocr",
+      "name": "Coletando Dados Locais com Scraping e OCR",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/993-referencia/integrando-com-vscode-foam",
+      "name": "Integrando com VSCode (Foam)",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 4,
+      "brokenLinks": [
+        "wikilinks",
+        "wikilinks",
+        "../40 - Recursos/O que sao system prompts de IA",
+        "Guia do Jardineiro Digital"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/991-onboarding/entendendo-a-estrutura-de-pastas",
+      "name": "Entendendo a Estrutura de Pastas",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 7,
+      "brokenLinks": [
+        "Links",
+        "O que são MOCs (Mapas de Conteúdo)",
+        "Daily Note",
+        "Templater",
+        "Links",
+        "O que são MOCs (Mapas de Conteúdo)",
+        "Guia do Jardineiro Digital"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/991-onboarding/depois-da-recepcao-do-template",
+      "name": "Depois da Recepção do Template",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 7,
+      "brokenLinks": [
+        "Guia do Jardineiro Digital",
+        "Exploracao Guiada do Vault",
+        "Configurando o Obsidian Git",
+        "MOC Vault Seed",
+        "Evoluindo seu Vault com Links, Tags e MOCs",
+        "Criando seu Painel de Controle (Dashboard)",
+        "Guia do Jardineiro Digital"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/993-referencia/convencoes-e-boas-praticas",
+      "name": "Convenções e Boas Práticas",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 4,
+      "brokenLinks": [
+        "Wikilinks",
+        "O que é o método PARA",
+        "O que é o método PARA",
+        "Guia do Jardineiro Digital"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/992-workflows/configurando-o-obsidian-git",
+      "name": "Configurando o Obsidian Git",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 2,
+      "brokenLinks": [
+        "Preparando seu Computador para o Vault#Android com Termux",
+        "Guia do Jardineiro Digital"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/993-referencia/evoluindo-seu-vault-com-links-tags-e-mocs",
+      "name": "Evoluindo seu Vault com Links, Tags e MOCs",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 9,
+      "brokenLinks": [
+        "Links",
+        "Tags",
+        "O que são MOCs (Mapas de Conteúdo)",
+        "Templater",
+        "Bases",
+        "Dataview",
+        "MOC Vault Seed",
+        "Vault Seed Kitchen Sink.base",
+        "Guia do Jardineiro Digital"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/993-referencia/identidade-visual-e-blocos-de-interface",
+      "name": "Identidade Visual e Blocos de Interface",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/992-workflows/rotina-de-curadoria-editorial",
+      "name": "Rotina de Curadoria Editorial",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/993-referencia/usando-o-plugin-templates",
+      "name": "Usando o Plugin Templates",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 1,
+      "brokenLinks": [
+        "Guia do Jardineiro Digital"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/993-referencia/usando-com-agentes-de-ia",
+      "name": "Usando com Agentes de IA",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 4,
+      "brokenLinks": [
+        "Conhecendo o Agents Lab",
+        "Inbox Soberana de Fontes",
+        "Outbox Soberana de Publicação",
+        "Preparando seu Computador para o Vault"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:recursos/o-que-sao-system-prompts-de-ia",
+      "name": "O que são system prompts de IA?",
+      "folder": "40 - Recursos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/993-referencia/plugins-essenciais-e-recomendados",
+      "name": "Plugins Essenciais e Recomendados",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 2,
+      "brokenLinks": [
+        "Configurando o Obsidian Git",
+        "Guia do Jardineiro Digital"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/993-referencia/usando-o-vault-no-celular-vs-desktop",
+      "name": "Usando o Vault no Celular vs. Desktop",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 3,
+      "brokenLinks": [
+        "Preparando seu Computador para o Vault#Android com Termux",
+        "Configurando o Obsidian Git",
+        "Guia do Jardineiro Digital"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/993-referencia/verificando-a-aparencia-do-site-publicado",
+      "name": "Verificando a Aparência do Site Publicado",
+      "folder": "99 - Meta e Anexos",
+      "status": "sem status",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/991-onboarding/seus-primeiros-passos",
+      "name": "Seus Primeiros Passos",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 10,
+      "brokenLinks": [
+        "O que é o método PARA",
+        "O que é o método PARA",
+        "Entendendo a Estrutura de Pastas",
+        "O que é o método PARA",
+        "O que é o método Zettelkasten",
+        "Obsidian",
+        "VS Code",
+        "Entendendo a Estrutura de Pastas",
+        "Evoluindo seu Vault com Links, Tags e MOCs",
+        "Convenções e Boas Práticas"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/991-onboarding/guia-do-jardineiro-digital",
+      "name": "Guia do Jardineiro Digital",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 15,
+      "brokenLinks": [
+        "Seus Primeiros Passos",
+        "Exploracao Guiada do Vault",
+        "Preparando seu Computador para o Vault",
+        "Depois da Recepcao do Template",
+        "MOC Vault Seed",
+        "Filosofia e Conceitos Fundamentais",
+        "Entendendo a Estrutura de Pastas",
+        "Evoluindo seu Vault com Links, Tags e MOCs",
+        "Convenções e Boas Práticas",
+        "Visualização do Fluxo do Vault",
+        "Usando o Git e o GitHub para Sincronizar seu Vault",
+        "Plugins Essenciais e Recomendados",
+        "../40 - Recursos/O que sao system prompts de IA",
+        "Usando o Vault no Celular vs. Desktop",
+        "Integrando com VSCode (Foam)"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/992-workflows/outbox-soberana-de-publicacao",
+      "name": "Outbox Soberana de Publicação",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/991-onboarding/moc-vault-seed",
+      "name": "MOC Vault Seed",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 43,
+      "brokenLinks": [
+        "Guia do Jardineiro Digital",
+        "Seus Primeiros Passos",
+        "Preparando seu Computador para o Vault",
+        "Entendendo a Estrutura de Pastas",
+        "Depois da Recepcao do Template",
+        "Exploracao Guiada do Vault",
+        "Configurando o Obsidian Git",
+        "Publicando seu Vault como Site",
+        "Identidade Visual e Blocos de Interface",
+        "Usando o Lab (Notebooks Marimo)",
+        "Preparando Dados para o Lab",
+        "Coletando Dados Locais com Scraping e OCR",
+        "Publicando e Consumindo RSS no Vault",
+        "Inbox Soberana de Fontes",
+        "Outbox Soberana de Publicação",
+        "Rotina de Curadoria Editorial",
+        "Usando o Git e o GitHub para Sincronizar seu Vault",
+        "Filosofia e Conceitos Fundamentais",
+        "O que é o método PARA",
+        "O que é o método Zettelkasten",
+        "O que são MOCs (Mapas de Conteúdo)",
+        "Links",
+        "Tags",
+        "Daily Note",
+        "Obsidian",
+        "VS Code",
+        "Templater",
+        "Plugins Essenciais e Recomendados",
+        "Usando o Git e o GitHub para Sincronizar seu Vault",
+        "Publicando seu Vault como Site",
+        "Identidade Visual e Blocos de Interface",
+        "Usando o Lab (Notebooks Marimo)",
+        "Preparando Dados para o Lab",
+        "Coletando Dados Locais com Scraping e OCR",
+        "Publicando e Consumindo RSS no Vault",
+        "Inbox Soberana de Fontes",
+        "Outbox Soberana de Publicação",
+        "Rotina de Curadoria Editorial",
+        "Conhecendo o Agents Lab",
+        "Ecossistema aretw0 Agents Lab e Refarm",
+        "Usando o Vault no Celular vs. Desktop",
+        "Vault Seed Kitchen Sink.base",
+        "Guia do Jardineiro Digital"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/991-onboarding/configurando-com-devcontainer",
+      "name": "Configurando com Devcontainer",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 1,
+      "brokenLinks": [
+        "Preparando seu Computador para o Vault"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/992-workflows/publicando-seu-vault-como-site",
+      "name": "Publicando seu Vault como Site",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 2,
+      "brokenLinks": [
+        "Publicando e Consumindo RSS no Vault",
+        "Identidade Visual e Blocos de Interface"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/993-referencia/automatizando-a-inicializacao-do-vault",
+      "name": "Automatizando a Inicialização do Vault",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/992-workflows/o-ciclo-de-vida-do-conhecimento-versionamento-para-jardineiros-digitais",
+      "name": "O Ciclo de Vida do Conhecimento (Versionamento para Jardineiros Digitais)",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 2,
+      "brokenLinks": [
+        "Usando o Git e o GitHub para Sincronizar seu Vault",
+        "Publicando seu Vault como Site"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/991-onboarding/configurando-localmente",
+      "name": "Configurando Localmente",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 1,
+      "brokenLinks": [
+        "Preparando seu Computador para o Vault"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/991-onboarding/exploracao-guiada-do-vault",
+      "name": "Exploração Guiada do Vault",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 11,
+      "brokenLinks": [
+        "Guia do Jardineiro Digital",
+        "Preparando seu Computador para o Vault",
+        "Depois da Recepcao do Template",
+        "Filosofia e Conceitos Fundamentais",
+        "Entendendo a Estrutura de Pastas",
+        "Seus Primeiros Passos",
+        "MOC Vault Seed",
+        "Convenções e Boas Práticas",
+        "O que sao system prompts de IA",
+        "Guia do Jardineiro Digital",
+        "Seus Primeiros Passos"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/992-workflows/automacoes-no-obsidian",
+      "name": "Automações no Obsidian",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 1,
+      "brokenLinks": [
+        "Preparando seu Computador para o Vault"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/992-workflows/inbox-soberana-de-fontes",
+      "name": "Inbox Soberana de Fontes",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 1,
+      "brokenLinks": [
+        "Outbox Soberana de Publicação"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/993-referencia/ecossistema-aretw0-agents-lab-e-refarm",
+      "name": "Ecossistema aretw0, Agents Lab e Refarm",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/993-referencia/conhecendo-o-agents-lab",
+      "name": "Conhecendo o Agents Lab",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 1,
+      "brokenLinks": [
+        "Ecossistema aretw0 Agents Lab e Refarm"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:areas/blog/jardim-digital-por-onde-comecar",
+      "name": "Jardim digital: por onde começar",
+      "folder": "30 - Áreas",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
+      "@id": "note:entrada/bem-vindo-ao-seu-vault",
+      "name": "Bem-vindo ao seu vault",
+      "folder": "00 - Entrada",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 2,
+      "brokenLinks": [
+        "O que é publicação multi-canal",
+        "Outbox Soberana de Publicação"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/993-referencia/licenca-e-uso-do-vault",
+      "name": "Licença e Uso do Vault",
+      "folder": "99 - Meta e Anexos",
+      "status": "sem status",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
+      "@id": "note:recursos/filosofia-e-conceitos-fundamentais",
+      "name": "Filosofia e Conceitos Fundamentais",
+      "folder": "40 - Recursos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 6,
+      "brokenLinks": [
+        "Links",
+        "Tags",
+        "O que são MOCs (Mapas de Conteúdo)",
+        "O que é o método PARA",
+        "O que é o método Zettelkasten",
+        "Guia do Jardineiro Digital"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/993-referencia/qualidade-e-lint-de-notas",
+      "name": "Qualidade e Lint de Notas",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 1,
+      "brokenLinks": [
+        "Convenções e Boas Práticas"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:recursos/mermaid",
+      "name": "Mermaid",
+      "folder": "40 - Recursos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 6,
+      "brokenLinks": [
+        "Nota",
+        "wikilink",
+        "Wikilinks",
+        "wikilinks",
+        "Diagramas do Vault",
+        "MOC Vault Seed"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:recursos/dataview",
+      "name": "Dataview",
+      "folder": "40 - Recursos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 2,
+      "brokenLinks": [
+        "Bases",
+        "MOC Vault Seed"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:modelos/template-post-externo",
+      "name": "{{title}}",
+      "folder": "90 - Modelos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
+      "@id": "note:recursos/o-que-e-o-metodo-zettelkasten",
+      "name": "O que é o método Zettelkasten",
+      "folder": "40 - Recursos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 2,
+      "brokenLinks": [
+        "Links",
+        "Filosofia e Conceitos Fundamentais"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:recursos/o-que-sao-mocs-mapas-de-conteudo",
+      "name": "O que são MOCs (Mapas de Conteúdo)",
+      "folder": "40 - Recursos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 2,
+      "brokenLinks": [
+        "MOC Vault Seed",
+        "Filosofia e Conceitos Fundamentais"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:recursos/o-que-e-o-metodo-para",
+      "name": "O que é o método PARA",
+      "folder": "40 - Recursos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 1,
+      "brokenLinks": [
+        "Filosofia e Conceitos Fundamentais"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:recursos/daily-note",
+      "name": "Daily Note",
+      "folder": "40 - Recursos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 2,
+      "brokenLinks": [
+        "Template - Nota Diaria",
+        "Links"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:recursos/obsidian",
+      "name": "Obsidian",
+      "folder": "40 - Recursos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 3,
+      "brokenLinks": [
+        "VS Code",
+        "Plugins Essenciais e Recomendados",
+        "Templater"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:recursos/vs-code",
+      "name": "VS Code",
+      "folder": "40 - Recursos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 1,
+      "brokenLinks": [
+        "Obsidian"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:recursos/templater",
+      "name": "Templater",
+      "folder": "40 - Recursos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 1,
+      "brokenLinks": [
+        "Usando o Plugin Templates"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:recursos/o-que-e-publicacao-multi-canal",
+      "name": "O que é publicação multi-canal",
+      "folder": "40 - Recursos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
+      "@id": "note:recursos/links",
+      "name": "Links",
+      "folder": "40 - Recursos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 2,
+      "brokenLinks": [
+        "Nome da Nota",
+        "O que são MOCs (Mapas de Conteúdo)"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:recursos/jardim-digital",
+      "name": "Jardim digital",
+      "folder": "40 - Recursos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 3,
+      "brokenLinks": [
+        "Markdown e Obsidian",
+        "Links",
+        "O que é o método PARA"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:recursos/pkm-com-obsidian-e-vs-code",
+      "name": "PKM com Obsidian e VS Code",
+      "folder": "40 - Recursos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 4,
+      "brokenLinks": [
+        "Nome da Nota",
+        "VS Code",
+        "Obsidian",
+        "Links"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:recursos/tags",
+      "name": "Tags",
+      "folder": "40 - Recursos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 1,
+      "brokenLinks": [
+        "Links"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:recursos/bases",
+      "name": "Bases",
+      "folder": "40 - Recursos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 2,
+      "brokenLinks": [
+        "Vault Seed Kitchen Sink.base",
+        "MOC Vault Seed"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:modelos/template-plano-de-acao",
+      "name": "Plano: {{title}}",
+      "folder": "90 - Modelos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
+      "@id": "note:modelos/template-item-de-feed",
+      "name": "{{title}}",
+      "folder": "90 - Modelos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
+      "@id": "note:modelos/template-nota-conceitual",
+      "name": "{{title}}",
+      "folder": "90 - Modelos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/diagramas/exemplos",
+      "name": "Diagramas do Vault",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
+      "@id": "note:modelos/template-nota-diaria",
+      "name": "{{date}}",
+      "folder": "90 - Modelos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
+      "@id": "note:modelos/template-prompt",
+      "name": "Prompt: {{title}}",
+      "folder": "90 - Modelos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
+      "@id": "note:modelos/template-moc",
+      "name": "MOC - {{title}}",
+      "folder": "90 - Modelos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
+      "@id": "note:meta-e-anexos/993-referencia/visualizacao-do-fluxo-do-vault",
+      "name": "Visualização do Fluxo do Vault",
+      "folder": "99 - Meta e Anexos",
+      "status": "published",
+      "inboundLinks": 0,
+      "outboundLinks": 1,
+      "brokenLinks": [
+        "Guia do Jardineiro Digital"
+      ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:modelos/template-dashboard",
+      "name": "Dashboard - {{title}}",
+      "folder": "90 - Modelos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
+      "@id": "note:entrada/06-13-05-04-from-telegram",
+      "name": "Mensagem Telegram — 2026-06-13 05:04",
+      "folder": "00 - Entrada",
+      "status": "inbox",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
+      "@id": "note:entrada/06-14-00-03-from-telegram",
+      "name": "Mensagem Telegram — 2026-06-14 00:03",
+      "folder": "00 - Entrada",
+      "status": "inbox",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    }
+  ],
+  "generatedAt": "2026-06-14T02:58:48.717Z"
+}

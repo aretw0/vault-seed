@@ -1,3 +1,8 @@
+[project]
+name = "vault-seed"
+version = "0.1.0"
+requires-python = ">=3.12"
+
 [tool.marimo.display]
 locale = "pt-BR"
 custom_css = [".site/styles/marimo-vault.css"]

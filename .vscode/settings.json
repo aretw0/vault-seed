@@ -1,0 +1,40 @@
+{
+  "foam.files.ignore": [
+    "**/.git/**",
+    "**/.obsidian/**",
+    "**/.sandbox/**",
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/public/lab/**",
+    "**/.changeset/**",
+    "**/dados/**"
+  ],
+  "foam.links.wiki.syntax": "wikilink",
+  "foam.openDailyNote.onVaultOpen": false,
+  "[markdown]": {
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": false,
+      "strings": false
+    }
+  },
+  "editor.formatOnSave": false,
+  "markdownlint.config": {
+    "extends": "./.markdownlint.json"
+  },
+  "files.exclude": {
+    "node_modules": true,
+    ".sandbox": true,
+    "dist": true,
+    "public/lab": true
+  },
+  "search.exclude": {
+    "node_modules": true,
+    ".sandbox": true,
+    "dist": true,
+    "public/lab": true,
+    "uv.lock": true,
+    "pnpm-lock.yaml": true
+  }
+}

@@ -277,26 +277,31 @@ test('Accessibility foundations: skip link, lang, and license link are present',
   assert.match(astroConfig, /href: '\/LICENSE\.md'/);
 });
 
-test('Homepage cards render body text without interactive gating', () => {
+test('Homepage post list and capabilities render without interactive gating', () => {
   const home = read('.site/pages/index.astro');
   const css = read('.site/styles/custom.css');
 
-  // Body text must be in a plain <p>, never locked behind a <details> expand pattern.
+  // Content must never be gated behind a <details> expand pattern.
   assert.doesNotMatch(home, /class="vault-card__details"/);
   assert.doesNotMatch(home, /vault-card__body-full/);
   assert.doesNotMatch(home, /<summary[^>]*vault-card__body/);
 
-  // Each card section must contain a direct <p class="vault-card__body">.
-  const cardBodies = home.match(/<p class="vault-card__body">/g);
-  assert.ok(cardBodies && cardBodies.length >= 6, 'Expected at least 6 card body paragraphs in the homepage grid');
+  // Homepage uses the monospace post-list layout (cassidoo-style).
+  assert.match(home, /vault-home-mono/);
+  assert.match(home, /vault-post-list/);
+  assert.match(home, /vault-post-item/);
 
-  // The homepage section must override the global line-clamp so no body text is truncated.
-  assert.match(home, /vault-home-section[\s\S]*vault-card__body[\s\S]*-webkit-line-clamp:\s*unset/);
-  assert.match(home, /vault-home-section[\s\S]*vault-card__body[\s\S]*overflow:\s*visible/);
+  // Capabilities section replaces the old card grid — must have at least 6 bullet items.
+  const capItems = home.match(/<li>/g);
+  assert.ok(capItems && capItems.length >= 6, 'Expected at least 6 capability list items in the homepage');
 
-  // The global component CSS defines the clamp variable; the homepage overrides it per-section.
-  assert.match(css, /--vault-card-body-lines/);
-  assert.match(css, /vault-card__body[\s\S]*-webkit-line-clamp: var\(--vault-card-body-lines\)/);
+  // Capabilities section must be present.
+  assert.match(home, /vault-capabilities/);
+
+  // CSS defines the post-list and capabilities classes used by the homepage.
+  assert.match(css, /vault-post-list/);
+  assert.match(css, /vault-capabilities/);
+  assert.match(css, /vault-home-mono/);
 });
 
 test('Package license fields align with LICENSE.md (GPL-3.0-only)', () => {

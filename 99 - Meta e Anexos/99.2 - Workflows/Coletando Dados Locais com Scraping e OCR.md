@@ -99,7 +99,7 @@ para, por exemplo:
 Depois abra o Lab local:
 
 ```bash
-pnpm run notebooks:dev
+dgk lab minha-coleta
 ```
 
 O starter já traz campos para:
@@ -200,8 +200,8 @@ Depois que o snapshot existir, declare o arquivo em `.site/lab.datasets.json`:
 Finalize com:
 
 ```bash
-pnpm run notebooks:etl
-pnpm run notebooks:check
+dgk etl
+pnpm run notebooks:check  # verificação extra (dev)
 ```
 
 ## Limites Intencionais

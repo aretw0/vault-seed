@@ -36,6 +36,42 @@
     "publish": true
   },
   {
+    "id": "grafo-do-vault",
+    "title": "Grafo do vault",
+    "description": "Dados de conectividade por nota: links de entrada e saída, órfãs e hubs",
+    "source": "dados/lab/grafo-do-vault.json",
+    "output": "grafo-do-vault.json",
+    "format": "json",
+    "publish": true
+  },
+  {
+    "id": "grafo-do-vault-jsonld",
+    "title": "Grafo do vault (JSON-LD)",
+    "description": "Grafo semântico do vault com vocabulário dgk: e schema.org, exportado em JSON-LD",
+    "source": "dados/lab/grafo-do-vault.jsonld",
+    "output": "grafo-do-vault.jsonld",
+    "format": "json",
+    "publish": true
+  },
+  {
+    "id": "lista-leitura",
+    "title": "Lista de leitura",
+    "description": "URLs curadas para leitura, com tópico e status, enriquecidas localmente com OpenGraph",
+    "source": "dados/lab/lista-leitura.json",
+    "output": "lista-leitura.json",
+    "format": "json",
+    "publish": true
+  },
+  {
+    "id": "qualidade-textos",
+    "title": "Qualidade de escrita",
+    "description": "Relatório determinístico de vícios de escrita por nota: repetições, aberturas mecânicas, frases longas e artefatos sintéticos",
+    "source": "dados/lab/qualidade-textos.json",
+    "output": "qualidade-textos.json",
+    "format": "json",
+    "publish": true
+  },
+  {
     "id": "json-remoto-opcional",
     "title": "JSON remoto opcional",
     "description": "Exemplo de fonte que um notebook WASM pode carregar no navegador quando houver CORS e rede",

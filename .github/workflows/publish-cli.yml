@@ -4,7 +4,10 @@ on:
   push:
     tags:
       - '@aretw0/dgk-cli@*'
+      - '@aretw0/dgk-channels@*'
       - '@aretw0/dgk-astro-plugins@*'
+      - '@aretw0/dgk-skills@*'
+      - '@aretw0/dgk-runner@*'
 
 permissions:
   contents: read
@@ -33,6 +36,15 @@ jobs:
         uses: ./.github/actions/setup
         with:
           cache-mode: "off"
+
+      - name: Preflight — verify NPM_TOKEN
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "${NODE_AUTH_TOKEN:-}" ]; then
+            echo "::error::NPM_TOKEN secret is not set. Add it at: Settings → Secrets and variables → Actions → New repository secret"
+            exit 1
+          fi
 
       - name: Publish
         run: pnpm changeset publish

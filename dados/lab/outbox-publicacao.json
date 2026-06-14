@@ -69,7 +69,36 @@
       "notes": "Bom para changelogs, releases e discussões técnicas."
     }
   ],
-  "itemCount": 0,
-  "items": [],
-  "sha256": "043c629e49dd35290dee7853d793e7ebe2def375b4e71e40d911b8914f84eb9a"
+  "itemCount": 1,
+  "items": [
+    {
+      "id": "areas-blog-jardim-digital-por-onde-comecar",
+      "title": "Jardim digital: por onde começar",
+      "path": "30 - Áreas/Blog/Jardim digital - por onde começar.md",
+      "url": "https://vault-seed.aretw0.dev.br/areas-blog-jardim-digital-por-onde-comecar/",
+      "status": "published",
+      "publicationStatus": "ready",
+      "canonical": "30 - Áreas/Blog/Jardim digital - por onde começar.md",
+      "source": "30 - Áreas/Blog/Jardim digital - por onde começar.md",
+      "collectedAt": null,
+      "sha256": "b8a9791d932d2ded76e1589bd823079818ac1d547aa5de3d5ea9197db56a986f",
+      "license": "verificar",
+      "privacy": "private-until-published",
+      "channels": [
+        "mastodon",
+        "bluesky",
+        "telegram"
+      ],
+      "channelCount": 3,
+      "audience": "todos",
+      "tags": [
+        "pkm",
+        "jardim-digital",
+        "gestao-conhecimento"
+      ],
+      "description": "Um arquivo você cria e esquece. Um jardim exige cuidado — você planta sementes, poda o que não funciona, conecta ideias que se beneficiam da proximidade. Aqui, os primeiros passos.",
+      "excerpt": "Existe uma ideia simples e poderosa escondida na metáfora do \"jardim digital\". Um arquivo você cria e esquece. Um jardim exige cuidado contínuo — você planta sementes, poda o que não funciona, conecta o que se beneficia da proximidade. No jardim digital, uma nota nasce como rascu"
+    }
+  ],
+  "sha256": "f4d24af1eb3a0076e787b8bcff7378071f418ccff7d392abcb19de00ff197c36"
 }

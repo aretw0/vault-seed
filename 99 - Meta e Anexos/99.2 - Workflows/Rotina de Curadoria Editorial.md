@@ -38,11 +38,13 @@ Rode esta rotina quando você:
 
 ## Ciclo Recomendado
 
-1. **Valide a régua canônica:**
+1. **Verifique a saúde do vault:**
 
    ```bash
-   pnpm run validate
+   dgk check
    ```
+
+   Para contribuidores do template, o pipeline completo de qualidade é `pnpm run validate` (dev-only).
 
 2. **Leia os sinais editoriais no terminal:**
 
@@ -50,6 +52,8 @@ Rode esta rotina quando você:
    pnpm run audit:ia
    pnpm run site:audit:sidebar
    ```
+
+   `pnpm run audit:ia` avalia cobertura por intenção e candidatas à promoção usando o dataset `curadoria-ia.json`. Use como ponto de partida para a decisão humana sobre o que expandir ou reclassificar.
 
 3. **Abra a exploração pública:**
 
@@ -66,7 +70,7 @@ Rode esta rotina quando você:
 4. **Use o Lab quando quiser investigar como dado:**
 
    ```bash
-   pnpm run notebooks:etl
+   dgk etl
    pnpm run site:dev:lab
    ```
 

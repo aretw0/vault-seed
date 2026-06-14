@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.23.8"
+__generated_with = "0.23.9"
 app = marimo.App(width="medium")
 
 
@@ -8,7 +8,7 @@ app = marimo.App(width="medium")
 def _():
     import marimo as mo
 
-    return mo
+    return (mo,)
 
 
 @app.cell
@@ -600,23 +600,81 @@ def _(load_remote, mo, read_lab_json, runtime_sources):
 
 
 @app.cell
+def _(get_local_secret, mo, runtime_context):
+    if not runtime_context["isLocal"]:
+        github_result = mo.vstack([
+            mo.md("## API com credencial local (GitHub)"),
+            mo.callout(
+                mo.md(
+                    "Execute localmente com `GITHUB_TOKEN` no ambiente para consultar a API do GitHub "
+                    "sem expor o token no HTML publicado."
+                ),
+                kind="info",
+            ),
+        ])
+    else:
+        import json as _json
+        from urllib.request import Request as _Req, urlopen as _urlopen
+
+        _token = get_local_secret("GITHUB_TOKEN")
+        if not _token:
+            github_result = mo.vstack([
+                mo.md("## API com credencial local (GitHub)"),
+                mo.callout(
+                    mo.md(
+                        "`GITHUB_TOKEN` não encontrado no ambiente. "
+                        "Defina a variável antes de abrir o notebook para ativar esta célula:\n\n"
+                        "```sh\nexport GITHUB_TOKEN=ghp_...\nuv run marimo edit etl-demo.py\n```"
+                    ),
+                    kind="warn",
+                ),
+            ])
+        else:
+            try:
+                _req = _Req(
+                    "https://api.github.com/repos/aretw0/vault-seed",
+                    headers={
+                        "Authorization": f"Bearer {_token}",
+                        "Accept": "application/vnd.github+json",
+                        "X-GitHub-Api-Version": "2022-11-28",
+                    },
+                )
+                with _urlopen(_req, timeout=10) as _resp:
+                    _repo = _json.loads(_resp.read())
+                github_result = mo.vstack([
+                    mo.md("## API com credencial local (GitHub)"),
+                    mo.md(
+                        f"Repositório: **{_repo.get('full_name')}**\n\n"
+                        f"- stars: {_repo.get('stargazers_count', 0)}\n"
+                        f"- forks: {_repo.get('forks_count', 0)}\n"
+                        f"- issues abertas: {_repo.get('open_issues_count', 0)}\n"
+                        f"- última atualização: `{_repo.get('updated_at', '—')[:10]}`\n\n"
+                        "O token foi lido via `get_local_secret('GITHUB_TOKEN')` e nunca foi "
+                        "serializado no notebook nem no HTML publicado."
+                    ),
+                ])
+            except Exception as _exc:
+                github_result = mo.vstack([
+                    mo.md("## API com credencial local (GitHub)"),
+                    mo.callout(mo.md(f"Erro ao consultar a API: {_exc}"), kind="warn"),
+                ])
+
+    github_result
+    return
+
+
+@app.cell
 def _(mo):
     mo.md(
-        "## 🧭 Lane de entendimento\n\n"
-        "Converta este notebook em uma trilha prática para pipeline ETL local + pacote publicado:\n\n"
-        "### Nível inicial — transparência\n\n"
-        "- Ler contrato de datasets e validar fontes disponíveis;\n"
-        "- Confirmar snapshots como fonte única da fonte publicada.\n\n"
-        "### Nível intermediário — proteção\n\n"
-        "- Separar primitivas locais (acesso ao disco, OCR, secrects) das transformações publicadas;\n"
-        "- Testar modos de extração com e sem rede para reduzir falhas de ambiente.\n\n"
-        "### Nível avançado — automação\n\n"
-        "- Transformar esse fluxo em rotina cron/CI local;\n"
-        "- Assinar artefatos versionáveis (JSON/CSV) e reusar em exports futuros.\n\n"
-        "### Nível de excelência — sustentabilidade operacional\n\n"
-        "- Automatizar validações de schema, checksum e retenção antes de publicar artefatos;\n"
-        "- Criar rollback explícito por fonte e registrar causa raiz de cada correção;\n"
-        "- Documentar o impacto de custo/latência de cada etapa para definir prioridades de otimização."
+        "## Ciclo ETL no CI\n\n"
+        "O workflow `refresh-lab-data.yml` repete este ciclo diariamente:\n\n"
+        "1. **Extract** — `pnpm run notebooks:etl` lê as notas do vault e as fontes externas\n"
+        "2. **Transform** — scripts em `scripts/` normalizam e enriquecem os dados\n"
+        "3. **Load** — os arquivos em `dados/lab/` são commitados com `[skip ci]` "
+        "para não disparar novamente o workflow de deploy\n\n"
+        "O notebook é a interface humana para o mesmo ciclo. "
+        "O CI é a automação sem interface. "
+        "Os datasets em `dados/lab/` são o ponto de encontro entre os dois."
     )
     return
 

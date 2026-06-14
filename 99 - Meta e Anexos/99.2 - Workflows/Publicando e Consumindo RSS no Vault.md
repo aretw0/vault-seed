@@ -89,10 +89,10 @@ leitores para dentro do vault. Para normalizar essa lista como dataset do Lab,
 rode:
 
 ```bash
-pnpm run feeds:opml
+dgk etl
 ```
 
-O comando gera `dados/lab/feeds-assinados.json`, com `source`, `collectedAt`,
+O ETL inclui o processamento de feeds OPML. Ele gera `dados/lab/feeds-assinados.json`, com `source`, `collectedAt`,
 `sha256`, `license` e `privacy`. Esse dataset é publicado pelo manifesto do Lab
 e alimenta o notebook `/lab/feeds.html`.
 
@@ -150,7 +150,7 @@ Depois declare o snapshot em `.site/lab.datasets.json`:
 Finalize com:
 
 ```bash
-pnpm run notebooks:etl
+dgk etl
 pnpm run notebooks:check
 ```
 

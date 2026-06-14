@@ -1,6 +1,6 @@
 ---
 title: O que são MOCs (Mapas de Conteúdo)
-status: published
+status: draft
 category: conceito
 audience: iniciante
 tags:

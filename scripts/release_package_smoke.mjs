@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const PACKAGE_DIR = path.join(ROOT, "packages");
-const RELEASE_PACKAGES = ["packages/cli", "packages/astro-plugins"];
+const RELEASE_PACKAGES = ["packages/cli", "packages/dgk-channels", "packages/astro-plugins"];
 
 function readText(relPath) {
   return readFileSync(path.join(ROOT, relPath), "utf8");

@@ -12,6 +12,7 @@ jobs:
     permissions:
       contents: write
       pages: write
+      administration: write
     steps:
       - name: 🏗️ Initialize Project from Template
         uses: aretw0/template-initializer@cf2249f8a97563d5bf3bc82bec5d3bcc3c816469 # v1.0.1
@@ -19,7 +20,87 @@ jobs:
           template_repository: "aretw0/vault-seed"
           workflow_filename: ".github/workflows/initialize.yml"
           files_to_rename: "README.template.md:README.md CONTRIBUTING.template.md:CONTRIBUTING.md AGENTS.template.md:AGENTS.md package.template.json:package.json pnpm-lock.template.yaml:pnpm-lock.yaml"
-          files_to_remove: "docs ROADMAP.md AGENTS.template.md README.template.md CONTRIBUTING.template.md packages/cli .changeset mdt.toml .github/workflows/template-ci.yml .github/workflows/prepare-release-pr.yml .github/workflows/release.yml .github/workflows/security-audit.yml .github/workflows/sync-develop-with-main.yml .github/workflows/validate-mdt.yml .github/workflows/publish-cli.yml CNAME scripts/audience_boundary.test.js scripts/deploy_site_workflow.test.js scripts/mermaid_render_contract.test.js scripts/mermaid_toggle.test.js scripts/release_package_smoke.test.js scripts/release_package_smoke.mjs"
+          files_to_remove: "docs .templates ROADMAP.md AGENTS.template.md README.template.md CONTRIBUTING.template.md packages/cli packages/dgk-channels packages/dgk-runner packages/dgk-skills .changeset mdt.toml .github/workflows/template-ci.yml .github/workflows/prepare-release-pr.yml .github/workflows/release.yml .github/workflows/security-audit.yml .github/workflows/sync-develop-with-main.yml .github/workflows/validate-mdt.yml .github/workflows/publish-cli.yml .github/workflows/refresh-lab-data.yml CNAME scripts/audience_boundary.test.js scripts/deploy_site_workflow.test.js scripts/mermaid_render_contract.test.js scripts/mermaid_toggle.test.js scripts/release_package_smoke.test.js scripts/release_package_smoke.mjs scripts/sync_lockfile_template.mjs scripts/smoke_template.js scripts/smoke_initialize_reset.mjs scripts/smoke_user_vault.mjs scripts/smoke_user_e2e.mjs 99\ -\ Meta\ e\ Anexos/Notebooks/apresentacao-vault-seed.py dados/lab"
+
+      - name: 🌱 Reset notas de referência para draft no vault do usuário
+        run: |
+          # Notas publicadas no site do vault-seed mas que chegam ao usuário como
+          # draft — conteúdo de referência que o usuário decide manter ou não.
+          # Mantido em sincronia com NOTE_STATUS_CONTRACT em scripts/smoke_template.js.
+          notes=(
+            "30 - Áreas/Blog/Jardim digital - por onde começar.md"
+            "40 - Recursos/Mermaid.md"
+            "99 - Meta e Anexos/99.1 - Onboarding/Configurando com Devcontainer.md"
+            "99 - Meta e Anexos/99.1 - Onboarding/Configurando Localmente.md"
+            "99 - Meta e Anexos/99.1 - Onboarding/Depois da Recepcao do Template.md"
+            "99 - Meta e Anexos/99.1 - Onboarding/Entendendo a Estrutura de Pastas.md"
+            "99 - Meta e Anexos/99.1 - Onboarding/Exploracao Guiada do Vault.md"
+            "99 - Meta e Anexos/99.1 - Onboarding/Guia do Jardineiro Digital.md"
+            "99 - Meta e Anexos/99.1 - Onboarding/MOC Vault Seed.md"
+            "99 - Meta e Anexos/99.1 - Onboarding/Preparando seu Computador para o Vault.md"
+            "99 - Meta e Anexos/99.1 - Onboarding/Seus Primeiros Passos.md"
+            "99 - Meta e Anexos/99.2 - Workflows/Automacoes no Obsidian.md"
+            "99 - Meta e Anexos/99.2 - Workflows/Coletando Dados Locais com Scraping e OCR.md"
+            "99 - Meta e Anexos/99.2 - Workflows/Configurando o Obsidian Git.md"
+            "99 - Meta e Anexos/99.2 - Workflows/Criando seu Painel de Controle (Dashboard).md"
+            "99 - Meta e Anexos/99.2 - Workflows/Inbox Soberana de Fontes.md"
+            "99 - Meta e Anexos/99.2 - Workflows/O Ciclo de Vida do Conhecimento (Versionamento para Jardineiros Digitais).md"
+            "99 - Meta e Anexos/99.2 - Workflows/Outbox Soberana de Publicação.md"
+            "99 - Meta e Anexos/99.2 - Workflows/Preparando Dados para o Lab.md"
+            "99 - Meta e Anexos/99.2 - Workflows/Publicando e Consumindo RSS no Vault.md"
+            "99 - Meta e Anexos/99.2 - Workflows/Publicando seu Vault como Site.md"
+            "99 - Meta e Anexos/99.2 - Workflows/Rotina de Curadoria Editorial.md"
+            "99 - Meta e Anexos/99.2 - Workflows/Usando o Git e o GitHub para Sincronizar seu Vault.md"
+            "99 - Meta e Anexos/99.2 - Workflows/Usando o Lab (Notebooks Marimo).md"
+            "99 - Meta e Anexos/99.3 - Referência/Automatizando a Inicialização do Vault.md"
+            "99 - Meta e Anexos/99.3 - Referência/Conhecendo o Agents Lab.md"
+            "99 - Meta e Anexos/99.3 - Referência/Convenções e Boas Práticas.md"
+            "99 - Meta e Anexos/99.3 - Referência/Ecossistema aretw0 Agents Lab e Refarm.md"
+            "99 - Meta e Anexos/99.3 - Referência/Evoluindo seu Vault com Links, Tags e MOCs.md"
+            "99 - Meta e Anexos/99.3 - Referência/Identidade Visual e Blocos de Interface.md"
+            "99 - Meta e Anexos/99.3 - Referência/Integrando com VSCode (Foam).md"
+            "99 - Meta e Anexos/99.3 - Referência/Plugins Essenciais e Recomendados.md"
+            "99 - Meta e Anexos/99.3 - Referência/Qualidade e Lint de Notas.md"
+            "99 - Meta e Anexos/99.3 - Referência/Usando com Agentes de IA.md"
+            "99 - Meta e Anexos/99.3 - Referência/Usando o Plugin Templates.md"
+            "99 - Meta e Anexos/99.3 - Referência/Usando o Vault no Celular vs. Desktop.md"
+            "99 - Meta e Anexos/99.3 - Referência/Visualização do Fluxo do Vault.md"
+            "99 - Meta e Anexos/Diagramas/Exemplos.md"
+          )
+          changed=0
+          for note in "${notes[@]}"; do
+            if [ -f "$note" ]; then
+              sed -i 's/^status: published$/status: draft/' "$note"
+              changed=1
+            fi
+          done
+          if [ "$changed" -eq 1 ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add .
+            git commit -m "chore: reset notas de referência para draft"
+            git push
+          fi
+
+      - name: 🔒 Protect main branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api \
+            --method PUT \
+            -H "Accept: application/vnd.github+json" \
+            /repos/${{ github.repository }}/branches/main/protection \
+            --input - <<'JSON'
+          {
+            "required_status_checks": null,
+            "enforce_admins": false,
+            "required_pull_request_reviews": null,
+            "restrictions": null,
+            "allow_force_pushes": false,
+            "allow_deletions": false
+          }
+          JSON
+          echo "Main branch protected against force pushes and deletions."
 
       - name: 🌐 Enable GitHub Pages
         env:

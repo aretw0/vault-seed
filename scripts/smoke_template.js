@@ -125,6 +125,12 @@ requireCondition(
   "package.template.json scripts must not reference release-only changelog or version tooling.",
 );
 requireCondition(
+  !templatePkg.scripts?.["smoke:template"] &&
+    !templatePkg.scripts?.["smoke:user-vault"] &&
+    !templatePkg.scripts?.["smoke:init:reset"],
+  "package.template.json must not include template-dev smoke scripts — they read files removed by initialize.yml and would fail in user vaults.",
+);
+requireCondition(
   !templatePkg.scripts?.["lint:docs"] &&
     templatePkg.scripts?.lint === "pnpm run lint:main && pnpm run lint:templates" &&
     templatePkg.scripts?.test?.includes("scripts/*.test.mjs") &&
@@ -527,6 +533,117 @@ requireCondition(
   exists("scripts/notebook_cell_output_lint.test.mjs"),
   "scripts/notebook_cell_output_lint.test.mjs must be present so generated vaults guard against invisible notebook output.",
 );
+
+// Note status contract — three categories:
+//
+// PUBLISHED (stay published for users): notes the user receives as published.
+//   Must NOT be in RESET_ON_INIT. The welcome note is the canonical example —
+//   it is the user's first published content.
+//
+// PUBLISHED → DRAFT on init (RESET_ON_INIT): published on the vault-seed site
+//   but reset to draft by initialize.yml before the user's first commit.
+//   Used for reference notes vault-seed wants on its own site but that belong
+//   to the user to decide about. Must be listed in initialize.yml's reset step.
+//
+// DRAFT: example/concept content that arrives as draft and stays draft.
+//   Must not be accidentally published by bulk resets.
+const NOTE_STATUS_CONTRACT = {
+  // Stays published for users — the user's own starting content.
+  published: [
+    "00 - Entrada/Bem-vindo ao seu vault.md",
+  ],
+  // Published on vault-seed's site; reset to draft by initialize.yml.
+  // The user's site starts lean — only Bem-vindo is published.
+  // Users promote notes individually as they make them their own.
+  publishedResetOnInit: [
+    // 30 - Áreas
+    "30 - Áreas/Blog/Jardim digital - por onde começar.md",
+    // 40 - Recursos
+    "40 - Recursos/Mermaid.md",
+    // 99 - Meta e Anexos / Onboarding
+    "99 - Meta e Anexos/99.1 - Onboarding/Configurando com Devcontainer.md",
+    "99 - Meta e Anexos/99.1 - Onboarding/Configurando Localmente.md",
+    "99 - Meta e Anexos/99.1 - Onboarding/Depois da Recepcao do Template.md",
+    "99 - Meta e Anexos/99.1 - Onboarding/Entendendo a Estrutura de Pastas.md",
+    "99 - Meta e Anexos/99.1 - Onboarding/Exploracao Guiada do Vault.md",
+    "99 - Meta e Anexos/99.1 - Onboarding/Guia do Jardineiro Digital.md",
+    "99 - Meta e Anexos/99.1 - Onboarding/MOC Vault Seed.md",
+    "99 - Meta e Anexos/99.1 - Onboarding/Preparando seu Computador para o Vault.md",
+    "99 - Meta e Anexos/99.1 - Onboarding/Seus Primeiros Passos.md",
+    // 99 - Meta e Anexos / Workflows
+    "99 - Meta e Anexos/99.2 - Workflows/Automacoes no Obsidian.md",
+    "99 - Meta e Anexos/99.2 - Workflows/Coletando Dados Locais com Scraping e OCR.md",
+    "99 - Meta e Anexos/99.2 - Workflows/Configurando o Obsidian Git.md",
+    "99 - Meta e Anexos/99.2 - Workflows/Criando seu Painel de Controle (Dashboard).md",
+    "99 - Meta e Anexos/99.2 - Workflows/Inbox Soberana de Fontes.md",
+    "99 - Meta e Anexos/99.2 - Workflows/O Ciclo de Vida do Conhecimento (Versionamento para Jardineiros Digitais).md",
+    "99 - Meta e Anexos/99.2 - Workflows/Outbox Soberana de Publicação.md",
+    "99 - Meta e Anexos/99.2 - Workflows/Preparando Dados para o Lab.md",
+    "99 - Meta e Anexos/99.2 - Workflows/Publicando e Consumindo RSS no Vault.md",
+    "99 - Meta e Anexos/99.2 - Workflows/Publicando seu Vault como Site.md",
+    "99 - Meta e Anexos/99.2 - Workflows/Rotina de Curadoria Editorial.md",
+    "99 - Meta e Anexos/99.2 - Workflows/Usando o Git e o GitHub para Sincronizar seu Vault.md",
+    "99 - Meta e Anexos/99.2 - Workflows/Usando o Lab (Notebooks Marimo).md",
+    // 99 - Meta e Anexos / Referência
+    "99 - Meta e Anexos/99.3 - Referência/Automatizando a Inicialização do Vault.md",
+    "99 - Meta e Anexos/99.3 - Referência/Conhecendo o Agents Lab.md",
+    "99 - Meta e Anexos/99.3 - Referência/Convenções e Boas Práticas.md",
+    "99 - Meta e Anexos/99.3 - Referência/Ecossistema aretw0 Agents Lab e Refarm.md",
+    "99 - Meta e Anexos/99.3 - Referência/Evoluindo seu Vault com Links, Tags e MOCs.md",
+    "99 - Meta e Anexos/99.3 - Referência/Identidade Visual e Blocos de Interface.md",
+    "99 - Meta e Anexos/99.3 - Referência/Integrando com VSCode (Foam).md",
+    "99 - Meta e Anexos/99.3 - Referência/Plugins Essenciais e Recomendados.md",
+    "99 - Meta e Anexos/99.3 - Referência/Qualidade e Lint de Notas.md",
+    "99 - Meta e Anexos/99.3 - Referência/Usando com Agentes de IA.md",
+    "99 - Meta e Anexos/99.3 - Referência/Usando o Plugin Templates.md",
+    "99 - Meta e Anexos/99.3 - Referência/Usando o Vault no Celular vs. Desktop.md",
+    "99 - Meta e Anexos/99.3 - Referência/Visualização do Fluxo do Vault.md",
+    // 99 - Meta e Anexos / Diagramas
+    "99 - Meta e Anexos/Diagramas/Exemplos.md",
+  ],
+  draft: [
+    "40 - Recursos/Filosofia e Conceitos Fundamentais.md",
+    "40 - Recursos/O que é o método PARA.md",
+    "40 - Recursos/O que é o método Zettelkasten.md",
+    "40 - Recursos/O que são MOCs (Mapas de Conteúdo).md",
+  ],
+};
+
+function extractStatus(content) {
+  const m = content.replace(/^﻿/, "").match(/^---[\s\S]*?^status:\s*(\S+)/m);
+  return m ? m[1] : null;
+}
+
+for (const notePath of NOTE_STATUS_CONTRACT.published) {
+  const content = read(notePath);
+  const status = extractStatus(content);
+  requireCondition(
+    status === "published",
+    `${notePath} must have status: published (stays published for users). Got: ${status ?? "(absent)"}`,
+  );
+}
+
+for (const notePath of NOTE_STATUS_CONTRACT.publishedResetOnInit) {
+  const content = read(notePath);
+  const status = extractStatus(content);
+  requireCondition(
+    status === "published",
+    `${notePath} must have status: published in source (vault-seed site) — initialize.yml resets it to draft for users. Got: ${status ?? "(absent)"}`,
+  );
+  requireCondition(
+    initializeWorkflow.includes(notePath),
+    `${notePath} is in publishedResetOnInit but missing from initialize.yml's reset step — users would receive it as published.`,
+  );
+}
+
+for (const notePath of NOTE_STATUS_CONTRACT.draft) {
+  const content = read(notePath);
+  const status = extractStatus(content);
+  requireCondition(
+    status === "draft",
+    `${notePath} must have status: draft (example content, user decides). Got: ${status ?? "(absent)"}`,
+  );
+}
 
 if (errors.length > 0) {
   console.error("Template smoke failed:");

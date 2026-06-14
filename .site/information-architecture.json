@@ -5,7 +5,8 @@
     "referencia": { "label": "Referência", "aliases": ["referência"] },
     "ferramenta": { "label": "Ferramenta" },
     "moc": { "label": "MOC" },
-    "workflow": { "label": "Workflow" }
+    "workflow": { "label": "Workflow" },
+    "post": { "label": "Post", "aliases": ["ensaio", "artigo"] }
   },
   "audiences": {
     "iniciante": { "label": "Iniciante" },
@@ -33,8 +34,9 @@
     },
     "publicar": {
       "label": "Publicar",
-      "description": "Publicação web, Astro, GitHub Pages e experiência pública.",
-      "tags": ["meta/site", "meta/astro", "meta/github-actions"]
+      "description": "Publicação web, Astro, GitHub Pages, posts e experiência pública.",
+      "tags": ["meta/site", "meta/astro", "meta/github-actions"],
+      "categories": ["post"]
     },
     "automatizar": {
       "label": "Automatizar",

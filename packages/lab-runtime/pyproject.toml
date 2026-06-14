@@ -19,7 +19,7 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
 ]
-dependencies = []
+dependencies = ["defusedxml>=0.7"]
 
 [project.optional-dependencies]
 scraping = ["playwright>=1.40"]

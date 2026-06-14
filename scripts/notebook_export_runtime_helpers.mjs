@@ -20,6 +20,12 @@ const LAB_RUNTIME_HELPER_EXPORT_NAMES = [
 	"fetch_local_url_text",
 	"scrape_local_page_text",
 	"extract_local_image_text",
+	"parse_feed_xml",
+	"fetch_local_feed",
+	"fetch_wasm_json",
+	"fetch_wasm_feed",
+	"with_data_provenance",
+	"write_local_markdown_note",
 ];
 
 function collectRuntimeImports(sourceCode, runtimeImportPrefix) {
@@ -159,12 +165,24 @@ export function replaceImportAndInjectRuntimeHelpers(
 		APP_INIT_PATTERN.test(line),
 	);
 
+	// Find the closing line of the marimo.App(...) call, which may span multiple lines.
+	let appEndIndex = appAssignmentIndex;
+	if (appAssignmentIndex >= 0) {
+		let depth = (cleanedLines[appAssignmentIndex].match(/\(/g) ?? []).length
+			- (cleanedLines[appAssignmentIndex].match(/\)/g) ?? []).length;
+		while (depth > 0 && appEndIndex + 1 < cleanedLines.length) {
+			appEndIndex += 1;
+			const l = cleanedLines[appEndIndex];
+			depth += (l.match(/\(/g) ?? []).length - (l.match(/\)/g) ?? []).length;
+		}
+	}
+
 	const lines =
 		appAssignmentIndex >= 0
 			? [
-					...cleanedLines.slice(0, appAssignmentIndex + 1),
+					...cleanedLines.slice(0, appEndIndex + 1),
 					...helperLines,
-					...cleanedLines.slice(appAssignmentIndex + 1),
+					...cleanedLines.slice(appEndIndex + 1),
 				]
 			: [...helperLines, ...cleanedLines];
 

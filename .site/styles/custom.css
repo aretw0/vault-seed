@@ -687,6 +687,9 @@
   color: var(--sl-color-text-accent);
   outline: none;
   cursor: grab;
+  /* Suppress iOS long-press callout — the graph is an exploration canvas,
+     not a link list; tap = navigate, long-press should not interrupt. */
+  -webkit-touch-callout: none;
 }
 
 .vault-graph-view__nodes a.is-dragged {
@@ -739,6 +742,12 @@
 }
 
 .vault-graph-view__nodes a:is(.is-hovered, :focus-visible) .vault-graph-view__label--short {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Hide labels on nodes that are neither hovered nor neighbors during hover */
+.vault-graph-view[data-vault-graph-hover='1'] .vault-graph-view__nodes a:not(.is-hovered):not(.is-neighbor) .vault-graph-view__label {
   opacity: 0;
   visibility: hidden;
 }
@@ -1136,6 +1145,199 @@ dialog.mermaid-dialog::backdrop {
   cursor: pointer;
   font-size: 0.75rem;
   padding: 0.2rem 0.5rem;
+}
+
+/* ── Cassidoo-style homepage ─────────────────────────────────────────────── */
+
+.vault-home-mono {
+  font-family: ui-monospace, 'JetBrains Mono', 'Cascadia Code', Menlo, 'Courier New', monospace;
+}
+
+.vault-post-header {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-block: 2rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--sl-color-gray-3);
+}
+
+.vault-post-see-all {
+  flex: none;
+  color: var(--sl-color-text-accent);
+  font-size: var(--sl-text-xs);
+  text-decoration: none;
+}
+
+.vault-post-see-all:hover {
+  text-decoration: underline;
+}
+
+.vault-post-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.vault-post-item {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.vault-post-item__headline {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.vault-post-item__title {
+  color: var(--sl-color-white);
+  font-size: 1rem;
+  font-weight: 400;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--sl-color-accent) 45%, transparent);
+  text-underline-offset: 3px;
+}
+
+.vault-post-item__title:hover {
+  color: var(--sl-color-text-accent);
+  text-decoration-color: var(--sl-color-accent);
+}
+
+.vault-post-item__date {
+  font-size: 0.75rem;
+  color: var(--sl-color-gray-3);
+  white-space: nowrap;
+  font-style: italic;
+}
+
+.vault-post-item__excerpt {
+  font-size: 0.875rem;
+  color: var(--sl-color-gray-2);
+  line-height: 1.55;
+  margin: 0;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.vault-post-item__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.vault-post-tag {
+  font-size: var(--sl-text-xs);
+  color: var(--sl-color-text-accent);
+  text-decoration: none;
+}
+
+.vault-post-tag:hover {
+  text-decoration: underline;
+}
+
+.vault-subscribe-line {
+  margin-block: 1.75rem 0;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--sl-color-gray-2);
+}
+
+.vault-subscribe-line a {
+  color: var(--sl-color-text-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.vault-tags-header {
+  margin-block: 2rem 0.65rem;
+  font-size: 0.875rem;
+  color: var(--sl-color-gray-3);
+  text-align: center;
+}
+
+.vault-tag-cloud-home {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-block-end: 2rem;
+}
+
+.vault-tag-link {
+  color: var(--sl-color-text-accent);
+  font-size: var(--sl-text-xs);
+  text-decoration: none;
+  border: 1px solid color-mix(in srgb, var(--sl-color-accent) 30%, var(--sl-color-hairline));
+  border-radius: 999px;
+  padding: 0.3rem 0.65rem;
+  background: color-mix(in srgb, var(--sl-color-accent) 7%, transparent);
+  white-space: nowrap;
+}
+
+.vault-tag-link:hover {
+  background: color-mix(in srgb, var(--sl-color-accent) 16%, transparent);
+}
+
+.vault-no-notes {
+  color: var(--sl-color-gray-2);
+  font-size: 0.875rem;
+  border: 1px dashed var(--sl-color-hairline);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-block: 1.5rem;
+}
+
+.vault-capabilities {
+  margin-block-start: 2.5rem;
+  border-block-start: 1px solid var(--sl-color-hairline);
+  padding-block-start: 1.5rem;
+}
+
+.vault-capabilities__heading {
+  margin-block: 0 0.75rem;
+  font-size: 0.875rem;
+  color: var(--sl-color-gray-3);
+}
+
+.vault-capabilities__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.vault-capabilities__list li {
+  font-size: 0.8125rem;
+  color: var(--sl-color-gray-2);
+  line-height: 1.5;
+  padding-inline-start: 1.1em;
+  position: relative;
+}
+
+.vault-capabilities__list li::before {
+  content: '→';
+  position: absolute;
+  inset-inline-start: 0;
+  color: var(--sl-color-text-accent);
+}
+
+.vault-capabilities__list a {
+  color: var(--sl-color-white);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--sl-color-accent) 40%, transparent);
+  text-underline-offset: 2px;
+}
+
+.vault-capabilities__list a:hover {
+  color: var(--sl-color-text-accent);
 }
 
 /* Callout styles — complementam os do @dgk/astro-plugins */

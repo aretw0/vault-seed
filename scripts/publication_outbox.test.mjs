@@ -15,6 +15,7 @@ test("buildPublicationOutbox extracts only explicit publication candidates", () 
     [
       "---",
       "title: Post de Teste",
+      "description: Gancho de compartilhamento para todos os canais.",
       "status: draft",
       "outbox: true",
       "publicationStatus: draft",
@@ -39,17 +40,34 @@ test("buildPublicationOutbox extracts only explicit publication candidates", () 
     "utf8",
   );
 
-  const { data } = buildPublicationOutbox({
-    cwd,
-    outputPath: join(cwd, "dados", "lab", "outbox-publicacao.json"),
-    now: "2026-05-26T00:00:00.000Z",
-  });
+  // Isolate from CI env vars that would make resolveSiteUrl() return a non-null URL.
+  const savedRepo = process.env.GITHUB_REPOSITORY;
+  const savedSite = process.env.ASTRO_SITE;
+  delete process.env.GITHUB_REPOSITORY;
+  delete process.env.ASTRO_SITE;
+  let data;
+  try {
+    ({ data } = buildPublicationOutbox({
+      cwd,
+      outputPath: join(cwd, "dados", "lab", "outbox-publicacao.json"),
+      now: "2026-05-26T00:00:00.000Z",
+    }));
+  } finally {
+    if (savedRepo !== undefined) process.env.GITHUB_REPOSITORY = savedRepo;
+    if (savedSite !== undefined) process.env.ASTRO_SITE = savedSite;
+  }
 
   assert.equal(data.kind, "publication-outbox");
   assert.equal(data.itemCount, 1);
   assert.equal(data.policy.humanReviewRequired, true);
   assert.deepEqual(data.items[0].channels, ["mastodon", "rss"]);
   assert.equal(data.items[0].license, "CC-BY-4.0");
+  // description: author-crafted sharing hook — preferred over excerpt in publish scripts.
+  assert.equal(data.items[0].description, "Gancho de compartilhamento para todos os canais.");
   assert.match(data.items[0].excerpt, /Resumo auditável/);
   assert.ok(data.channels.some((channel) => channel.id === "site"));
+  // url is null when ASTRO_SITE is unset, CNAME absent, and GITHUB_REPOSITORY absent.
+  assert.equal(data.items[0].url, null);
+  // tags extracted from frontmatter (absent here → empty array).
+  assert.deepEqual(data.items[0].tags, []);
 });
