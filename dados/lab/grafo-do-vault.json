@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "source": "scripts/lab_etl_demo.mjs",
-  "noteCount": 66,
+  "noteCount": 68,
   "linkCount": 209,
   "notes": [
     {
@@ -584,7 +584,7 @@
       "id": "recursos/mermaid",
       "title": "Mermaid",
       "folder": "40 - Recursos",
-      "status": "draft",
+      "status": "published",
       "outbound": 6,
       "inbound": 0,
       "brokenLinks": [
@@ -607,6 +607,15 @@
         "Bases",
         "MOC Vault Seed"
       ]
+    },
+    {
+      "id": "modelos/template-post-externo",
+      "title": "{{title}}",
+      "folder": "90 - Modelos",
+      "status": "draft",
+      "outbound": 0,
+      "inbound": 0,
+      "brokenLinks": []
     },
     {
       "id": "recursos/o-que-e-o-metodo-zettelkasten",
@@ -710,15 +719,6 @@
         "Nome da Nota",
         "O que são MOCs (Mapas de Conteúdo)"
       ]
-    },
-    {
-      "id": "modelos/template-post-externo",
-      "title": "{{title}}",
-      "folder": "90 - Modelos",
-      "status": "draft",
-      "outbound": 0,
-      "inbound": 0,
-      "brokenLinks": []
     },
     {
       "id": "recursos/jardim-digital",
@@ -849,6 +849,24 @@
       "title": "Dashboard - {{title}}",
       "folder": "90 - Modelos",
       "status": "draft",
+      "outbound": 0,
+      "inbound": 0,
+      "brokenLinks": []
+    },
+    {
+      "id": "entrada/06-13-05-04-from-telegram",
+      "title": "Mensagem Telegram — 2026-06-13 05:04",
+      "folder": "00 - Entrada",
+      "status": "inbox",
+      "outbound": 0,
+      "inbound": 0,
+      "brokenLinks": []
+    },
+    {
+      "id": "entrada/06-14-00-03-from-telegram",
+      "title": "Mensagem Telegram — 2026-06-14 00:03",
+      "folder": "00 - Entrada",
+      "status": "inbox",
       "outbound": 0,
       "inbound": 0,
       "brokenLinks": []

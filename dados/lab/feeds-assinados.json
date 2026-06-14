@@ -7,13 +7,14 @@
   "privacy": "public-feed-list",
   "groups": [
     "Jardim digital",
+    "Social soberano",
     "Tecnologia",
     "Engenharia de software",
     "Ferramentas e web",
     "Ciência de dados e IA",
     "Privacidade e segurança"
   ],
-  "subscriptionCount": 13,
+  "subscriptionCount": 17,
   "subscriptions": [
     {
       "id": "rss-xml",
@@ -25,6 +26,42 @@
       "categories": [
         "Jardim digital",
         "vault"
+      ]
+    },
+    {
+      "id": "github-com-aretw0-vault-seed-releases-atom",
+      "title": "vault-seed Releases",
+      "xmlUrl": "https://github.com/aretw0/vault-seed/releases.atom",
+      "htmlUrl": "https://github.com/aretw0/vault-seed/releases",
+      "type": "rss",
+      "description": null,
+      "categories": [
+        "Jardim digital",
+        "vault"
+      ]
+    },
+    {
+      "id": "mastodon-social-aretw0-rss",
+      "title": "aretw0 (Mastodon)",
+      "xmlUrl": "https://mastodon.social/@aretw0.rss",
+      "htmlUrl": "https://mastodon.social/@aretw0",
+      "type": "rss",
+      "description": null,
+      "categories": [
+        "Social soberano",
+        "social"
+      ]
+    },
+    {
+      "id": "bsky-app-profile-aretw0-bsky-social-rss",
+      "title": "aretw0 (Bluesky)",
+      "xmlUrl": "https://bsky.app/profile/aretw0.bsky.social/rss",
+      "htmlUrl": "https://bsky.app/profile/aretw0.bsky.social",
+      "type": "rss",
+      "description": null,
+      "categories": [
+        "Social soberano",
+        "social"
       ]
     },
     {
@@ -88,9 +125,9 @@
       ]
     },
     {
-      "id": "thoughtbot-com-blog-atom",
+      "id": "thoughtbot-com-blog-feed-xml",
       "title": "Thoughtbot",
-      "xmlUrl": "https://thoughtbot.com/blog.atom",
+      "xmlUrl": "https://thoughtbot.com/blog/feed.xml",
       "htmlUrl": "https://thoughtbot.com/blog/",
       "type": "rss",
       "description": null,
@@ -124,9 +161,9 @@
       ]
     },
     {
-      "id": "cassidoo-co-feed-xml",
+      "id": "cassidoo-co-rss-xml",
       "title": "Cassidy Williams",
-      "xmlUrl": "https://cassidoo.co/feed.xml",
+      "xmlUrl": "https://cassidoo.co/rss.xml",
       "htmlUrl": "https://cassidoo.co/",
       "type": "rss",
       "description": null,
@@ -136,10 +173,22 @@
       ]
     },
     {
-      "id": "marimo-io-blog-rss-xml",
-      "title": "Marimo Blog",
-      "xmlUrl": "https://marimo.io/blog/rss.xml",
-      "htmlUrl": "https://marimo.io/blog/",
+      "id": "forgejo-org-rss-xml",
+      "title": "Forgejo Blog",
+      "xmlUrl": "https://forgejo.org/rss.xml",
+      "htmlUrl": "https://forgejo.org/blog/",
+      "type": "rss",
+      "description": null,
+      "categories": [
+        "Ferramentas e web",
+        "ferramentas"
+      ]
+    },
+    {
+      "id": "github-com-marimo-team-marimo-releases-atom",
+      "title": "Marimo Releases",
+      "xmlUrl": "https://github.com/marimo-team/marimo/releases.atom",
+      "htmlUrl": "https://github.com/marimo-team/marimo/releases",
       "type": "rss",
       "description": null,
       "categories": [
@@ -148,10 +197,10 @@
       ]
     },
     {
-      "id": "www-deeplearning-ai-the-batch-feed",
-      "title": "The Batch (DeepLearning.AI)",
-      "xmlUrl": "https://www.deeplearning.ai/the-batch/feed/",
-      "htmlUrl": "https://www.deeplearning.ai/the-batch/",
+      "id": "huggingface-co-blog-feed-xml",
+      "title": "Hugging Face Blog",
+      "xmlUrl": "https://huggingface.co/blog/feed.xml",
+      "htmlUrl": "https://huggingface.co/blog/",
       "type": "rss",
       "description": null,
       "categories": [
@@ -172,5 +221,5 @@
       ]
     }
   ],
-  "sha256": "a675b20a3d2c08b1d28521962e8ebd0b7015866b28c9efbab4d6d264b1d9e368"
+  "sha256": "050a9dff334aea246882a640fbe97be751ffb2bd1f6a2586df48c8a4401bc7c3"
 }

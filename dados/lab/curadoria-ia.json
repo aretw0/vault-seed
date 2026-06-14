@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
   "source": ".site/lib/information-architecture-audit.mjs",
-  "notesEvaluated": 38,
+  "notesEvaluated": 39,
   "errors": [],
   "warnings": [],
   "notices": [
-    "Distribuição por intenção: Automatizar=10, Começar=10, Explorar=12, Manter=12, Organizar=7, Publicar=7"
+    "Distribuição por intenção: Automatizar=10, Começar=10, Explorar=12, Manter=12, Organizar=8, Publicar=7"
   ],
   "promotionCandidates": [],
   "thinPublishedResources": [],
@@ -34,7 +34,7 @@
     {
       "intent": "organizar",
       "label": "Organizar",
-      "count": 7
+      "count": 8
     },
     {
       "intent": "publicar",

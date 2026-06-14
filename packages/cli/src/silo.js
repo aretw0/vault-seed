@@ -11,33 +11,10 @@ export const SILO_PATH = join(SILO_DIR, 'silo.json');
 // When refarm publishes @refarm.dev/silo, this file will delegate to it.
 export const SILO_SCOPE = 'publishing-channels';
 
+// Only channels with a complete sow → etl → outbox cycle are listed here.
+// Mastodon, Bluesky, and Buttondown have credential management ready but
+// no dgk outbox implementation yet; they will be added when the cycle is complete.
 export const SERVICES = {
-  mastodon: {
-    label: 'Mastodon',
-    // hint shown before instance is known; the real app-creation link is
-    // shown dynamically in sowService after the user enters their instance.
-    hint: 'Você precisará criar um aplicativo na sua instância Mastodon para obter um token de acesso.',
-    keys: ['MASTODON_INSTANCE', 'MASTODON_TOKEN'],
-    prompts: [
-      { key: 'MASTODON_INSTANCE', label: 'Instância', default: 'mastodon.social', secret: false },
-      { key: 'MASTODON_TOKEN', label: 'Token de acesso', secret: true },
-    ],
-  },
-  bluesky: {
-    label: 'Bluesky',
-    hint: 'Crie um App Password em: https://bsky.app/settings/app-passwords',
-    keys: ['BLUESKY_HANDLE', 'BLUESKY_APP_PASSWORD'],
-    prompts: [
-      { key: 'BLUESKY_HANDLE', label: 'Handle (ex: aretw0.bsky.social)', secret: false },
-      { key: 'BLUESKY_APP_PASSWORD', label: 'App Password', secret: true },
-    ],
-  },
-  buttondown: {
-    label: 'Buttondown',
-    hint: 'Obtenha sua API Key em: https://buttondown.email/settings/api-key',
-    keys: ['BUTTONDOWN_API_KEY'],
-    prompts: [{ key: 'BUTTONDOWN_API_KEY', label: 'API Key', secret: true }],
-  },
   telegram: {
     label: 'Telegram',
     hint: 'Crie um bot em: https://t.me/BotFather → /newbot → copie o token. Depois envie qualquer mensagem ao bot para que o Chat ID seja detectado automaticamente.',

@@ -5,7 +5,7 @@
 
 dgk v0.4: credential manager, pnpm-free UX, and cleaner command surface.
 
-**`dgk sow`** — interactive credential wizard for Mastodon, Bluesky, and Buttondown. Stores tokens at `~/.dgk/silo.json` with `0o600` permissions. Verifies each credential against the real API before saving. `dgk sow list` masks stored values for safe display.
+**`dgk sow`** — interactive credential wizard for Telegram (sow → etl → outbox cycle complete). Stores tokens at `~/.dgk/silo.json` with `0o600` permissions. Verifies credentials against the real API before saving. `dgk sow list` masks stored values for safe display. Mastodon, Bluesky, and Buttondown support is ready internally but will be exposed when `dgk outbox` is implemented for each channel.
 
 **`dgk open <notebook|obsidian>`** — top-level command replacing `dgk lab open` and `dgk lab open-vault`. `dgk open obsidian` opens the vault in Obsidian via URI scheme. `dgk open <name>` opens a marimo notebook by short name or partial match.
 

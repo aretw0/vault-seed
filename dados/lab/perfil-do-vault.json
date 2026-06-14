@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "source": "scripts/lab_etl_demo.mjs",
-  "noteCount": 66,
-  "totalWords": 23180,
-  "averageWords": 351,
+  "noteCount": 68,
+  "totalWords": 23231,
+  "averageWords": 342,
   "folders": [
     {
       "name": "99 - Meta e Anexos",
@@ -19,7 +19,7 @@
     },
     {
       "name": "00 - Entrada",
-      "count": 1
+      "count": 3
     },
     {
       "name": "30 - Áreas",
@@ -29,11 +29,15 @@
   "statuses": [
     {
       "name": "published",
-      "count": 38
+      "count": 39
     },
     {
       "name": "draft",
-      "count": 26
+      "count": 25
+    },
+    {
+      "name": "inbox",
+      "count": 2
     },
     {
       "name": "sem status",
@@ -279,5 +283,5 @@
       ]
     }
   ],
-  "collectedAt": "2026-06-13T00:31:49.480Z"
+  "collectedAt": "2026-06-14T02:58:48.698Z"
 }

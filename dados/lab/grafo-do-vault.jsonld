@@ -17,7 +17,7 @@
   "@type": "Vault",
   "@id": "vault:root",
   "name": "vault-seed",
-  "noteCount": 66,
+  "noteCount": 68,
   "linkCount": 209,
   "@graph": [
     {
@@ -642,7 +642,7 @@
       "@id": "note:recursos/mermaid",
       "name": "Mermaid",
       "folder": "40 - Recursos",
-      "status": "draft",
+      "status": "published",
       "inboundLinks": 0,
       "outboundLinks": 6,
       "brokenLinks": [
@@ -666,6 +666,16 @@
         "Bases",
         "MOC Vault Seed"
       ]
+    },
+    {
+      "@type": "Note",
+      "@id": "note:modelos/template-post-externo",
+      "name": "{{title}}",
+      "folder": "90 - Modelos",
+      "status": "draft",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
     },
     {
       "@type": "Note",
@@ -778,16 +788,6 @@
         "Nome da Nota",
         "O que são MOCs (Mapas de Conteúdo)"
       ]
-    },
-    {
-      "@type": "Note",
-      "@id": "note:modelos/template-post-externo",
-      "name": "{{title}}",
-      "folder": "90 - Modelos",
-      "status": "draft",
-      "inboundLinks": 0,
-      "outboundLinks": 0,
-      "brokenLinks": []
     },
     {
       "@type": "Note",
@@ -934,7 +934,27 @@
       "inboundLinks": 0,
       "outboundLinks": 0,
       "brokenLinks": []
+    },
+    {
+      "@type": "Note",
+      "@id": "note:entrada/06-13-05-04-from-telegram",
+      "name": "Mensagem Telegram — 2026-06-13 05:04",
+      "folder": "00 - Entrada",
+      "status": "inbox",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
+    },
+    {
+      "@type": "Note",
+      "@id": "note:entrada/06-14-00-03-from-telegram",
+      "name": "Mensagem Telegram — 2026-06-14 00:03",
+      "folder": "00 - Entrada",
+      "status": "inbox",
+      "inboundLinks": 0,
+      "outboundLinks": 0,
+      "brokenLinks": []
     }
   ],
-  "generatedAt": "2026-06-13T00:31:49.502Z"
+  "generatedAt": "2026-06-14T02:58:48.717Z"
 }

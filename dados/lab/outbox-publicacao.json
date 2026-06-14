@@ -81,7 +81,7 @@
       "canonical": "30 - Áreas/Blog/Jardim digital - por onde começar.md",
       "source": "30 - Áreas/Blog/Jardim digital - por onde começar.md",
       "collectedAt": null,
-      "sha256": "d04d347e14d17b967e1acfe625ac1e2c6fbd05d2546241b10887ddfd83fe2211",
+      "sha256": "b8a9791d932d2ded76e1589bd823079818ac1d547aa5de3d5ea9197db56a986f",
       "license": "verificar",
       "privacy": "private-until-published",
       "channels": [
@@ -96,8 +96,9 @@
         "jardim-digital",
         "gestao-conhecimento"
       ],
+      "description": "Um arquivo você cria e esquece. Um jardim exige cuidado — você planta sementes, poda o que não funciona, conecta ideias que se beneficiam da proximidade. Aqui, os primeiros passos.",
       "excerpt": "Existe uma ideia simples e poderosa escondida na metáfora do \"jardim digital\". Um arquivo você cria e esquece. Um jardim exige cuidado contínuo — você planta sementes, poda o que não funciona, conecta o que se beneficia da proximidade. No jardim digital, uma nota nasce como rascu"
     }
   ],
-  "sha256": "3f912d429c4077396833584ee17baeddc3f8d9fb41587baa1e2d30e0ff5307d0"
+  "sha256": "f4d24af1eb3a0076e787b8bcff7378071f418ccff7d392abcb19de00ff197c36"
 }
