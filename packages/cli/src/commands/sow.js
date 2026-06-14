@@ -66,6 +66,9 @@ export function promptSecret(question, writeFn = (s) => process.stdout.write(s),
       input.off('keypress', onKeypress);
       input.setRawMode(wasRaw ?? false);
       output.write('\n');
+      // unref allows the process to exit naturally after the last prompt;
+      // the next promptSecret/prompt call will re-ref via resume().
+      input.unref();
     };
 
     const onKeypress = (str, key) => {
