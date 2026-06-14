@@ -25,6 +25,7 @@ const STATE_JSON = join(ROOT, "dados", "lab", "outbox-telegram.json");
 
 const args = process.argv.slice(2);
 const DRY_RUN = args.includes("--dry-run");
+const FORCE = args.includes("--force");
 const LIMIT = (() => {
   const idx = args.indexOf("--limit");
   return idx !== -1 ? parseInt(args[idx + 1], 10) : 5;
@@ -88,6 +89,7 @@ export async function publishToTelegram({
   statePath = STATE_JSON,
   rateLimiterStatePath = RATE_STATE_PATH,
   dryRun = DRY_RUN,
+  force = FORCE,
   limit = LIMIT,
 } = {}) {
   const token = env.TELEGRAM_BOT_TOKEN;
@@ -119,9 +121,12 @@ export async function publishToTelegram({
     ? (() => { try { return JSON.parse(readFileSync(statePath, "utf8")); } catch { return { sent: {} }; } })()
     : { sent: {} };
 
-  const pending = notes.filter((n) => !state.sent[sha(n.path || n.title || "")]);
+  const pending = force
+    ? notes
+    : notes.filter((n) => !state.sent[sha(n.path || n.title || "")]);
   const batch = pending.slice(0, limit);
 
+  if (force && notes.length) console.log("publish_to_telegram: modo --force, ignorando estado de envio anterior.");
   console.log(`publish_to_telegram: ${batch.length} nota(s) para enviar (${pending.length - batch.length} restantes).`);
 
   let sentCount = 0;

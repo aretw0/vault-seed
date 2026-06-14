@@ -18,10 +18,14 @@ Canais disponíveis:
 
 Opções:
   --dry-run  Mostra o que seria publicado sem enviar
+  --force    Republica notas já enviadas (ignora histórico de envio)
+  --limit N  Máximo de notas por execução (padrão: 5)
 
 Exemplos:
   dgk outbox telegram
-  dgk outbox telegram --dry-run`);
+  dgk outbox telegram --dry-run
+  dgk outbox telegram --force --dry-run   # prévia de reenvio
+  dgk outbox telegram --force             # republica tudo`);
 }
 
 export async function outbox(args, runner = run) {

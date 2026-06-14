@@ -253,6 +253,19 @@ async function sowService(serviceId) {
       console.log(`  "Your access token" (não o client secret).\n`);
       const answer = await promptSecret(`${p.label}: `);
       collected[p.key] = answer.trim();
+    } else if (serviceId === 'bluesky' && p.key === 'BLUESKY_APP_PASSWORD') {
+      console.log(`\n  Crie um App Password em:`);
+      console.log(`  → https://bsky.app/settings/app-passwords\n`);
+      console.log(`  Clique em "Add App Password", dê um nome (ex: dgk) e copie`);
+      console.log(`  a senha gerada. Ela aparece apenas uma vez.\n`);
+      const answer = await promptSecret(`${p.label}: `);
+      collected[p.key] = answer.trim();
+    } else if (serviceId === 'buttondown' && p.key === 'BUTTONDOWN_API_KEY') {
+      console.log(`\n  Obtenha sua API Key em:`);
+      console.log(`  → https://buttondown.email/settings/api-key\n`);
+      console.log(`  Clique em "Reveal" para ver a chave e copie-a.\n`);
+      const answer = await promptSecret(`${p.label}: `);
+      collected[p.key] = answer.trim();
     } else if (p.secret) {
       const answer = await promptSecret(`${p.label}: `);
       collected[p.key] = answer.trim();
