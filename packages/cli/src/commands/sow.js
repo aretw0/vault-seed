@@ -234,6 +234,10 @@ async function sowService(serviceId) {
     } else if (serviceId === 'mastodon' && p.key === 'MASTODON_TOKEN') {
       // Instance is already collected — show the real app-creation link before asking for token.
       const instance = normalizeMastodonInstance(collected.MASTODON_INSTANCE);
+      if (!instance) {
+        console.error('\nErro: instância Mastodon é obrigatória.');
+        process.exit(1);
+      }
       collected.MASTODON_INSTANCE = instance;
       console.log(`\n  Crie um aplicativo em:`);
       console.log(`  → https://${instance}/settings/applications/new\n`);

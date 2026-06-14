@@ -226,6 +226,12 @@ describe('normalizeMastodonInstance', () => {
   test('remove protocolo e barra juntos', () => {
     assert.equal(normalizeMastodonInstance('https://mastodon.social/'), 'mastodon.social');
   });
+  test('retorna string vazia para input vazio (Enter sem digitar)', () => {
+    assert.equal(normalizeMastodonInstance(''), '');
+  });
+  test('retorna string vazia para protocolo sem host', () => {
+    assert.equal(normalizeMastodonInstance('https://'), '');
+  });
 });
 
 // --- verifyMastodon ---
