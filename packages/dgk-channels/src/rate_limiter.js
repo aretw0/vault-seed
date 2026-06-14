@@ -78,6 +78,10 @@ export async function throttle(platform, {
       await sleep(windowRemaining);
       ps.windowStart = Date.now();
       ps.sentInWindow = 0;
+      const sinceLastSendAfterBurst = Date.now() - ps.lastSentAt;
+      if (sinceLastSendAfterBurst < limits.minDelayMs) {
+        await sleep(limits.minDelayMs - sinceLastSendAfterBurst);
+      }
     }
   }
 

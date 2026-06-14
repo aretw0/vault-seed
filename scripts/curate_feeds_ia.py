@@ -13,6 +13,7 @@ import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.request import Request, urlopen
 
 import defusedxml.ElementTree as ET
 from llm_client import call_llm, resolve_provider

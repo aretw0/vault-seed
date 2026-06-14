@@ -7,7 +7,9 @@ import {
   siloStatus, loadSilo, saveTokens, removeService,
   SILO_PATH, SERVICES,
 } from '../silo.js';
-import { loadContacts, resolveContactsDir, telegramChatsToContacts } from '@aretw0/dgk-channels/contacts';
+async function loadChannels() {
+  try { return await import('@aretw0/dgk-channels/contacts'); } catch { return null; }
+}
 
 const DEFAULT_PORT = 4322;
 const DEFAULT_HOST = '127.0.0.1';
@@ -47,15 +49,26 @@ function readRateLimits() {
   try { return JSON.parse(readFileSync(RATE_LIMITS_PATH, 'utf8')); } catch { return {}; }
 }
 
-function readAllContacts(root, siloPath) {
-  const silo = loadSilo(siloPath);
-  const dir = resolveContactsDir(root, silo);
+async function readAllContacts(root, siloPath) {
+  const mod = await loadChannels();
   const result = {};
   for (const platform of Object.keys(SERVICES)) {
-    const contacts = loadContacts(platform, dir);
+    if (!mod) { result[platform] = { count: 0, contacts: [] }; continue; }
+    const silo = loadSilo(siloPath);
+    const dir = mod.resolveContactsDir(root, silo);
+    const contacts = mod.loadContacts(platform, dir);
     result[platform] = { count: contacts.length, contacts };
   }
   return result;
+}
+
+async function verifyTelegramToken(token, fetchFn) {
+  try {
+    const res = await fetchFn(`https://api.telegram.org/bot${token}/getMe`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.ok ? `@${data.result.username}` : null;
+  } catch { return null; }
 }
 
 // Spawns a script and captures stdout+stderr. Used by operation endpoints
@@ -118,7 +131,9 @@ async function fetchTelegramChats(token, fetchFn) {
                    u.my_chat_member?.chat ?? u.chat_member?.chat;
       if (chat && !seen.has(chat.id)) seen.set(chat.id, chat);
     }
-    return telegramChatsToContacts([...seen.values()]);
+    const mod = await loadChannels();
+    if (!mod) return [];
+    return mod.telegramChatsToContacts([...seen.values()]);
   } catch { return []; }
 }
 
@@ -399,7 +414,7 @@ async function handleAsync(req, res, root, siloPath, fetchFn, spawnFn) {
   }
 
   if (url.pathname === '/api/contacts' && method === 'GET') {
-    jsonResponse(res, { platforms: readAllContacts(root, siloPath) });
+    jsonResponse(res, { platforms: await readAllContacts(root, siloPath) });
     return;
   }
 
@@ -418,7 +433,25 @@ async function handleAsync(req, res, root, siloPath, fetchFn, spawnFn) {
       jsonResponse(res, { error: `Unknown service: ${service}` }, 400);
       return;
     }
-    saveTokens(tokens, siloPath);
+    const allowedKeys = SERVICES[service].keys;
+    const filtered = Object.fromEntries(
+      allowedKeys.filter((k) => k in tokens && tokens[k]).map((k) => [k, tokens[k]]),
+    );
+    if (service === 'telegram' && filtered.TELEGRAM_BOT_TOKEN) {
+      const identity = await verifyTelegramToken(filtered.TELEGRAM_BOT_TOKEN, fetchFn);
+      if (identity === null) {
+        jsonResponse(res, { error: 'Credenciais inválidas: token Telegram rejeitado' }, 400);
+        return;
+      }
+    }
+    saveTokens(filtered, siloPath);
+    const mod = await loadChannels();
+    if (mod && service === 'telegram' && filtered.TELEGRAM_BOT_TOKEN) {
+      const silo = loadSilo(siloPath);
+      const contactsDir = mod.resolveContactsDir(root, silo);
+      await mod.discoverAndSaveTelegramContacts(filtered.TELEGRAM_BOT_TOKEN, contactsDir, fetchFn)
+        .catch(() => {});
+    }
     jsonResponse(res, { ok: true });
     return;
   }

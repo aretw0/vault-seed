@@ -242,10 +242,16 @@ describe('GET /api/services', () => {
 
 describe('POST /api/sow', () => {
   let tmp, siloPath, server;
+  const fakeFetch = async (url) => {
+    if (String(url).includes('/getMe')) {
+      return { ok: true, json: async () => ({ ok: true, result: { username: 'testbot', first_name: 'Test' } }) };
+    }
+    return { ok: true, json: async () => ({ ok: true, result: [] }) };
+  };
   beforeEach(async () => {
     tmp = tempDir();
     siloPath = tempSilo(tmp);
-    server = await startServer(tmp, siloPath);
+    server = await startServer(tmp, siloPath, { fetchFn: fakeFetch });
   });
   afterEach(async () => {
     await server.close();

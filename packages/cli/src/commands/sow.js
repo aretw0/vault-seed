@@ -346,9 +346,13 @@ async function sowRemove(serviceId) {
     console.error('dgk sow remove: especifique o serviço');
     process.exit(1);
   }
+  if (!(serviceId in SERVICES)) {
+    console.error(`dgk sow remove: serviço desconhecido '${serviceId}'`);
+    process.exit(1);
+  }
   const removed = removeService(serviceId);
   if (!removed) {
-    console.error(`dgk sow remove: serviço desconhecido '${serviceId}'`);
+    console.error(`dgk sow remove: nenhuma credencial configurada para '${serviceId}'`);
     process.exit(1);
   }
   console.log(`✓ Credenciais de ${serviceId} removidas de ${SILO_PATH}`);

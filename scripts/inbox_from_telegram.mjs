@@ -3,7 +3,7 @@
  * Telegram inbox: polls for new messages and creates vault notes in 00 - Entrada/.
  *
  * Reads:  dados/lab/inbox-telegram-state.json (last processed update_id)
- * Writes: 00 - Entrada/YYYY-MM-DD HH-MM from telegram.md  (one per message)
+ * Writes: 00 - Entrada/YYYY-MM-DD HH-MM from telegram--<id>.md  (one per message)
  *         dados/lab/inbox-telegram-state.json              (updated state)
  *
  * Env vars (via dgk sow telegram):
@@ -186,7 +186,7 @@ export async function inboxFromTelegram({
     if (!msg) continue;
 
     const ts = isoDate(msg.date);
-    const filename = safeFilename(`${ts} from telegram`) + ".md";
+    const filename = safeFilename(`${ts} from telegram`) + `--${msg.message_id}.md`;
     const notePath = join(inboxDir, filename);
     const noteContent = buildNote(msg);
 
