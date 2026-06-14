@@ -98,6 +98,12 @@ export function promptSecret(question, writeFn = (s) => process.stdout.write(s),
   });
 }
 
+// Strips protocol and trailing slash so users can paste either
+// "mastodon.social" or "https://mastodon.social/" and get the same result.
+export function normalizeMastodonInstance(raw) {
+  return raw.replace(/^https?:\/\//, '').replace(/\/$/, '').trim();
+}
+
 export async function verifyMastodon(instance, token, fetchFn = fetch) {
   try {
     const url = `https://${instance}/api/v1/accounts/verify_credentials`;
@@ -225,6 +231,21 @@ async function sowService(serviceId) {
   for (const p of service.prompts) {
     if (serviceId === 'telegram' && p.key === 'TELEGRAM_CHAT_ID') {
       collected[p.key] = await resolveTelegramChatId(collected.TELEGRAM_BOT_TOKEN);
+    } else if (serviceId === 'mastodon' && p.key === 'MASTODON_TOKEN') {
+      // Instance is already collected — show the real app-creation link before asking for token.
+      const instance = normalizeMastodonInstance(collected.MASTODON_INSTANCE);
+      collected.MASTODON_INSTANCE = instance;
+      console.log(`\n  Crie um aplicativo em:`);
+      console.log(`  → https://${instance}/settings/applications/new\n`);
+      console.log(`  Configurações do formulário:`);
+      console.log(`    Nome do aplicativo : dgk  (ou qualquer nome)`);
+      console.log(`    Website            : (opcional)`);
+      console.log(`    Redirect URI       : urn:ietf:wg:oauth:2.0:oob  ← manter o padrão`);
+      console.log(`    Escopos            : read  write  push\n`);
+      console.log(`  Após salvar, abra o aplicativo criado e copie o campo`);
+      console.log(`  "Your access token" (não o client secret).\n`);
+      const answer = await promptSecret(`${p.label}: `);
+      collected[p.key] = answer.trim();
     } else if (p.secret) {
       const answer = await promptSecret(`${p.label}: `);
       collected[p.key] = answer.trim();

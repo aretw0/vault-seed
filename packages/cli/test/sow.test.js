@@ -1,6 +1,6 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { verifyTelegram, discoverTelegramChats, chatLabel, promptSecret, maskSecret, verifyMastodon, verifyBluesky, verifyButtondown } from '../src/commands/sow.js';
+import { verifyTelegram, discoverTelegramChats, chatLabel, promptSecret, maskSecret, verifyMastodon, normalizeMastodonInstance, verifyBluesky, verifyButtondown } from '../src/commands/sow.js';
 
 function mockFetch(body, ok = true) {
   return async (_url) => ({
@@ -205,6 +205,26 @@ describe('discoverTelegramChats', () => {
     const chats = await discoverTelegramChats('tok', fakeFetch);
     assert.equal(chats.length, 1);
     assert.equal(chats[0].id, 77);
+  });
+});
+
+// --- normalizeMastodonInstance ---
+
+describe('normalizeMastodonInstance', () => {
+  test('mantém instância sem protocolo', () => {
+    assert.equal(normalizeMastodonInstance('mastodon.social'), 'mastodon.social');
+  });
+  test('remove prefixo https://', () => {
+    assert.equal(normalizeMastodonInstance('https://mastodon.social'), 'mastodon.social');
+  });
+  test('remove prefixo http://', () => {
+    assert.equal(normalizeMastodonInstance('http://fosstodon.org'), 'fosstodon.org');
+  });
+  test('remove barra final', () => {
+    assert.equal(normalizeMastodonInstance('mastodon.social/'), 'mastodon.social');
+  });
+  test('remove protocolo e barra juntos', () => {
+    assert.equal(normalizeMastodonInstance('https://mastodon.social/'), 'mastodon.social');
   });
 });
 

@@ -14,7 +14,9 @@ export const SILO_SCOPE = 'publishing-channels';
 export const SERVICES = {
   mastodon: {
     label: 'Mastodon',
-    hint: 'Crie um token em: <instância>/settings/applications → Novo aplicativo → escopos: read+write+push',
+    // hint shown before instance is known; the real app-creation link is
+    // shown dynamically in sowService after the user enters their instance.
+    hint: 'Você precisará criar um aplicativo na sua instância Mastodon para obter um token de acesso.',
     keys: ['MASTODON_INSTANCE', 'MASTODON_TOKEN'],
     prompts: [
       { key: 'MASTODON_INSTANCE', label: 'Instância (ex: mastodon.social)', secret: false },
