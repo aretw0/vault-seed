@@ -12,6 +12,7 @@ jobs:
     permissions:
       contents: write
       pages: write
+      administration: write
     steps:
       - name: 🏗️ Initialize Project from Template
         uses: aretw0/template-initializer@cf2249f8a97563d5bf3bc82bec5d3bcc3c816469 # v1.0.1
@@ -80,6 +81,26 @@ jobs:
             git commit -m "chore: reset notas de referência para draft"
             git push
           fi
+
+      - name: 🔒 Protect main branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api \
+            --method PUT \
+            -H "Accept: application/vnd.github+json" \
+            /repos/${{ github.repository }}/branches/main/protection \
+            --input - <<'JSON'
+          {
+            "required_status_checks": null,
+            "enforce_admins": false,
+            "required_pull_request_reviews": null,
+            "restrictions": null,
+            "allow_force_pushes": false,
+            "allow_deletions": false
+          }
+          JSON
+          echo "Main branch protected against force pushes and deletions."
 
       - name: 🌐 Enable GitHub Pages
         env:
