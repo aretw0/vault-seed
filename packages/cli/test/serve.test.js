@@ -68,7 +68,7 @@ describe('GET /api/status', () => {
   let tmp, siloPath, server;
   beforeEach(async () => {
     tmp = tempDir();
-    siloPath = tempSilo(tmp, { MASTODON_TOKEN: 'tok-abc123' });
+    siloPath = tempSilo(tmp, { TELEGRAM_BOT_TOKEN: 'tok-abc123', TELEGRAM_CHAT_ID: '-100' });
     server = await startServer(tmp, siloPath);
   });
   afterEach(async () => {
@@ -94,13 +94,13 @@ describe('GET /api/status', () => {
     }
   });
 
-  test('canal mastodon aparece como configurado quando token presente', async () => {
+  test('canal telegram aparece como configurado quando token presente', async () => {
     const res = await fetch(`${server.address}/api/status`);
     const data = await res.json();
-    const mastodon = data.channels.find((c) => c.id === 'mastodon');
-    assert.ok(mastodon, 'mastodon deve estar listado');
-    const tokenKey = mastodon.keys.find((k) => k.key === 'MASTODON_TOKEN');
-    assert.ok(tokenKey.configured, 'MASTODON_TOKEN deve aparecer como configurado');
+    const telegram = data.channels.find((c) => c.id === 'telegram');
+    assert.ok(telegram, 'telegram deve estar listado');
+    const tokenKey = telegram.keys.find((k) => k.key === 'TELEGRAM_BOT_TOKEN');
+    assert.ok(tokenKey.configured, 'TELEGRAM_BOT_TOKEN deve aparecer como configurado');
   });
 });
 
@@ -214,13 +214,13 @@ describe('GET /api/services', () => {
     rmSync(tmp, { recursive: true });
   });
 
-  test('retorna definições de todos os canais sem credentials', async () => {
+  test('retorna definições dos canais registrados sem credentials', async () => {
     const res = await fetch(`${server.address}/api/services`);
     assert.equal(res.status, 200);
     const data = await res.json();
     assert.ok(typeof data.services === 'object');
     assert.ok('telegram' in data.services, 'telegram deve estar listado');
-    assert.ok('mastodon' in data.services);
+    assert.ok(!('mastodon' in data.services), 'mastodon não deve estar listado (ciclo incompleto)');
   });
 
   test('cada serviço tem label, hint e prompts', async () => {
@@ -256,7 +256,7 @@ describe('POST /api/sow', () => {
     const res = await fetch(`${server.address}/api/sow`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
-      body: JSON.stringify({ service: 'mastodon', tokens: { MASTODON_TOKEN: 'tok-test' } }),
+      body: JSON.stringify({ service: 'telegram', tokens: { TELEGRAM_BOT_TOKEN: 'tok-test', TELEGRAM_CHAT_ID: '-999' } }),
     });
     assert.equal(res.status, 200);
     const data = await res.json();
@@ -265,7 +265,16 @@ describe('POST /api/sow', () => {
     // Verify persisted in silo
     const { readFileSync } = await import('node:fs');
     const silo = JSON.parse(readFileSync(siloPath, 'utf8'));
-    assert.equal(silo.tokens.MASTODON_TOKEN, 'tok-test');
+    assert.equal(silo.tokens.TELEGRAM_BOT_TOKEN, 'tok-test');
+  });
+
+  test('retorna 400 para serviço fora do ciclo completo (mastodon)', async () => {
+    const res = await fetch(`${server.address}/api/sow`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
+      body: JSON.stringify({ service: 'mastodon', tokens: { MASTODON_TOKEN: 'tok' } }),
+    });
+    assert.equal(res.status, 400);
   });
 
   test('retorna 400 para serviço desconhecido', async () => {
@@ -312,7 +321,7 @@ describe('DELETE /api/sow/:service', () => {
   let tmp, siloPath, server;
   beforeEach(async () => {
     tmp = tempDir();
-    siloPath = tempSilo(tmp, { MASTODON_TOKEN: 'tok', MASTODON_INSTANCE: 'social.example' });
+    siloPath = tempSilo(tmp, { TELEGRAM_BOT_TOKEN: 'tok', TELEGRAM_CHAT_ID: '-100' });
     server = await startServer(tmp, siloPath);
   });
   afterEach(async () => {
@@ -321,18 +330,18 @@ describe('DELETE /api/sow/:service', () => {
   });
 
   test('remove credenciais do serviço', async () => {
-    const res = await fetch(`${server.address}/api/sow/mastodon`, { method: 'DELETE', headers: { 'X-Dgk-Admin': '1' } });
+    const res = await fetch(`${server.address}/api/sow/telegram`, { method: 'DELETE', headers: { 'X-Dgk-Admin': '1' } });
     assert.equal(res.status, 200);
     const data = await res.json();
     assert.equal(data.ok, true);
 
     const { readFileSync } = await import('node:fs');
     const silo = JSON.parse(readFileSync(siloPath, 'utf8'));
-    assert.ok(!silo.tokens?.MASTODON_TOKEN, 'token deve ter sido removido');
+    assert.ok(!silo.tokens?.TELEGRAM_BOT_TOKEN, 'token deve ter sido removido');
   });
 
-  test('retorna 404 para serviço não configurado', async () => {
-    const res = await fetch(`${server.address}/api/sow/telegram`, { method: 'DELETE', headers: { 'X-Dgk-Admin': '1' } });
+  test('retorna 404 para serviço desconhecido (fora do ciclo completo)', async () => {
+    const res = await fetch(`${server.address}/api/sow/mastodon`, { method: 'DELETE', headers: { 'X-Dgk-Admin': '1' } });
     assert.equal(res.status, 404);
   });
 });

@@ -45,15 +45,15 @@ describe('saveTokens e loadSiloEnv', () => {
 });
 
 describe('removeService', () => {
-  test('remove chaves do serviço especificado sem afetar outros', () => {
+  test('remove chaves do serviço especificado sem afetar outros tokens no silo', () => {
     const { path, cleanup } = tempPath();
     try {
-      saveTokens({ MASTODON_INSTANCE: 'mastodon.social', MASTODON_TOKEN: 'tok', BLUESKY_HANDLE: 'x' }, path);
-      removeService('mastodon', path);
+      saveTokens({ TELEGRAM_BOT_TOKEN: 'tok', TELEGRAM_CHAT_ID: '-100', OTHER_KEY: 'x' }, path);
+      removeService('telegram', path);
       const env = loadSiloEnv(path);
-      assert.equal(env.MASTODON_INSTANCE, undefined, 'MASTODON_INSTANCE deve ser removido');
-      assert.equal(env.MASTODON_TOKEN, undefined, 'MASTODON_TOKEN deve ser removido');
-      assert.equal(env.BLUESKY_HANDLE, 'x', 'BLUESKY_HANDLE não deve ser afetado');
+      assert.equal(env.TELEGRAM_BOT_TOKEN, undefined, 'TELEGRAM_BOT_TOKEN deve ser removido');
+      assert.equal(env.TELEGRAM_CHAT_ID, undefined, 'TELEGRAM_CHAT_ID deve ser removido');
+      assert.equal(env.OTHER_KEY, 'x', 'outras chaves não devem ser afetadas');
     } finally { cleanup(); }
   });
 
@@ -62,19 +62,16 @@ describe('removeService', () => {
   });
 
   test('removeService retorna false quando silo não existe', () => {
-    assert.equal(removeService('mastodon', '/caminho/inexistente/silo.json'), false);
+    assert.equal(removeService('telegram', '/caminho/inexistente/silo.json'), false);
   });
 });
 
 describe('siloStatus', () => {
-  test('retorna todos os serviços mesmo sem nenhum configurado', () => {
+  test('retorna todos os serviços registrados mesmo sem nenhum configurado', () => {
     const { path, cleanup } = tempPath();
     try {
       const status = siloStatus(path);
       const ids = status.map((s) => s.id);
-      assert.ok(ids.includes('mastodon'), 'deve incluir mastodon');
-      assert.ok(ids.includes('bluesky'), 'deve incluir bluesky');
-      assert.ok(ids.includes('buttondown'), 'deve incluir buttondown');
       assert.ok(ids.includes('telegram'), 'deve incluir telegram');
     } finally { cleanup(); }
   });
@@ -82,37 +79,33 @@ describe('siloStatus', () => {
   test('marca chaves como configuradas quando presentes no silo', () => {
     const { path, cleanup } = tempPath();
     try {
-      saveTokens({ MASTODON_INSTANCE: 'mastodon.social', MASTODON_TOKEN: 'tok' }, path);
+      saveTokens({ TELEGRAM_BOT_TOKEN: 'tok', TELEGRAM_CHAT_ID: '-100' }, path);
       const status = siloStatus(path);
-      const mastodon = status.find((s) => s.id === 'mastodon');
-      const bluesky = status.find((s) => s.id === 'bluesky');
-      assert.ok(mastodon.keys.every((k) => k.configured), 'todas as chaves mastodon devem estar configuradas');
-      assert.ok(bluesky.keys.every((k) => !k.configured), 'bluesky não deve estar configurado');
+      const telegram = status.find((s) => s.id === 'telegram');
+      assert.ok(telegram.keys.every((k) => k.configured), 'todas as chaves telegram devem estar configuradas');
     } finally { cleanup(); }
   });
 
   test('preview mascara o valor (mostra apenas 4 chars)', () => {
     const { path, cleanup } = tempPath();
     try {
-      saveTokens({ MASTODON_TOKEN: 'secrettoken123' }, path);
+      saveTokens({ TELEGRAM_BOT_TOKEN: 'secrettoken123' }, path);
       const status = siloStatus(path);
-      const mastodon = status.find((s) => s.id === 'mastodon');
-      const tokenKey = mastodon.keys.find((k) => k.key === 'MASTODON_TOKEN');
+      const telegram = status.find((s) => s.id === 'telegram');
+      const tokenKey = telegram.keys.find((k) => k.key === 'TELEGRAM_BOT_TOKEN');
       assert.ok(tokenKey.preview.startsWith('secr'), 'preview deve começar com os 4 primeiros chars');
       assert.ok(tokenKey.preview.includes('•'), 'preview deve conter caracteres de máscara');
     } finally { cleanup(); }
   });
 });
 
-test('SERVICES cobre canais de publicação com prompts e hints', () => {
-  assert.ok('mastodon' in SERVICES);
-  assert.ok('bluesky' in SERVICES);
-  assert.ok('buttondown' in SERVICES);
-  assert.ok('telegram' in SERVICES);
+test('SERVICES cobre somente canais com ciclo sow→etl→outbox completo', () => {
+  // Only channels with a complete, dogfooded publish cycle are registered.
+  assert.ok('telegram' in SERVICES, 'telegram deve estar registrado');
+  assert.ok(!('mastodon' in SERVICES), 'mastodon ainda não tem dgk outbox implementado');
+  assert.ok(!('bluesky' in SERVICES), 'bluesky ainda não tem dgk outbox implementado');
+  assert.ok(!('buttondown' in SERVICES), 'buttondown ainda não tem dgk outbox implementado');
   assert.ok(!('anthropic' in SERVICES), 'anthropic é domínio do refarm sow, não do dgk sow');
-  assert.ok(SERVICES.mastodon.prompts.length >= 2);
-  assert.ok(SERVICES.bluesky.prompts.length >= 2);
-  assert.ok(SERVICES.buttondown.prompts.length >= 1);
   assert.ok(SERVICES.telegram.prompts.length >= 2, 'telegram precisa de BOT_TOKEN e CHAT_ID');
   for (const svc of Object.values(SERVICES)) {
     assert.ok(typeof svc.hint === 'string' && svc.hint.length > 0, `${svc.label} deve ter hint`);
