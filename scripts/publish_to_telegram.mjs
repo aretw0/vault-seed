@@ -41,8 +41,9 @@ function formatMessage(note) {
   const body = note.excerpt || note.summary || note.description || "";
   const url = note.url || note.siteUrl || "";
   // Tags from frontmatter become hashtags; spaces → underscores per Telegram convention.
+  // escapeMarkdown handles the '#' — MarkdownV2 requires it as '\#'.
   const hashtags = (note.tags ?? [])
-    .map((t) => `\#${String(t).replace(/\s+/g, "_")}`)
+    .map((t) => escapeMarkdown(`#${String(t).replace(/\s+/g, "_")}`))
     .join(" ");
 
   let text = `*${escapeMarkdown(title)}*`;
