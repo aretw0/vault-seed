@@ -36,12 +36,18 @@ function sha(str) {
 
 function formatMessage(note) {
   const title = note.title || note.path?.split("/").pop()?.replace(/\.md$/, "") || "Nota";
-  const summary = note.summary || note.description || "";
+  // excerpt comes from outbox ETL; summary/description kept for backward compat.
+  const body = note.excerpt || note.summary || note.description || "";
   const url = note.url || note.siteUrl || "";
+  // Tags from frontmatter become hashtags; spaces → underscores per Telegram convention.
+  const hashtags = (note.tags ?? [])
+    .map((t) => `\#${String(t).replace(/\s+/g, "_")}`)
+    .join(" ");
 
   let text = `*${escapeMarkdown(title)}*`;
-  if (summary) text += `\n\n${escapeMarkdown(summary)}`;
-  if (url) text += `\n\n[Leia mais](${url})`;
+  if (body) text += `\n\n${escapeMarkdown(body.length > 300 ? body.slice(0, 297) + "…" : body)}`;
+  if (hashtags) text += `\n\n${hashtags}`;
+  if (url) text += `\n\n[Leia mais ↗](${escapeMarkdown(url)})`;
   return text;
 }
 

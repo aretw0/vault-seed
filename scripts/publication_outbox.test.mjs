@@ -52,4 +52,8 @@ test("buildPublicationOutbox extracts only explicit publication candidates", () 
   assert.equal(data.items[0].license, "CC-BY-4.0");
   assert.match(data.items[0].excerpt, /Resumo auditável/);
   assert.ok(data.channels.some((channel) => channel.id === "site"));
+  // url is null when ASTRO_SITE is unset, CNAME absent, and GITHUB_REPOSITORY absent.
+  assert.equal(data.items[0].url, null);
+  // tags extracted from frontmatter (absent here → empty array).
+  assert.deepEqual(data.items[0].tags, []);
 });

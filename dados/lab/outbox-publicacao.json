@@ -75,6 +75,7 @@
       "id": "areas-blog-jardim-digital-por-onde-comecar",
       "title": "Jardim digital: por onde começar",
       "path": "30 - Áreas/Blog/Jardim digital - por onde começar.md",
+      "url": "https://vault-seed.aretw0.dev.br/areas-blog-jardim-digital-por-onde-comecar/",
       "status": "published",
       "publicationStatus": "ready",
       "canonical": "30 - Áreas/Blog/Jardim digital - por onde começar.md",
@@ -90,8 +91,13 @@
       ],
       "channelCount": 3,
       "audience": "todos",
+      "tags": [
+        "pkm",
+        "jardim-digital",
+        "gestao-conhecimento"
+      ],
       "excerpt": "Existe uma ideia simples e poderosa escondida na metáfora do \"jardim digital\". Um arquivo você cria e esquece. Um jardim exige cuidado contínuo — você planta sementes, poda o que não funciona, conecta o que se beneficia da proximidade. No jardim digital, uma nota nasce como rascu"
     }
   ],
-  "sha256": "70c261db52617f9b01d0f52076d31fabc9cbcdb911211c928bae45da48002a54"
+  "sha256": "3f912d429c4077396833584ee17baeddc3f8d9fb41587baa1e2d30e0ff5307d0"
 }
