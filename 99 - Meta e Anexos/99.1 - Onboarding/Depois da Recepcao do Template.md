@@ -8,7 +8,7 @@ tags:
   - meta/workflow
   - git/github
   - obsidian/git
-status: published
+status: draft
 created: 2026-05-19
 updated: 2026-05-19
 category: guia

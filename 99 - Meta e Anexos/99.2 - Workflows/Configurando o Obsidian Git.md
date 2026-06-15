@@ -7,7 +7,7 @@ tags:
   - obsidian/plugin
   - meta/git
   - meta/sincronizacao
-status: published
+status: draft
 created: 2026-05-18
 updated: 2026-05-18
 category: guia

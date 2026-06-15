@@ -9,7 +9,7 @@ tags:
   - obsidian/bases
   - obsidian/dataview
   - obsidian/moc
-status: published
+status: draft
 created: 2026-05-19
 updated: 2026-05-23
 category: moc

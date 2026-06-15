@@ -6,7 +6,7 @@ aliases:
 tags:
   - meta/setup
   - meta/devenv
-status: published
+status: draft
 created: 2026-05-19
 updated: 2026-05-21
 category: guia

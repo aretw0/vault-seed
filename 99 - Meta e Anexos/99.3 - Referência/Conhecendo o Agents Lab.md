@@ -7,7 +7,7 @@ tags:
   - meta/ia
   - meta/agentes
   - meta/ecossistema
-status: published
+status: draft
 created: 2026-05-23
 updated: 2026-05-23
 category: referencia

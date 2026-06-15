@@ -7,7 +7,7 @@ tags:
   - meta/site
   - meta/github-actions
   - meta/astro
-status: published
+status: draft
 created: 2026-05-22
 updated: 2026-05-22
 category: guia
@@ -51,7 +51,7 @@ Se você configurar um domínio customizado, o workflow detecta o domínio e aju
 Adicione ou atualize o frontmatter:
 
 ```yaml
-status: published
+status: draft
 ```
 
 Faça commit e push para `main`. O histórico Git continua sendo o registro da mudança, e o site mostra o estado publicado depois que o workflow terminar.

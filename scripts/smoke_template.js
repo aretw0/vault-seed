@@ -534,28 +534,23 @@ requireCondition(
   "scripts/notebook_cell_output_lint.test.mjs must be present so generated vaults guard against invisible notebook output.",
 );
 
-// Note status contract — three categories:
+// Note status contract — two categories:
 //
-// PUBLISHED (stay published for users): notes the user receives as published.
-//   Must NOT be in RESET_ON_INIT. The welcome note is the canonical example —
-//   it is the user's first published content.
+// PUBLISHED: notes the user receives as published. The vault-seed site also
+//   shows them. The welcome note is the canonical example.
 //
-// PUBLISHED → DRAFT on init (RESET_ON_INIT): published on the vault-seed site
-//   but reset to draft by initialize.yml before the user's first commit.
-//   Used for reference notes vault-seed wants on its own site but that belong
-//   to the user to decide about. Must be listed in initialize.yml's reset step.
-//
-// DRAFT: example/concept content that arrives as draft and stays draft.
-//   Must not be accidentally published by bulk resets.
+// DRAFT_FOR_USERS: user content (onboarding, reference, workflows, examples).
+//   Must be status: draft in source — vault-seed does not publish these as its
+//   own content. Users promote notes individually as they make them their own.
+//   The global catch-all below catches any note that escapes this contract.
 const NOTE_STATUS_CONTRACT = {
-  // Stays published for users — the user's own starting content.
+  // Stays published everywhere — the user's own starting content.
   published: [
     "00 - Entrada/Bem-vindo ao seu vault.md",
   ],
-  // Published on vault-seed's site; reset to draft by initialize.yml.
-  // The user's site starts lean — only Bem-vindo is published.
-  // Users promote notes individually as they make them their own.
-  publishedResetOnInit: [
+  // User content: ships as draft, user decides whether to publish.
+  // vault-seed's site must NOT show these as published notes.
+  draftForUsers: [
     // 30 - Áreas
     "30 - Áreas/Blog/Jardim digital - por onde começar.md",
     // 40 - Recursos
@@ -606,8 +601,7 @@ const NOTE_STATUS_CONTRACT = {
     "99 - Meta e Anexos/99.4 - Apresentações/Integração com Agentes de IA.md",
     // 99 - Meta e Anexos / Diagramas
     "99 - Meta e Anexos/Diagramas/Exemplos.md",
-  ],
-  draft: [
+    // 40 - Recursos / concepts (always draft)
     "40 - Recursos/Filosofia e Conceitos Fundamentais.md",
     "40 - Recursos/O que é o método PARA.md",
     "40 - Recursos/O que é o método Zettelkasten.md",
@@ -629,26 +623,40 @@ for (const notePath of NOTE_STATUS_CONTRACT.published) {
   );
 }
 
-for (const notePath of NOTE_STATUS_CONTRACT.publishedResetOnInit) {
-  const content = read(notePath);
-  const status = extractStatus(content);
-  requireCondition(
-    status === "published",
-    `${notePath} must have status: published in source (vault-seed site) — initialize.yml resets it to draft for users. Got: ${status ?? "(absent)"}`,
-  );
-  requireCondition(
-    initializeWorkflow.includes(notePath),
-    `${notePath} is in publishedResetOnInit but missing from initialize.yml's reset step — users would receive it as published.`,
-  );
-}
-
-for (const notePath of NOTE_STATUS_CONTRACT.draft) {
+for (const notePath of NOTE_STATUS_CONTRACT.draftForUsers) {
   const content = read(notePath);
   const status = extractStatus(content);
   requireCondition(
     status === "draft",
-    `${notePath} must have status: draft (example content, user decides). Got: ${status ?? "(absent)"}`,
+    `${notePath} must have status: draft in source — user content must not appear as published on the vault-seed site. Got: ${status ?? "(absent)"}`,
   );
+}
+
+// Global catch-all: any git-tracked .md file not covered by the explicit
+// published allowlist must NOT have status: published. This catches notes
+// added without being registered in NOTE_STATUS_CONTRACT.published.
+// Files removed by initialize.yml (files_to_remove) are exempt — they are
+// template-brand content that never ships to users.
+{
+  const removedRaw = (() => {
+    const m = initializeWorkflow.match(/files_to_remove:\s*"([^"]+)"/);
+    return m ? m[1].replace(/\\ /g, "\x00").split(/\s+/).filter(Boolean).map((s) => s.replace(/\x00/g, " ")) : [];
+  })();
+  const allowedPublished = new Set(NOTE_STATUS_CONTRACT.published.map((p) => p.replace(/\\/g, "/")));
+  for (const trackedFile of gitLsFiles()) {
+    if (!trackedFile.endsWith(".md")) continue;
+    const normalized = trackedFile.replace(/\\/g, "/");
+    if (allowedPublished.has(normalized)) continue;
+    if (removedRaw.some((r) => normalized === r || normalized.startsWith(r.replace(/\\/g, "/") + "/"))) continue;
+    let content;
+    try { content = read(normalized); } catch { continue; }
+    const status = extractStatus(content);
+    requireCondition(
+      status !== "published",
+      `[NOTE_CATCH_ALL] ${normalized} has status: published but is not in the published allowlist. ` +
+      `User content must be status: draft in source. To publish vault-seed brand content, add it to files_to_remove.`,
+    );
+  }
 }
 
 if (errors.length > 0) {

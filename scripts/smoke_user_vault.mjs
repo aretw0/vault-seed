@@ -6,7 +6,7 @@
  *     a. Rename template files (README.template.md → README.md, etc.)
  *     b. Remove template-only files and directories
  *     c. Self-destruct: remove initialize.yml
- *   Step 2 — Note reset: status: published → status: draft for 38 reference notes
+ *   Step 2 — Note status: all user-content notes already arrive as status: draft in source (no reset step needed)
  *   Step 3 — GitHub Pages enable (not testable in Node.js — skipped)
  *
  * Uses `git ls-files` as the source of truth for what ships to users.
@@ -25,7 +25,7 @@
  */
 import {
   mkdtempSync, mkdirSync, copyFileSync, rmSync,
-  existsSync, readFileSync, writeFileSync, readdirSync,
+  existsSync, readFileSync, readdirSync,
 } from 'node:fs';
 import { join, dirname, relative } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -79,12 +79,6 @@ function extractStatus(content) {
   return m ? m[1] : null;
 }
 
-function applyStatusReset(content) {
-  return content
-    .split(/\r?\n/)
-    .map((line) => (line === 'status: published' ? 'status: draft' : line))
-    .join('\n');
-}
 
 function findMd(dir) {
   const results = [];
@@ -189,13 +183,7 @@ try {
   const selfPath = join(tmpDir, workflowFilename);
   if (existsSync(selfPath)) rmSync(selfPath);
 
-  // Step 2 — Apply note reset (equivalent to the bash sed loop).
-  for (const notePath of RESET_ON_INIT) {
-    const fullPath = join(tmpDir, notePath);
-    if (existsSync(fullPath)) {
-      writeFileSync(fullPath, applyStatusReset(readFileSync(fullPath, 'utf8')));
-    }
-  }
+  // Step 2 — No reset step: user-content notes arrive as status: draft in source.
 
   // -------------------------------------------------------------------------
   // Contract A — files_to_remove must be absent
@@ -277,17 +265,17 @@ try {
   }
 
   // -------------------------------------------------------------------------
-  // Contract F — publishedResetOnInit notes arrive as draft
+  // Contract F — user-content notes must be status: draft in the user vault
   // -------------------------------------------------------------------------
   for (const notePath of RESET_ON_INIT) {
     const fullPath = join(tmpDir, notePath);
     if (!existsSync(fullPath)) {
-      errors.push(`[F] MISSING reset note: ${notePath}`);
+      errors.push(`[F] MISSING user-content note: ${notePath}`);
       continue;
     }
     const status = extractStatus(readFileSync(fullPath, 'utf8'));
     if (status !== 'draft') {
-      errors.push(`[F] ${notePath}: expected status: draft after reset, got: ${status ?? '(absent)'}`);
+      errors.push(`[F] ${notePath}: expected status: draft in user vault, got: ${status ?? '(absent)'}`);
     }
   }
 

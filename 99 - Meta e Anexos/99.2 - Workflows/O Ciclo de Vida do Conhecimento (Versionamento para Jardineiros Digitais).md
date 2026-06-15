@@ -7,7 +7,7 @@ tags:
   - meta/versionamento
   - meta/git
   - meta/workflow
-status: published
+status: draft
 created: 2023-10-27
 updated: 2026-05-26
 category: referencia

@@ -7,7 +7,7 @@ tags:
   - meta/apresentacao
   - meta/lab
   - meta/notebooks
-status: published
+status: draft
 created: 2026-06-14
 updated: 2026-06-14
 category: referencia

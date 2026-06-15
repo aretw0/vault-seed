@@ -9,7 +9,7 @@ tags:
   - meta/site
   - meta/ui
   - meta/design
-status: published
+status: draft
 created: 2026-05-25
 updated: 2026-05-25
 category: guia

@@ -4,7 +4,7 @@ aliases:
   - Inbox de Fontes
   - Triagem de Feeds
   - Inbox Soberana
-status: published
+status: draft
 created: 2026-05-26
 updated: 2026-05-26
 tags:

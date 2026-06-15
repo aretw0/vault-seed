@@ -7,7 +7,7 @@ tags:
   - meta/guia
   - meta/onboarding
   - iniciante
-status: published
+status: draft
 created: 2026-05-18
 updated: 2026-05-18
 category: guia

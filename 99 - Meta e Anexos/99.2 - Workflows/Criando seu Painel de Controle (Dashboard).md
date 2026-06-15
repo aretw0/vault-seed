@@ -9,7 +9,7 @@ tags:
   - meta/workflow
   - obsidian/dashboard
   - obsidian/canvas
-status: published
+status: draft
 created: 2024-01-05
 updated: 2024-01-05
 category: guia
