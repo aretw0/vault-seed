@@ -4,7 +4,7 @@ tags:
   - meta/onboarding
 status: published
 category: guia
-audience: todos
+audience: user-vault
 ---
 
 # Bem-vindo ao seu vault

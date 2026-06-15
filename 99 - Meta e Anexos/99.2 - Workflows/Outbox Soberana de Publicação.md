@@ -3,7 +3,7 @@ title: Outbox Soberana de Publicação
 aliases:
   - Outbox Soberana
   - Fila de Publicação Externa
-status: draft
+status: published
 created: 2026-05-26
 updated: 2026-05-26
 tags:

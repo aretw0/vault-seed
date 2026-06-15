@@ -8,7 +8,7 @@ tags:
   - meta/dados
   - meta/site
   - meta/workflow
-status: draft
+status: published
 created: 2026-05-26
 updated: 2026-05-26
 category: workflow

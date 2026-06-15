@@ -7,7 +7,7 @@ tags:
   - meta/lab
   - meta/notebooks
   - meta/automacao
-status: draft
+status: published
 created: 2026-05-22
 updated: 2026-06-14
 category: guia

@@ -6,7 +6,7 @@ aliases:
 tags:
   - meta/ia
   - meta/agentes
-status: draft
+status: published
 created: 2026-05-19
 updated: 2026-05-23
 category: guia

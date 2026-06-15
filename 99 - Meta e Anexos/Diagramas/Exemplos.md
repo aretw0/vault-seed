@@ -2,7 +2,7 @@
 title: Diagramas do Vault
 tags:
   - meta/diagramas
-status: draft
+status: published
 category: referencia
 audience: tecnico
 ---

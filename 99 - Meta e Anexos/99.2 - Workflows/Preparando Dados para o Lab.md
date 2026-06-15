@@ -6,7 +6,7 @@ aliases:
 tags:
   - meta/notebooks
   - meta/dados
-status: draft
+status: published
 created: 2026-05-23
 updated: 2026-05-23
 category: workflow

@@ -8,7 +8,7 @@ tags:
   - meta/git
   - meta/github
   - meta/workflow
-status: draft
+status: published
 created: 2023-10-27
 updated: 2026-05-18
 category: guia

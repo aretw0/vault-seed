@@ -7,7 +7,7 @@ tags:
   - meta/lab
   - meta/dados
   - meta/automacao
-status: draft
+status: published
 created: 2026-05-26
 updated: 2026-05-26
 category: workflow

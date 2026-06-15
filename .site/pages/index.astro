@@ -100,6 +100,29 @@ function formatDate(iso: string | null): string {
       O vault é seu desde o primeiro commit.
     </p>
 
+    <section class="vault-capabilities" aria-label="Capacidades do vault-seed">
+      <p class="vault-capabilities__heading">O que este vault oferece</p>
+      <ul class="vault-capabilities__list">
+        <li><a href={`${base}/meta-e-anexos/onboarding/entendendo-a-estrutura-de-pastas/`}>Local first</a> — Markdown + Git. Funciona offline, em qualquer editor, sem lock-in.</li>
+        <li><a href={`${base}/meta-e-anexos/referencia/usando-com-agentes-de-ia/`}>AI-ready</a> — AGENTS.md, CLAUDE.md e GEMINI.md entregam contexto a qualquer assistente.</li>
+        <li><a href={`${base}/meta-e-anexos/workflows/publicando-seu-vault-como-site/`}>Publicação opcional</a> — GitHub Pages com Astro. RSS gerado automaticamente.</li>
+        <li><a href={`${base}/meta-e-anexos/referencia/convencoes-e-boas-praticas/`}>Conhecimento coletivo</a> — Git, PRs e Markdown para times. Auditável por padrão.</li>
+        <li><a href={`${base}/lab/`}>Lab</a> — Notebooks Marimo junto do vault. Análises que não pertencem ao site estático.</li>
+        <li><a href={`${base}/meta-e-anexos/workflows/publicando-e-consumindo-rss-no-vault/`}>Sindicação</a> — Feed próprio + consumo de feeds externos como datasets no Lab.</li>
+      </ul>
+    </section>
+
+    {topTags.length > 0 && (
+      <>
+        <p class="vault-tags-header">Ver por tag</p>
+        <div class="vault-tag-cloud-home">
+          {topTags.map(({ name }) => (
+            <a class="vault-tag-link" href={`${base}/explorar/?tags=${name}`}>#{name}</a>
+          ))}
+        </div>
+      </>
+    )}
+
     {recentNotes.length > 0 ? (
       <>
         <div class="vault-post-header">
@@ -117,6 +140,9 @@ function formatDate(iso: string | null): string {
                   </time>
                 )}
               </div>
+              {note.description && (
+                <p class="vault-post-item__excerpt">{note.description.length > 140 ? note.description.slice(0, 139) + '…' : note.description}</p>
+              )}
               {note.tags.length > 0 && (
                 <div class="vault-post-item__tags">
                   {note.tags.slice(0, 5).map((tag) => (
@@ -137,29 +163,6 @@ function formatDate(iso: string | null): string {
         Nenhuma nota publicada ainda. Marque suas notas com <code>status: published</code> para aparecerem aqui.
       </p>
     )}
-
-    {topTags.length > 0 && (
-      <>
-        <p class="vault-tags-header">Ver por tag</p>
-        <div class="vault-tag-cloud-home">
-          {topTags.map(({ name }) => (
-            <a class="vault-tag-link" href={`${base}/explorar/?tags=${name}`}>#{name}</a>
-          ))}
-        </div>
-      </>
-    )}
-
-    <section class="vault-capabilities" aria-label="Capacidades do vault-seed">
-      <p class="vault-capabilities__heading">O que este vault oferece</p>
-      <ul class="vault-capabilities__list">
-        <li><a href={`${base}/meta-e-anexos/onboarding/entendendo-a-estrutura-de-pastas/`}>Local first</a> — Markdown + Git. Funciona offline, em qualquer editor, sem lock-in.</li>
-        <li><a href={`${base}/meta-e-anexos/referencia/usando-com-agentes-de-ia/`}>AI-ready</a> — AGENTS.md, CLAUDE.md e GEMINI.md entregam contexto a qualquer assistente.</li>
-        <li><a href={`${base}/meta-e-anexos/workflows/publicando-seu-vault-como-site/`}>Publicação opcional</a> — GitHub Pages com Astro. RSS gerado automaticamente.</li>
-        <li><a href={`${base}/meta-e-anexos/referencia/convencoes-e-boas-praticas/`}>Conhecimento coletivo</a> — Git, PRs e Markdown para times. Auditável por padrão.</li>
-        <li><a href={`${base}/lab/`}>Lab</a> — Notebooks Marimo junto do vault. Análises que não pertencem ao site estático.</li>
-        <li><a href={`${base}/meta-e-anexos/workflows/publicando-e-consumindo-rss-no-vault/`}>Sindicação</a> — Feed próprio + consumo de feeds externos como datasets no Lab.</li>
-      </ul>
-    </section>
   </section>
 </StarlightPage>
 

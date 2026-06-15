@@ -548,14 +548,10 @@ const NOTE_STATUS_CONTRACT = {
   published: [
     "00 - Entrada/Bem-vindo ao seu vault.md",
   ],
-  // User content: ships as draft, user decides whether to publish.
-  // vault-seed's site must NOT show these as published notes.
+  // User onboarding: setup guides with "you, the new user" voice.
+  // vault-seed's site must NOT show these — they only make sense
+  // in a freshly initialized vault. Users receive them as draft.
   draftForUsers: [
-    // 30 - Áreas
-    "30 - Áreas/Blog/Jardim digital - por onde começar.md",
-    // 40 - Recursos
-    "40 - Recursos/Mermaid.md",
-    // 99 - Meta e Anexos / Onboarding
     "99 - Meta e Anexos/99.1 - Onboarding/Configurando com Devcontainer.md",
     "99 - Meta e Anexos/99.1 - Onboarding/Configurando Localmente.md",
     "99 - Meta e Anexos/99.1 - Onboarding/Depois da Recepcao do Template.md",
@@ -565,43 +561,7 @@ const NOTE_STATUS_CONTRACT = {
     "99 - Meta e Anexos/99.1 - Onboarding/MOC Vault Seed.md",
     "99 - Meta e Anexos/99.1 - Onboarding/Preparando seu Computador para o Vault.md",
     "99 - Meta e Anexos/99.1 - Onboarding/Seus Primeiros Passos.md",
-    // 99 - Meta e Anexos / Workflows
-    "99 - Meta e Anexos/99.2 - Workflows/Automacoes no Obsidian.md",
-    "99 - Meta e Anexos/99.2 - Workflows/Coletando Dados Locais com Scraping e OCR.md",
-    "99 - Meta e Anexos/99.2 - Workflows/Configurando o Obsidian Git.md",
-    "99 - Meta e Anexos/99.2 - Workflows/Criando seu Painel de Controle (Dashboard).md",
-    "99 - Meta e Anexos/99.2 - Workflows/Inbox Soberana de Fontes.md",
-    "99 - Meta e Anexos/99.2 - Workflows/O Ciclo de Vida do Conhecimento (Versionamento para Jardineiros Digitais).md",
-    "99 - Meta e Anexos/99.2 - Workflows/Outbox Soberana de Publicação.md",
-    "99 - Meta e Anexos/99.2 - Workflows/Preparando Dados para o Lab.md",
-    "99 - Meta e Anexos/99.2 - Workflows/Publicando e Consumindo RSS no Vault.md",
-    "99 - Meta e Anexos/99.2 - Workflows/Publicando seu Vault como Site.md",
-    "99 - Meta e Anexos/99.2 - Workflows/Rotina de Curadoria Editorial.md",
-    "99 - Meta e Anexos/99.2 - Workflows/Usando o Git e o GitHub para Sincronizar seu Vault.md",
-    "99 - Meta e Anexos/99.2 - Workflows/Usando o Lab (Notebooks Marimo).md",
-    // 99 - Meta e Anexos / Referência
-    "99 - Meta e Anexos/99.3 - Referência/Automatizando a Inicialização do Vault.md",
-    "99 - Meta e Anexos/99.3 - Referência/Conhecendo o Agents Lab.md",
-    "99 - Meta e Anexos/99.3 - Referência/Convenções e Boas Práticas.md",
-    "99 - Meta e Anexos/99.3 - Referência/Ecossistema aretw0 Agents Lab e Refarm.md",
-    "99 - Meta e Anexos/99.3 - Referência/Evoluindo seu Vault com Links, Tags e MOCs.md",
-    "99 - Meta e Anexos/99.3 - Referência/Identidade Visual e Blocos de Interface.md",
-    "99 - Meta e Anexos/99.3 - Referência/Integrando com VSCode (Foam).md",
-    "99 - Meta e Anexos/99.3 - Referência/Plugins Essenciais e Recomendados.md",
-    "99 - Meta e Anexos/99.3 - Referência/Qualidade e Lint de Notas.md",
-    "99 - Meta e Anexos/99.3 - Referência/Usando com Agentes de IA.md",
-    "99 - Meta e Anexos/99.3 - Referência/Usando o Plugin Templates.md",
-    "99 - Meta e Anexos/99.3 - Referência/Usando o Vault no Celular vs. Desktop.md",
-    "99 - Meta e Anexos/99.3 - Referência/Visualização do Fluxo do Vault.md",
-    // 99 - Meta e Anexos / Apresentações
-    "99 - Meta e Anexos/99.4 - Apresentações/Apresentações.md",
-    "99 - Meta e Anexos/99.4 - Apresentações/Visão Geral do Vault Seed.md",
-    "99 - Meta e Anexos/99.4 - Apresentações/O Lab — Notebooks e Dados.md",
-    "99 - Meta e Anexos/99.4 - Apresentações/Fluxo de Publicação.md",
-    "99 - Meta e Anexos/99.4 - Apresentações/Integração com Agentes de IA.md",
-    // 99 - Meta e Anexos / Diagramas
-    "99 - Meta e Anexos/Diagramas/Exemplos.md",
-    // 40 - Recursos / concepts (always draft)
+    // Concept stubs — user fills in as they learn
     "40 - Recursos/Filosofia e Conceitos Fundamentais.md",
     "40 - Recursos/O que é o método PARA.md",
     "40 - Recursos/O que é o método Zettelkasten.md",
@@ -632,29 +592,23 @@ for (const notePath of NOTE_STATUS_CONTRACT.draftForUsers) {
   );
 }
 
-// Global catch-all: any git-tracked .md file not covered by the explicit
-// published allowlist must NOT have status: published. This catches notes
-// added without being registered in NOTE_STATUS_CONTRACT.published.
-// Files removed by initialize.yml (files_to_remove) are exempt — they are
-// template-brand content that never ships to users.
+// Global catch-all: notes in draftForUsers must never have status: published.
+// Guards against regressions where an onboarding/setup note is accidentally
+// restored to published — those notes have "new user" voice and must not
+// appear on vault-seed's site or arrive published in user vaults.
 {
-  const removedRaw = (() => {
-    const m = initializeWorkflow.match(/files_to_remove:\s*"([^"]+)"/);
-    return m ? m[1].replace(/\\ /g, "\x00").split(/\s+/).filter(Boolean).map((s) => s.replace(/\x00/g, " ")) : [];
-  })();
-  const allowedPublished = new Set(NOTE_STATUS_CONTRACT.published.map((p) => p.replace(/\\/g, "/")));
+  const draftPaths = new Set(NOTE_STATUS_CONTRACT.draftForUsers.map((p) => p.replace(/\\/g, "/")));
   for (const trackedFile of gitLsFiles()) {
     if (!trackedFile.endsWith(".md")) continue;
     const normalized = trackedFile.replace(/\\/g, "/");
-    if (allowedPublished.has(normalized)) continue;
-    if (removedRaw.some((r) => normalized === r || normalized.startsWith(r.replace(/\\/g, "/") + "/"))) continue;
+    if (!draftPaths.has(normalized)) continue;
     let content;
     try { content = read(normalized); } catch { continue; }
     const status = extractStatus(content);
     requireCondition(
       status !== "published",
-      `[NOTE_CATCH_ALL] ${normalized} has status: published but is not in the published allowlist. ` +
-      `User content must be status: draft in source. To publish vault-seed brand content, add it to files_to_remove.`,
+      `[NOTE_CATCH_ALL] ${normalized} is in draftForUsers but has status: published — ` +
+      `onboarding/setup notes must not appear on vault-seed's site or arrive published for users.`,
     );
   }
 }

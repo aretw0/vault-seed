@@ -62,6 +62,30 @@ if (versions.starlight) versionParts.push(`Starlight ${versions.starlight}`);
 		</details>
 	)}
 
+	<div class="vault-footer-links" lang="pt-BR" aria-label="Links do projeto">
+		<div class="vault-footer-col">
+			<p class="vault-footer-col__heading">vault-seed</p>
+			<ul>
+				<li><a href="https://github.com/aretw0/vault-seed">Código-fonte</a></li>
+				<li><a href="https://github.com/aretw0/vault-seed/releases">Releases</a></li>
+				<li><a href="https://github.com/aretw0/vault-seed/issues">Issues</a></li>
+			</ul>
+		</div>
+		<div class="vault-footer-col">
+			<p class="vault-footer-col__heading">Comunidade</p>
+			<ul>
+				<li><a href="https://github.com/sponsors/aretw0">GitHub Sponsors</a></li>
+				<li><a href={`https://wa.me/5581999499582?text=${encodeURIComponent('Olá! Vim pelo vault-seed e gostaria de conhecer mais sobre a comunidade.')}`} target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
+			</ul>
+		</div>
+		<div class="vault-footer-col">
+			<p class="vault-footer-col__heading">Autor</p>
+			<ul>
+				<li><a href="https://github.com/aretw0">@aretw0</a></li>
+			</ul>
+		</div>
+	</div>
+
 	<div class="kudos" lang="pt-BR">
 		Feito com ♥ por <a href="https://github.com/aretw0">@aretw0</a> · {year}
 	</div>
@@ -145,6 +169,44 @@ if (versions.starlight) versionParts.push(`Starlight ${versions.starlight}`);
 	.attributions a {
 		color: inherit;
 		text-underline-offset: 2px;
+	}
+	.vault-footer-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 2rem 3rem;
+		justify-content: center;
+		padding: 1.5rem 0 1rem;
+		border-top: 1px solid var(--sl-color-hairline);
+		margin-top: 1rem;
+	}
+	.vault-footer-col {
+		min-width: 8rem;
+	}
+	.vault-footer-col__heading {
+		margin: 0 0 0.5rem;
+		font-size: 0.75rem;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--sl-color-gray-3);
+	}
+	.vault-footer-col ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+	}
+	.vault-footer-col ul a {
+		font-size: 0.8125rem;
+		color: var(--sl-color-gray-3);
+		text-decoration: none;
+		text-underline-offset: 2px;
+	}
+	.vault-footer-col ul a:hover {
+		color: var(--sl-color-white);
+		text-decoration: underline;
 	}
 	.kudos {
 		display: inline-flex;

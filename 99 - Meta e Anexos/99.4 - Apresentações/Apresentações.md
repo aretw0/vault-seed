@@ -7,7 +7,7 @@ tags:
   - meta/apresentacao
   - meta/onboarding
   - meta/moc
-status: draft
+status: published
 created: 2026-06-14
 updated: 2026-06-14
 category: moc

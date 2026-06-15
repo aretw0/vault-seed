@@ -7,7 +7,7 @@ tags:
   - meta/organizacao
   - meta/workflow
   - iniciante
-status: draft
+status: published
 created: 2023-10-27
 updated: 2023-10-27
 category: guia

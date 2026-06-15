@@ -9,7 +9,7 @@ tags:
   - obsidian/dataview
   - obsidian/bases
   - obsidian/moc
-status: draft
+status: published
 created: 2023-10-27
 updated: 2023-10-27
 category: guia

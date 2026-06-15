@@ -5,7 +5,7 @@ tags:
   - pkm
   - jardim-digital
   - gestao-conhecimento
-status: draft
+status: published
 publicationStatus: ready
 category: post
 audience: todos

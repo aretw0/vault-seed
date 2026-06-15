@@ -7,7 +7,7 @@ tags:
   - meta/apresentacao
   - meta/agentes
   - meta/ia
-status: draft
+status: published
 created: 2026-06-14
 updated: 2026-06-14
 category: referencia

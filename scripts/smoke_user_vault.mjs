@@ -6,7 +6,8 @@
  *     a. Rename template files (README.template.md → README.md, etc.)
  *     b. Remove template-only files and directories
  *     c. Self-destruct: remove initialize.yml
- *   Step 2 — Note status: all user-content notes already arrive as status: draft in source (no reset step needed)
+ *   Step 2 — No reset step needed: onboarding notes are status: draft in source;
+ *             vault-seed showcase notes (workflows, referência, etc.) ship as published.
  *   Step 3 — GitHub Pages enable (not testable in Node.js — skipped)
  *
  * Uses `git ls-files` as the source of truth for what ships to users.
@@ -17,9 +18,9 @@
  *   B. Every renamed file exists at its destination; source is gone
  *   C. initialize.yml is absent (self-destruct)
  *   D. package.json exists and comes from package.template.json
- *   E. PUBLISHED notes (Bem-vindo) have status: published
- *   F. publishedResetOnInit notes have status: draft
- *   G. No other .md files have status: published (global scan)
+ *   E. PUBLISHED_IN_USER_VAULT notes have status: published
+ *   F. DRAFT_FOR_USERS notes (99.1 Onboarding) have status: draft
+ *   G. No .md files outside allowlists have status: published
  *
  * Run: node scripts/smoke_user_vault.mjs
  */
@@ -97,9 +98,12 @@ const PUBLISHED_IN_USER_VAULT = [
   '00 - Entrada/Bem-vindo ao seu vault.md',
 ];
 
-const RESET_ON_INIT = [
-  '30 - Áreas/Blog/Jardim digital - por onde começar.md',
-  '40 - Recursos/Mermaid.md',
+// Notes that must arrive as status: draft in the user vault.
+// These are onboarding setup guides with "you, the new user" voice —
+// they only make sense in a freshly initialized vault. All other
+// published notes ship as status: published (the user can feel what
+// a published vault looks like from day one).
+const DRAFT_FOR_USERS = [
   '99 - Meta e Anexos/99.1 - Onboarding/Configurando com Devcontainer.md',
   '99 - Meta e Anexos/99.1 - Onboarding/Configurando Localmente.md',
   '99 - Meta e Anexos/99.1 - Onboarding/Depois da Recepcao do Template.md',
@@ -109,38 +113,6 @@ const RESET_ON_INIT = [
   '99 - Meta e Anexos/99.1 - Onboarding/MOC Vault Seed.md',
   '99 - Meta e Anexos/99.1 - Onboarding/Preparando seu Computador para o Vault.md',
   '99 - Meta e Anexos/99.1 - Onboarding/Seus Primeiros Passos.md',
-  '99 - Meta e Anexos/99.2 - Workflows/Automacoes no Obsidian.md',
-  '99 - Meta e Anexos/99.2 - Workflows/Coletando Dados Locais com Scraping e OCR.md',
-  '99 - Meta e Anexos/99.2 - Workflows/Configurando o Obsidian Git.md',
-  '99 - Meta e Anexos/99.2 - Workflows/Criando seu Painel de Controle (Dashboard).md',
-  '99 - Meta e Anexos/99.2 - Workflows/Inbox Soberana de Fontes.md',
-  '99 - Meta e Anexos/99.2 - Workflows/O Ciclo de Vida do Conhecimento (Versionamento para Jardineiros Digitais).md',
-  '99 - Meta e Anexos/99.2 - Workflows/Outbox Soberana de Publicação.md',
-  '99 - Meta e Anexos/99.2 - Workflows/Preparando Dados para o Lab.md',
-  '99 - Meta e Anexos/99.2 - Workflows/Publicando e Consumindo RSS no Vault.md',
-  '99 - Meta e Anexos/99.2 - Workflows/Publicando seu Vault como Site.md',
-  '99 - Meta e Anexos/99.2 - Workflows/Rotina de Curadoria Editorial.md',
-  '99 - Meta e Anexos/99.2 - Workflows/Usando o Git e o GitHub para Sincronizar seu Vault.md',
-  '99 - Meta e Anexos/99.2 - Workflows/Usando o Lab (Notebooks Marimo).md',
-  '99 - Meta e Anexos/99.3 - Referência/Automatizando a Inicialização do Vault.md',
-  '99 - Meta e Anexos/99.3 - Referência/Conhecendo o Agents Lab.md',
-  '99 - Meta e Anexos/99.3 - Referência/Convenções e Boas Práticas.md',
-  '99 - Meta e Anexos/99.3 - Referência/Ecossistema aretw0 Agents Lab e Refarm.md',
-  '99 - Meta e Anexos/99.3 - Referência/Evoluindo seu Vault com Links, Tags e MOCs.md',
-  '99 - Meta e Anexos/99.3 - Referência/Identidade Visual e Blocos de Interface.md',
-  '99 - Meta e Anexos/99.3 - Referência/Integrando com VSCode (Foam).md',
-  '99 - Meta e Anexos/99.3 - Referência/Plugins Essenciais e Recomendados.md',
-  '99 - Meta e Anexos/99.3 - Referência/Qualidade e Lint de Notas.md',
-  '99 - Meta e Anexos/99.3 - Referência/Usando com Agentes de IA.md',
-  '99 - Meta e Anexos/99.3 - Referência/Usando o Plugin Templates.md',
-  '99 - Meta e Anexos/99.3 - Referência/Usando o Vault no Celular vs. Desktop.md',
-  '99 - Meta e Anexos/99.3 - Referência/Visualização do Fluxo do Vault.md',
-  '99 - Meta e Anexos/99.4 - Apresentações/Apresentações.md',
-  '99 - Meta e Anexos/99.4 - Apresentações/Visão Geral do Vault Seed.md',
-  '99 - Meta e Anexos/99.4 - Apresentações/O Lab — Notebooks e Dados.md',
-  '99 - Meta e Anexos/99.4 - Apresentações/Fluxo de Publicação.md',
-  '99 - Meta e Anexos/99.4 - Apresentações/Integração com Agentes de IA.md',
-  '99 - Meta e Anexos/Diagramas/Exemplos.md',
 ];
 
 // ---------------------------------------------------------------------------
@@ -267,7 +239,7 @@ try {
   // -------------------------------------------------------------------------
   // Contract F — user-content notes must be status: draft in the user vault
   // -------------------------------------------------------------------------
-  for (const notePath of RESET_ON_INIT) {
+  for (const notePath of DRAFT_FOR_USERS) {
     const fullPath = join(tmpDir, notePath);
     if (!existsSync(fullPath)) {
       errors.push(`[F] MISSING user-content note: ${notePath}`);
@@ -280,14 +252,16 @@ try {
   }
 
   // -------------------------------------------------------------------------
-  // Contract G — no other .md files have status: published (global scan)
+  // Contract G — DRAFT_FOR_USERS notes must not have status: published
+  // (redundant with F, but guards against initialize.yml regressions)
   // -------------------------------------------------------------------------
-  const allowedPublished = new Set(PUBLISHED_IN_USER_VAULT.map((p) => p.replace(/\\/g, '/')));
+  const draftSet = new Set(DRAFT_FOR_USERS.map((p) => p.replace(/\\/g, '/')));
   for (const mdPath of findMd(tmpDir)) {
     const relPath = relative(tmpDir, mdPath).replace(/\\/g, '/');
+    if (!draftSet.has(relPath)) continue;
     const status = extractStatus(readFileSync(mdPath, 'utf8'));
-    if (status === 'published' && !allowedPublished.has(relPath)) {
-      errors.push(`[G] UNEXPECTED PUBLISHED in user vault: ${relPath}`);
+    if (status === 'published') {
+      errors.push(`[G] ${relPath}: onboarding note must not be published in user vault`);
     }
   }
 
