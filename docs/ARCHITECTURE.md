@@ -9,7 +9,7 @@ Documento de referência sobre o posicionamento do vault-seed no ecossistema DGK
 as responsabilidades de cada projeto, e as decisões de design que guiam a evolução.
 
 Para o diagrama visual de camadas, veja [`docs/diagrams/ECOSYSTEM.md`](diagrams/ECOSYSTEM.md).
-Para o roadmap de versões, veja [`ROADMAP.md`](../ROADMAP.md).
+Para o roadmap do Lab, veja [`docs/lab-roadmap.md`](lab-roadmap.md).
 
 ---
 
@@ -105,6 +105,19 @@ graph TD
 
 `@aretw0/dgk-channels` é bridge temporário. Quando o refarm publicar equivalentes
 (`rate-limiter`, `contacts`, `silo`), vault-seed migra para consumidor.
+
+---
+
+## Workspace multi-pacote — conceito v0.5.0
+
+`dgk publish skill` e `dgk publish extension` geram workflows standalone por pacote,
+correto para o caso mais comum. Usuários que evoluírem para um workspace pnpm com
+múltiplos pacotes (ex: skill + extensão + runner customizado) precisam de suporte
+adicional: `pnpm-workspace.yaml`, `.changeset/config.json` com `updateInternalDependencies`,
+e um workflow análogo ao `publish-packages.yml` do vault-seed.
+
+**v0.5.0:** adicionar `dgk publish workspace` — inicializa esse setup no vault do usuário,
+espelhando o mesmo padrão que usamos internamente (incluindo `--provenance`).
 
 ---
 
