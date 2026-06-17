@@ -44,7 +44,7 @@ O mesmo repositório que contém as notas contém o pipeline. Não há serviço 
 
 ## RSS e feeds
 
-Notas publicadas com `audience: todos` entram automaticamente no feed RSS do site. O feed é declarado em `astro.config.mjs` e fica em `/rss.xml`. Leitores de feed externos podem assinar direto da URL do site.
+Notas com `status: published` entram automaticamente no feed RSS do site — o campo `audience` é metadado editorial para leitores, não um filtro de acesso. O feed fica em `/rss.xml`. Leitores de feed externos podem assinar direto da URL do site.
 
 O vault também pode assinar feeds externos. O comando `dgk etl` inclui o processamento de fontes declaradas em `dados/feeds-assinados.json` como parte do pipeline, alimentando o dataset de curadoria consumido pelos notebooks do Lab.
 
