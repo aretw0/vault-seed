@@ -24,7 +24,7 @@ related:
 
 # Depois da Recepção do Template
 
-Quando você cria um vault a partir do template, o workflow de inicialização faz a recepção: limpa histórico de release do template, renomeia arquivos `.template.md` e remove automações que só servem para manter o projeto original.
+Quando você cria um vault a partir do template, o workflow de inicialização faz a recepção: renomeia arquivos `.template.md` para os nomes finais e remove automações que só servem para manter o projeto original. O histórico de commits do template fica preservado no repositório.
 
 Depois disso, o repositório é seu. Esta nota ajuda a conferir se o ambiente ficou pronto para uso diário.
 
