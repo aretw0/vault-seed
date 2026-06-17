@@ -694,6 +694,27 @@ requireCondition(
   'Homepage "Por onde começar" must use curated iniciante/meta/onboarding notes, not algorithmic graph hubs.',
 );
 
+// ── Factual integrity: npx must not appear in vault notes ─────────────────
+// This is a pnpm project. Using `npx` in documentation suggests falling back to
+// downloading packages from npm — use `pnpm exec` (local devDeps) or `pnpm run`
+// (defined scripts) instead. npx crept into one note as a manual lint example.
+{
+  const VAULT_CONTENT_DIRS = [
+    "00 - Entrada/", "10 - Diário/", "20 - Projetos/", "30 - Áreas/",
+    "40 - Recursos/", "50 - Arquivo/", "90 - Modelos/", "99 - Meta e Anexos/",
+  ];
+  for (const file of gitLsFiles()) {
+    if (!file.endsWith(".md")) continue;
+    if (!VAULT_CONTENT_DIRS.some((d) => file.startsWith(d))) continue;
+    let content;
+    try { content = read(file); } catch { continue; }
+    requireCondition(
+      !content.includes("npx "),
+      `${file}: uses \`npx\` — this is a pnpm project. Use \`pnpm exec\` for local packages or \`pnpm run\` for scripts.`,
+    );
+  }
+}
+
 // ── Factual integrity: dgk command references ─────────────────────────────
 // Notes must only reference registered dgk subcommands. Non-existent commands
 // (e.g. `dgk feeds`) have been introduced by LLM hallucination. The valid set
