@@ -96,22 +96,21 @@ def _(mo):
 def _(mo):
     mo.md(
         """
-        ## A Outbox: escreva uma vez, publique em vários canais
+        ## A Outbox: revisão humana antes de publicar
 
-        A nota no vault é a fonte de verdade. A outbox converte frontmatter
-        em publicação sem reescrever conteúdo ou duplicar arquivos.
+        A nota no vault é a fonte de verdade. A outbox lê frontmatter
+        para saber o que foi aprovado para cada canal.
 
         ```yaml
         # frontmatter da nota
-        outbox:
-          - platform: telegram
-            status: approved
-          - platform: mastodon
-            status: draft
+        channels:
+          - telegram
+        publicationStatus: review
         ```
 
         ```bash
-        dgk outbox publish  # publica os aprovados, atualiza status
+        dgk etl             # atualiza dados/lab/outbox-publicacao.json
+        dgk outbox telegram # publica notas com channel=telegram
         ```
 
         Cada publicação é rastreável no histórico Git da nota.
@@ -126,17 +125,18 @@ def _(mo):
         """
         ## Canais disponíveis
 
-        | Canal | Tipo | Autenticação |
+        | Canal | dgk sow (credencial) | dgk outbox (publicar) |
         | --- | --- | --- |
-        | Telegram | mensagem / canal | bot token + chat ID |
-        | Mastodon | toot | access token da instância |
-        | Bluesky | post | app password |
-        | Buttondown | newsletter | API key |
-        | RSS | feed gerado | nenhuma — você controla o endpoint |
+        | Telegram | ✓ bot token + chat ID | ✓ disponível |
+        | Mastodon | ✓ access token | — em desenvolvimento |
+        | Bluesky | ✓ app password | — em desenvolvimento |
+        | Buttondown | ✓ API key | — em desenvolvimento |
+        | RSS | — | gerado pelo `astro build` |
 
-        Os quatro primeiros requerem o pacote `dgk-channels` instalado.
-        O RSS é gerado automaticamente pelo build do site.
-        Credenciais ficam no silo local (`~/.dgk/silo.json`), nunca no repositório.
+        `dgk sow <canal>` configura credenciais e as guarda no silo local.
+        `dgk outbox telegram` publica o que está aprovado na fila.
+        Os demais canais aceitam credenciais mas ainda não têm publicação automática.
+        Credenciais ficam em `~/.dgk/silo.json`, nunca no repositório.
         """
     )
     return
