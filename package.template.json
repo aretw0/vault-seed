@@ -31,6 +31,8 @@
     "outbox:prepare": "node scripts/prepare_publication_outbox.mjs",
     "notebooks:etl": "pnpm run notebooks:etl:demo && pnpm run feeds:opml && pnpm run outbox:prepare && node scripts/prepare_lab_datasets.mjs",
     "notebooks:extract:local": "pnpm run notebooks:etl",
+    "notebooks:extract:check": "uv run --no-project --with-requirements requirements.local-etl.txt python scripts/check_lab_extract_tools.py",
+    "notebooks:extract:browser": "uv run --no-project --with-requirements requirements.local-etl.txt playwright install chromium",
     "notebooks:dev": "node scripts/notebooks_dev.mjs",
     "notebooks:check": "node scripts/notebooks_check.mjs",
     "notebooks:pair": "node scripts/notebooks_pair.mjs",

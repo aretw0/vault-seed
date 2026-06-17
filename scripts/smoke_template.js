@@ -160,6 +160,8 @@ requireCondition(
     templatePkg.scripts?.["outbox:prepare"] === "node scripts/prepare_publication_outbox.mjs" &&
     templatePkg.scripts?.["notebooks:etl"] === "pnpm run notebooks:etl:demo && pnpm run feeds:opml && pnpm run outbox:prepare && node scripts/prepare_lab_datasets.mjs" &&
     templatePkg.scripts?.["notebooks:extract:local"] === "pnpm run notebooks:etl" &&
+    templatePkg.scripts?.["notebooks:extract:check"] === "uv run --no-project --with-requirements requirements.local-etl.txt python scripts/check_lab_extract_tools.py" &&
+    templatePkg.scripts?.["notebooks:extract:browser"] === "uv run --no-project --with-requirements requirements.local-etl.txt playwright install chromium" &&
     templatePkg.scripts?.["notebooks:dev"] === "node scripts/notebooks_dev.mjs" &&
     templatePkg.scripts?.["notebooks:check"] === "node scripts/notebooks_check.mjs" &&
     templatePkg.scripts?.["notebooks:pair"] === "node scripts/notebooks_pair.mjs" &&
@@ -293,6 +295,8 @@ requireCondition(
     pkg.scripts?.["notebooks:etl"]?.includes("feeds:opml") &&
     pkg.scripts?.["notebooks:etl"]?.includes("notebooks:etl:demo") &&
     pkg.scripts?.["notebooks:extract:local"] === "pnpm run notebooks:etl" &&
+    pkg.scripts?.["notebooks:extract:check"] === "uv run --no-project --with-requirements requirements.local-etl.txt python scripts/check_lab_extract_tools.py" &&
+    pkg.scripts?.["notebooks:extract:browser"] === "uv run --no-project --with-requirements requirements.local-etl.txt playwright install chromium" &&
     labEtlDemoScript.includes("dados\", \"lab\", \"perfil-do-vault.json") &&
     labEtlDemoScript.includes("dados\", \"lab\", \"curadoria-ia.json") &&
     labDatasetsManifest.some((entry) => entry.id === "perfil-do-vault" && entry.source === "dados/lab/perfil-do-vault.json") &&
