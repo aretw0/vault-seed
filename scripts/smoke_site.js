@@ -12,6 +12,7 @@
 //   - missing mermaid CDN script (head[] injection lost)
 //   - missing mermaid code blocks in known diagram pages (pipeline regression)
 //   - missing or empty Pagefind index (search broken)
+//   - audience:user-vault notes leaking into explore data (vault-explore filter regression)
 
 const fs = require("node:fs");
 const path = require("node:path");
@@ -203,6 +204,34 @@ if (fs.existsSync(exploreDataPath)) {
       noteIds.has(edge?.source) && noteIds.has(edge?.target),
       `dist/explorar/dados.json: graph edge references unknown note ids (${edge?.source} -> ${edge?.target}).`,
     );
+  }
+
+  // No audience:user-vault note should leak into explore data.
+  // Scan source markdown for the frontmatter field and assert paths are absent from dados.json.
+  const explorePaths = new Set(notes.map((n) => n?.path).filter(Boolean));
+  const VAULT_SOURCE_FOLDERS = [
+    '00 - Entrada', '10 - Diário', '20 - Projetos', '30 - Áreas',
+    '40 - Recursos', '50 - Arquivo', '90 - Modelos', '99 - Meta e Anexos',
+  ];
+  function findMdFiles(dir, results = []) {
+    if (!fs.existsSync(dir)) return results;
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) findMdFiles(full, results);
+      else if (entry.name.endsWith('.md')) results.push(full);
+    }
+    return results;
+  }
+  for (const folder of VAULT_SOURCE_FOLDERS) {
+    for (const absPath of findMdFiles(path.join(root, folder))) {
+      const content = fs.readFileSync(absPath, 'utf8').replace(/^﻿/, '');
+      if (!/^audience:\s*user-vault\s*$/m.test(content)) continue;
+      const relPath = path.relative(root, absPath).replace(/\\/g, '/');
+      requireCondition(
+        !explorePaths.has(relPath),
+        `dist/explorar/dados.json: note "${relPath}" has audience:user-vault and must not appear in explore data.`,
+      );
+    }
   }
 }
 
@@ -492,12 +521,51 @@ if (fs.existsSync(pagefindIndexDir)) {
   );
 }
 
-// ── 9. sitemap (warning only — requires ASTRO_SITE to be set) ────────────────
+// ── 9a. homepage structure ────────────────────────────────────────────────────
+// The homepage must render the curated "Por onde começar" section and a
+// persistent license-row in the footer. These are build-time signals that
+// vault.config.json and vault-explore.ts are wired up correctly.
+
+const indexPath = path.join(distDir, "index.html");
+if (fs.existsSync(indexPath)) {
+  const indexHtml = fs.readFileSync(indexPath, "utf8");
+  requireCondition(
+    indexHtml.includes("vault-hubs") || indexHtml.includes("Por onde começar"),
+    "dist/index.html: missing curated start section — vault-hubs or 'Por onde começar' label not found. " +
+    "Check that explore.notes has notes tagged meta/onboarding or iniciante.",
+  );
+  requireCondition(
+    indexHtml.includes("vault-metrics") || indexHtml.includes("notas"),
+    "dist/index.html: metrics strip missing — vault-explore.ts metrics may not be wiring through to the homepage.",
+  );
+  requireCondition(
+    indexHtml.includes("license-row") || indexHtml.includes("license-badge"),
+    "dist/index.html: license attribution not found in footer — vault.config.json license may not be configured, " +
+    "or Footer.astro license-row is broken.",
+  );
+}
+
+// ── 9b. sitemap (warning only — requires ASTRO_SITE to be set) ───────────────
 
 warnCondition(
   fs.existsSync(path.join(distDir, "sitemap-index.xml")),
   "dist/sitemap-index.xml missing — sitemap not generated. Set ASTRO_SITE env var to enable.",
 );
+
+// ── 10. kudos comment ─────────────────────────────────────────────────────────
+// This check documents expected footer states. Not an error — kudos presence
+// depends on vault.config.json and is intentionally absent in user vaults.
+if (fs.existsSync(indexPath)) {
+  const indexHtml = fs.readFileSync(indexPath, "utf8");
+  const hasKudos = indexHtml.includes('class="kudos"');
+  const hasLicense = indexHtml.includes("license-row") || indexHtml.includes("license-badge");
+  warnCondition(
+    hasLicense,
+    "dist/index.html: no license-row found — if vault.config.json has a license, this is a regression. " +
+    "If license is intentionally absent, this warning is expected.",
+  );
+  // (kudos is not required — user vaults omit it by design, so no requireCondition)
+}
 
 // ── report ────────────────────────────────────────────────────────────────────
 

@@ -125,3 +125,7 @@ dados/lab/
 .playwright-mcp/
 explorar-toc-check.png
 graph-drag-check.png
+
+# Arquivos de auditoria gerados por scripts de validação
+intent_matches.json
+published_files.json

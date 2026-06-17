@@ -26,7 +26,7 @@
  */
 import {
   mkdtempSync, mkdirSync, copyFileSync, rmSync,
-  existsSync, readFileSync, readdirSync,
+  existsSync, readFileSync, writeFileSync, readdirSync,
 } from 'node:fs';
 import { join, dirname, relative } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -155,7 +155,18 @@ try {
   const selfPath = join(tmpDir, workflowFilename);
   if (existsSync(selfPath)) rmSync(selfPath);
 
-  // Step 2 — No reset step: user-content notes arrive as status: draft in source.
+  // Step 2 — Publish user welcome note and clear vault-seed kudos.
+  const welcomePath = join(tmpDir, '00 - Entrada/Bem-vindo ao seu vault.md');
+  if (existsSync(welcomePath)) {
+    const updated = readFileSync(welcomePath, 'utf8').replace(/^status: draft$/m, 'status: published');
+    writeFileSync(welcomePath, updated, 'utf8');
+  }
+  const vaultConfigPath = join(tmpDir, 'vault.config.json');
+  if (existsSync(vaultConfigPath)) {
+    const cfg = JSON.parse(readFileSync(vaultConfigPath, 'utf8'));
+    delete cfg.kudos;
+    writeFileSync(vaultConfigPath, JSON.stringify(cfg, null, 2) + '\n', 'utf8');
+  }
 
   // -------------------------------------------------------------------------
   // Contract A — files_to_remove must be absent
@@ -248,6 +259,21 @@ try {
     const status = extractStatus(readFileSync(fullPath, 'utf8'));
     if (status !== 'draft') {
       errors.push(`[F] ${notePath}: expected status: draft in user vault, got: ${status ?? '(absent)'}`);
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // Contract H — vault.config.json must not have a kudos field after init.
+  // initialize.yml removes it so user vaults get a clean license-only footer.
+  // -------------------------------------------------------------------------
+  if (existsSync(vaultConfigPath)) {
+    try {
+      const cfg = JSON.parse(readFileSync(vaultConfigPath, 'utf8'));
+      if ('kudos' in cfg && cfg.kudos !== null && cfg.kudos !== undefined) {
+        errors.push(`[H] vault.config.json still has kudos="${cfg.kudos}" — initialize.yml must delete this field so user vaults get a clean footer`);
+      }
+    } catch {
+      errors.push('[H] vault.config.json is not valid JSON after init simulation');
     }
   }
 

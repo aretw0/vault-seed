@@ -89,6 +89,10 @@ const vaultLoader = read(".site/content.config.ts");
 const customCss = read(".site/styles/custom.css");
 const curationRoutineGuide = read("99 - Meta e Anexos/99.2 - Workflows/Rotina de Curadoria Editorial.md");
 const labDataGuide = read("99 - Meta e Anexos/99.2 - Workflows/Preparando Dados para o Lab.md");
+const automatizandoInitNote = read("99 - Meta e Anexos/99.3 - Referência/Automatizando a Inicialização do Vault.md");
+const vaultConfigJson = readJson("vault.config.json");
+const vaultConfigMjs = read(".site/lib/vault-config.mjs");
+const footerComponent = read(".site/components/Footer.astro");
 
 requireCondition(
   typeof pkg.packageManager === "string" &&
@@ -536,22 +540,23 @@ requireCondition(
 
 // Note status contract — two categories:
 //
-// PUBLISHED: notes the user receives as published. The vault-seed site also
-//   shows them. The welcome note is the canonical example.
+// PUBLISHED: notes that initialize.yml promotes from draft to published during
+//   vault init. Must be draft in source so vault-seed's site does not show them.
 //
-// DRAFT_FOR_USERS: user content (onboarding, reference, workflows, examples).
+// DRAFT_FOR_USERS: user content (onboarding, welcome, concept stubs).
 //   Must be status: draft in source — vault-seed does not publish these as its
 //   own content. Users promote notes individually as they make them their own.
 //   The global catch-all below catches any note that escapes this contract.
 const NOTE_STATUS_CONTRACT = {
-  // Stays published everywhere — the user's own starting content.
-  published: [
-    "00 - Entrada/Bem-vindo ao seu vault.md",
-  ],
-  // User onboarding: setup guides with "you, the new user" voice.
+  // Notes that initialize.yml promotes to published during vault init.
+  // Must be status: draft in source (vault-seed site does not show them)
+  // but arrive as status: published in user vaults.
+  published: [],
+  // User content: onboarding guides and concept stubs with "you, the new user" voice.
   // vault-seed's site must NOT show these — they only make sense
   // in a freshly initialized vault. Users receive them as draft.
   draftForUsers: [
+    "00 - Entrada/Bem-vindo ao seu vault.md",
     "99 - Meta e Anexos/99.1 - Onboarding/Configurando com Devcontainer.md",
     "99 - Meta e Anexos/99.1 - Onboarding/Configurando Localmente.md",
     "99 - Meta e Anexos/99.1 - Onboarding/Depois da Recepcao do Template.md",
@@ -612,6 +617,82 @@ for (const notePath of NOTE_STATUS_CONTRACT.draftForUsers) {
     );
   }
 }
+
+// ── Footer & kudos contract ────────────────────────────────────────────────
+// vault-seed's own showcase must have a kudos string configured so its footer
+// shows "Feito com ♥". initialize.yml removes it for user vaults (Contract H
+// in smoke_user_vault.mjs). vaultKudos must be exported from vault-config.mjs.
+
+requireCondition(
+  typeof vaultConfigJson.kudos === "string" && vaultConfigJson.kudos.trim().length > 0,
+  "vault.config.json must define a non-empty kudos string for the vault-seed showcase footer. " +
+  "User vaults get this field removed by initialize.yml.",
+);
+requireCondition(
+  vaultConfigMjs.includes("export const vaultKudos"),
+  "vault-config.mjs must export vaultKudos so Footer.astro can read it without prop drilling.",
+);
+requireCondition(
+  footerComponent.includes("vaultKudos") &&
+    footerComponent.includes("license-row") &&
+    footerComponent.includes("license-badge"),
+  "Footer.astro must render a persistent license-row (legal) and a conditional kudos pill (personal).",
+);
+requireCondition(
+  footerComponent.includes("{vaultKudos &&") || footerComponent.includes("vaultKudos &&"),
+  "Footer.astro kudos must be conditional — user vaults with kudos=null must not render the kudos pill.",
+);
+
+// ── IA sidebar integrity ───────────────────────────────────────────────────
+// "Automatizando a Inicialização do Vault" is template-dev documentation.
+// It must carry audience:tecnico and tag meta/template-dev so it does not
+// appear in any user-facing sidebar section (Publicar, Automatizar, Manter).
+{
+  const automatizandoFm = automatizandoInitNote.match(/^---\n([\s\S]*?)\n---/)?.[1] ?? "";
+  const audience = (automatizandoFm.match(/^audience:\s*(.+)$/m) ?? [])[1]?.trim();
+  const tagsBlock = (automatizandoFm.match(/^tags:\n((?:  - .+\n?)+)/m) ?? [])[1] ?? "";
+  const tags = tagsBlock.match(/  - (.+)/g)?.map((t) => t.replace("  - ", "").trim()) ?? [];
+  requireCondition(
+    audience === "tecnico",
+    `"Automatizando a Inicialização do Vault" must have audience: tecnico — it is template-dev docs, not a user guide. Got: ${audience ?? "(absent)"}`,
+  );
+  requireCondition(
+    tags.length === 1 && tags[0] === "meta/template-dev",
+    `"Automatizando a Inicialização do Vault" must have exactly one tag: meta/template-dev. ` +
+    `meta/github-actions and meta/devops are removed so it never routes into Publicar/Automatizar/Manter. ` +
+    `Got: [${tags.join(", ")}]`,
+  );
+}
+
+// Explorar intent must not use categories:workflow (too broad — catches all
+// workflow notes regardless of topic, polluting the section with publishing
+// and automation notes). Publicar must not use meta/github-actions (matches
+// template-internal automation, not user publishing workflows).
+{
+  const ia = JSON.parse(informationArchitecture);
+  requireCondition(
+    !ia.intents?.explorar?.categories?.includes("workflow"),
+    "information-architecture.json explorar intent must not use categories:workflow — " +
+    "it routes all workflow-category notes into Explorar regardless of topic.",
+  );
+  requireCondition(
+    !ia.intents?.publicar?.tags?.includes("meta/github-actions"),
+    "information-architecture.json publicar intent must not use meta/github-actions — " +
+    "this tag matches template-internal automation (initialize.yml) in addition to publishing workflows.",
+  );
+}
+
+// ── Homepage curated start section ────────────────────────────────────────
+// "Por onde começar" must use curated notes (iniciante/meta/onboarding tags)
+// not algorithmic hubs. Hub data can change with vault content; curated tags
+// are intentional and stable.
+requireCondition(
+  homePage.includes("COMECAR_TAGS") &&
+    homePage.includes("meta/onboarding") &&
+    homePage.includes("iniciante") &&
+    !homePage.includes("graph.insights.hubs"),
+  'Homepage "Por onde começar" must use curated iniciante/meta/onboarding notes, not algorithmic graph hubs.',
+);
 
 if (errors.length > 0) {
   console.error("Template smoke failed:");
