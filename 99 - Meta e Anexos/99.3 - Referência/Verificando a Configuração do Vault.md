@@ -12,7 +12,7 @@ updated: 2026-06-15
 category: guia
 audience: todos
 related:
-  - "[[Verificando a Aparência do Site Publicado]]"
+  - "[[Verificando a Aparencia do Site Publicado]]"
   - "[[Depois da Recepcao do Template]]"
   - "[[Publicando seu Vault como Site]]"
 sidebar:
@@ -98,9 +98,7 @@ No Obsidian ou VS Code, abra qualquer nota que você **não** quer no site públ
 
 - [ ] Notas pessoais ou em rascunho têm `status: draft`
 - [ ] Notas que você quer publicar têm `status: published`
-- [ ] Nenhuma nota com `audience: user-vault` aparece no `/explorar/` do vault-seed
-
-Para verificar programaticamente: `pnpm run smoke:template` cobre o contrato de status das notas.
+O CI verifica estrutura e wiki links (`pnpm run validate`), mas o status individual de cada nota é uma decisão sua — revise o frontmatter das notas novas antes de cada push.
 
 ---
 
@@ -113,7 +111,7 @@ Depois do deploy no GitHub Pages:
 - [ ] `/rss.xml` existe e tem itens (suas notas publicadas)
 - [ ] Footer mostra seus dados, não os do vault-seed de exemplo
 
-Se algo estiver fora, consulte [[Verificando a Aparência do Site Publicado]] para o checklist visual completo.
+Se algo estiver fora, consulte [[Verificando a Aparencia do Site Publicado]] para o checklist visual completo.
 
 ---
 

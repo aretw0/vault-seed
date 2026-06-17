@@ -91,5 +91,5 @@ Se o Lab mostrar dados desatualizados:
 
 1. Verifique se o deploy terminou sem erros (aba Actions no GitHub)
 2. Force-refresh a página (`Ctrl+Shift+R` no desktop, ou feche e reabra no celular)
-3. Para problemas de dados no Lab, acione o workflow `refresh-lab-data.yml` manualmente pelo GitHub Actions
+3. Para problemas de dados no Lab, rode `dgk etl` e `dgk lab export` localmente, faça commit de `public/lab/` e push para `main`
 4. Se o problema persistir, abra uma issue no repositório `aretw0/vault-seed` com uma screenshot

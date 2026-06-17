@@ -15,7 +15,6 @@ category: guia
 audience: intermediário
 related:
   - "[[Usando o Lab (Notebooks Marimo)]]"
-  - "[[Preparando Dados para o Lab]]"
   - "[[O Lab — Notebooks e Dados]]"
   - "[[Verificando a Configuração do Vault]]"
 sidebar:
@@ -32,11 +31,11 @@ Leva de 10 a 20 minutos. Funciona como verificação manual de que o pipeline lo
 
 ## Antes de começar
 
-O CI já verifica automaticamente:
+O CI verifica automaticamente:
 
-- Que os notebooks exportam para HTML sem erros de execução
-- Que o ETL gera os datasets esperados (`perfil-do-vault.json`, `curadoria-ia.json`, etc.)
-- Que o site inclui `/lab/` com os notebooks publicados
+- Estrutura do vault e arquivos de onboarding presentes
+- Wiki links dos arquivos de entrada resolvendo
+- Lint de markdown e qualidade de texto
 
 O que você verifica manualmente:
 
@@ -117,7 +116,7 @@ Após um deploy no GitHub Pages, abra `https://seu-usuario.github.io/seu-vault/l
 - [ ] Os dados são do snapshot do último deploy — se parecerem desatualizados, rode `dgk etl` localmente, exporte e faça um novo push para `main`
 - [ ] Notebooks de apresentação: o botão "Slides" funciona e o layout em tela cheia abre corretamente
 
-Se o Lab publicado mostrar dados muito diferentes dos dados locais, o workflow `refresh-lab-data.yml` pode precisar ser acionado manualmente pelo GitHub Actions.
+Se o Lab publicado mostrar dados muito diferentes dos dados locais: rode `dgk etl` e `dgk lab export` localmente, faça commit de `public/lab/` e push para `main`.
 
 ---
 

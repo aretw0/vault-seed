@@ -49,6 +49,10 @@ const wikiLinkEntryPoints = [
   "40 - Recursos/O que sao system prompts de IA.md",
   "40 - Recursos/Bases.md",
   "40 - Recursos/Dataview.md",
+  "99 - Meta e Anexos/99.2 - Workflows/Trilha de Publicação em Canal.md",
+  "99 - Meta e Anexos/99.2 - Workflows/Trilha do Lab Interativo.md",
+  "99 - Meta e Anexos/99.3 - Referência/Verificando a Configuração do Vault.md",
+  "99 - Meta e Anexos/99.3 - Referência/Verificando a Aparencia do Site Publicado.md",
 ];
 
 const templateOnlyWikiLinkEntryPoints = [

@@ -31,11 +31,10 @@ O único canal com publicação automática disponível hoje é o **Telegram**. 
 
 ## Antes de começar
 
-O CI já verifica automaticamente:
+O CI verifica automaticamente:
 
-- Que o ETL produz `dados/lab/outbox-publicacao.json` com o schema correto
-- Que o frontmatter `channels` e `publicationStatus` são detectados pelo pipeline
-- Que o notebook `/lab/outbox.html` é exportado junto com o site
+- Estrutura do vault e lint das notas
+- Wiki links dos arquivos de entrada resolvendo
 
 O que você verifica manualmente:
 
