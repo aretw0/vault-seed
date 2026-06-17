@@ -18,7 +18,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
-const STATE_JSON = join(ROOT, "\.dgk", "inbox-telegram-state.json");
+const STATE_JSON = join(ROOT, ".dgk", "inbox-telegram-state.json");
 const INBOX_DIR = join(ROOT, "00 - Entrada");
 
 const args = process.argv.slice(2);

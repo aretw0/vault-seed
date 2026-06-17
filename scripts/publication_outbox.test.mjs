@@ -49,7 +49,7 @@ test("buildPublicationOutbox extracts only explicit publication candidates", () 
   try {
     ({ data } = buildPublicationOutbox({
       cwd,
-      outputPath: join(cwd, "dados", "lab", "outbox-publicacao.json"),
+      outputPath: join(cwd, ".dgk", "outbox-publicacao.json"),
       now: "2026-05-26T00:00:00.000Z",
     }));
   } finally {

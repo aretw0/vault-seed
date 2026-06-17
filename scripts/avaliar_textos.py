@@ -45,7 +45,7 @@ def evaluate(text: str, config: dict[str, Any], note_path: Path) -> tuple[list[F
 def main(argv: list[str] | None = None) -> int:
     vault_root = Path(__file__).resolve().parent.parent
     default_config = vault_root / "quality-rules.json"
-    default_output = vault_root / "\.dgk" / "qualidade-textos.json"
+    default_output = vault_root / ".dgk" / "qualidade-textos.json"
 
     parser = argparse.ArgumentParser(description="Avalia qualidade de escrita das notas do vault.")
     parser.add_argument("--config", default=str(default_config))

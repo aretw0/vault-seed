@@ -19,8 +19,8 @@ import defusedxml.ElementTree as ET
 from llm_client import call_llm, resolve_provider
 
 ROOT = Path(__file__).resolve().parent.parent
-FEEDS_SOURCE = ROOT / "\.dgk" / "feeds-assinados.json"
-OUTPUT = ROOT / "\.dgk" / "curadoria-feeds.json"
+FEEDS_SOURCE = ROOT / ".dgk" / "feeds-assinados.json"
+OUTPUT = ROOT / ".dgk" / "curadoria-feeds.json"
 MAX_FEEDS = 5
 MAX_ITEMS_PER_FEED = 10
 USER_AGENT = "vault-seed-lab/1.0"

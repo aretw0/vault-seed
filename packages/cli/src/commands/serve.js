@@ -36,7 +36,7 @@ async function readBody(req) {
 }
 
 function readOutbox(root) {
-  const path = join(root, 'dados', 'lab', 'outbox-publicacao.json');
+  const path = join(root, '.dgk', 'outbox-publicacao.json');
   if (!existsSync(path)) return [];
   try {
     const data = JSON.parse(readFileSync(path, 'utf8'));

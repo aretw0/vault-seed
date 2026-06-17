@@ -124,7 +124,7 @@ describe('GET /api/outbox', () => {
   });
 
   test('retorna items do arquivo quando presente', async () => {
-    const outboxDir = join(tmp, 'dados', 'lab');
+    const outboxDir = join(tmp, '.dgk');
     mkdirSync(outboxDir, { recursive: true });
     const item = { id: 'nota-1', title: 'Minha Nota', status: 'published', channels: ['mastodon'] };
     writeFileSync(

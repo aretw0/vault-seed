@@ -268,7 +268,7 @@ function runFullInstallLayer(tmpDir, errors) {
     // Do not return: site build can still proceed without lab data.
   }
 
-  const labProfile = join(tmpDir, 'dados', 'lab', 'perfil-do-vault.json');
+  const labProfile = join(tmpDir, '.dgk', 'perfil-do-vault.json');
   if (!existsSync(labProfile)) {
     errors.push('[L3b] .dgk/perfil-do-vault.json not created by etl:demo');
   } else {

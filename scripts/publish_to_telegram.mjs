@@ -20,8 +20,8 @@ import { fileURLToPath } from "node:url";
 import { throttle, handleRateLimitResponse, DEFAULT_STATE_PATH as RATE_STATE_PATH } from "@aretw0/dgk-channels/rate-limiter";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
-const OUTBOX_JSON = join(ROOT, "\.dgk", "outbox-publicacao.json");
-const STATE_JSON = join(ROOT, "\.dgk", "outbox-telegram.json");
+const OUTBOX_JSON = join(ROOT, ".dgk", "outbox-publicacao.json");
+const STATE_JSON = join(ROOT, ".dgk", "outbox-telegram.json");
 
 const args = process.argv.slice(2);
 const DRY_RUN = args.includes("--dry-run");
