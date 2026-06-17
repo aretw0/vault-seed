@@ -7,8 +7,6 @@ status: published
 created: 2026-05-26
 updated: 2026-05-26
 tags:
-  - meta/dados
-  - meta/workflow
   - meta/ia
   - meta/site
 category: workflow

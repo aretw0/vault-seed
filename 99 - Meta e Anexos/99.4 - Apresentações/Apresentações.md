@@ -5,7 +5,6 @@ aliases:
   - MOC Apresentações
 tags:
   - meta/apresentacao
-  - meta/onboarding
   - meta/moc
 status: published
 created: 2026-06-14

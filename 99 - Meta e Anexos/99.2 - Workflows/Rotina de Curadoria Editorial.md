@@ -5,9 +5,7 @@ aliases:
   - Revisão Editorial do Vault
 tags:
   - meta/organizacao
-  - meta/dados
   - meta/site
-  - meta/workflow
 status: published
 created: 2026-05-26
 updated: 2026-05-26

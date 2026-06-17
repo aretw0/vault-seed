@@ -170,8 +170,8 @@ export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData
     const raw = readFileSync(join(cwd, file), 'utf-8');
     const { data, content } = matter(raw);
     if (data.status !== 'published') continue;
-    // audience: user-vault = published in user vaults, hidden from vault-seed's own demo site.
-    if (data.audience === 'user-vault' && process.env.GITHUB_REPOSITORY === 'aretw0/vault-seed') continue;
+    // audience: user-vault = ships published to user vaults but excluded from any site's explore/graph.
+    if (data.audience === 'user-vault') continue;
 
     const slug = makeSlug(normalizedFile);
     const title = data.title ? String(data.title) : basename(file, '.md');

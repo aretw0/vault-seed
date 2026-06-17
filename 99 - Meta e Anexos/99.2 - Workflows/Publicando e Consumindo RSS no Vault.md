@@ -6,8 +6,6 @@ aliases:
   - Sindicação do Vault
 tags:
   - meta/site
-  - meta/dados
-  - meta/lab
   - meta/automacao
 status: published
 created: 2026-05-26

@@ -4,14 +4,12 @@ aliases:
   - Inicialização Automática
   - Setup Automático
 tags:
-  - meta/automacao
-  - meta/github-actions
-  - meta/devops
+  - meta/template-dev
 status: published
 created: 2023-10-27
-updated: 2026-05-26
+updated: 2026-06-15
 category: referencia
-audience: todos
+audience: tecnico
 related:
   - "[[Guia do Jardineiro Digital]]"
   - "[[Usando o Git e o GitHub para Sincronizar seu Vault]]"
