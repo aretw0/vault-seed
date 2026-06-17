@@ -121,6 +121,32 @@ dgk lab export
 pnpm run site:dev:lab
 ```
 
+## ETL no deploy
+
+O workflow `deploy-site.yml` executa `pnpm run notebooks:etl` automaticamente
+antes de `astro build` e do export dos notebooks. O usuário não precisa commitar
+`dados/lab/` localmente — os snapshots são gerados em CI a cada push para `main`,
+a partir das notas do vault no momento do deploy.
+
+### Por que `dados/lab/` é uma pasta visível
+
+Este template é uma referência educativa. A pasta `dados/lab/` poderia ficar em
+um diretório oculto — como `.dados/`, `.lab/` ou dentro de `.site/` — o que é
+prática comum em ferramentas que tratam metadados de build como artefatos
+efêmeros e não para leitura humana direta.
+
+A escolha de mantê-la visível é intencional: quem usa o vault consegue
+inspecionar os snapshots, entender o que o ETL produz e adaptar scripts de
+ingestão com base em exemplos concretos. A transparência tem custo — os arquivos
+aparecem no explorador de pastas e no histórico Git — mas isso faz sentido
+enquanto o objetivo é demonstrar o pipeline.
+
+À medida que o projeto amadurece, é possível que `dados/lab/` migre para uma
+pasta oculta quando `dados/` passar a ser reservada para conteúdo editável pelo
+usuário (feeds, fontes, rascunhos) e os snapshots de ETL passarem a ser tratados
+como artefatos de build sem valor permanente. Outros projetos da mesma família
+usam esse padrão de pasta oculta para metadados exportáveis.
+
 ## Exemplo incluído
 
 O comando `dgk etl` inclui automaticamente um exemplo pequeno de ETL local (equivalente ao antigo `pnpm run notebooks:etl:demo`).
