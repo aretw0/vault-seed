@@ -32,8 +32,8 @@ um sistema de memória: use as próprias notas para dar contexto ao agente.
 
 - `00 - Entrada/contexto-ativo.md` — estado atual do trabalho com o agente
   (o que está sendo feito, decisões recentes, próximos passos)
-- `10 - Projects/` — projetos onde o agente pode contribuir
-- `30 - Resources/` — referências que o agente pode consultar
+- `20 - Projetos/` — projetos onde o agente pode contribuir
+- `40 - Recursos/` — referências que o agente pode consultar
 
 Ao iniciar uma nova sessão, aponte o agente para `contexto-ativo.md`.
 Ao terminar, peça ao agente para atualizar esse arquivo com o que foi feito.

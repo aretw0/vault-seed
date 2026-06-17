@@ -63,22 +63,19 @@ def _(mo):
 def _(mo):
     mo.md(
         """
-        ## Pi: o assistente de campo
+        ## Pi: terminal coding harness
 
-        Pi é o agente de Telegram que conecta o vault ao celular.
-        Qualquer mensagem enviada ao bot vira uma nota em `00 - Entrada/`.
+        Pi é um coding harness de terminal criado pela Earendil Inc. (pi.dev).
+        Assim como Claude Code, opera diretamente no repositório via terminal:
+        lê e edita arquivos, executa comandos e propõe diffs para revisão.
 
-        ```
-        Você no celular  →  mensagem Telegram  →  Pi  →  nota no vault
-                                                      →  confirmação de volta
-        ```
+        O diferencial é a extensibilidade: o núcleo é minimal e o usuário
+        adiciona capacidades via skills TypeScript, templates de prompt
+        e integrações com múltiplos provedores de IA.
 
-        O bot também executa comandos no vault:
-        - rodar ETL e atualizar datasets
-        - publicar itens da outbox aprovados
-        - consultar o status do Lab
-
-        Nenhuma nota escrita pelo celular fica presa em app externo.
+        No vault, Pi pode ser usado para as mesmas tarefas que Claude Code:
+        editar notas, refatorar scripts, rodar validações e criar commits.
+        O `AGENTS.md` instrui qualquer agente que respeite convenções de arquivo.
         """
     )
     return
@@ -117,7 +114,7 @@ def _(mo):
 
         ```
         feeds-assinados.json  →  ETL local  →  dados/lab/feeds-*.json
-        Telegram inbox         →  Pi         →  00 - Entrada/*.md
+        Telegram inbox         →  telegram:inbox script  →  00 - Entrada/*.md
         scraping / OCR         →  coleta-local.py  →  snapshot local
         ```
 
@@ -185,9 +182,8 @@ def _(mo):
         ## O fluxo com agentes
 
         ```
-        Ideia no celular
-            → Pi cria nota em 00 - Entrada/
-            → Claude revisa, enriquece, move para a pasta certa
+        Nota em 00 - Entrada/
+            → Claude (ou outro agente) revisa, enriquece, move para a pasta certa
             → Lint e CI validam
             → Frontmatter muda para published
             → Site atualiza via deploy

@@ -124,7 +124,7 @@ def _(mo):
 def _(mo):
     mo.md(
         """
-        ## Canais suportados
+        ## Canais disponíveis
 
         | Canal | Tipo | Autenticação |
         | --- | --- | --- |
@@ -132,9 +132,10 @@ def _(mo):
         | Mastodon | toot | access token da instância |
         | Bluesky | post | app password |
         | Buttondown | newsletter | API key |
-        | Instagram | legenda + mídia | *(planejado)* |
         | RSS | feed gerado | nenhuma — você controla o endpoint |
 
+        Os quatro primeiros requerem o pacote `dgk-channels` instalado.
+        O RSS é gerado automaticamente pelo build do site.
         Credenciais ficam no silo local (`~/.dgk/silo.json`), nunca no repositório.
         """
     )

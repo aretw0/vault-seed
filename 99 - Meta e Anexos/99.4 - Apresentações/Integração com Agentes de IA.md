@@ -33,7 +33,7 @@ O vault não armazena chaves de API nem tokens de serviços externos no reposit�
 
 ## Agentes em uso no ecossistema
 
-- **Pi** — assistente conversacional mobile; consome notas exportadas e alimenta a inbox via mensagens.
+- **Pi** — coding harness de terminal da Earendil Inc. (pi.dev); suporta múltiplos provedores de IA incluindo Claude; extensível via skills TypeScript. Veja [[Agentes de Codificação]].
 - **Claude Code** — opera no terminal do vault: edita notebooks, refatora scripts, roda testes, commita.
 - **Codex / OpenCode** — alternativa ao Claude Code para tarefas de edição de código.
 
@@ -41,13 +41,13 @@ Qualquer agente compatível com terminal pode ser usado. O `AGENTS.md` do reposi
 
 ## Inbox soberana
 
-A pasta `00 - Entrada/` funciona como inbox de captura. Mensagens de Pi, Telegram, webhooks ou qualquer fonte chegam como arquivos Markdown com frontmatter. O agente pode ler, classificar e mover essas notas para as pastas certas do PARA.
+A pasta `00 - Entrada/` funciona como inbox de captura. Conteúdo de webhooks, feeds, Telegram ou qualquer fonte externa chega como arquivos Markdown com frontmatter. O agente pode ler, classificar e mover essas notas para as pastas certas do PARA.
 
 Esse fluxo mantém o dado no repositório antes de qualquer sincronização com nuvem. A inbox é soberana: o usuário decide o que fica e o que vai para outros canais.
 
 ## Curadoria com IA
 
-O script `scripts/curate_feeds_ia.py` usa um modelo de linguagem para classificar entradas de feeds RSS/Atom e gerar sugestões editoriais. O resultado alimenta o dataset `curadoria-ia` consumido pelo notebook ETL.
+O notebook `99 - Meta e Anexos/Notebooks/curadoria-feeds-ia.py` usa um modelo de linguagem para classificar entradas de feeds RSS/Atom e gerar sugestões editoriais. O resultado alimenta o dataset `curadoria-ia` consumido pelo notebook ETL.
 
 Essa etapa é opcional e configurável: sem chave de API, o script pula a classificação por IA e faz curadoria só por metadados.
 
