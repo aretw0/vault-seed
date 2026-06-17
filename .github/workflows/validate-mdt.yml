@@ -5,15 +5,19 @@ on:
     branches: [main, develop]
     paths:
       - "docs/diagrams/.templates/**"
+      - ".templates/**"
       - "mdt.toml"
-      - "99 - Meta e Anexos/Visualização do Fluxo do Vault.md"
-      - "99 - Meta e Anexos/Entendendo a Estrutura de Pastas.md"
+      - "99 - Meta e Anexos/99.3 - Referência/Visualização do Fluxo do Vault.md"
+      - "99 - Meta e Anexos/99.1 - Onboarding/Entendendo a Estrutura de Pastas.md"
+      - "99 - Meta e Anexos/99.3 - Referência/Comandos do dgk.md"
       - ".github/workflows/validate-mdt.yml"
   push:
     branches: [main]
     paths:
       - "docs/diagrams/.templates/**"
+      - ".templates/**"
       - "mdt.toml"
+      - "99 - Meta e Anexos/99.3 - Referência/Comandos do dgk.md"
   workflow_dispatch:
   schedule:
     - cron: "0 14 * * 3"
