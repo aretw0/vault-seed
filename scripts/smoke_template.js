@@ -694,6 +694,92 @@ requireCondition(
   'Homepage "Por onde começar" must use curated iniciante/meta/onboarding notes, not algorithmic graph hubs.',
 );
 
+// ── Factual integrity: dgk command references ─────────────────────────────
+// Notes must only reference registered dgk subcommands. Non-existent commands
+// (e.g. `dgk feeds`) have been introduced by LLM hallucination. The valid set
+// mirrors COMMANDS in packages/cli/src/index.js — update both when adding commands.
+{
+  const VALID_DGK_COMMANDS = new Set([
+    "validate", "lint", "setup", "check", "lab", "obsidian", "vscode",
+    "note", "publish", "sow", "serve", "etl", "outbox", "inbox", "preview",
+  ]);
+  const VAULT_CONTENT_DIRS = [
+    "00 - Entrada/", "10 - Diário/", "20 - Projetos/", "30 - Áreas/",
+    "40 - Recursos/", "50 - Arquivo/", "90 - Modelos/", "99 - Meta e Anexos/",
+  ];
+  const dgkCmdRe = /`dgk ([a-z][\w-]*)/g;
+  for (const file of gitLsFiles()) {
+    if (!file.endsWith(".md")) continue;
+    if (!VAULT_CONTENT_DIRS.some((d) => file.startsWith(d))) continue;
+    let content;
+    try { content = read(file); } catch { continue; }
+    for (const m of content.matchAll(dgkCmdRe)) {
+      const cmd = m[1];
+      requireCondition(
+        VALID_DGK_COMMANDS.has(cmd),
+        `${file}: references non-existent \`dgk ${cmd}\`. ` +
+        `Valid commands: ${[...VALID_DGK_COMMANDS].join(", ")}.`,
+      );
+    }
+  }
+}
+
+// ── Factual integrity: PARA folder names must be in Portuguese ────────────
+// English variants crept in via LLM outputs trained on older English templates.
+// Vault content directories use PT names; these patterns should never appear.
+{
+  const ENGLISH_PARA = [
+    { re: /\b10\s*-\s*Projects?\b/i, correct: "20 - Projetos" },
+    { re: /\b20\s*-\s*Projects?\b/i, correct: "20 - Projetos" },
+    { re: /\b30\s*-\s*Areas?\b/i,    correct: "30 - Áreas" },
+    { re: /\b30\s*-\s*Resources?\b/i, correct: "40 - Recursos" },
+    { re: /\b40\s*-\s*Resources?\b/i, correct: "40 - Recursos" },
+    { re: /\b50\s*-\s*Archive\b/i,    correct: "50 - Arquivo" },
+  ];
+  const VAULT_CONTENT_DIRS = [
+    "00 - Entrada/", "10 - Diário/", "20 - Projetos/", "30 - Áreas/",
+    "40 - Recursos/", "50 - Arquivo/", "90 - Modelos/", "99 - Meta e Anexos/",
+  ];
+  for (const file of gitLsFiles()) {
+    if (!file.endsWith(".md")) continue;
+    if (!VAULT_CONTENT_DIRS.some((d) => file.startsWith(d))) continue;
+    let content;
+    try { content = read(file); } catch { continue; }
+    for (const { re, correct } of ENGLISH_PARA) {
+      requireCondition(
+        !re.test(content),
+        `${file}: contains English PARA folder name matching /${re.source}/. ` +
+        `Use Portuguese: ${correct}.`,
+      );
+    }
+  }
+}
+
+// ── Factual integrity: no fabricated script paths in published notes ───────
+// Notes must not reference scripts that do not exist in the repo. Wrong paths
+// were introduced when LLMs invented plausible-sounding file names.
+{
+  const VAULT_CONTENT_DIRS = [
+    "00 - Entrada/", "10 - Diário/", "20 - Projetos/", "30 - Áreas/",
+    "40 - Recursos/", "50 - Arquivo/", "90 - Modelos/", "99 - Meta e Anexos/",
+  ];
+  // Matches paths like `scripts/foo.mjs` or `scripts/foo.py` inside backtick spans
+  const scriptRefRe = /`(scripts\/[\w\-\.]+\.(js|mjs|cjs|py|sh))`/g;
+  for (const file of gitLsFiles()) {
+    if (!file.endsWith(".md")) continue;
+    if (!VAULT_CONTENT_DIRS.some((d) => file.startsWith(d))) continue;
+    let content;
+    try { content = read(file); } catch { continue; }
+    for (const m of content.matchAll(scriptRefRe)) {
+      const scriptPath = m[1];
+      requireCondition(
+        exists(scriptPath),
+        `${file}: references \`${scriptPath}\` but that file does not exist.`,
+      );
+    }
+  }
+}
+
 if (errors.length > 0) {
   console.error("Template smoke failed:");
   for (const error of errors) {
