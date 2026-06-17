@@ -2,9 +2,9 @@
 title: Bem-vindo ao seu vault
 tags:
   - meta/onboarding
-status: published
+status: draft
 category: guia
-audience: user-vault
+audience: iniciante
 ---
 
 # Bem-vindo ao seu vault

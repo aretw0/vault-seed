@@ -1,6 +1,19 @@
 ---
 title: Verificando a Aparência do Site Publicado
-tags: [publicação, site, verificação, mobile]
+aliases:
+  - Checklist Visual do Site
+  - Trilha Visual
+tags:
+  - meta/site
+  - meta/qualidade
+status: published
+created: 2026-05-01
+updated: 2026-06-15
+category: guia
+audience: todos
+related:
+  - "[[Publicando seu Vault como Site]]"
+  - "[[Verificando a Configuração do Vault]]"
 sidebar:
   order: 92
 ---
@@ -29,13 +42,16 @@ O que você precisa conferir manualmente é o que é **visual e perceptivo**: ap
 Abra seu site no Chrome ou Firefox e verifique:
 
 - [ ] **Página inicial** carrega com o grafo visível e os nós distribuídos (não amontoados)
+- [ ] **"Por onde começar"** → os cards mostram notas acessíveis (marcadas como `iniciante`) — não notas técnicas ou de configuração
+- [ ] **Métricas** → strip com contagem de notas, palavras, conexões e tags aparece abaixo do lead
 - [ ] **`/explorar/`** → o SVG do graph aparece preenchendo o espaço — não apenas espaço em branco
 - [ ] **`/explorar/` em ≥ 1152px** → sidebar direita mostra um graph menor; toolbar (−/+/↻) visível
 - [ ] **Arrastar um nó** → ao soltar, os nós vizinhos se afastam progressivamente (não ficam todos amontoados)
 - [ ] **Zoom com scroll** → nós ficam dentro da borda do SVG, não "escapam" para fora
 - [ ] **Botões da toolbar** (recolher, expandir, recentrar) → ícone SVG centrado no círculo, sem deslocamento vertical
 - [ ] **Botões de sidebar** (recolher esquerda, recolher direita) → ícone SVG centrado no círculo
-- [ ] **Footer** → texto de autoria ("Feito com ♥ por …") aparece centralizado como pílula compacta — sem quebra de layout
+- [ ] **Footer — licença** → linha `© ano · nome [CC BY-SA 4.0]` aparece — este campo é sempre visível quando `vault.config.json` tem `license` preenchido
+- [ ] **Footer — kudos** → pílula compacta aparece se `kudos` estiver configurado em `vault.config.json`; ausente se o campo foi removido (comportamento padrão do vault inicializado)
 
 ---
 
@@ -45,8 +61,8 @@ Abra no Safari iOS ou Chrome Android:
 
 - [ ] **`/explorar/`** → graph preenche a largura da tela — não está encostado à esquerda nem com espaço branco excessivo
 - [ ] **Arrastar um nó com o dedo** → responde ao toque; nós vizinhos se afastam ao soltar
-- [ ] **Footer** → o ♥ aparece como símbolo de texto preto/branco, não como emoji colorido
-- [ ] **Footer** → pílula de autoria ocupa só a largura do conteúdo — sem barra grossa ocupando a tela
+- [ ] **Footer — licença** → linha de licença legível e sem quebra de layout
+- [ ] **Footer — kudos** → se presente, o ♥ aparece como símbolo de texto preto/branco (não emoji colorido) e a pílula ocupa só a largura do conteúdo
 - [ ] **Scroll horizontal** → não existe em nenhuma página (nenhum elemento "estica" a tela)
 
 ---

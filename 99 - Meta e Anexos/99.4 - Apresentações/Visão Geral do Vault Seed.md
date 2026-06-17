@@ -9,9 +9,11 @@ tags:
   - meta/onboarding
 status: published
 created: 2026-06-14
-updated: 2026-06-14
+updated: 2026-06-15
 category: referencia
 audience: todos
+sidebar:
+  order: 2
 related:
   - "[[Guia do Jardineiro Digital]]"
   - "[[Entendendo a Estrutura de Pastas]]"
@@ -49,4 +51,4 @@ A apresentação navegável em slides está disponível no Lab publicado. Ela é
 
 - [[O Lab — Notebooks e Dados]] — como os notebooks funcionam, o pipeline de dados e os modos de execução
 - [[Fluxo de Publicação]] — site, outbox, canais, RSS e CI como infraestrutura
-- [[Integração com Agentes de IA]] — Pi, Claude Code, inbox soberana e curadoria com IA
+- [[Integração com Agentes de IA]] — Claude Code, agentes de codificação, inbox soberana e curadoria com IA
