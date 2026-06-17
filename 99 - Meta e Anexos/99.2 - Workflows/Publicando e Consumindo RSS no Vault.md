@@ -94,6 +94,9 @@ O ETL inclui o processamento de feeds OPML. Ele gera `.dgk/feeds-assinados.json`
 `sha256`, `license` e `privacy`. Esse dataset é publicado pelo manifesto do Lab
 e alimenta o notebook `/lab/feeds.html`.
 
+> `fontes/feeds.opml` é conteúdo seu — commitado, versionado, editado por você.
+> `.dgk/feeds-assinados.json` é o snapshot gerado pelo ETL — oculto, efêmero, nunca commitado.
+
 ## Consumindo Feeds Como Dados
 
 Feeds externos devem ser consumidos no modo local do Lab, antes da publicação.

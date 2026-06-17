@@ -48,7 +48,7 @@ O que você verifica manualmente:
 
 ## Trilha 1 — Preparar os datasets
 
-O Lab carrega dados de `.dgk/`. Gere-os antes de abrir qualquer notebook:
+`.dgk/` é a pasta oculta onde a CLI guarda snapshots gerados pelo ETL — ela não é commitada no Git (como `.git/` e `.astro/`) e é recriada a cada `dgk etl`. Gere os datasets antes de abrir qualquer notebook:
 
 ```bash
 dgk etl

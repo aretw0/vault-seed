@@ -27,8 +27,8 @@ Pense em três etapas:
 
 1. **Extract local:** baixar páginas, ler arquivos privados, executar OCR ou
    chamar APIs com token.
-2. **Snapshot versionável:** gravar o resultado limpo em `.dgk/` ou outra
-   pasta do vault.
+2. **Snapshot efêmero:** gravar o resultado limpo em `.dgk/` — pasta oculta
+   da CLI, gitignored, regenerada a cada execução do ETL.
 3. **Lab publicado:** declarar o snapshot em `.site/lab.datasets.json` e ler o
    arquivo no notebook Marimo exportado.
 
