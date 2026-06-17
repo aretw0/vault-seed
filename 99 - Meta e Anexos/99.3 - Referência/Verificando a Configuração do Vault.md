@@ -121,7 +121,7 @@ Abra `https://seu-usuario.github.io/seu-vault/lab/` após o deploy:
 
 - [ ] A página `/lab/` carrega sem erro
 - [ ] Pelo menos os notebooks padrão estão listados: `etl-demo`, `analise-feeds`, `analise-outbox`
-- [ ] Abrir um notebook: carrega no navegador sem depender de servidor (WASM)
+- [ ] Abrir um notebook: botão "Abrir" visível e funcional — só aparece após `dgk lab export` ter sido rodado e os HTMLs incluídos no deploy; antes do export, os notebooks mostram "Aguardando exportação"
 - [ ] Os dados são do vault — não dados de exemplo do vault-seed
 
 Para verificar localmente antes do deploy:

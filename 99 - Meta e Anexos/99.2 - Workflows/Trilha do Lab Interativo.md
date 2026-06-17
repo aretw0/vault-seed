@@ -15,6 +15,7 @@ category: guia
 audience: intermediário
 related:
   - "[[Usando o Lab (Notebooks Marimo)]]"
+  - "[[Preparando Dados para o Lab]]"
   - "[[O Lab — Notebooks e Dados]]"
   - "[[Verificando a Configuração do Vault]]"
 sidebar:

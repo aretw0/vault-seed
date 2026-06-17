@@ -313,6 +313,16 @@ function runFullInstallLayer(tmpDir, errors) {
     console.log('    OK — dist/index.html present.');
   }
 
+  // dist/lab/index.html — the Lab listing page is generated from .site/lab.notebooks.json
+  // at build time (no export required). Before dgk lab export, notebooks show
+  // "Aguardando exportação"; after export + commit of public/lab/, "Abrir" buttons appear.
+  const labIndexPath = join(distDir, 'lab', 'index.html');
+  if (!existsSync(labIndexPath)) {
+    errors.push('[L3c] dist/lab/index.html missing — Lab listing page did not render');
+  } else {
+    console.log('    OK — dist/lab/index.html present (notebooks listed, export pending).');
+  }
+
   // dist/rss.xml — generated from status:published notes.
   // The welcome note (Bem-vindo ao seu vault.md) is the only published note
   // in a fresh user vault, so the feed must have at least one item.
