@@ -27,11 +27,9 @@ Agentes de codificação são ferramentas de IA que operam no terminal, leem e e
 
 - **Instalação:** consulte [pi.dev](https://pi.dev) para instruções atualizadas
 - **Provedores:** múltiplos incluindo Anthropic (Claude), OpenAI, Google e outros — configurável por sessão
-- **Modos de operação:** UI interativa no terminal, saída JSON para scripts, RPC para integrações externas, SDK para embutir em aplicações
-- **Licença:** MIT (open source)
-- **Referência:** [pi.dev](https://pi.dev) — [[Conhecendo o Agents Lab]] documenta o uso prático
+- **Referência:** [pi.dev](https://pi.dev) — documentação oficial com modos de uso, licença e instruções de instalação
 
-O repositório `agents-lab` cura o ecossistema do Pi: skills, extensões e padrões de uso documentados com exemplos reais.
+[[Conhecendo o Agents Lab]] descreve como Pi se encaixa no ecossistema de agentes deste vault.
 
 > Não confundir com pi.ai (Inflection AI) — assistente conversacional sem relação com este projeto.
 
