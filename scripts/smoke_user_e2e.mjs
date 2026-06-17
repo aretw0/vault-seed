@@ -19,8 +19,8 @@
  *     `node --test scripts/*.test.js scripts/*.test.mjs scripts/*.test.cjs`.
  *
  *   Layer 3b — ETL demo (--full flag)
- *     Runs `pnpm run notebooks:etl:demo` to generate dados/lab/. This mirrors
- *     the user's first step after cloning: initialize.yml removes dados/lab/,
+ *     Runs `pnpm run notebooks:etl:demo` to generate .lab/. This mirrors
+ *     the user's first step after cloning: initialize.yml removes .lab/,
  *     so the user must run dgk etl before the Lab has any data. Verifies that
  *     perfil-do-vault.json is produced with a non-zero noteCount.
  *
@@ -253,7 +253,7 @@ function runFullInstallLayer(tmpDir, errors) {
   }
 
   // Layer 3b: ETL demo.
-  // initialize.yml removes dados/lab/ from the user vault. The user runs `dgk etl`
+  // initialize.yml removes .lab/ from the user vault. The user runs `dgk etl`
   // (or `pnpm run notebooks:etl:demo`) as their first step to populate lab datasets.
   // We verify this works in the post-install user vault before the site build.
   console.log('  Layer 3b: ETL demo (lab dataset generation)...');
@@ -270,7 +270,7 @@ function runFullInstallLayer(tmpDir, errors) {
 
   const labProfile = join(tmpDir, 'dados', 'lab', 'perfil-do-vault.json');
   if (!existsSync(labProfile)) {
-    errors.push('[L3b] dados/lab/perfil-do-vault.json not created by etl:demo');
+    errors.push('[L3b] .lab/perfil-do-vault.json not created by etl:demo');
   } else {
     try {
       const profile = JSON.parse(readFileSync(labProfile, 'utf8'));

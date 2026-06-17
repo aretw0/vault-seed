@@ -1,4 +1,4 @@
-name: Deploy Site
+﻿name: Deploy Site
 
 on:
   push:
@@ -72,16 +72,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
       - name: Generate lab datasets (ETL)
-        # ETL roda antes do astro build para que public/lab/datasets/ exista
-        # quando o Astro copiar public/ para dist/. Os notebooks WASM leem esses
-        # datasets em runtime a partir de /lab/datasets/.
-        # O usuário não precisa commitar dados/lab/ localmente: o CI regenera
-        # os snapshots a cada deploy a partir das notas do vault.
-        #
-        # dados/lab/ é uma pasta visível por decisão educativa — este template é
-        # uma referência e os arquivos de ETL são inspecionáveis por design.
-        # Em projetos com requisitos de privacidade ou em versões futuras do
-        # template, esses metadados efêmeros podem migrar para uma pasta oculta.
+        # ETL gera .lab/ e public/lab/datasets/ antes do astro build.
+        # O Astro copia public/lab/datasets/ para dist/lab/datasets/;
+        # os notebooks WASM leem esses datasets em runtime via fetch.
+        # .lab/ é ignorado pelo git — os snapshots nunca precisam ser commitados.
         run: pnpm run notebooks:etl
 
       - name: Build @aretw0/dgk-astro-plugins

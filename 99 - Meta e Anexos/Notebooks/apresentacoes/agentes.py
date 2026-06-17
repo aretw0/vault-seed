@@ -113,7 +113,7 @@ def _(mo):
         O vault ingere fontes externas sem depender de agregadores:
 
         ```
-        feeds-assinados.json  →  ETL local  →  dados/lab/feeds-*.json
+        feeds-assinados.json  →  ETL local  →  .lab/feeds-*.json
         Telegram inbox         →  telegram:inbox script  →  00 - Entrada/*.md
         scraping / OCR         →  coleta-local.py  →  snapshot local
         ```
@@ -139,7 +139,7 @@ def _(mo):
         for item in feeds:
             score = call_llm(item, prompt=RELEVANCE_PROMPT)
             snapshot[item.id] = score
-        write_local_json_snapshot("dados/lab/curadoria-feeds.json", snapshot)
+        write_local_json_snapshot(".lab/curadoria-feeds.json", snapshot)
         ```
 
         O resultado alimenta o notebook `analise-feeds.py` e a outbox.

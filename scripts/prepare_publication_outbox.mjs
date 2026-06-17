@@ -7,7 +7,7 @@ import { globSync } from "glob";
 import matter from "gray-matter";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
-const DEFAULT_OUTPUT = join(ROOT, "dados", "lab", "outbox-publicacao.json");
+const DEFAULT_OUTPUT = join(ROOT, ".lab", "outbox-publicacao.json");
 const OUTBOX_PATTERNS = [
   "00 - Entrada/**/*.md",
   "10 - Diário/**/*.md",

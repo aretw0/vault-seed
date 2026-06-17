@@ -2,9 +2,9 @@
 /**
  * Telegram inbox: polls for new messages and creates vault notes in 00 - Entrada/.
  *
- * Reads:  dados/lab/inbox-telegram-state.json (last processed update_id)
+ * Reads:  .lab/inbox-telegram-state.json (last processed update_id)
  * Writes: 00 - Entrada/YYYY-MM-DD HH-MM from telegram--<id>.md  (one per message)
- *         dados/lab/inbox-telegram-state.json              (updated state)
+ *         .lab/inbox-telegram-state.json              (updated state)
  *
  * Env vars (via dgk sow telegram):
  *   TELEGRAM_BOT_TOKEN  — bot token from @BotFather
@@ -18,7 +18,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
-const STATE_JSON = join(ROOT, "dados", "lab", "inbox-telegram-state.json");
+const STATE_JSON = join(ROOT, ".lab", "inbox-telegram-state.json");
 const INBOX_DIR = join(ROOT, "00 - Entrada");
 
 const args = process.argv.slice(2);

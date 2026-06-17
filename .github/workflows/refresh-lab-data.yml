@@ -42,14 +42,6 @@ jobs:
         run: uv run --with anthropic --with defusedxml python scripts/curate_feeds_ia.py
         continue-on-error: true
 
-      - name: Commit updated data
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add dados/lab/
-          if git diff --cached --quiet; then
-            echo "Nenhuma atualização nos dados do Lab."
-          else
-            git commit -m "chore(lab): refresh dados automaticamente [skip ci]"
-            git push
-          fi
+      # .lab/ é ignorado pelo git — snapshots são efêmeros e regenerados pelo CI a cada deploy.
+      # Este workflow serve para acionar o ETL + curadoria IA manualmente ou via schedule,
+      # mas não persiste nenhum arquivo no repositório.

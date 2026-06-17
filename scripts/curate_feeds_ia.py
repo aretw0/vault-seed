@@ -2,7 +2,7 @@
 """CI script: classifies recent feed items using Claude API.
 
 Reads feeds-assinados.json, fetches up to MAX_FEEDS feeds, calls Claude to
-rank items by relevance, and writes dados/lab/curadoria-feeds.json.
+rank items by relevance, and writes .lab/curadoria-feeds.json.
 
 Requires: ANTHROPIC_API_KEY env var, uv run --with anthropic.
 Run via: uv run --with anthropic python scripts/curate_feeds_ia.py
@@ -19,8 +19,8 @@ import defusedxml.ElementTree as ET
 from llm_client import call_llm, resolve_provider
 
 ROOT = Path(__file__).resolve().parent.parent
-FEEDS_SOURCE = ROOT / "dados" / "lab" / "feeds-assinados.json"
-OUTPUT = ROOT / "dados" / "lab" / "curadoria-feeds.json"
+FEEDS_SOURCE = ROOT / ".lab" / "feeds-assinados.json"
+OUTPUT = ROOT / ".lab" / "curadoria-feeds.json"
 MAX_FEEDS = 5
 MAX_ITEMS_PER_FEED = 10
 USER_AGENT = "vault-seed-lab/1.0"

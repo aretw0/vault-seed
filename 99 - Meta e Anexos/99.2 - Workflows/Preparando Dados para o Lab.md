@@ -125,12 +125,12 @@ pnpm run site:dev:lab
 
 O workflow `deploy-site.yml` executa `pnpm run notebooks:etl` automaticamente
 antes de `astro build` e do export dos notebooks. O usuário não precisa commitar
-`dados/lab/` localmente — os snapshots são gerados em CI a cada push para `main`,
+`.lab/` localmente — os snapshots são gerados em CI a cada push para `main`,
 a partir das notas do vault no momento do deploy.
 
-### Por que `dados/lab/` é uma pasta visível
+### Por que `.lab/` é uma pasta visível
 
-Este template é uma referência educativa. A pasta `dados/lab/` poderia ficar em
+Este template é uma referência educativa. A pasta `.lab/` poderia ficar em
 um diretório oculto — como `.dados/`, `.lab/` ou dentro de `.site/` — o que é
 prática comum em ferramentas que tratam metadados de build como artefatos
 efêmeros e não para leitura humana direta.
@@ -141,7 +141,7 @@ ingestão com base em exemplos concretos. A transparência tem custo — os arqu
 aparecem no explorador de pastas e no histórico Git — mas isso faz sentido
 enquanto o objetivo é demonstrar o pipeline.
 
-À medida que o projeto amadurece, é possível que `dados/lab/` migre para uma
+À medida que o projeto amadurece, é possível que `.lab/` migre para uma
 pasta oculta quando `dados/` passar a ser reservada para conteúdo editável pelo
 usuário (feeds, fontes, rascunhos) e os snapshots de ETL passarem a ser tratados
 como artefatos de build sem valor permanente. Outros projetos da mesma família
@@ -152,12 +152,12 @@ usam esse padrão de pasta oculta para metadados exportáveis.
 O comando `dgk etl` inclui automaticamente um exemplo pequeno de ETL local (equivalente ao antigo `pnpm run notebooks:etl:demo`).
 
 O ETL lê as notas Markdown no computador, calcula um perfil simples do
-vault e escreve `dados/lab/perfil-do-vault.json`. Ele também roda a auditoria
+vault e escreve `.lab/perfil-do-vault.json`. Ele também roda a auditoria
 compartilhada de arquitetura de informação e escreve
-`dados/lab/curadoria-ia.json`, um relatório JSON com notas avaliadas, avisos
+`.lab/curadoria-ia.json`, um relatório JSON com notas avaliadas, avisos
 editoriais, candidatas a promoção e distribuição por intenção. O mesmo fluxo
-normaliza OPML em `dados/lab/feeds-assinados.json` e gera a outbox a partir de
-frontmatter em `dados/lab/outbox-publicacao.json`. Depois,
+normaliza OPML em `.lab/feeds-assinados.json` e gera a outbox a partir de
+frontmatter em `.lab/outbox-publicacao.json`. Depois,
 `prepare_lab_datasets.mjs` empacota esses arquivos em `public/lab/datasets/` e
 `public/lab/assets/datasets/`.
 

@@ -216,7 +216,7 @@ def _(context, enriched_items, mo, write_local_json_snapshot):
     else:
         try:
             _result = write_local_json_snapshot(
-                "dados/lab/lista-leitura.enriquecida.json",
+                ".lab/lista-leitura.enriquecida.json",
                 {"schemaVersion": 1, "source": "analise-leitura.py", "items": enriched_items},
             )
             save_result = mo.callout(

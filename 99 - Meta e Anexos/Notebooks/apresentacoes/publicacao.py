@@ -109,7 +109,7 @@ def _(mo):
         ```
 
         ```bash
-        dgk etl             # atualiza dados/lab/outbox-publicacao.json
+        dgk etl             # atualiza .lab/outbox-publicacao.json
         dgk outbox telegram # publica notas com channel=telegram
         ```
 

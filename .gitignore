@@ -1,4 +1,4 @@
-# ===================================================================
+﻿# ===================================================================
 # .gitignore para Vaults de Obsidian & Foam
 # ===================================================================
 
@@ -103,20 +103,14 @@ dist/
 public/lab/
 
 # ===================================================================
-# Dados gerados pelo Lab (artefatos de build — regeneráveis com dgk etl)
+# Artefatos efêmeros de ETL e pipeline (.lab/)
 # ===================================================================
-# Estes arquivos são derivados das notas do vault e de fontes externas.
-# Não os comprometa no vault de usuários — regenere com `dgk etl`.
-#
-# No template (vault-seed), os arquivos de exemplo permanecem rastreados
-# como baseline de demonstração e são removidos pelo initialize.yml ao
-# inicializar o vault do usuário.
-# Para atualizar o baseline no template, use: git add -f dados/lab/
-#
-# Quando dados/lab/ ultrapassar ~1 MB total, o ETL rodar diariamente ou
-# as notas indexadas excederem ~500, considere migrar para SQLite local
-# (`dados/lab.db`) ou um repositório de dados separado.
-dados/lab/
+# .lab/ contém snapshots gerados por `dgk etl` e estado de pipeline
+# (outbox-telegram.json, inbox-telegram-state.json, etc.).
+# Esses arquivos são regeneráveis pelo CI a cada deploy — não os commite.
+# dados/ fica reservada para conteúdo editável pelo usuário:
+#   dados/fontes/feeds.opml, dados/fontes/lista-leitura.json
+.lab/
 
 # Social dumps
 **/**/instagram-*.zip

@@ -20,7 +20,7 @@ test("buildPublicationOutbox extracts only explicit publication candidates", () 
       "outbox: true",
       "publicationStatus: draft",
       "canonical: https://example.com/post",
-      "source: dados/lab/snapshot.json",
+      "source: .lab/snapshot.json",
       "collectedAt: 2026-05-26T00:00:00.000Z",
       "license: CC-BY-4.0",
       "privacy: public",

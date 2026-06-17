@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const DEFAULT_OPML = join(ROOT, "dados", "fontes", "feeds.opml");
-const DEFAULT_OUTPUT = join(ROOT, "dados", "lab", "feeds-assinados.json");
+const DEFAULT_OUTPUT = join(ROOT, ".lab", "feeds-assinados.json");
 
 function decodeXml(value = "") {
   return String(value)

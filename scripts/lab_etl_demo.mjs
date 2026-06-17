@@ -24,12 +24,12 @@ function stableTimestamp(outputPath, payloadWithoutTs, tsKey = "collectedAt") {
 }
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
-const PROFILE_OUTPUT = join(ROOT, "dados", "lab", "perfil-do-vault.json");
-const CURATION_OUTPUT = join(ROOT, "dados", "lab", "curadoria-ia.json");
-const GRAPH_OUTPUT = join(ROOT, "dados", "lab", "grafo-do-vault.json");
-const JSONLD_OUTPUT = join(ROOT, "dados", "lab", "grafo-do-vault.jsonld");
+const PROFILE_OUTPUT = join(ROOT, ".lab", "perfil-do-vault.json");
+const CURATION_OUTPUT = join(ROOT, ".lab", "curadoria-ia.json");
+const GRAPH_OUTPUT = join(ROOT, ".lab", "grafo-do-vault.json");
+const JSONLD_OUTPUT = join(ROOT, ".lab", "grafo-do-vault.jsonld");
 const READING_LIST_SOURCE = join(ROOT, "dados", "fontes", "lista-leitura.json");
-const READING_LIST_OUTPUT = join(ROOT, "dados", "lab", "lista-leitura.json");
+const READING_LIST_OUTPUT = join(ROOT, ".lab", "lista-leitura.json");
 
 function countWords(text) {
   return text
@@ -191,7 +191,7 @@ const readingData = {
   collectedAt: stableTimestamp(READING_LIST_OUTPUT, readingWithoutTs),
 };
 
-mkdirSync(join(ROOT, "dados", "lab"), { recursive: true });
+mkdirSync(join(ROOT, ".lab"), { recursive: true });
 writeFileSync(PROFILE_OUTPUT, `${JSON.stringify(profileData, null, 2)}\n`, "utf8");
 writeFileSync(CURATION_OUTPUT, `${JSON.stringify(curationData, null, 2)}\n`, "utf8");
 writeFileSync(GRAPH_OUTPUT, `${JSON.stringify(graphData, null, 2)}\n`, "utf8");

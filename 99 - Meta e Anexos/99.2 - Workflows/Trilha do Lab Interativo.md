@@ -48,16 +48,16 @@ O que você verifica manualmente:
 
 ## Trilha 1 — Preparar os datasets
 
-O Lab carrega dados de `dados/lab/`. Gere-os antes de abrir qualquer notebook:
+O Lab carrega dados de `.lab/`. Gere-os antes de abrir qualquer notebook:
 
 ```bash
 dgk etl
 ```
 
-- [ ] `dados/lab/perfil-do-vault.json` existe e foi gerado agora
+- [ ] `.lab/perfil-do-vault.json` existe e foi gerado agora
 - [ ] O campo `noteCount` reflete o número real de notas do seu vault
-- [ ] `dados/lab/curadoria-ia.json` existe
-- [ ] `dados/lab/outbox-publicacao.json` existe
+- [ ] `.lab/curadoria-ia.json` existe
+- [ ] `.lab/outbox-publicacao.json` existe
 
 Se `noteCount` for 0 ou muito baixo, verifique se as pastas do vault estão na raiz correta do repositório.
 

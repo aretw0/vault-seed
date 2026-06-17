@@ -2,8 +2,8 @@
 /**
  * Telegram outbox: publishes notes flagged for Telegram to a bot/channel.
  *
- * Reads: dados/lab/outbox-publicacao.json
- * Writes: dados/lab/outbox-telegram.json (state — tracks what was sent)
+ * Reads: .lab/outbox-publicacao.json
+ * Writes: .lab/outbox-telegram.json (state — tracks what was sent)
  *
  * Env vars (via dgk sow telegram):
  *   TELEGRAM_BOT_TOKEN  — bot token from @BotFather
@@ -20,8 +20,8 @@ import { fileURLToPath } from "node:url";
 import { throttle, handleRateLimitResponse, DEFAULT_STATE_PATH as RATE_STATE_PATH } from "@aretw0/dgk-channels/rate-limiter";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
-const OUTBOX_JSON = join(ROOT, "dados", "lab", "outbox-publicacao.json");
-const STATE_JSON = join(ROOT, "dados", "lab", "outbox-telegram.json");
+const OUTBOX_JSON = join(ROOT, ".lab", "outbox-publicacao.json");
+const STATE_JSON = join(ROOT, ".lab", "outbox-telegram.json");
 
 const args = process.argv.slice(2);
 const DRY_RUN = args.includes("--dry-run");

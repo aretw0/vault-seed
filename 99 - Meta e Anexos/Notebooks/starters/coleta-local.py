@@ -66,7 +66,7 @@ def _(mo):
     run_ocr_extract = mo.ui.checkbox(label="Executar OCR agora", value=False)
     output_path = mo.ui.text(
         label="Snapshot JSON de saída",
-        value="dados/lab/minha-coleta-local.json",
+        value=".lab/minha-coleta-local.json",
     )
     token_name = mo.ui.text(label="Nome de segredo opcional", value="LAB_DEMO_TOKEN")
     mo.vstack([source_url, run_url_extract, image_path, run_ocr_extract, output_path, token_name])

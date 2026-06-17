@@ -153,6 +153,6 @@ Rode o ETL e confirme que o dataset da outbox é gerado:
 dgk etl
 ```
 
-- [ ] `dados/lab/outbox-publicacao.json` existe
+- [ ] `.lab/outbox-publicacao.json` existe
 
 Para o passo a passo de uma publicação real, consulte [[Trilha de Publicação em Canal]].

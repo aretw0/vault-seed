@@ -30,7 +30,7 @@ No `vault-seed`, RSS tem dois papéis:
 
 1. **Produzir seu feed:** o site gera `/rss.xml` com as notas publicadas.
 2. **Consumir feeds externos:** o Lab local pode baixar RSS/Atom, normalizar os
-   itens e gravar snapshots em `dados/lab/`.
+   itens e gravar snapshots em `.lab/`.
 
 ## Produzindo Seu Feed
 
@@ -90,7 +90,7 @@ rode:
 dgk etl
 ```
 
-O ETL inclui o processamento de feeds OPML. Ele gera `dados/lab/feeds-assinados.json`, com `source`, `collectedAt`,
+O ETL inclui o processamento de feeds OPML. Ele gera `.lab/feeds-assinados.json`, com `source`, `collectedAt`,
 `sha256`, `license` e `privacy`. Esse dataset é publicado pelo manifesto do Lab
 e alimenta o notebook `/lab/feeds.html`.
 
@@ -105,7 +105,7 @@ Use a primitiva `fetch_local_feed()`:
 from _lab_notebook_runtime import fetch_local_feed, write_local_json_snapshot
 
 feed = fetch_local_feed("https://example.com/feed.xml")
-write_local_json_snapshot("dados/lab/feed-exemplo.json", feed)
+write_local_json_snapshot(".lab/feed-exemplo.json", feed)
 ```
 
 O snapshot gerado tem uma forma simples:
@@ -138,7 +138,7 @@ Depois declare o snapshot em `.site/lab.datasets.json`:
   "id": "feed-exemplo",
   "title": "Feed Exemplo",
   "description": "Itens normalizados de um feed RSS externo",
-  "source": "dados/lab/feed-exemplo.json",
+  "source": ".lab/feed-exemplo.json",
   "output": "feed-exemplo.json",
   "format": "json",
   "publish": true

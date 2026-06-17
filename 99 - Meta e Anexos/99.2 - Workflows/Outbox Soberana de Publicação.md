@@ -63,7 +63,7 @@ O pipeline ETL inclui a preparação da outbox: procura notas com pelo menos um 
 Depois ele gera:
 
 ```text
-dados/lab/outbox-publicacao.json
+.lab/outbox-publicacao.json
 ```
 
 ## Campos De Controle

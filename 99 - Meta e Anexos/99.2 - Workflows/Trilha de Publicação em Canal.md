@@ -87,7 +87,7 @@ Rode o ETL para atualizar o dataset da outbox:
 dgk etl
 ```
 
-- [ ] `dados/lab/outbox-publicacao.json` existe e contém a nota
+- [ ] `.lab/outbox-publicacao.json` existe e contém a nota
 - [ ] A entrada no JSON tem `publicationStatus: review` e `channels: ["telegram"]`
 
 Para revisar visualmente no Lab:
