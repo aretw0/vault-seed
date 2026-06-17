@@ -1,4 +1,4 @@
-import marimo
+﻿import marimo
 
 __generated_with = "0.23.9"
 app = marimo.App(
@@ -109,7 +109,7 @@ def _(mo):
         ```
 
         ```bash
-        dgk etl             # atualiza .lab/outbox-publicacao.json
+        dgk etl             # atualiza .dgk/outbox-publicacao.json
         dgk outbox telegram # publica notas com channel=telegram
         ```
 

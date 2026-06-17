@@ -1,4 +1,4 @@
----
+﻿---
 title: Usando o Lab (Notebooks Marimo)
 aliases:
   - Lab
@@ -108,7 +108,7 @@ O mesmo vale para o seletor de tema do site Astro: ele aparece no `vault-seed` p
 
 O workflow `.github/workflows/deploy-site.yml` executa, em sequência: ETL (`pnpm run notebooks:etl`), build do site Astro, export dos notebooks como HTML WebAssembly e validação. Apenas os notebooks listados em `.site/lab.notebooks.json` com `publish: true` são exportados. Por padrão, eles ficam em `/lab/` junto com o site publicado.
 
-O ETL gera `.lab/` e `public/lab/datasets/` no ambiente de CI antes do build, de modo que o usuário não precisa commitar esses snapshots localmente. Veja [[Preparando Dados para o Lab]] para entender a decisão de manter `.lab/` em pasta visível e o que mudaria em versões futuras.
+O ETL gera `.dgk/` e `public/lab/datasets/` no ambiente de CI antes do build, de modo que o usuário não precisa commitar esses snapshots localmente. Veja [[Preparando Dados para o Lab]] para entender a decisão de manter `.dgk/` em pasta visível e o que mudaria em versões futuras.
 
 No preview local do Astro, a página `/lab/` aparece, mas os notebooks exportados só existem depois do passo de export. Para experimentar a versão empacotada localmente, rode:
 

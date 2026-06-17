@@ -1,4 +1,4 @@
----
+﻿---
 title: Verificando a Configuração do Vault
 aliases:
   - Trilha de Configuração
@@ -153,6 +153,6 @@ Rode o ETL e confirme que o dataset da outbox é gerado:
 dgk etl
 ```
 
-- [ ] `.lab/outbox-publicacao.json` existe
+- [ ] `.dgk/outbox-publicacao.json` existe
 
 Para o passo a passo de uma publicação real, consulte [[Trilha de Publicação em Canal]].

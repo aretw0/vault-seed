@@ -1,10 +1,10 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """Avaliador determinístico de qualidade de escrita para notas do vault.
 
 Uso típico:
   uv run python scripts/avaliar_textos.py
   uv run python scripts/avaliar_textos.py --note "40 - Recursos/Jardim digital.md"
-  uv run python scripts/avaliar_textos.py --profile ultra-rigor --json .lab/qualidade-textos.json
+  uv run python scripts/avaliar_textos.py --profile ultra-rigor --json .dgk/qualidade-textos.json
 
 Sem dependências externas. Lê as regras em quality-rules.json na raiz do vault.
 Engine: scripts/text_scorer.py
@@ -45,7 +45,7 @@ def evaluate(text: str, config: dict[str, Any], note_path: Path) -> tuple[list[F
 def main(argv: list[str] | None = None) -> int:
     vault_root = Path(__file__).resolve().parent.parent
     default_config = vault_root / "quality-rules.json"
-    default_output = vault_root / ".lab" / "qualidade-textos.json"
+    default_output = vault_root / "\.dgk" / "qualidade-textos.json"
 
     parser = argparse.ArgumentParser(description="Avalia qualidade de escrita das notas do vault.")
     parser.add_argument("--config", default=str(default_config))

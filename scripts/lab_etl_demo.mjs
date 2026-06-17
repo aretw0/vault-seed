@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -24,12 +24,12 @@ function stableTimestamp(outputPath, payloadWithoutTs, tsKey = "collectedAt") {
 }
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
-const PROFILE_OUTPUT = join(ROOT, ".lab", "perfil-do-vault.json");
-const CURATION_OUTPUT = join(ROOT, ".lab", "curadoria-ia.json");
-const GRAPH_OUTPUT = join(ROOT, ".lab", "grafo-do-vault.json");
-const JSONLD_OUTPUT = join(ROOT, ".lab", "grafo-do-vault.jsonld");
+const PROFILE_OUTPUT = join(ROOT, "\.dgk", "perfil-do-vault.json");
+const CURATION_OUTPUT = join(ROOT, "\.dgk", "curadoria-ia.json");
+const GRAPH_OUTPUT = join(ROOT, "\.dgk", "grafo-do-vault.json");
+const JSONLD_OUTPUT = join(ROOT, "\.dgk", "grafo-do-vault.jsonld");
 const READING_LIST_SOURCE = join(ROOT, "dados", "fontes", "lista-leitura.json");
-const READING_LIST_OUTPUT = join(ROOT, ".lab", "lista-leitura.json");
+const READING_LIST_OUTPUT = join(ROOT, "\.dgk", "lista-leitura.json");
 
 function countWords(text) {
   return text
@@ -176,7 +176,7 @@ for (const item of readingSource) {
 }
 const readingWithoutTs = {
   schemaVersion: 1,
-  source: "dados/fontes/lista-leitura.json",
+  source: "fontes/lista-leitura.json",
   itemCount: readingSource.length,
   items: readingSource,
   topicSummary: Array.from(topicCount.entries())
@@ -191,7 +191,7 @@ const readingData = {
   collectedAt: stableTimestamp(READING_LIST_OUTPUT, readingWithoutTs),
 };
 
-mkdirSync(join(ROOT, ".lab"), { recursive: true });
+mkdirSync(join(ROOT, "\.dgk"), { recursive: true });
 writeFileSync(PROFILE_OUTPUT, `${JSON.stringify(profileData, null, 2)}\n`, "utf8");
 writeFileSync(CURATION_OUTPUT, `${JSON.stringify(curationData, null, 2)}\n`, "utf8");
 writeFileSync(GRAPH_OUTPUT, `${JSON.stringify(graphData, null, 2)}\n`, "utf8");

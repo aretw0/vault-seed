@@ -1,4 +1,4 @@
-const fs = require("node:fs");
+﻿const fs = require("node:fs");
 const path = require("node:path");
 const { execFileSync } = require("node:child_process");
 
@@ -299,10 +299,10 @@ requireCondition(
     pkg.scripts?.["notebooks:extract:browser"] === "uv run --no-project --with-requirements requirements.local-etl.txt playwright install chromium" &&
     labEtlDemoScript.includes("dados\", \"lab\", \"perfil-do-vault.json") &&
     labEtlDemoScript.includes("dados\", \"lab\", \"curadoria-ia.json") &&
-    labDatasetsManifest.some((entry) => entry.id === "perfil-do-vault" && entry.source === ".lab/perfil-do-vault.json") &&
-    labDatasetsManifest.some((entry) => entry.id === "curadoria-ia" && entry.source === ".lab/curadoria-ia.json") &&
-    labDatasetsManifest.some((entry) => entry.id === "feeds-assinados" && entry.source === ".lab/feeds-assinados.json") &&
-    labDatasetsManifest.some((entry) => entry.id === "outbox-publicacao" && entry.source === ".lab/outbox-publicacao.json") &&
+    labDatasetsManifest.some((entry) => entry.id === "perfil-do-vault" && entry.source === ".dgk/perfil-do-vault.json") &&
+    labDatasetsManifest.some((entry) => entry.id === "curadoria-ia" && entry.source === ".dgk/curadoria-ia.json") &&
+    labDatasetsManifest.some((entry) => entry.id === "feeds-assinados" && entry.source === ".dgk/feeds-assinados.json") &&
+    labDatasetsManifest.some((entry) => entry.id === "outbox-publicacao" && entry.source === ".dgk/outbox-publicacao.json") &&
     labDatasetsManifest.some((entry) => entry.id === "json-remoto-opcional" && entry.runtimeUrl) &&
     labNotebooksManifest.some((entry) => entry.source === "99 - Meta e Anexos/Notebooks/etl-demo.py" && entry.publish === true) &&
     labNotebooksManifest.some((entry) => entry.source === "99 - Meta e Anexos/Notebooks/analise-feeds.py" && entry.publish === true) &&

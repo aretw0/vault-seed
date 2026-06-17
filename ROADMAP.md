@@ -30,7 +30,7 @@ ecossistema DGK — *powered by refarm* no longo prazo.
 - `lab.sources.json` — configuração declarada de fontes de dados (tipo, URL, destino PARA, perfil)
 - Interface `ExtractionProfile` — perfis Python modulares por tipo de fonte
 - `dgk etl` lê `lab.sources.json` e despacha para o perfil registrado
-- Cache bruto (`dados/lab/cache/`) e staging (`dados/lab/staging/`) — reprocessar sem refetch
+- Cache bruto (`.dgk/cache/`) e staging (`.dgk/staging/`) — reprocessar sem refetch
 - Roteamento de taxonomia: campo `"target": "auto"` → classificador IA determina pasta PARA
 - `dgk outbox mastodon`, `dgk outbox bluesky` — paridade com Telegram
 

@@ -1,4 +1,4 @@
----
+﻿---
 title: Preparando Dados para o Lab
 aliases:
   - ETL para o Lab
@@ -45,7 +45,7 @@ Para empacotar um arquivo local junto com o Lab:
     "id": "exemplo",
     "title": "Exemplo",
     "description": "Snapshot usado por um notebook do Lab",
-    "source": "dados/exemplo.json",
+    "source": "fontes/exemplo.json",
     "output": "exemplo.json",
     "format": "json",
     "publish": true
@@ -125,39 +125,31 @@ pnpm run site:dev:lab
 
 O workflow `deploy-site.yml` executa `pnpm run notebooks:etl` automaticamente
 antes de `astro build` e do export dos notebooks. O usuário não precisa commitar
-`.lab/` localmente — os snapshots são gerados em CI a cada push para `main`,
+`.dgk/` localmente — os snapshots são gerados em CI a cada push para `main`,
 a partir das notas do vault no momento do deploy.
 
-### Por que `.lab/` é uma pasta visível
+### Separação entre `.dgk/` e `fontes/`
 
-Este template é uma referência educativa. A pasta `.lab/` poderia ficar em
-um diretório oculto — como `.dados/`, `.lab/` ou dentro de `.site/` — o que é
-prática comum em ferramentas que tratam metadados de build como artefatos
-efêmeros e não para leitura humana direta.
+`.dgk/` é uma pasta oculta, ignorada pelo git. Segue a convenção `.<toolname>/`
+usada por outras ferramentas (`.git/`, `.astro/`, `.pi/`): estado de runtime da
+CLI, regenerável a cada `dgk etl`, nunca commitado.
 
-A escolha de mantê-la visível é intencional: quem usa o vault consegue
-inspecionar os snapshots, entender o que o ETL produz e adaptar scripts de
-ingestão com base em exemplos concretos. A transparência tem custo — os arquivos
-aparecem no explorador de pastas e no histórico Git — mas isso faz sentido
-enquanto o objetivo é demonstrar o pipeline.
-
-À medida que o projeto amadurece, é possível que `.lab/` migre para uma
-pasta oculta quando `dados/` passar a ser reservada para conteúdo editável pelo
-usuário (feeds, fontes, rascunhos) e os snapshots de ETL passarem a ser tratados
-como artefatos de build sem valor permanente. Outros projetos da mesma família
-usam esse padrão de pasta oculta para metadados exportáveis.
+`fontes/` é a pasta editável pelo usuário: `fontes/feeds.opml` e
+`fontes/lista-leitura.json` são conteúdo que o usuário cuida e que o ETL lê
+como entrada. Esses arquivos são commitados porque são decisões do usuário, não
+artefatos de build.
 
 ## Exemplo incluído
 
 O comando `dgk etl` inclui automaticamente um exemplo pequeno de ETL local (equivalente ao antigo `pnpm run notebooks:etl:demo`).
 
 O ETL lê as notas Markdown no computador, calcula um perfil simples do
-vault e escreve `.lab/perfil-do-vault.json`. Ele também roda a auditoria
+vault e escreve `.dgk/perfil-do-vault.json`. Ele também roda a auditoria
 compartilhada de arquitetura de informação e escreve
-`.lab/curadoria-ia.json`, um relatório JSON com notas avaliadas, avisos
+`.dgk/curadoria-ia.json`, um relatório JSON com notas avaliadas, avisos
 editoriais, candidatas a promoção e distribuição por intenção. O mesmo fluxo
-normaliza OPML em `.lab/feeds-assinados.json` e gera a outbox a partir de
-frontmatter em `.lab/outbox-publicacao.json`. Depois,
+normaliza OPML em `.dgk/feeds-assinados.json` e gera a outbox a partir de
+frontmatter em `.dgk/outbox-publicacao.json`. Depois,
 `prepare_lab_datasets.mjs` empacota esses arquivos em `public/lab/datasets/` e
 `public/lab/assets/datasets/`.
 

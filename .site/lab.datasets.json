@@ -1,9 +1,9 @@
-[
+﻿[
   {
     "id": "perfil-do-vault",
     "title": "Perfil do vault",
     "description": "Snapshot gerado localmente para demonstrar ETL antes do notebook",
-    "source": ".lab/perfil-do-vault.json",
+    "source": ".dgk/perfil-do-vault.json",
     "output": "perfil-do-vault.json",
     "format": "json",
     "publish": true
@@ -12,7 +12,7 @@
     "id": "curadoria-ia",
     "title": "Curadoria da arquitetura de informação",
     "description": "Relatório local da auditoria editorial compartilhada entre site, CI e Lab",
-    "source": ".lab/curadoria-ia.json",
+    "source": ".dgk/curadoria-ia.json",
     "output": "curadoria-ia.json",
     "format": "json",
     "publish": true
@@ -21,7 +21,7 @@
     "id": "feeds-assinados",
     "title": "Feeds assinados",
     "description": "Lista OPML normalizada para auditoria de fontes abertas no Lab",
-    "source": ".lab/feeds-assinados.json",
+    "source": ".dgk/feeds-assinados.json",
     "output": "feeds-assinados.json",
     "format": "json",
     "publish": true
@@ -30,7 +30,7 @@
     "id": "outbox-publicacao",
     "title": "Outbox de publicação",
     "description": "Rascunhos candidatos a distribuição externa, derivados de frontmatter e revisados antes de publicar",
-    "source": ".lab/outbox-publicacao.json",
+    "source": ".dgk/outbox-publicacao.json",
     "output": "outbox-publicacao.json",
     "format": "json",
     "publish": true
@@ -39,7 +39,7 @@
     "id": "grafo-do-vault",
     "title": "Grafo do vault",
     "description": "Dados de conectividade por nota: links de entrada e saída, órfãs e hubs",
-    "source": ".lab/grafo-do-vault.json",
+    "source": ".dgk/grafo-do-vault.json",
     "output": "grafo-do-vault.json",
     "format": "json",
     "publish": true
@@ -48,7 +48,7 @@
     "id": "grafo-do-vault-jsonld",
     "title": "Grafo do vault (JSON-LD)",
     "description": "Grafo semântico do vault com vocabulário dgk: e schema.org, exportado em JSON-LD",
-    "source": ".lab/grafo-do-vault.jsonld",
+    "source": ".dgk/grafo-do-vault.jsonld",
     "output": "grafo-do-vault.jsonld",
     "format": "json",
     "publish": true
@@ -57,7 +57,7 @@
     "id": "lista-leitura",
     "title": "Lista de leitura",
     "description": "URLs curadas para leitura, com tópico e status, enriquecidas localmente com OpenGraph",
-    "source": ".lab/lista-leitura.json",
+    "source": ".dgk/lista-leitura.json",
     "output": "lista-leitura.json",
     "format": "json",
     "publish": true
@@ -66,7 +66,7 @@
     "id": "qualidade-textos",
     "title": "Qualidade de escrita",
     "description": "Relatório determinístico de vícios de escrita por nota: repetições, aberturas mecânicas, frases longas e artefatos sintéticos",
-    "source": ".lab/qualidade-textos.json",
+    "source": ".dgk/qualidade-textos.json",
     "output": "qualidade-textos.json",
     "format": "json",
     "publish": true

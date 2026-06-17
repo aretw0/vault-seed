@@ -1,4 +1,4 @@
----
+﻿---
 title: Trilha do Lab Interativo
 aliases:
   - Primeiro Notebook Marimo
@@ -48,16 +48,16 @@ O que você verifica manualmente:
 
 ## Trilha 1 — Preparar os datasets
 
-O Lab carrega dados de `.lab/`. Gere-os antes de abrir qualquer notebook:
+O Lab carrega dados de `.dgk/`. Gere-os antes de abrir qualquer notebook:
 
 ```bash
 dgk etl
 ```
 
-- [ ] `.lab/perfil-do-vault.json` existe e foi gerado agora
+- [ ] `.dgk/perfil-do-vault.json` existe e foi gerado agora
 - [ ] O campo `noteCount` reflete o número real de notas do seu vault
-- [ ] `.lab/curadoria-ia.json` existe
-- [ ] `.lab/outbox-publicacao.json` existe
+- [ ] `.dgk/curadoria-ia.json` existe
+- [ ] `.dgk/outbox-publicacao.json` existe
 
 Se `noteCount` for 0 ou muito baixo, verifique se as pastas do vault estão na raiz correta do repositório.
 

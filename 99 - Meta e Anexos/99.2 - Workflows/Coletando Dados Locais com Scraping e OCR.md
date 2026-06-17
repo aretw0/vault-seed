@@ -1,4 +1,4 @@
----
+﻿---
 title: Coletando Dados Locais com Scraping e OCR
 aliases:
   - Scraping e OCR no Lab
@@ -27,7 +27,7 @@ Pense em três etapas:
 
 1. **Extract local:** baixar páginas, ler arquivos privados, executar OCR ou
    chamar APIs com token.
-2. **Snapshot versionável:** gravar o resultado limpo em `.lab/` ou outra
+2. **Snapshot versionável:** gravar o resultado limpo em `.dgk/` ou outra
    pasta do vault.
 3. **Lab publicado:** declarar o snapshot em `.site/lab.datasets.json` e ler o
    arquivo no notebook Marimo exportado.
@@ -107,7 +107,7 @@ O starter já traz campos para:
 - coletar uma URL simples;
 - executar OCR em uma imagem local;
 - verificar se um segredo de ambiente existe;
-- gravar um snapshot JSON em `.lab/`;
+- gravar um snapshot JSON em `.dgk/`;
 - bloquear a escrita quando o notebook estiver publicado em HTML.
 
 ## Receita: Página Simples
@@ -119,7 +119,7 @@ from _lab_notebook_runtime import fetch_local_url_text, write_local_json_snapsho
 
 page = fetch_local_url_text("https://example.com")
 write_local_json_snapshot(
-    ".lab/minha-pagina.json",
+    ".dgk/minha-pagina.json",
     {
         "schemaVersion": 1,
         "source": page["url"],
@@ -137,7 +137,7 @@ Use quando a página precisa renderizar JavaScript. A função é assíncrona:
 from _lab_notebook_runtime import scrape_local_page_text, write_local_json_snapshot
 
 page = await scrape_local_page_text("https://example.com")
-write_local_json_snapshot(".lab/minha-pagina-dinamica.json", page)
+write_local_json_snapshot(".dgk/minha-pagina-dinamica.json", page)
 ```
 
 Se o navegador local ainda não existir, rode `pnpm run notebooks:extract:browser`.
@@ -151,7 +151,7 @@ from _lab_notebook_runtime import extract_local_image_text, write_local_json_sna
 
 text = extract_local_image_text("anexos/exemplo.png", languages="por+eng")
 write_local_json_snapshot(
-    ".lab/ocr-exemplo.json",
+    ".dgk/ocr-exemplo.json",
     {
         "schemaVersion": 1,
         "source": "anexos/exemplo.png",
@@ -180,7 +180,7 @@ request = Request(
 with urlopen(request, timeout=20) as response:
     payload = json.loads(response.read())
 
-write_local_json_snapshot(".lab/minha-api.json", payload)
+write_local_json_snapshot(".dgk/minha-api.json", payload)
 ```
 
 Depois que o snapshot existir, declare o arquivo em `.site/lab.datasets.json`:
@@ -190,7 +190,7 @@ Depois que o snapshot existir, declare o arquivo em `.site/lab.datasets.json`:
   "id": "minha-api",
   "title": "Minha API",
   "description": "Snapshot local gerado antes da publicação",
-  "source": ".lab/minha-api.json",
+  "source": ".dgk/minha-api.json",
   "output": "minha-api.json",
   "format": "json",
   "publish": true

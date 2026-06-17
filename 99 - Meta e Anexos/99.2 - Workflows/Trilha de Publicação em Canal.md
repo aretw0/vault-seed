@@ -1,4 +1,4 @@
----
+﻿---
 title: Trilha de Publicação em Canal
 aliases:
   - Outbox Passo a Passo
@@ -87,7 +87,7 @@ Rode o ETL para atualizar o dataset da outbox:
 dgk etl
 ```
 
-- [ ] `.lab/outbox-publicacao.json` existe e contém a nota
+- [ ] `.dgk/outbox-publicacao.json` existe e contém a nota
 - [ ] A entrada no JSON tem `publicationStatus: review` e `channels: ["telegram"]`
 
 Para revisar visualmente no Lab:

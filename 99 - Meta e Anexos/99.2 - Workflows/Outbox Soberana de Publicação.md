@@ -1,4 +1,4 @@
----
+﻿---
 title: Outbox Soberana de Publicação
 aliases:
   - Outbox Soberana
@@ -63,7 +63,7 @@ O pipeline ETL inclui a preparação da outbox: procura notas com pelo menos um 
 Depois ele gera:
 
 ```text
-.lab/outbox-publicacao.json
+.dgk/outbox-publicacao.json
 ```
 
 ## Campos De Controle

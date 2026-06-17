@@ -1,4 +1,4 @@
-import test from "node:test";
+﻿import test from "node:test";
 import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -20,7 +20,7 @@ test("buildPublicationOutbox extracts only explicit publication candidates", () 
       "outbox: true",
       "publicationStatus: draft",
       "canonical: https://example.com/post",
-      "source: .lab/snapshot.json",
+      "source: .dgk/snapshot.json",
       "collectedAt: 2026-05-26T00:00:00.000Z",
       "license: CC-BY-4.0",
       "privacy: public",

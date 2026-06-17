@@ -105,12 +105,12 @@ public/lab/
 # ===================================================================
 # Artefatos efêmeros de ETL e pipeline (.lab/)
 # ===================================================================
-# .lab/ contém snapshots gerados por `dgk etl` e estado de pipeline
+# .dgk/ contém snapshots gerados por `dgk etl` e estado de pipeline
 # (outbox-telegram.json, inbox-telegram-state.json, etc.).
 # Esses arquivos são regeneráveis pelo CI a cada deploy — não os commite.
-# dados/ fica reservada para conteúdo editável pelo usuário:
-#   dados/fontes/feeds.opml, dados/fontes/lista-leitura.json
-.lab/
+# fontes/ fica reservada para conteúdo editável pelo usuário:
+#   fontes/feeds.opml, fontes/lista-leitura.json
+.dgk/
 
 # Social dumps
 **/**/instagram-*.zip

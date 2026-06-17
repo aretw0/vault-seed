@@ -1,4 +1,4 @@
-import marimo
+﻿import marimo
 
 __generated_with = "0.23.9"
 app = marimo.App(width="medium")
@@ -414,7 +414,7 @@ def _(mo, run_local_extract, runtime_context, snapshot, write_local_json_snapsho
             "largestNotes": snapshot.get("largestNotes", [])[:5],
         }
         _result = write_local_json_snapshot(
-            ".lab/perfil-do-vault.extract-preview.json",
+            ".dgk/perfil-do-vault.extract-preview.json",
             payload,
         )
         _message = (
@@ -534,7 +534,7 @@ def _(
     if run_tabular_snapshot.value and runtime_context["isLocal"]:
         _result = write_local_dataframe_snapshot(
             notes_df,
-            ".lab/perfil-do-vault.largest-notes.csv",
+            ".dgk/perfil-do-vault.largest-notes.csv",
         )
         _message = (
             f"Tabela local escrita em `{_result['relativePath']}` "
@@ -670,11 +670,11 @@ def _(mo):
         "O workflow `refresh-lab-data.yml` repete este ciclo diariamente:\n\n"
         "1. **Extract** — `pnpm run notebooks:etl` lê as notas do vault e as fontes externas\n"
         "2. **Transform** — scripts em `scripts/` normalizam e enriquecem os dados\n"
-        "3. **Load** — os arquivos em `.lab/` são commitados com `[skip ci]` "
+        "3. **Load** — os arquivos em `.dgk/` são commitados com `[skip ci]` "
         "para não disparar novamente o workflow de deploy\n\n"
         "O notebook é a interface humana para o mesmo ciclo. "
         "O CI é a automação sem interface. "
-        "Os datasets em `.lab/` são o ponto de encontro entre os dois."
+        "Os datasets em `.dgk/` são o ponto de encontro entre os dois."
     )
     return
 

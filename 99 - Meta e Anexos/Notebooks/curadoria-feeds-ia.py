@@ -1,4 +1,4 @@
-import marimo
+﻿import marimo
 
 __generated_with = "0.23.9"
 app = marimo.App(width="medium")
@@ -254,7 +254,7 @@ def _(mo):
         "`ANTHROPIC_API_KEY` está configurado como secret do repositório:\n\n"
         "```\nSettings → Secrets and variables → Actions → New repository secret\nName: ANTHROPIC_API_KEY\n```\n\n"
         "O passo de curadoria usa `claude-haiku-4-5-20251001` para manter custo baixo. "
-        "O resultado é commitado em `.lab/curadoria-feeds.json` com `[skip ci]`."
+        "O resultado é commitado em `.dgk/curadoria-feeds.json` com `[skip ci]`."
     )
     return
 
