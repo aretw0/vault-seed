@@ -236,6 +236,45 @@ function runFullInstallLayer(tmpDir, errors) {
   } catch {
     errors.push('[L3] user test suite failed after install');
   }
+
+  // Layer 3b: site build.
+  // packages/dgk-astro-plugins is NOT removed by initialize.yml, so astro build
+  // must work in the user vault after install. Verifies the full publish pipeline.
+  console.log('  Layer 3b: site build (astro build)...');
+  try {
+    execFileSync('pnpm', ['run', 'site:build'], {
+      cwd: tmpDir,
+      stdio: 'inherit',
+      shell: false,
+    });
+  } catch {
+    errors.push('[L3b] pnpm run site:build failed in user vault');
+    return;
+  }
+
+  const distDir = join(tmpDir, 'dist');
+  if (!existsSync(distDir)) {
+    errors.push('[L3b] astro build did not produce a dist/ directory');
+    return;
+  }
+
+  const { readdirSync } = await import('node:fs');
+  function countHtml(dir) {
+    let n = 0;
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      if (entry.isDirectory()) n += countHtml(join(dir, entry.name));
+      else if (entry.name.endsWith('.html')) n += 1;
+    }
+    return n;
+  }
+  const htmlCount = countHtml(distDir);
+  // At minimum: index.html + 404.html + rss.xml page wrapper + the one published note (Bem-vindo).
+  const MIN_HTML = 3;
+  if (htmlCount < MIN_HTML) {
+    errors.push(`[L3b] astro build produced only ${htmlCount} HTML files — expected at least ${MIN_HTML}`);
+  } else {
+    console.log(`    OK — site build produced ${htmlCount} HTML files.`);
+  }
 }
 
 // ---------------------------------------------------------------------------
