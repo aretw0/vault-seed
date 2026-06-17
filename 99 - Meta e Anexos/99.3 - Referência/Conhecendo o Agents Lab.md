@@ -57,7 +57,7 @@ Para notebooks Marimo, o caminho recomendado neste vault continua sendo:
 1. editar o arquivo `.py`;
 2. rodar `pnpm run notebooks:check`;
 3. revisar o diff;
-4. abrir `pnpm run notebooks:dev` para inspecionar a experiência interativa;
+4. abrir `dgk lab <nome-do-notebook>` para inspecionar a experiência interativa;
 5. publicar apenas quando o notebook entrar conscientemente em
    `.site/lab.notebooks.json`.
 
