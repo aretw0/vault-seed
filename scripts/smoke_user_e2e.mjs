@@ -17,14 +17,29 @@
  *     Runs `pnpm install --frozen-lockfile` in the temp vault (using the
  *     pnpm-lock.yaml from pnpm-lock.template.yaml), then runs the user's
  *     `node --test scripts/*.test.js scripts/*.test.mjs scripts/*.test.cjs`.
- *     Slow (~30s). Skip in normal CI; run locally before release.
+ *
+ *   Layer 3b — ETL demo (--full flag)
+ *     Runs `pnpm run notebooks:etl:demo` to generate dados/lab/. This mirrors
+ *     the user's first step after cloning: initialize.yml removes dados/lab/,
+ *     so the user must run dgk etl before the Lab has any data. Verifies that
+ *     perfil-do-vault.json is produced with a non-zero noteCount.
+ *
+ *   Layer 3c — Site build + verification (--full flag)
+ *     Runs `pnpm run site:build`, then checks: dist/index.html (homepage),
+ *     dist/rss.xml with at least one <item> (the welcome note is published),
+ *     and a minimum HTML file count. packages/astro-plugins is NOT removed by
+ *     initialize.yml so the build must work in the post-install user vault.
+ *     Lab notebook HTML is NOT verified here — that requires Python/Marimo.
+ *     See Trilha do Lab Interativo for the manual checklist.
+ *
+ *     Slow (~60s total). Skip in normal CI; run locally before release.
  *
  * Run: node scripts/smoke_user_e2e.mjs
  * Run: node scripts/smoke_user_e2e.mjs --full
  */
 import {
   mkdtempSync, mkdirSync, copyFileSync, rmSync,
-  existsSync, readFileSync, writeFileSync,
+  existsSync, readFileSync, writeFileSync, readdirSync,
 } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -237,10 +252,43 @@ function runFullInstallLayer(tmpDir, errors) {
     errors.push('[L3] user test suite failed after install');
   }
 
-  // Layer 3b: site build.
-  // packages/dgk-astro-plugins is NOT removed by initialize.yml, so astro build
-  // must work in the user vault after install. Verifies the full publish pipeline.
-  console.log('  Layer 3b: site build (astro build)...');
+  // Layer 3b: ETL demo.
+  // initialize.yml removes dados/lab/ from the user vault. The user runs `dgk etl`
+  // (or `pnpm run notebooks:etl:demo`) as their first step to populate lab datasets.
+  // We verify this works in the post-install user vault before the site build.
+  console.log('  Layer 3b: ETL demo (lab dataset generation)...');
+  try {
+    execFileSync('pnpm', ['run', 'notebooks:etl:demo'], {
+      cwd: tmpDir,
+      stdio: 'inherit',
+      shell: false,
+    });
+  } catch {
+    errors.push('[L3b] pnpm run notebooks:etl:demo failed — lab data generation broken in user vault');
+    // Do not return: site build can still proceed without lab data.
+  }
+
+  const labProfile = join(tmpDir, 'dados', 'lab', 'perfil-do-vault.json');
+  if (!existsSync(labProfile)) {
+    errors.push('[L3b] dados/lab/perfil-do-vault.json not created by etl:demo');
+  } else {
+    try {
+      const profile = JSON.parse(readFileSync(labProfile, 'utf8'));
+      if (typeof profile.noteCount !== 'number' || profile.noteCount < 1) {
+        errors.push(`[L3b] perfil-do-vault.json has noteCount=${profile.noteCount} — ETL found no notes`);
+      } else {
+        console.log(`    OK — ETL generated lab datasets (${profile.noteCount} notes).`);
+      }
+    } catch {
+      errors.push('[L3b] perfil-do-vault.json is not valid JSON');
+    }
+  }
+
+  // Layer 3c: site build.
+  // packages/astro-plugins is NOT removed by initialize.yml, so astro build
+  // must work in the user vault after install. Runs after ETL so the build
+  // has access to generated data if any integration needs it.
+  console.log('  Layer 3c: site build (astro build)...');
   try {
     execFileSync('pnpm', ['run', 'site:build'], {
       cwd: tmpDir,
@@ -248,17 +296,39 @@ function runFullInstallLayer(tmpDir, errors) {
       shell: false,
     });
   } catch {
-    errors.push('[L3b] pnpm run site:build failed in user vault');
+    errors.push('[L3c] pnpm run site:build failed in user vault');
     return;
   }
 
   const distDir = join(tmpDir, 'dist');
   if (!existsSync(distDir)) {
-    errors.push('[L3b] astro build did not produce a dist/ directory');
+    errors.push('[L3c] astro build did not produce a dist/ directory');
     return;
   }
 
-  const { readdirSync } = await import('node:fs');
+  // dist/index.html — homepage must render.
+  if (!existsSync(join(distDir, 'index.html'))) {
+    errors.push('[L3c] dist/index.html missing — homepage did not render');
+  } else {
+    console.log('    OK — dist/index.html present.');
+  }
+
+  // dist/rss.xml — generated from status:published notes.
+  // The welcome note (Bem-vindo ao seu vault.md) is the only published note
+  // in a fresh user vault, so the feed must have at least one item.
+  const rssPath = join(distDir, 'rss.xml');
+  if (!existsSync(rssPath)) {
+    errors.push('[L3c] dist/rss.xml missing — RSS feed not generated');
+  } else {
+    const rss = readFileSync(rssPath, 'utf8');
+    if (!rss.includes('<item>')) {
+      errors.push('[L3c] dist/rss.xml has no <item> entries — welcome note not published or not found by content loader');
+    } else {
+      console.log('    OK — dist/rss.xml contains at least one item.');
+    }
+  }
+
+  // HTML file count sanity check.
   function countHtml(dir) {
     let n = 0;
     for (const entry of readdirSync(dir, { withFileTypes: true })) {
@@ -268,10 +338,10 @@ function runFullInstallLayer(tmpDir, errors) {
     return n;
   }
   const htmlCount = countHtml(distDir);
-  // At minimum: index.html + 404.html + rss.xml page wrapper + the one published note (Bem-vindo).
-  const MIN_HTML = 3;
+  // index.html + 404.html + welcome note page + at minimum one workflow note = 4.
+  const MIN_HTML = 4;
   if (htmlCount < MIN_HTML) {
-    errors.push(`[L3b] astro build produced only ${htmlCount} HTML files — expected at least ${MIN_HTML}`);
+    errors.push(`[L3c] astro build produced only ${htmlCount} HTML files — expected at least ${MIN_HTML}`);
   } else {
     console.log(`    OK — site build produced ${htmlCount} HTML files.`);
   }
