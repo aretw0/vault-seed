@@ -77,18 +77,18 @@ function formatDate(iso: string | null): string {
       image: {
         html: heroGraphHtml,
       },
-      tagline: 'Conhecimento que é seu: local, versionado, AI-ready. Publique quando quiser, ou não publique nunca.',
+      tagline: 'Um vault Git-native para quem leva a sério o que aprende — com site próprio, RSS e Lab de notebooks.',
       actions: [
-        {
-          text: 'Começar',
-          link: `${base}/meta-e-anexos/onboarding/seus-primeiros-passos/`,
-          icon: 'right-arrow',
-          variant: 'primary',
-        },
         {
           text: 'Explorar',
           link: `${base}/explorar/`,
           icon: 'open-book',
+          variant: 'primary',
+        },
+        {
+          text: 'GitHub',
+          link: 'https://github.com/aretw0/vault-seed',
+          icon: 'external',
         },
       ],
     },
@@ -100,10 +100,41 @@ function formatDate(iso: string | null): string {
       O vault é seu desde o primeiro commit.
     </p>
 
+    {explore.metrics.notes > 0 && (
+      <p class="vault-metrics">
+        {explore.metrics.notes} notas
+        · {explore.metrics.totalWords.toLocaleString('pt-BR')} palavras
+        · {explore.metrics.links} conexões
+        · {explore.metrics.tags} tags
+      </p>
+    )}
+
+    {(() => {
+      const COMECAR_TAGS = new Set(['meta/onboarding', 'iniciante', 'vault/setup']);
+      const comecarNotes = explore.notes
+        .filter((n) => n.tags.some((t) => COMECAR_TAGS.has(t)))
+        .slice(0, 4);
+      return comecarNotes.length > 0 && (
+        <section class="vault-hubs" aria-label="Por onde começar">
+          <p class="vault-section-label">Por onde começar</p>
+          <ul class="vault-hub-grid">
+            {comecarNotes.map((note) => (
+              <li>
+                <a class="vault-hub-card" href={`${base}${note.href}`}>
+                  <span class="vault-hub-card__title">{note.title}</span>
+                  <span class="vault-hub-card__meta">{note.audience ?? 'Geral'}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      );
+    })()}
+
     <section class="vault-capabilities" aria-label="Capacidades do vault-seed">
-      <p class="vault-capabilities__heading">O que este vault oferece</p>
+      <p class="vault-section-label">O que este vault oferece</p>
       <ul class="vault-capabilities__list">
-        <li><a href={`${base}/meta-e-anexos/onboarding/entendendo-a-estrutura-de-pastas/`}>Local first</a> — Markdown + Git. Funciona offline, em qualquer editor, sem lock-in.</li>
+        <li>Local first — Markdown + Git. Funciona offline, em qualquer editor, sem lock-in.</li>
         <li><a href={`${base}/meta-e-anexos/referencia/usando-com-agentes-de-ia/`}>AI-ready</a> — AGENTS.md, CLAUDE.md e GEMINI.md entregam contexto a qualquer assistente.</li>
         <li><a href={`${base}/meta-e-anexos/workflows/publicando-seu-vault-como-site/`}>Publicação opcional</a> — GitHub Pages com Astro. RSS gerado automaticamente.</li>
         <li><a href={`${base}/meta-e-anexos/referencia/convencoes-e-boas-praticas/`}>Conhecimento coletivo</a> — Git, PRs e Markdown para times. Auditável por padrão.</li>
@@ -112,22 +143,20 @@ function formatDate(iso: string | null): string {
       </ul>
     </section>
 
-    {topTags.length > 0 && (
-      <>
-        <p class="vault-tags-header">Ver por tag</p>
-        <div class="vault-tag-cloud-home">
-          {topTags.map(({ name }) => (
-            <a class="vault-tag-link" href={`${base}/explorar/?tags=${name}`}>#{name}</a>
-          ))}
-        </div>
-      </>
-    )}
-
     {recentNotes.length > 0 ? (
       <>
         <div class="vault-post-header">
           <span>Notas recentes</span>
-          <a class="vault-post-see-all" href={`${base}/explorar/`}>ver todas →</a>
+          <span class="vault-post-header__actions">
+            <a class="vault-rss-link" href={`${base}/rss.xml`} title="Assinar via RSS" aria-label="Feed RSS">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <circle cx="6.18" cy="17.82" r="2.18"/>
+                <path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"/>
+              </svg>
+              RSS
+            </a>
+            <a class="vault-post-see-all" href={`${base}/explorar/`}>ver todas →</a>
+          </span>
         </div>
         <ol class="vault-post-list">
           {recentNotes.map((note) => (
@@ -153,15 +182,22 @@ function formatDate(iso: string | null): string {
             </li>
           ))}
         </ol>
-
-        <p class="vault-subscribe-line">
-          Assine via <a href={`${base}/rss.xml`}>RSS</a> para acompanhar novidades do vault.
-        </p>
       </>
     ) : (
       <p class="vault-no-notes">
         Nenhuma nota publicada ainda. Marque suas notas com <code>status: published</code> para aparecerem aqui.
       </p>
+    )}
+
+    {topTags.length > 0 && (
+      <>
+        <p class="vault-tags-header">Explorar por tag</p>
+        <div class="vault-tag-cloud-home">
+          {topTags.map(({ name }) => (
+            <a class="vault-tag-link" href={`${base}/explorar/?tags=${name}`}>#{name}</a>
+          ))}
+        </div>
+      </>
     )}
   </section>
 </StarlightPage>

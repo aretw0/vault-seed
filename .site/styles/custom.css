@@ -1294,6 +1294,87 @@ dialog.mermaid-dialog::backdrop {
   margin-block: 1.5rem;
 }
 
+/* ── home: shared section label ────────────────────────────────────────────── */
+.vault-section-label {
+  margin-block: 0 0.75rem;
+  font-size: 0.875rem;
+  color: var(--sl-color-gray-3);
+}
+
+/* ── home: metrics strip ────────────────────────────────────────────────────── */
+.vault-metrics {
+  text-align: center;
+  font-size: var(--sl-text-xs);
+  color: var(--sl-color-gray-4);
+  letter-spacing: 0.02em;
+  margin-block: 0.25rem 0;
+}
+
+/* ── home: hub entry-point cards ────────────────────────────────────────────── */
+.vault-hubs {
+  margin-block-start: 2.5rem;
+  border-block-start: 1px solid var(--sl-color-hairline);
+  padding-block-start: 1.5rem;
+}
+
+.vault-hub-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 0.65rem;
+}
+
+.vault-hub-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 0.45rem;
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.vault-hub-card:hover {
+  border-color: var(--sl-color-accent);
+  background: color-mix(in srgb, var(--sl-color-accent) 5%, transparent);
+}
+
+.vault-hub-card__title {
+  font-size: 0.875rem;
+  color: var(--sl-color-white);
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.vault-hub-card__meta {
+  font-size: var(--sl-text-xs);
+  color: var(--sl-color-gray-3);
+}
+
+/* ── home: RSS link in post header ──────────────────────────────────────────── */
+.vault-post-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.vault-rss-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  font-size: var(--sl-text-xs);
+  color: var(--sl-color-gray-3);
+  text-decoration: none;
+}
+
+.vault-rss-link:hover {
+  color: var(--sl-color-text-accent);
+}
+
+/* ── home: capabilities ─────────────────────────────────────────────────────── */
 .vault-capabilities {
   margin-block-start: 2.5rem;
   border-block-start: 1px solid var(--sl-color-hairline);
