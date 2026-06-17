@@ -76,7 +76,7 @@ dados/lab/outbox-publicacao.json
 | `sha256` | fingerprint do item ou da nota |
 | `license` | licença, termos ou `verificar` |
 | `privacy` | limite de exposição antes de publicar |
-| `channels` | canais candidatos, como `rss`, `mastodon`, `newsletter` |
+| `channels` | canais candidatos, como `telegram`, `mastodon`, `newsletter` |
 | `publicationStatus` | `draft`, `review`, `scheduled`, `published` ou `blocked` |
 
 ## Notebook De Revisão
