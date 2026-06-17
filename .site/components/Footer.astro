@@ -2,7 +2,7 @@
 import EditLink from 'virtual:starlight/components/EditLink';
 import LastUpdated from 'virtual:starlight/components/LastUpdated';
 import Pagination from 'virtual:starlight/components/Pagination';
-import { vaultLicense, versions, resolveLicense } from '../lib/vault-config.mjs';
+import { vaultLicense, vaultKudos, versions, resolveLicense } from '../lib/vault-config.mjs';
 
 const { entry } = Astro.props;
 
@@ -32,17 +32,6 @@ if (versions.starlight) versionParts.push(`Starlight ${versions.starlight}`);
 	</div>
 	<Pagination />
 
-	{activeLicense && (
-		<div class="license-row" lang="pt-BR">
-			<span class="license-copy">
-				© {year}{activeHolder ? <> · {activeHolder}</> : null}
-			</span>
-			{activeLicense.url
-				? <a class="license-badge" href={activeLicense.url} target="_blank" rel="noopener noreferrer license">{activeLicense.label}</a>
-				: <span class="license-badge">{activeLicense.label}</span>
-			}
-		</div>
-	)}
 
 	{attributions.length > 0 && (
 		<details class="attributions" lang="pt-BR">
@@ -69,26 +58,31 @@ if (versions.starlight) versionParts.push(`Starlight ${versions.starlight}`);
 				<li><a href="https://github.com/aretw0/vault-seed">Código-fonte</a></li>
 				<li><a href="https://github.com/aretw0/vault-seed/releases">Releases</a></li>
 				<li><a href="https://github.com/aretw0/vault-seed/issues">Issues</a></li>
+				<li><a href="https://github.com/aretw0/vault-seed/blob/main/LICENSE.md">Licença do código (GPL v3)</a></li>
 			</ul>
 		</div>
 		<div class="vault-footer-col">
 			<p class="vault-footer-col__heading">Comunidade</p>
 			<ul>
-				<li><a href="https://github.com/sponsors/aretw0">GitHub Sponsors</a></li>
 				<li><a href={`https://wa.me/5581999499582?text=${encodeURIComponent('Olá! Vim pelo vault-seed e gostaria de conhecer mais sobre a comunidade.')}`} target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
-			</ul>
-		</div>
-		<div class="vault-footer-col">
-			<p class="vault-footer-col__heading">Autor</p>
-			<ul>
-				<li><a href="https://github.com/aretw0">@aretw0</a></li>
+				<li><a href="https://github.com/sponsors/aretw0">GitHub Sponsors</a></li>
 			</ul>
 		</div>
 	</div>
 
-	<div class="kudos" lang="pt-BR">
-		Feito com ♥ por <a href="https://github.com/aretw0">@aretw0</a> · {year}
-	</div>
+	{activeLicense && (
+		<div class="license-row" lang="pt-BR">
+			<span class="license-copy">© {year}{activeHolder ? <> · {activeHolder}</> : null}</span>
+			{activeLicense.url
+				? <a class="license-badge" href={activeLicense.url} target="_blank" rel="noopener noreferrer license">{activeLicense.label}</a>
+				: <span class="license-badge">{activeLicense.label}</span>
+			}
+		</div>
+	)}
+
+	{vaultKudos && (
+		<div class="kudos" lang="pt-BR">{vaultKudos}</div>
+	)}
 
 	{versionParts.length > 0 && (
 		<div class="versions" aria-label="Versões">
@@ -222,13 +216,6 @@ if (versions.starlight) versionParts.push(`Starlight ${versions.starlight}`);
 		color: var(--sl-color-gray-3);
 		border: 1px solid var(--sl-color-hairline);
 		border-radius: 999px;
-	}
-	.kudos a {
-		color: inherit;
-		text-decoration: none;
-	}
-	.kudos a:hover {
-		color: var(--sl-color-white);
 	}
 	.versions {
 		text-align: center;

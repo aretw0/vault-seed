@@ -33,6 +33,10 @@ export const vaultLicense = {
   holder: _cfg.license?.holder ?? null,
 };
 
+// Optional personal sign-off shown below the license row.
+// Set to null in vault.config.json to disable (default for user vaults after init).
+export const vaultKudos = typeof _cfg.kudos === 'string' && _cfg.kudos.trim() ? _cfg.kudos.trim() : null;
+
 // ---------------------------------------------------------------------------
 // Package versions — read at build time; gracefully absent before first install
 // ---------------------------------------------------------------------------

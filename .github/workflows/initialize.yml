@@ -22,6 +22,21 @@ jobs:
           files_to_rename: "README.template.md:README.md CONTRIBUTING.template.md:CONTRIBUTING.md AGENTS.template.md:AGENTS.md package.template.json:package.json pnpm-lock.template.yaml:pnpm-lock.yaml"
           files_to_remove: "docs .templates ROADMAP.md AGENTS.template.md README.template.md CONTRIBUTING.template.md packages/cli packages/dgk-channels packages/dgk-runner packages/dgk-skills .changeset mdt.toml .github/workflows/template-ci.yml .github/workflows/prepare-release-pr.yml .github/workflows/release.yml .github/workflows/security-audit.yml .github/workflows/sync-develop-with-main.yml .github/workflows/validate-mdt.yml .github/workflows/publish-packages.yml .github/workflows/refresh-lab-data.yml CNAME scripts/audience_boundary.test.js scripts/deploy_site_workflow.test.js scripts/mermaid_render_contract.test.js scripts/mermaid_toggle.test.js scripts/release_package_smoke.test.js scripts/release_package_smoke.mjs scripts/release_version_contract.test.mjs scripts/sync_lockfile_template.mjs scripts/smoke_template.js scripts/smoke_initialize_reset.mjs scripts/smoke_user_vault.mjs scripts/smoke_user_e2e.mjs dados/lab"
 
+      - name: 📄 Publish user welcome note and clear vault-seed kudos
+        run: |
+          sed -i 's/^status: draft$/status: published/' "00 - Entrada/Bem-vindo ao seu vault.md"
+          node -e "
+            const fs = require('fs');
+            const cfg = JSON.parse(fs.readFileSync('vault.config.json', 'utf8'));
+            delete cfg.kudos;
+            fs.writeFileSync('vault.config.json', JSON.stringify(cfg, null, 2) + '\n');
+          "
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "00 - Entrada/Bem-vindo ao seu vault.md" vault.config.json
+          git diff --cached --quiet || git commit -m "chore(init): publish welcome note and reset kudos"
+          git push
+
       - name: 🔒 Protect main branch
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
