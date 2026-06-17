@@ -67,8 +67,29 @@ Abra no Safari iOS ou Chrome Android:
 
 ---
 
+---
+
+## Checklist do Lab (`/lab/`)
+
+Abra `https://seu-usuario.github.io/seu-vault/lab/`:
+
+- [ ] **Listagem de notebooks** → a página mostra os notebooks disponíveis (etl-demo, analise-feeds, analise-outbox, apresentações)
+- [ ] **Abrir um notebook** → carrega sem "Failed to fetch" ou tela em branco (modo WASM, sem servidor)
+- [ ] **Dados do vault** → as métricas no cabeçalho (contagem de notas, status) são do seu vault — não zero nem dados do vault-seed
+- [ ] **Reatividade** → se houver filtros ou sliders, eles respondem ao clique
+- [ ] **Tema** → o toggle escuro/claro funciona e o Lab segue o tema do site
+
+Se o Lab mostrar dados desatualizados:
+
+1. Rode `dgk etl` e `dgk lab export` localmente
+2. Faça commit da pasta `public/lab/` atualizada
+3. Faça push para `main` e espere o deploy
+
+---
+
 ## Se algo não estiver correto
 
 1. Verifique se o deploy terminou sem erros (aba Actions no GitHub)
 2. Force-refresh a página (`Ctrl+Shift+R` no desktop, ou feche e reabra no celular)
-3. Se o problema persistir, abra uma issue no repositório `aretw0/vault-seed` com uma screenshot
+3. Para problemas de dados no Lab, acione o workflow `refresh-lab-data.yml` manualmente pelo GitHub Actions
+4. Se o problema persistir, abra uma issue no repositório `aretw0/vault-seed` com uma screenshot

@@ -114,3 +114,47 @@ Depois do deploy no GitHub Pages:
 - [ ] Footer mostra seus dados, não os do vault-seed de exemplo
 
 Se algo estiver fora, consulte [[Verificando a Aparência do Site Publicado]] para o checklist visual completo.
+
+---
+
+## Trilha 5 — Lab publicado
+
+Abra `https://seu-usuario.github.io/seu-vault/lab/` após o deploy:
+
+- [ ] A página `/lab/` carrega sem erro
+- [ ] Pelo menos os notebooks padrão estão listados: `etl-demo`, `analise-feeds`, `analise-outbox`
+- [ ] Abrir um notebook: carrega no navegador sem depender de servidor (WASM)
+- [ ] Os dados são do vault — não dados de exemplo do vault-seed
+
+Para verificar localmente antes do deploy:
+
+```bash
+dgk etl
+dgk lab export
+```
+
+- [ ] `public/lab/etl-demo.html` existe depois do export
+- [ ] O HTML abre no navegador sem erros de rede
+
+---
+
+## Trilha 6 — Outbox e canais
+
+Verifique se o pipeline de outbox está operacional:
+
+```bash
+dgk check
+```
+
+- [ ] Canais configurados aparecem com `✓` (ex: `✓ Telegram`)
+- [ ] Canais não configurados aparecem com `○` e a instrução `dgk sow <canal>`
+
+Rode o ETL e confirme que o dataset da outbox é gerado:
+
+```bash
+dgk etl
+```
+
+- [ ] `dados/lab/outbox-publicacao.json` existe
+
+Para o passo a passo de uma publicação real, consulte [[Trilha de Publicação em Canal]].
