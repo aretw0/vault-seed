@@ -4,7 +4,7 @@
   "riskPatterns": [
     {
       "id": "draft-markers",
-      "severity": "warn",
+      "severity": "fail",
       "description": "Marcadores de rascunho não devem ficar em notas promovidas.",
       "regex": "(?-i:\\bTODO\\b|\\bFIXME\\b|\\bPENDENTE\\b|\\bPENDENTES\\b)"
     },
@@ -28,9 +28,15 @@
     },
     {
       "id": "ai-conclusao-generica",
-      "severity": "warn",
+      "severity": "fail",
       "description": "Evitar conclusões genéricas ou promocionais sem dado verificável.",
       "regex": "\\b(o futuro (parece|e|é) (promissor|brilhante)|tempos (empolgantes|animadores)|rumo [àa] excel[eê]ncia|passo (importante|decisivo) na dire[cç][aã]o certa)\\b"
+    },
+    {
+      "id": "autopromocao",
+      "severity": "warn",
+      "description": "Evitar autoelogio retórico — preferir mostrar o que foi feito em vez de declarar qualidade. Ver [[feedback_discurso_humildade_curadoria]].",
+      "regex": "\\b(somos (incr[ií]veis|os melhores|excelentes)|ferramenta (incr[ií]vel|revolucion[aá]ria)|muito orgulhosos (em|de) (anunciar|apresentar)|estamos (muito )?felizes em anunciar|simplesmente (incr[ií]vel|fant[aá]stico))\\b"
     },
     {
       "id": "ai-filler-hedging",
@@ -119,7 +125,13 @@
   "scanDirs": [
     "20 - Projetos",
     "30 - Áreas",
-    "40 - Recursos"
+    "40 - Recursos",
+    "99 - Meta e Anexos"
+  ],
+  "institutionalFiles": [
+    "README.md",
+    "ROADMAP.md",
+    "00 - Entrada/Bem-vindo ao seu vault.md"
   ],
   "profiles": {
     "default": {},

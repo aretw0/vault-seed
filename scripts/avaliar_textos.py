@@ -54,6 +54,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--json", dest="json_out", default=str(default_output), help="Saída JSON (batch)")
     parser.add_argument("--report", help="Escrever relatório Markdown desta nota (requer --note)")
     parser.add_argument("--strict", action="store_true")
+    parser.add_argument(
+        "--only-published",
+        action="store_true",
+        help="Avaliar apenas notas com status: published no frontmatter (uso em CI)",
+    )
     args = parser.parse_args(argv)
 
     config_path = Path(args.config).resolve()
@@ -90,6 +95,19 @@ def main(argv: list[str] | None = None) -> int:
     # Batch: walk all configured dirs
     scan_dirs = base_config.get("scanDirs", ["40 - Recursos"])
     notes = walk_notes(scan_dirs, vault_root)
+
+    # Institutional files (README, ROADMAP, welcome note) ship with the
+    # project regardless of frontmatter status — checked unconditionally,
+    # bypassing --only-published.
+    institutional_paths = {
+        (vault_root / rel).resolve()
+        for rel in base_config.get("institutionalFiles", [])
+        if (vault_root / rel).exists()
+    }
+    for path in institutional_paths:
+        if path not in notes:
+            notes.append(path)
+
     if not notes:
         print("Nenhuma nota encontrada nas pastas configuradas em scanDirs.", file=sys.stderr)
         return 0
@@ -99,6 +117,9 @@ def main(argv: list[str] | None = None) -> int:
 
     for note_path in notes:
         text = note_path.read_text(encoding="utf-8")
+        is_institutional = note_path.resolve() in institutional_paths
+        if args.only_published and not is_institutional and read_frontmatter_field(text, "status") != "published":
+            continue
         audience = read_frontmatter_field(text, "audience") or "todos"
         cfg = build_effective_config(base_config, args.profile, audience)
         rel = note_path.relative_to(vault_root)

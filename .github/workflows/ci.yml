@@ -44,6 +44,7 @@ jobs:
           uv run python scripts/test_avaliar_textos.py -v
           uv run python scripts/test_text_scorer.py -v
           uv run python scripts/test_llm_client.py -v
+          uv run python scripts/test_avaliar_apresentacoes.py -v
 
   mdt-check:
     name: MDT template drift (advisory)
@@ -82,6 +83,9 @@ jobs:
         uses: ./.github/actions/setup
         with:
           install-playwright: "true"
+
+      - name: Install uv
+        run: curl -fsSL https://astral.sh/uv/install.sh | sh && echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
       - name: Validate vault quality gates
         run: pnpm run validate
