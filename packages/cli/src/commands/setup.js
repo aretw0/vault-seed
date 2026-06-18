@@ -90,5 +90,11 @@ export async function setup(args, runner) {
     console.log('  Isso é opcional — o vault funciona sem Obsidian instalado.');
   }
 
-  console.log('\nSetup completo. Use `dgk check` para verificar a saúde do vault.');
+  console.log('\nVerificando o ambiente...');
+  try {
+    await _runner('node', ['scripts/check-substrate.mjs']);
+    console.log('\nSetup completo. Use `dgk check` para verificar a saúde do vault.');
+  } catch {
+    console.log('\nSetup com pendências — rode `dgk doctor` para ver o que falta corrigir.');
+  }
 }

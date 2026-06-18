@@ -36,6 +36,7 @@ editar o template para propagar a mudança aqui.
 | Comando | Descrição |
 |---|---|
 | `dgk setup` | Configura o ambiente local (git, deps, Python tools) |
+| `dgk doctor` | Diagnostica o ambiente (node, pnpm, uv, python, binários) |
 | `dgk check` | Verifica a saúde do vault (onboarding, IA, texto) |
 | `dgk evaluate [nota]` | Avalia qualidade de escrita (determinístico, sem API) |
 | `dgk lint` | Valida o markdown do vault |
@@ -75,6 +76,6 @@ dgk outbox telegram       # publica
 
 ## Onde cada comando é usado em detalhe
 
-- `dgk setup`, `dgk check`, `dgk evaluate` → [[Configurando Localmente]]
+- `dgk setup`, `dgk doctor`, `dgk check`, `dgk evaluate` → [[Configurando Localmente]]
 - `dgk etl`, `dgk lab <notebook>`, `dgk lab export` → [[Trilha do Lab Interativo]]
 - `dgk sow <canal>`, `dgk outbox <canal>` → [[Trilha de Publicação em Canal]]

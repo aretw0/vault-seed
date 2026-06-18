@@ -28,15 +28,41 @@ test('lint chama markdownlint diretamente via node (sem pnpm)', async () => {
   );
 });
 
-test('setup não usa bash — apenas pnpm/uv via runner quando necessário', async () => {
+test('setup não usa bash — apenas pnpm/uv/node via runner quando necessário', async () => {
   const { calls, runner } = captureRun();
   await setup([], runner);
   // git config and path-checks use execFileSync directly, not the injected runner
   assert.ok(calls.every((c) => c.cmd !== 'bash'), 'setup não deve chamar bash');
   assert.ok(
-    calls.every((c) => c.cmd === 'pnpm' || c.cmd === 'uv'),
-    'runner só deve ser chamado com pnpm ou uv',
+    calls.every((c) => ['pnpm', 'uv', 'node'].includes(c.cmd)),
+    'runner só deve ser chamado com pnpm, uv ou node',
   );
+});
+
+test('setup roda o diagnóstico de ambiente (check-substrate) ao final', async () => {
+  const { calls, runner } = captureRun();
+  await setup([], runner);
+  const doctorCall = calls.find((c) => c.cmd === 'node' && c.args.includes('scripts/check-substrate.mjs'));
+  assert.ok(doctorCall, 'deve rodar scripts/check-substrate.mjs ao final do setup');
+});
+
+test('setup não diz "completo" quando o diagnóstico de ambiente falha', async () => {
+  const runner = async (cmd, args) => {
+    if (cmd === 'node' && args.includes('scripts/check-substrate.mjs')) {
+      throw new Error("'node scripts/check-substrate.mjs' exited with code 1");
+    }
+  };
+  const logs = [];
+  const originalLog = console.log;
+  console.log = (msg) => logs.push(msg);
+  try {
+    await setup([], runner);
+  } finally {
+    console.log = originalLog;
+  }
+  const joined = logs.join('\n');
+  assert.ok(!joined.includes('Setup completo'), 'não deve afirmar conclusão quando o ambiente tem pendências');
+  assert.ok(joined.includes('dgk doctor'), 'deve apontar dgk doctor para detalhar o que falta');
 });
 
 test('check executa onboarding, IA audit, pt-text e avaliação de texto', async () => {

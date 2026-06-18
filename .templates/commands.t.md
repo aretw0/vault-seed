@@ -9,6 +9,7 @@ Edite aqui; propague com `mdt update` na raiz do projeto.
 | Comando | Descrição |
 |---|---|
 | `dgk setup` | Configura o ambiente local (git, deps, Python tools) |
+| `dgk doctor` | Diagnostica o ambiente (node, pnpm, uv, python, binários) |
 | `dgk check` | Verifica a saúde do vault (onboarding, IA, texto) |
 | `dgk evaluate [nota]` | Avalia qualidade de escrita (determinístico, sem API) |
 | `dgk lint` | Valida o markdown do vault |

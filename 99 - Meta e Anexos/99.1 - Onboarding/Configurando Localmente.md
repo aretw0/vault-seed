@@ -146,11 +146,16 @@ Funciona em Windows (PowerShell ou Git Bash), macOS e Linux — sem dependência
 
 ## 5. Verificar o ambiente
 
+`dgk setup` já roda esse diagnóstico ao final, mas você pode rodá-lo a
+qualquer momento:
+
 ```bash
-node -v      # deve mostrar v22.x
-pnpm --version
-uv --version
+dgk doctor
 ```
+
+Confirma node, pnpm, uv, Python e os binários do `node_modules` em um único
+comando — sem precisar saber os nomes dos pacotes internos ou digitar
+`pnpm run` para verificar o ambiente.
 
 Depois verifique o vault:
 
@@ -158,9 +163,9 @@ Depois verifique o vault:
 dgk check
 ```
 
-Resultado esperado: onboarding, arquitetura de informação e checagem de texto
-terminam sem erro. Avisos sobre notas curtas ou promoções de pasta orientam
-curadoria futura mas não bloqueiam.
+Resultado esperado: onboarding, arquitetura de informação, checagem de texto
+e avaliação de qualidade de escrita terminam sem erro. Avisos sobre notas
+curtas ou promoções de pasta orientam curadoria futura mas não bloqueiam.
 
 > **Desenvolvedor do template:** use `pnpm run validate` para o pipeline
 > completo de CI (testes, lint, smoke de site, etc.).

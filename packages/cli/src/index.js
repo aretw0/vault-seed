@@ -6,6 +6,7 @@ import { validate } from './commands/validate.js';
 import { lint } from './commands/lint.js';
 import { setup } from './commands/setup.js';
 import { check } from './commands/check.js';
+import { doctor } from './commands/doctor.js';
 import { evaluate } from './commands/evaluate.js';
 import { lab } from './commands/lab.js';
 import { obsidian } from './commands/obsidian.js';
@@ -19,7 +20,7 @@ import { inbox } from './commands/inbox.js';
 import { vscode } from './commands/vscode.js';
 import { preview } from './commands/preview.js';
 
-const COMMANDS = { validate, lint, setup, check, evaluate, lab, obsidian, vscode, note, publish, sow, serve, etl, outbox, inbox, preview };
+const COMMANDS = { validate, lint, setup, check, doctor, evaluate, lab, obsidian, vscode, note, publish, sow, serve, etl, outbox, inbox, preview };
 
 export function resolveCommand(name) {
   return name in COMMANDS ? name : null;
@@ -46,6 +47,7 @@ Uso: dgk <comando> [opções]
 
 Comandos:
   setup              Configura o ambiente local (git, deps, Python tools)
+  doctor             Diagnostica o ambiente (node, pnpm, uv, python, binários)
   check              Verifica a saúde do vault (onboarding, IA, texto)
   evaluate [nota]    Avalia qualidade de escrita (determinístico, sem API)
   lint               Valida o markdown do vault
