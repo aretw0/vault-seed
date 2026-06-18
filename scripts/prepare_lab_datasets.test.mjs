@@ -3,7 +3,15 @@ import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
-import { buildLabDatasets } from "./prepare_lab_datasets.mjs";
+import { buildLabDatasets, readManifest } from "./prepare_lab_datasets.mjs";
+
+test("readManifest accepts UTF-8 BOM", () => {
+  const cwd = mkdtempSync(join(tmpdir(), "vault-seed-etl-"));
+  const manifestPath = join(cwd, "lab.datasets.json");
+  writeFileSync(manifestPath, "\uFEFF" + JSON.stringify([{ id: "bom", runtimeUrl: "https://example.com/bom.json" }]), "utf8");
+
+  assert.deepEqual(readManifest(manifestPath), [{ id: "bom", runtimeUrl: "https://example.com/bom.json" }]);
+});
 
 test("buildLabDatasets copies local snapshots to root and WASM asset paths", () => {
   const cwd = mkdtempSync(join(tmpdir(), "vault-seed-etl-"));

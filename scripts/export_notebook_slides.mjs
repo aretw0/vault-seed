@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { uvEnv } from "./uv_env.mjs";
 import { writeVaultData } from "./generate_vault_data.mjs";
 import { buildLabDatasets } from "./prepare_lab_datasets.mjs";
+import { ensureLabDatasetSnapshots } from "./ensure_lab_snapshots.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const PRESENTATIONS = [
@@ -126,6 +127,7 @@ const { data, outDir: sourceDataDir } = writeVaultData({ cwd: ROOT });
 console.log(`[notebooks:data] ${data.noteCount} notas`);
 mkdirSync(outDir, { recursive: true });
 mkdirSync(join(outDir, "assets"), { recursive: true });
+ensureLabDatasetSnapshots({ cwd: ROOT });
 const { data: datasetData } = buildLabDatasets({ cwd: ROOT, targetRoot: outDir });
 console.log(`[notebooks:etl] ${datasetData.datasetCount} dataset(s)`);
 copyFileSync(

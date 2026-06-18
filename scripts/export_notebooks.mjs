@@ -19,6 +19,7 @@ import { uvEnv } from "./uv_env.mjs";
 import { resolveNotebooksPath } from "./notebook_path.mjs";
 import { writeVaultData } from "./generate_vault_data.mjs";
 import { buildLabDatasets } from "./prepare_lab_datasets.mjs";
+import { ensureLabDatasetSnapshots } from "./ensure_lab_snapshots.mjs";
 import { replaceImportAndInjectRuntimeHelpers } from "./notebook_export_runtime_helpers.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -50,6 +51,8 @@ const PRESENTATION_FULLSCREEN_MARKER =
 	"data-vault-marimo-presentation-fullscreen";
 const PRESENTATION_MOBILE_FALLBACK_MARKER =
 	"data-vault-marimo-presentation-mobile-fallback";
+const OVERVIEW_PRESENTATION_OUTPUT = "visao-geral-slides.html";
+const LEGACY_OVERVIEW_PRESENTATION_OUTPUT = "vault-seed-slides.html";
 const themeSelectorMode = process.env.VAULT_MARIMO_THEME_SELECTOR;
 const isVaultSeedRepo = String(packageJson.repository?.url ?? "").includes(
 	"aretw0/vault-seed",
@@ -62,6 +65,7 @@ const { data, outDir: sourceDataDir } = writeVaultData({
 	notebooksPath,
 });
 console.log(`[notebooks:data] ${data.noteCount} notas`);
+ensureLabDatasetSnapshots({ cwd: ROOT });
 const { data: datasetData } = buildLabDatasets({
 	cwd: ROOT,
 	targetRoot: outDir,
@@ -389,9 +393,8 @@ const presentationFullscreenHtml = String.raw`
 const presentationMobileFallbackRedirectHtml = String.raw`
 <script data-vault-marimo-presentation-mobile-fallback>
 (() => {
-  const isFirefox = /Firefox\/\d+|FxiOS/i.test(navigator.userAgent);
-  const isMobileViewport = window.matchMedia("(max-width: 44rem), (pointer: coarse)").matches;
-  if (isFirefox && isMobileViewport && !location.pathname.endsWith("vault-seed-slides-lite.html")) {
+  const isMobileViewport = window.matchMedia("(max-width: 64rem), (pointer: coarse)").matches;
+  if (isMobileViewport && !location.pathname.endsWith("vault-seed-slides-lite.html")) {
     location.replace("./vault-seed-slides-lite.html");
   }
 })();
@@ -499,6 +502,20 @@ function writePresentationLiteFallback() {
 		presentationLiteHtml(),
 		"utf8",
 	);
+}
+
+function isOverviewPresentation(notebook) {
+	return [
+		OVERVIEW_PRESENTATION_OUTPUT,
+		LEGACY_OVERVIEW_PRESENTATION_OUTPUT,
+	].includes(notebook.output);
+}
+
+function copyLegacyOverviewPresentationAlias(output) {
+	if (basename(output) === LEGACY_OVERVIEW_PRESENTATION_OUTPUT) {
+		return;
+	}
+	copyFileSync(output, join(outDir, LEGACY_OVERVIEW_PRESENTATION_OUTPUT));
 }
 
 function copyVaultDataForWasm() {
@@ -645,10 +662,11 @@ for (const notebook of manifest.filter((entry) => entry.publish)) {
 	}
 
 	injectNotebookNavigation(output, notebook.output);
-	if (notebook.output === "vault-seed-slides.html") {
+	if (isOverviewPresentation(notebook)) {
 		writePresentationLiteFallback();
 		injectPresentationMobileFallback(output);
 		injectPresentationFullscreen(output);
+		copyLegacyOverviewPresentationAlias(output);
 	}
 	if (shouldInjectThemeSelector) {
 		injectThemeSelector(output);

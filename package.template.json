@@ -31,7 +31,7 @@
     "notebooks:etl:demo": "node scripts/lab_etl_demo.mjs",
     "feeds:opml": "node scripts/prepare_feed_sources.mjs",
     "outbox:prepare": "node scripts/prepare_publication_outbox.mjs",
-    "notebooks:etl": "pnpm run notebooks:etl:demo && pnpm run feeds:opml && pnpm run outbox:prepare && node scripts/prepare_lab_datasets.mjs",
+    "notebooks:etl": "pnpm run notebooks:etl:demo && pnpm run feeds:opml && pnpm run outbox:prepare && pnpm run validate:texto && node scripts/prepare_lab_datasets.mjs",
     "notebooks:extract:local": "pnpm run notebooks:etl",
     "notebooks:extract:check": "uv run --no-project --with-requirements requirements.local-etl.txt python scripts/check_lab_extract_tools.py",
     "notebooks:extract:browser": "uv run --no-project --with-requirements requirements.local-etl.txt playwright install chromium",

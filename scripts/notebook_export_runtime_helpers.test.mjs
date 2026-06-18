@@ -157,6 +157,22 @@ test("notebook runtime helpers are injected after marimo app creation", () => {
 	);
 });
 
+test("notebook export strips UTF-8 BOM before Marimo parses the temporary source", () => {
+	const transformed = replaceImportAndInjectRuntimeHelpers(
+		`\uFEFF${makeNotebook()}`,
+		{
+			runtimeHelperSource: MINIMAL_HELPER,
+		},
+	);
+
+	assert.equal(
+		transformed.charCodeAt(0),
+		"i".charCodeAt(0),
+		"exported notebook source must not start with BOM",
+	);
+	assert.match(transformed, /^import marimo/);
+});
+
 test("notebook runtime helper import is removed from exported source", () => {
 	const transformed = transformEtcDemo();
 

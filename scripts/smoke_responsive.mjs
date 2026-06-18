@@ -520,6 +520,13 @@ async function assertThemeSelectorDoesNotCoverMarimoBadge(page, target, viewport
   }
 }
 
+function effectiveTargetForViewport(target, viewport) {
+  if (target.path.endsWith("vault-seed-slides.html") && viewport.width < 1024) {
+    return { ...target, type: "site" };
+  }
+  return target;
+}
+
 async function run() {
   if (!existsSync(distDir)) {
     throw new Error("dist/ does not exist. Run pnpm run site:responsive.");
@@ -555,6 +562,7 @@ async function run() {
       });
 
       for (const target of pages) {
+        const effectiveTarget = effectiveTargetForViewport(target, viewport);
         const label = `${viewport.name} ${target.label}`;
         const response = await page.goto(`${server.baseUrl}${target.path}`, {
           waitUntil: "domcontentloaded",
@@ -566,25 +574,25 @@ async function run() {
           continue;
         }
 
-        if (target.type === "notebook") {
+        if (effectiveTarget.type === "notebook") {
           await waitForNotebook(page);
         } else {
           await page.waitForLoadState("networkidle", { timeout: 15000 }).catch(() => {});
         }
 
-        await assertVisibleContent(page, target, label);
+        await assertVisibleContent(page, effectiveTarget, label);
         await assertNoHorizontalOverflow(page, label);
-        await assertStaticGridAlignment(page, target, label);
-        await assertMobileGraphTypography(page, target, viewport, label);
+        await assertStaticGridAlignment(page, effectiveTarget, label);
+        await assertMobileGraphTypography(page, effectiveTarget, viewport, label);
         await assertPresentationSizing(
           page,
-          target,
+          effectiveTarget,
           viewport,
           label,
           externalNetworkAvailable,
         );
-        await assertLabShellLayout(page, target, viewport, label);
-        await assertThemeSelectorDoesNotCoverMarimoBadge(page, target, viewport, label);
+        await assertLabShellLayout(page, effectiveTarget, viewport, label);
+        await assertThemeSelectorDoesNotCoverMarimoBadge(page, effectiveTarget, viewport, label);
       }
 
       await context.close();

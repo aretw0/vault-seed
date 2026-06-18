@@ -31,11 +31,11 @@ function sha256(path) {
   return createHash("sha256").update(readFileSync(path)).digest("hex");
 }
 
-function readManifest() {
-  if (!existsSync(MANIFEST_PATH)) {
+export function readManifest(manifestPath = MANIFEST_PATH) {
+  if (!existsSync(manifestPath)) {
     return [];
   }
-  const parsed = JSON.parse(readFileSync(MANIFEST_PATH, "utf8"));
+  const parsed = JSON.parse(readFileSync(manifestPath, "utf8").replace(/^\uFEFF/, ""));
   if (!Array.isArray(parsed)) {
     throw new Error(".site/lab.datasets.json precisa ser um array.");
   }

@@ -132,9 +132,10 @@ export function replaceImportAndInjectRuntimeHelpers(
 		throw new Error("runtimeHelperSource is required");
 	}
 
-	const runtimeImports = collectRuntimeImports(sourceCode, runtimeImportPrefix);
+	const normalizedSourceCode = String(sourceCode).replace(/^\uFEFF/, "");
+	const runtimeImports = collectRuntimeImports(normalizedSourceCode, runtimeImportPrefix);
 	if (!runtimeImports.statements.length) {
-		return sourceCode;
+		return normalizedSourceCode;
 	}
 
 	const parsedImportNames = parseRuntimeImportNames(

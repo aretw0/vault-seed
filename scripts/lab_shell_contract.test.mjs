@@ -55,6 +55,7 @@ test("Lab ETL demo uses shared local/published runtime primitives", () => {
 
 test("published Lab pages keep the vault shell contract", () => {
   const exportNotebooks = read("scripts/export_notebooks.mjs");
+  const ensureSnapshots = read("scripts/ensure_lab_snapshots.mjs");
   const labIndex = read(".site/pages/lab/index.astro");
   const marimoCss = read(".site/styles/marimo-vault.css");
   const responsiveSmoke = read("scripts/smoke_responsive.mjs");
@@ -69,6 +70,10 @@ test("published Lab pages keep the vault shell contract", () => {
   assert.match(siteSmoke, /defaultMarimoNotebookPaths\.has\(relPath\)/);
 
   assert.match(exportNotebooks, /data-vault-marimo-navigation/);
+  assert.match(exportNotebooks, /ensureLabDatasetSnapshots/);
+  assert.match(ensureSnapshots, /missingLabDatasetSources/);
+  assert.match(ensureSnapshots, /pnpm run notebooks:etl/);
+  assert.match(ensureSnapshots, /command: "pnpm"/);
   assert.match(exportNotebooks, /MARIMO_VAULT_CSS/);
   assert.match(exportNotebooks, /data-vault-marimo-shell-css/);
   assert.match(exportNotebooks, /vault-lab-topbar/);
@@ -81,8 +86,11 @@ test("published Lab pages keep the vault shell contract", () => {
   assert.match(exportNotebooks, /notebooksPath === "lab" \? "\.\/" : "\.\.\/lab\/"/);
   assert.match(exportNotebooks, /data-vault-marimo-theme-selector/);
   assert.match(exportNotebooks, /data-vault-marimo-presentation-mobile-fallback/);
+  assert.doesNotMatch(exportNotebooks, /isFirefox/);
   assert.doesNotMatch(exportNotebooks, /vault-marimo-fullscreen-toggle/);
   assert.doesNotMatch(marimoCss, /data-vault-marimo-presentation="slides"\] \.vault-marimo-navigation\s*\{\s*display: none/);
+  assert.match(exportNotebooks, /LEGACY_OVERVIEW_PRESENTATION_OUTPUT = "vault-seed-slides\.html"/);
+  assert.match(exportNotebooks, /copyLegacyOverviewPresentationAlias/);
   assert.match(exportNotebooks, /vault-seed-slides-lite\.html/);
 
   assert.match(labIndex, /resolveNotebooksPath/);
