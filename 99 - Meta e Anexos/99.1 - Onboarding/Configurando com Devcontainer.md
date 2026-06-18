@@ -35,7 +35,8 @@ Tudo vem pré-configurado — incluindo extensões, locale PT-BR e dependências
 | --- | --- |
 | Node.js | 22 (LTS) |
 | pnpm | via Corepack |
-| uv | última estável |
+| uv | 0.11.11 (pinada — mesma versão usada no CI) |
+| mdt_cli | 0.7.0 (pinada) |
 | Locale | pt_BR.UTF-8 |
 
 **Extensões VS Code instaladas automaticamente:**
@@ -61,6 +62,7 @@ O VS Code mostra o log do container. Você verá:
 2. Instalação do locale pt_BR
 3. `pnpm install --frozen-lockfile`
 4. Configuração do Git
+5. Instalação do Pi (agente de IA), `mdt_cli` e dependências Python
 
 Ao final, o terminal exibe:
 
@@ -68,11 +70,20 @@ Ao final, o terminal exibe:
 === Ambiente pronto ===
 Node.js : v22.x.x
 pnpm    : x.x.x
-uv      : uv x.x.x
+uv      : uv 0.11.11
+marimo  : x.x.x
+Pi      : x.x.x
+gh      : gh version x.x.x
+rg      : ripgrep x.x.x
+fd      : fd x.x.x
+jq      : jq-x.x.x
+shfmt   : v3.x.x
 =======================
 ```
 
-Essa mensagem confirma que todas as ferramentas estão funcionando.
+Essa mensagem confirma que todas as ferramentas estão funcionando. Se algum
+item aparecer como "não instalado", a instalação automática daquela
+ferramenta falhou — rode `dgk doctor` para um diagnóstico mais detalhado.
 
 ## Ao retomar o container
 

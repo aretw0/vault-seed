@@ -98,6 +98,7 @@ function addCommandCheck(id, command, args = ["--version"], { required = true, s
     ok,
     required,
     command: [command, ...args].join(" "),
+    version: ok ? (result.stdout || "").trim().slice(0, 80) : undefined,
     stderr: ok ? undefined : (result.stderr || result.stdout || "").trim().slice(0, 240)
   });
   return ok;
@@ -109,7 +110,14 @@ function addAnyCommandCheck(id, label, candidates, { required = true } = {}) {
     const result = spawnSync(candidate.command, candidate.args, { cwd: root, encoding: "utf8", shell: isWindows });
     attempts.push([candidate.command, ...candidate.args].join(" "));
     if (result.status === 0) {
-      checks.push({ id, label, ok: true, required, command: [candidate.command, ...candidate.args].join(" ") });
+      checks.push({
+        id,
+        label,
+        ok: true,
+        required,
+        command: [candidate.command, ...candidate.args].join(" "),
+        version: (result.stdout || "").trim().slice(0, 80)
+      });
       return true;
     }
   }
@@ -172,6 +180,9 @@ if (json) {
   console.log(JSON.stringify(result, null, 2));
 } else if (result.ok) {
   console.log("vault-seed substrate ok");
+  for (const check of checks) {
+    if (check.version) console.log(`  ${check.id.padEnd(10)} ${check.version}`);
+  }
 } else {
   console.error("vault-seed substrate drift detected:");
   for (const check of missing) {

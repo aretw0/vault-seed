@@ -40,7 +40,7 @@ test("devcontainer provides the baseline sandbox tools expected by agents", () =
 
   assert.deepEqual(config.build, { dockerfile: "Dockerfile", context: "." });
   assert.deepEqual(config.features["ghcr.io/devcontainers/features/github-cli:1"], {});
-  assert.deepEqual(config.features["ghcr.io/jsburckhardt/devcontainer-features/uv:1"], {});
+  assert.deepEqual(config.features["ghcr.io/jsburckhardt/devcontainer-features/uv:1"], { version: "0.11.11" });
 
   for (const packageName of [
     "bash-completion",

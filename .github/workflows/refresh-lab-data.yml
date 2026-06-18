@@ -31,6 +31,8 @@ jobs:
           python-version: "3.12"
 
       - uses: astral-sh/setup-uv@bd01503ad93569bc31b533f7f8bfadecf9e10a8a # v6.3.1
+        with:
+          version: "0.11.11"
 
       - name: Run ETL
         run: pnpm run notebooks:etl
