@@ -234,7 +234,7 @@ _ctx = require_local_runtime("salvar snapshot local")
 # se estiver no WASM, levanta RuntimeError antes de chegar aqui
 ```
 
-O teste `scripts/notebook_cell_output_lint.test.mjs` valida automaticamente que nenhum notebook referencia uma chave do dicionário que não existe em `lab_runtime_context()`. Esse contrato roda junto com o restante dos testes do vault e também está disponível em vaults inicializados a partir deste template.
+O teste `scripts/notebook_cell_output_lint.test.mjs` valida automaticamente que nenhum notebook usa uma chave do dicionário que não existe em `lab_runtime_context()`. Esse contrato roda junto com o restante dos testes do vault e também está disponível em vaults inicializados a partir deste template.
 
 ## Dados E ETL
 

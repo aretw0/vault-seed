@@ -6,6 +6,7 @@ aliases:
 tags:
   - meta/apresentacao
   - meta/moc
+  - meta/notebooks
 status: published
 created: 2026-06-14
 updated: 2026-06-14
