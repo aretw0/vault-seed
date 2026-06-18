@@ -37,8 +37,8 @@ editar o template para propagar a mudança aqui.
 |---|---|
 | `dgk setup` | Configura o ambiente local (git, deps, Python tools) |
 | `dgk doctor` | Diagnostica o ambiente (node, pnpm, uv, python, binários) |
-| `dgk check` | Verifica a saúde do vault (onboarding, IA, texto) |
-| `dgk evaluate [nota]` | Avalia qualidade de escrita (determinístico, sem API) |
+| `dgk check` | Verifica a saúde do vault (onboarding, IA, texto e apresentações) |
+| `dgk evaluate [nota]` | Avalia qualidade de escrita; use `--presentations` para slides Marimo |
 | `dgk lint` | Valida o markdown do vault |
 | `dgk sow <canal>` | Configura credenciais de publicação (`~/.dgk/silo.json`) |
 | `dgk etl` | Executa o pipeline de dados do vault |

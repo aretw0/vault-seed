@@ -48,8 +48,8 @@ Uso: dgk <comando> [opções]
 Comandos:
   setup              Configura o ambiente local (git, deps, Python tools)
   doctor             Diagnostica o ambiente (node, pnpm, uv, python, binários)
-  check              Verifica a saúde do vault (onboarding, IA, texto)
-  evaluate [nota]    Avalia qualidade de escrita (determinístico, sem API)
+  check              Verifica a saúde do vault (onboarding, IA, texto e apresentações)
+  evaluate [nota]    Avalia qualidade de escrita; use --presentations para slides Marimo
   lint               Valida o markdown do vault
   sow                Configura credenciais de publicação (~/.dgk/silo.json)
   etl                Executa o pipeline de dados do vault

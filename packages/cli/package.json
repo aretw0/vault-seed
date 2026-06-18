@@ -9,6 +9,8 @@
   "files": [
     "src",
     "vendor",
+    "!vendor/**/__pycache__",
+    "!vendor/**/*.pyc",
     "README.md",
     "CHANGELOG.md"
   ],

@@ -6,7 +6,7 @@ const root = process.cwd();
 const errors = [];
 
 function readJson(relativePath) {
-  return JSON.parse(fs.readFileSync(path.join(root, relativePath), "utf8"));
+  return JSON.parse(fs.readFileSync(path.join(root, relativePath), "utf8").replace(/^\uFEFF/, ""));
 }
 
 function exists(relativePath) {
@@ -89,7 +89,7 @@ const vaultLoader = read(".site/content.config.ts");
 const customCss = read(".site/styles/custom.css");
 const curationRoutineGuide = read("99 - Meta e Anexos/99.2 - Workflows/Rotina de Curadoria Editorial.md");
 const labDataGuide = read("99 - Meta e Anexos/99.2 - Workflows/Preparando Dados para o Lab.md");
-const automatizandoInitNote = read("99 - Meta e Anexos/99.3 - Referência/Automatizando a Inicialização do Vault.md");
+const distributionGuide = read("docs/creating-a-distribution.md");
 const vaultConfigJson = readJson("vault.config.json");
 const vaultConfigMjs = read(".site/lib/vault-config.mjs");
 const footerComponent = read(".site/components/Footer.astro");
@@ -143,8 +143,12 @@ requireCondition(
     templatePkg.scripts?.validate?.includes("site:audit:sidebar") &&
     templatePkg.scripts?.validate?.includes("validate:pt-text") &&
     templatePkg.scripts?.validate?.includes("validate:theme") &&
-    templatePkg.scripts?.validate?.includes("validate:mermaid"),
-  "package.template.json must keep generated-vault validation aligned with JS, MJS, CJS tests and content audits.",
+    templatePkg.scripts?.validate?.includes("validate:mermaid") &&
+    templatePkg.scripts?.validate?.includes("validate:texto") &&
+    templatePkg.scripts?.validate?.includes("validate:apresentacoes") &&
+    templatePkg.scripts?.["validate:texto"] === "dgk evaluate" &&
+    templatePkg.scripts?.["validate:apresentacoes"] === "dgk evaluate --presentations",
+  "package.template.json must keep generated-vault validation aligned with JS, MJS, CJS tests, content audits, text quality, and Marimo presentation prose.",
 );
 requireCondition(
   ciWorkflow.includes("pnpm run validate") &&
@@ -297,8 +301,9 @@ requireCondition(
     pkg.scripts?.["notebooks:extract:local"] === "pnpm run notebooks:etl" &&
     pkg.scripts?.["notebooks:extract:check"] === "uv run --no-project --with-requirements requirements.local-etl.txt python scripts/check_lab_extract_tools.py" &&
     pkg.scripts?.["notebooks:extract:browser"] === "uv run --no-project --with-requirements requirements.local-etl.txt playwright install chromium" &&
-    labEtlDemoScript.includes("dados\", \"lab\", \"perfil-do-vault.json") &&
-    labEtlDemoScript.includes("dados\", \"lab\", \"curadoria-ia.json") &&
+    labEtlDemoScript.includes('join(ROOT, ".dgk", "perfil-do-vault.json")') &&
+    labEtlDemoScript.includes('join(ROOT, ".dgk", "curadoria-ia.json")') &&
+    labEtlDemoScript.includes('join(ROOT, ".dgk", "grafo-do-vault.json")') &&
     labDatasetsManifest.some((entry) => entry.id === "perfil-do-vault" && entry.source === ".dgk/perfil-do-vault.json") &&
     labDatasetsManifest.some((entry) => entry.id === "curadoria-ia" && entry.source === ".dgk/curadoria-ia.json") &&
     labDatasetsManifest.some((entry) => entry.id === "feeds-assinados" && entry.source === ".dgk/feeds-assinados.json") &&
@@ -647,24 +652,20 @@ requireCondition(
   "Footer.astro kudos must be conditional — user vaults with kudos=null must not render the kudos pill.",
 );
 
-// ── IA sidebar integrity ───────────────────────────────────────────────────
-// "Automatizando a Inicialização do Vault" is template-dev documentation.
-// It must carry audience:tecnico and tag meta/template-dev so it does not
-// appear in any user-facing sidebar section (Publicar, Automatizar, Manter).
+// ── Template-dev docs boundary ─────────────────────────────────────────────
+// initialize.yml is template-maintainer documentation. It belongs in docs/,
+// which initialize.yml removes from user vaults, not in 99 - Meta e Anexos.
 {
-  const automatizandoFm = automatizandoInitNote.match(/^---\n([\s\S]*?)\n---/)?.[1] ?? "";
-  const audience = (automatizandoFm.match(/^audience:\s*(.+)$/m) ?? [])[1]?.trim();
-  const tagsBlock = (automatizandoFm.match(/^tags:\n((?:  - .+\n?)+)/m) ?? [])[1] ?? "";
-  const tags = tagsBlock.match(/  - (.+)/g)?.map((t) => t.replace("  - ", "").trim()) ?? [];
   requireCondition(
-    audience === "tecnico",
-    `"Automatizando a Inicialização do Vault" must have audience: tecnico — it is template-dev docs, not a user guide. Got: ${audience ?? "(absent)"}`,
+    !exists("99 - Meta e Anexos/99.3 - Referência/Automatizando a Inicialização do Vault.md"),
+    `"Automatizando a Inicialização do Vault" must stay out of 99 - Meta e Anexos — it is template-dev docs and docs/ is removed from user vaults.`,
   );
   requireCondition(
-    tags.length === 1 && tags[0] === "meta/template-dev",
-    `"Automatizando a Inicialização do Vault" must have exactly one tag: meta/template-dev. ` +
-    `meta/github-actions and meta/devops are removed so it never routes into Publicar/Automatizar/Manter. ` +
-    `Got: [${tags.join(", ")}]`,
+    distributionGuide.includes("Contrato técnico do initialize.yml") &&
+      distributionGuide.includes("docs/") &&
+      distributionGuide.includes(".github/workflows/initialize.yml") &&
+      distributionGuide.includes("Remove o próprio"),
+    "docs/creating-a-distribution.md must document the maintainer-only initialize.yml contract.",
   );
 }
 
@@ -725,7 +726,7 @@ requireCondition(
 // mirrors COMMANDS in packages/cli/src/index.js — update both when adding commands.
 {
   const VALID_DGK_COMMANDS = new Set([
-    "validate", "lint", "setup", "check", "lab", "obsidian", "vscode",
+    "validate", "lint", "setup", "check", "doctor", "evaluate", "lab", "obsidian", "vscode",
     "note", "publish", "sow", "serve", "etl", "outbox", "inbox", "preview",
   ]);
   const VAULT_CONTENT_DIRS = [

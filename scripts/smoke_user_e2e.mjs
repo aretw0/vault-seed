@@ -49,6 +49,13 @@ import { createRequire } from 'node:module';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const FULL = process.argv.includes('--full');
+const REQUIRE_PUBLISHED_PACKAGES =
+  process.argv.includes('--require-published') ||
+  process.env.VAULT_E2E_REQUIRE_PUBLISHED === '1';
+
+function bin(name) {
+  return process.platform === 'win32' ? `${name}.cmd` : name;
+}
 
 // ---------------------------------------------------------------------------
 // Init helpers (mirrors smoke_user_vault.mjs — parse initialize.yml once)
@@ -89,7 +96,9 @@ function buildUserVault() {
 
   const tmpDir = mkdtempSync(join(tmpdir(), 'vault-seed-e2e-'));
 
-  for (const file of trackedFiles) safeCopy(join(ROOT, file), join(tmpDir, file));
+  for (const file of trackedFiles.filter((file) => existsSync(join(ROOT, file)))) {
+    safeCopy(join(ROOT, file), join(tmpDir, file));
+  }
 
   for (const { src, dst } of filesToRename) {
     const srcPath = join(tmpDir, src);
@@ -193,16 +202,29 @@ async function runServerLayer(tmpDir, errors) {
 // ---------------------------------------------------------------------------
 function checkNpmPackages(pkg) {
   const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
-  const external = Object.keys(allDeps).filter((name) => name.startsWith('@aretw0/'));
+  const external = Object.entries(allDeps)
+    .filter(([name, specifier]) =>
+      name.startsWith('@aretw0/') && !String(specifier).startsWith('workspace:'),
+    )
+    .map(([name]) => name);
   const unpublished = [];
   for (const name of external) {
     try {
-      execFileSync('npm', ['view', name, 'version'], { stdio: 'pipe', shell: true, encoding: 'utf8' });
+      execFileSync(bin('npm'), ['view', name, 'version'], { stdio: 'pipe', shell: false, encoding: 'utf8' });
     } catch {
       unpublished.push(name);
     }
   }
   return unpublished;
+}
+
+function listUserTestFiles(tmpDir) {
+  const scriptsDir = join(tmpDir, 'scripts');
+  if (!existsSync(scriptsDir)) return [];
+  return readdirSync(scriptsDir)
+    .filter((name) => /\.(?:test)\.(?:js|mjs|cjs)$/.test(name))
+    .sort()
+    .map((name) => `scripts/${name}`);
 }
 
 function runFullInstallLayer(tmpDir, errors) {
@@ -216,19 +238,26 @@ function runFullInstallLayer(tmpDir, errors) {
     return;
   }
 
-  // Pre-check: all @aretw0/* packages must be published before install can succeed.
+  // Pre-check: external @aretw0/* packages must be published before a real
+  // frozen install can succeed. During the first release that publishes those
+  // packages, this is a readiness warning rather than a source-tree failure.
+  // Use --require-published or VAULT_E2E_REQUIRE_PUBLISHED=1 for post-release
+  // verification.
   let pkg;
   try { pkg = JSON.parse(readFileSync(join(tmpDir, 'package.json'), 'utf8')); } catch { pkg = {}; }
   const unpublished = checkNpmPackages(pkg);
   if (unpublished.length > 0) {
-    for (const name of unpublished) {
-      errors.push(`[L3] ${name} is not published to npm — user vault is not installable until this package is released`);
+    const message = `${unpublished.join(', ')} ${unpublished.length === 1 ? 'is' : 'are'} not published to npm yet`;
+    if (REQUIRE_PUBLISHED_PACKAGES) {
+      errors.push(`[L3] ${message} — user vault installability requires published packages`);
+    } else {
+      console.warn(`    WARN — ${message}; skipping install layer. Re-run with --require-published after release.`);
     }
     return;
   }
 
   try {
-    execFileSync('pnpm', ['install', '--frozen-lockfile'], {
+    execFileSync(bin('pnpm'), ['install', '--frozen-lockfile'], {
       cwd: tmpDir,
       stdio: 'inherit',
       shell: false,
@@ -242,11 +271,12 @@ function runFullInstallLayer(tmpDir, errors) {
   // Run the user's own test suite (scripts/*.test.{js,mjs,cjs}).
   // This is the glob from package.template.json.
   try {
-    execFileSync(
-      'node',
-      ['--test', 'scripts/*.test.js', 'scripts/*.test.mjs', 'scripts/*.test.cjs'],
-      { cwd: tmpDir, stdio: 'inherit', shell: true },
-    );
+    const testFiles = listUserTestFiles(tmpDir);
+    if (testFiles.length === 0) {
+      errors.push('[L3] no user test files found in scripts/');
+      return;
+    }
+    execFileSync('node', ['--test', ...testFiles], { cwd: tmpDir, stdio: 'inherit', shell: false });
     console.log('    OK — user test suite passed.');
   } catch {
     errors.push('[L3] user test suite failed after install');
@@ -258,7 +288,7 @@ function runFullInstallLayer(tmpDir, errors) {
   // We verify this works in the post-install user vault before the site build.
   console.log('  Layer 3b: ETL demo (lab dataset generation)...');
   try {
-    execFileSync('pnpm', ['run', 'notebooks:etl:demo'], {
+    execFileSync(bin('pnpm'), ['run', 'notebooks:etl:demo'], {
       cwd: tmpDir,
       stdio: 'inherit',
       shell: false,
@@ -290,7 +320,7 @@ function runFullInstallLayer(tmpDir, errors) {
   // has access to generated data if any integration needs it.
   console.log('  Layer 3c: site build (astro build)...');
   try {
-    execFileSync('pnpm', ['run', 'site:build'], {
+    execFileSync(bin('pnpm'), ['run', 'site:build'], {
       cwd: tmpDir,
       stdio: 'inherit',
       shell: false,

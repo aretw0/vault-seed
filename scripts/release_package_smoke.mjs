@@ -6,7 +6,13 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const PACKAGE_DIR = path.join(ROOT, "packages");
-const RELEASE_PACKAGES = ["packages/cli", "packages/dgk-channels", "packages/astro-plugins"];
+const RELEASE_PACKAGES = [
+  "packages/cli",
+  "packages/dgk-channels",
+  "packages/astro-plugins",
+  "packages/dgk-runner",
+  "packages/dgk-skills",
+];
 
 function readText(relPath) {
   return readFileSync(path.join(ROOT, relPath), "utf8");
@@ -103,6 +109,9 @@ export function buildReleasePackageSmokeReport(options = {}) {
   if (!/pnpm changeset version/.test(prepareWorkflow)) {
     blockers.push("prepare-release-pr workflow must version through changesets");
   }
+  if (!/scripts\/sync_lockfile_template\.mjs --from-workspace/.test(prepareWorkflow)) {
+    blockers.push("prepare-release-pr workflow must sync pnpm-lock.template.yaml from local workspace package tarball integrity");
+  }
   if (!/contains\(github\.event\.head_commit\.message, 'chore\(release\):'\)/.test(releaseWorkflow)) {
     blockers.push("release workflow must remain gated by release commit message");
   }
@@ -112,11 +121,26 @@ export function buildReleasePackageSmokeReport(options = {}) {
   if (!/softprops\/action-gh-release@[0-9a-f]{40}/.test(releaseWorkflow)) {
     blockers.push("release workflow must keep GitHub Release action pinned to a full SHA");
   }
+  if (!/pnpm changeset publish -- --provenance/.test(releaseWorkflow)) {
+    blockers.push("release workflow must publish npm packages directly after creating the GitHub Release");
+  }
+  if (!/id-token:\s*write/.test(releaseWorkflow)) {
+    blockers.push("release workflow must grant id-token:write for npm provenance publishing");
+  }
+  if (!/NODE_AUTH_TOKEN:\s*\$\{\{ secrets\.NPM_TOKEN \}\}/.test(releaseWorkflow)) {
+    blockers.push("release workflow must require explicit NPM_TOKEN for npm publishing");
+  }
+  if (!/pnpm --filter @aretw0\/dgk-astro-plugins build/.test(releaseWorkflow)) {
+    blockers.push("release workflow must build @aretw0/dgk-astro-plugins before npm publishing");
+  }
   if (!/NODE_AUTH_TOKEN:\s*\$\{\{ secrets\.NPM_TOKEN \}\}/.test(publishWorkflow)) {
-    blockers.push("publish-cli workflow must require explicit NPM_TOKEN for publishing");
+    blockers.push("publish-packages workflow must require explicit NPM_TOKEN for manual package publishing");
   }
   if (!/pnpm changeset publish/.test(publishWorkflow)) {
-    blockers.push("publish-cli workflow must publish via changesets");
+    blockers.push("publish-packages workflow must publish via changesets");
+  }
+  if (!/pnpm --filter @aretw0\/dgk-astro-plugins build/.test(publishWorkflow)) {
+    blockers.push("publish-packages workflow must build @aretw0/dgk-astro-plugins before npm publishing");
   }
   if (/npm\.pkg\.github\.com|packages:\s*write/.test(publishWorkflow)) {
     warnings.push("GitHub Packages publishing is not configured for vault-seed; keep it opt-in and separately gated");

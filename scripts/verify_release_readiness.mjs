@@ -115,6 +115,13 @@ function checkLastMainCI() {
   const relevant = runs.filter(
     (r) => r.name === "Template CI" || r.name === "Vault CI (User)",
   );
+  if (relevant.length === 0) {
+    return {
+      ok: false,
+      detail: "No Template CI or Vault CI (User) runs found in the latest main runs",
+      blocking: false,
+    };
+  }
   const allGreen = relevant.every((r) => r.conclusion === "success");
   const summary = relevant
     .map((r) => `${r.name}: ${r.conclusion ?? r.status}`)

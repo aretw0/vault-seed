@@ -112,7 +112,7 @@ O starter já traz campos para:
 
 ## Receita: Página Simples
 
-Use quando a página tem HTML suficiente sem precisar de navegador real:
+Essa receita serve quando a página tem HTML suficiente sem precisar de navegador real:
 
 ```python
 from _lab_notebook_runtime import fetch_local_url_text, write_local_json_snapshot
@@ -131,7 +131,7 @@ write_local_json_snapshot(
 
 ## Receita: Página Dinâmica
 
-Use quando a página precisa renderizar JavaScript. A função é assíncrona:
+Escolha esta opção quando a página precisa renderizar JavaScript. A função é assíncrona:
 
 ```python
 from _lab_notebook_runtime import scrape_local_page_text, write_local_json_snapshot
@@ -144,7 +144,7 @@ Se o navegador local ainda não existir, rode `pnpm run notebooks:extract:browse
 
 ## Receita: OCR De Imagem
 
-Use quando o dado está em imagem, print ou documento já convertido para imagem:
+Para dados em imagem, print ou documento já convertido para imagem:
 
 ```python
 from _lab_notebook_runtime import extract_local_image_text, write_local_json_snapshot

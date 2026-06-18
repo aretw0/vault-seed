@@ -131,7 +131,7 @@ try {
 
   tmpDir = mkdtempSync(join(tmpdir(), 'vault-seed-user-'));
 
-  for (const file of trackedFiles) {
+  for (const file of trackedFiles.filter((file) => existsSync(join(ROOT, file)))) {
     safeCopy(join(ROOT, file), join(tmpDir, file));
   }
 

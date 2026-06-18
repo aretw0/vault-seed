@@ -55,10 +55,6 @@ function slugFromMarkdownTarget(target: string): string {
     return slugify(normalized);
   }
 
-  if (normalized.includes('/')) {
-    return slugify(normalized);
-  }
-
   return `${TECHNICAL_DOCS_ROOT}/${slugify(normalized)}`;
 }
 

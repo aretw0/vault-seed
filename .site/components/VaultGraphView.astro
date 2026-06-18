@@ -361,7 +361,7 @@ const hasData = positioned.length > 0;
 
         lines.forEach((line, index) => {
           const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-          tspan.textContent = String(line);
+          tspan.textContent = `${String(line)}${index < lines.length - 1 ? ' ' : ''}`;
           tspan.setAttribute('x', String(Number.isFinite(x) ? x : 0));
           if (index === 0) {
             tspan.setAttribute('y', String(Number.isFinite(y) ? y : 0));

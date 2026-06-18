@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 /**
- * Syncs pnpm-lock.template.yaml with the latest published DGK packages.
+ * Syncs pnpm-lock.template.yaml with DGK package versions.
  *
  * Run after publishing new versions to npm:
  *   node scripts/sync_lockfile_template.mjs
  *   node scripts/sync_lockfile_template.mjs --check   (fails if out of date)
+ *
+ * Run inside a release PR, after `pnpm changeset version` and before publish:
+ *   node scripts/sync_lockfile_template.mjs --from-workspace
  *
  * The template lock file is used by initialize.yml to seed user vault lock files.
  * An out-of-date entry causes pnpm install --frozen-lockfile to fail in user vault CI.
@@ -17,11 +20,38 @@ import { join } from "node:path";
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const TEMPLATE = join(ROOT, "pnpm-lock.template.yaml");
 const CHECK_MODE = process.argv.includes("--check");
+const FROM_WORKSPACE = process.argv.includes("--from-workspace");
 
 const MANAGED_PACKAGES = ["@aretw0/dgk-cli", "@aretw0/dgk-channels"];
+const WORKSPACE_PACKAGE_DIRS = {
+  "@aretw0/dgk-cli": "packages/cli",
+  "@aretw0/dgk-channels": "packages/dgk-channels",
+};
 
 function npmView(pkg, field) {
   return execFileSync("npm", ["view", pkg, field], { encoding: "utf8" }).trim();
+}
+
+function workspacePackageMeta(pkg) {
+  const packageDir = WORKSPACE_PACKAGE_DIRS[pkg];
+  if (!packageDir) throw new Error(`No workspace package directory configured for ${pkg}`);
+
+  const manifest = JSON.parse(readFileSync(join(ROOT, packageDir, "package.json"), "utf8"));
+  const npmCache = join(ROOT, ".sandbox", "npm-pack-cache");
+  const output = execFileSync("npm", ["pack", "--dry-run", "--ignore-scripts", "--json"], {
+    cwd: join(ROOT, packageDir),
+    encoding: "utf8",
+    env: {
+      ...process.env,
+      npm_config_cache: npmCache,
+    },
+  });
+  const parsed = JSON.parse(output);
+  const packed = Array.isArray(parsed) ? parsed[0] : parsed;
+  if (!packed?.integrity) {
+    throw new Error(`npm pack did not return integrity for ${pkg}`);
+  }
+  return { version: manifest.version, integrity: packed.integrity };
 }
 
 /**
@@ -78,14 +108,18 @@ if (isMain) {
   for (const pkg of MANAGED_PACKAGES) {
     let version, integrity;
     try {
-      version = npmView(pkg, "version");
-      integrity = npmView(pkg, "dist.integrity");
+      if (FROM_WORKSPACE) {
+        ({ version, integrity } = workspacePackageMeta(pkg));
+      } else {
+        version = npmView(pkg, "version");
+        integrity = npmView(pkg, "dist.integrity");
+      }
     } catch {
-      console.warn(`⚠ ${pkg} não publicado ainda — ignorando.`);
+      console.warn(`⚠ ${pkg} não encontrado — ignorando.`);
       continue;
     }
 
-    console.log(`${pkg} latest: ${version}`);
+    console.log(`${pkg} ${FROM_WORKSPACE ? "workspace" : "latest"}: ${version}`);
     console.log(`integrity: ${integrity}`);
 
     if (!isUpToDate(content, pkg, version, integrity)) {

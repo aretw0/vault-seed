@@ -65,17 +65,19 @@ test('setup não diz "completo" quando o diagnóstico de ambiente falha', async 
   assert.ok(joined.includes('dgk doctor'), 'deve apontar dgk doctor para detalhar o que falta');
 });
 
-test('check executa onboarding, IA audit, pt-text e avaliação de texto', async () => {
+test('check executa onboarding, IA audit, pt-text, textos e apresentações', async () => {
   const { calls, runner } = captureRun();
   await check([], runner);
-  assert.equal(calls.length, 4, 'deve executar 4 verificações');
+  assert.equal(calls.length, 5, 'deve executar 5 verificações');
   const nodeCalls = calls.filter((c) => c.cmd === 'node');
   assert.equal(nodeCalls.length, 3, '3 verificações usam node');
   const scripts = nodeCalls.map((c) => c.args[0]);
   assert.ok(scripts.includes('scripts/validate_onboarding.js'), 'deve incluir validate_onboarding');
   assert.ok(scripts.some((s) => s.includes('audit_information_architecture')), 'deve incluir IA audit');
   assert.ok(scripts.some((s) => s.includes('check_pt_text')), 'deve incluir pt-text check');
-  const evalCall = calls.find((c) => c.cmd === 'uv');
-  assert.ok(evalCall, 'deve incluir avaliação de qualidade de escrita via uv');
-  assert.ok(evalCall.args.includes('--only-published'), 'check deve avaliar apenas notas publicadas');
+  const evalCalls = calls.filter((c) => c.cmd === 'uv');
+  assert.equal(evalCalls.length, 2, 'deve incluir avaliações de texto e apresentações via uv');
+  assert.ok(evalCalls.some((c) => c.args.some((a) => a.includes('avaliar_textos.py'))), 'deve avaliar textos');
+  assert.ok(evalCalls.some((c) => c.args.some((a) => a.includes('avaliar_apresentacoes.py'))), 'deve avaliar apresentações');
+  assert.ok(evalCalls.find((c) => c.args.some((a) => a.includes('avaliar_textos.py'))).args.includes('--only-published'), 'check deve avaliar apenas notas publicadas no modo rápido');
 });

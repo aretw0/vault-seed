@@ -53,7 +53,7 @@ Este vault usa Markdown — texto simples com marcações legíveis mesmo sem re
 #### H4, H5, H6 também disponíveis
 ```
 
-> **No site:** todos os níveis renderizam. O H1 é gerado automaticamente pelo Starlight
+> **Renderização pública:** todos os níveis renderizam. O H1 é gerado automaticamente pelo Starlight
 > a partir do campo `title:` do frontmatter — não inclua `# Título` no corpo da nota.
 
 ---
@@ -73,7 +73,7 @@ Este vault usa Markdown — texto simples com marcações legíveis mesmo sem re
 - [x] Tarefa concluída
 ```
 
-> **No site:** listas ordenadas e não ordenadas renderizam. Listas de tarefas renderizam
+> **Site publicado:** listas ordenadas e não ordenadas renderizam. Listas de tarefas renderizam
 > como checkboxes HTML (não interativos). Listas de tarefas dinâmicas do plugin Tasks
 > são exclusivas do Obsidian.
 
@@ -88,7 +88,7 @@ Este vault usa Markdown — texto simples com marcações legíveis mesmo sem re
 [[Nome da Nota#Seção]]                 — link para uma seção específica
 ```
 
-> **No site:** links externos sempre renderizam. Wikilinks para notas com
+> **Links no site:** links externos sempre renderizam. Wikilinks para notas com
 > `status: published` viram `<a>` clicáveis. Wikilinks para notas não publicadas
 > ou privadas viram texto simples (sem link quebrado).
 
@@ -120,7 +120,7 @@ automaticamente para `public/assets/`, tornando-os acessíveis pelo caminho
 **Dimensionando no Obsidian:** `![[imagem.png|400]]` (largura em pixels, exibição
 local apenas — não tem efeito no site publicado).
 
-> **No site:** o plugin `remarkWikiImages` converte `![[...]]` em `<img>` com
+> **Imagens publicadas:** o plugin `remarkWikiImages` converte `![[...]]` em `<img>` com
 > `loading="lazy"` automaticamente. O texto após `|` vira o atributo `alt`,
 > importante para acessibilidade. Sempre forneça um texto alternativo descritivo.
 

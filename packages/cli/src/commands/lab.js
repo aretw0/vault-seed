@@ -50,6 +50,7 @@ Para pipeline de dados, publicação e avaliação de escrita, use os comandos t
   dgk outbox telegram       → publica notas da fila
   dgk inbox telegram        → importa mensagens para 00 - Entrada/
   dgk evaluate [nota]       → avalia qualidade de escrita (determinístico, sem API)
+  dgk evaluate --presentations → avalia a prosa dos slides Marimo
 
 Exemplos:
   dgk lab analise-feeds`);

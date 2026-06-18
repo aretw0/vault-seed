@@ -7,8 +7,8 @@ version: 0.1.0
 # Vault Evaluate
 
 Avalie a qualidade de escrita de uma nota com `dgk evaluate`. `dgk check`
-também roda essa avaliação em batch (apenas notas `status: published`)
-como parte da verificação geral de saúde do vault.
+também roda essa avaliação em batch e inclui a prosa dos notebooks Marimo de
+apresentação como parte da verificação geral de saúde do vault.
 
 ```bash
 # Avaliação de uma nota específica
@@ -19,6 +19,9 @@ dgk evaluate "40 - Recursos/Jardim digital.md" --profile ultra-rigor
 
 # Avaliação em batch de todas as notas configuradas
 dgk evaluate
+
+# Avaliação da prosa dos slides Marimo
+dgk evaluate --presentations
 ```
 
 O output é um relatório Markdown com status, achados e frases longas.

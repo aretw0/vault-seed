@@ -29,7 +29,7 @@ Quatro apresentações cobre os aspectos principais do vault-seed. Cada uma tem 
 
 O que é o vault-seed, como as partes se conectam e a filosofia local-first. Ponto de entrada para quem está conhecendo o sistema pela primeira vez.
 
-Notebook: `99 - Meta e Anexos/Notebooks/apresentacoes/visao-geral.py`
+Notebook Marimo: `99 - Meta e Anexos/Notebooks/apresentacoes/visao-geral.py`
 
 ---
 
@@ -37,7 +37,7 @@ Notebook: `99 - Meta e Anexos/Notebooks/apresentacoes/visao-geral.py`
 
 Notebooks Marimo, o pipeline de dados (notas → `vault-data.json` → notebooks), os três modos de execução e o contrato do runtime.
 
-Notebook: `99 - Meta e Anexos/Notebooks/apresentacoes/o-lab.py`
+Fonte interativa: `99 - Meta e Anexos/Notebooks/apresentacoes/o-lab.py`
 
 ---
 
@@ -45,7 +45,7 @@ Notebook: `99 - Meta e Anexos/Notebooks/apresentacoes/o-lab.py`
 
 Como notas viram site estático, a outbox multi-canal, RSS e o papel do CI como infraestrutura de publicação.
 
-Notebook: `99 - Meta e Anexos/Notebooks/apresentacoes/publicacao.py`
+Arquivo de slides: `99 - Meta e Anexos/Notebooks/apresentacoes/publicacao.py`
 
 ---
 
@@ -53,7 +53,7 @@ Notebook: `99 - Meta e Anexos/Notebooks/apresentacoes/publicacao.py`
 
 Pi, Claude Code e Codex no fluxo local; inbox soberana; curadoria assistida; o papel do `AGENTS.md` como contrato de contexto.
 
-Notebook: `99 - Meta e Anexos/Notebooks/apresentacoes/agentes.py`
+Versão Marimo: `99 - Meta e Anexos/Notebooks/apresentacoes/agentes.py`
 
 ---
 

@@ -306,7 +306,7 @@
 
       lines.forEach((line, index) => {
         const tspan = document.createElementNS(namespace, 'tspan');
-        tspan.textContent = String(line);
+        tspan.textContent = `${String(line)}${index < lines.length - 1 ? ' ' : ''}`;
         tspan.setAttribute('x', String(Number.isFinite(x) ? x : 0));
 
         if (index === 0) {

@@ -2,7 +2,7 @@
 // Run after `pnpm run site:build`. Catches:
 //   - 0-page builds (vault loader misconfiguration)
 //   - missing root redirect (404 at /)
-//   - missing template-contract pages (slugify regressions, status not published)
+//   - missing published contract pages (slugify regressions, status not published)
 //   - empty content pages (schema/rendering failures)
 //   - duplicate <h1> titles (vault loader must strip leading # heading)
 //   - protocol-relative URLs like href="//path" (remark-wiki-links base normalization)
@@ -117,29 +117,24 @@ requireCondition(
   "dist/index.html missing — root URL (/) returns 404. Add .site/pages/index.astro.",
 );
 
-// ── 3. template-contract pages ────────────────────────────────────────────────
-// These slugs are derived from the files that validate_onboarding.js marks as
-// required AND that carry status:published in the template. If any is missing,
-// something in the build pipeline broke (slugify regression, status field lost,
-// vault loader crash, etc.).
+// ── 3. published contract pages ───────────────────────────────────────────────
+// These slugs are deliberately public in the template. Draft onboarding notes
+// are validated by initialize/user-vault smokes instead; this smoke protects the
+// built site surface from slugify, status, or loader regressions.
 
 const REQUIRED_DIST_PATHS = [
   // Astro-first exploration surface
   "explorar",
   "explorar/intencoes",
-  // Onboarding guides — required by validate_onboarding.js
-  "meta-e-anexos/onboarding/guia-do-jardineiro-digital",
-  "meta-e-anexos/onboarding/seus-primeiros-passos",
-  "meta-e-anexos/onboarding/exploracao-guiada-do-vault",
-  "meta-e-anexos/onboarding/preparando-seu-computador-para-o-vault",
+  // Public onboarding / reference / workflow notes
+  "meta-e-anexos/apresentacoes/bem-vindo-ao-vault-seed",
+  "meta-e-anexos/apresentacoes/apresentacoes",
+  "meta-e-anexos/referencia/comandos-do-dgk",
+  "meta-e-anexos/referencia/verificando-a-configuracao-do-vault",
   "meta-e-anexos/workflows/configurando-o-obsidian-git",
-  "meta-e-anexos/onboarding/depois-da-recepcao-do-template",
-  "meta-e-anexos/onboarding/moc-vault-seed",
-  // Core resource notes
-  "recursos/bases",
-  "recursos/dataview",
+  "meta-e-anexos/workflows/publicando-seu-vault-como-site",
+  // Core resource note
   "recursos/mermaid",
-  "recursos/o-que-sao-system-prompts-de-ia",
 ];
 
 for (const slug of REQUIRED_DIST_PATHS) {
@@ -329,7 +324,10 @@ function isMarimoNotebook(relPath) {
 }
 
 function isNotebookArtifact(relPath) {
-  return isMarimoNotebook(relPath) || /(^|\/)vault-seed-slides-lite\.html$/.test(relPath);
+  return (
+    isMarimoNotebook(relPath) ||
+    (relPath.startsWith(`${notebooksPath}/`) && relPath.endsWith('.html') && relPath !== `${notebooksPath}/index.html`)
+  );
 }
 
 function hasMarimoRuntime(content) {
@@ -420,8 +418,8 @@ const SIDEBAR_SECTIONS = ["recursos", "meta-e-anexos"];
 const mocHtmlPath = path.join(
   distDir,
   "meta-e-anexos",
-  "onboarding",
-  "moc-vault-seed",
+  "referencia",
+  "comandos-do-dgk",
   "index.html",
 );
 
@@ -455,9 +453,9 @@ if (fs.existsSync(mocHtmlPath)) {
           `The sidebar filter in astro.config.mjs may be including sections with no published notes.`,
       );
     }
-  } else {
+} else {
     errors.push(
-      "meta-e-anexos/onboarding/moc-vault-seed/index.html: starlight__sidebar element not found.",
+      "meta-e-anexos/referencia/comandos-do-dgk/index.html: starlight__sidebar element not found.",
     );
   }
 

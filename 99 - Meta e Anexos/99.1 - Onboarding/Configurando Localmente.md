@@ -72,7 +72,7 @@ winget install Schniz.fnm
 brew install fnm
 ```
 
-**Linux / WSL:**
+**Linux e WSL:**
 
 ```bash
 curl -fsSL https://fnm.vercel.app/install | bash
@@ -97,7 +97,7 @@ winget install --id=astral-sh.uv
 brew install uv
 ```
 
-**Linux / WSL:**
+**Linux, WSL ou shell compatível:**
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -121,7 +121,7 @@ winget install Python.Python.3
 brew install python
 ```
 
-**Linux / WSL:**
+**Distribuições Debian/Ubuntu e WSL:**
 
 ```bash
 sudo apt install python3
@@ -163,9 +163,11 @@ Depois verifique o vault:
 dgk check
 ```
 
-Resultado esperado: onboarding, arquitetura de informação, checagem de texto
-e avaliação de qualidade de escrita terminam sem erro. Avisos sobre notas
-curtas ou promoções de pasta orientam curadoria futura mas não bloqueiam.
+Resultado esperado: onboarding, arquitetura de informação, checagem de texto,
+avaliação de escrita e prosa das apresentações terminam sem erro. O avaliador
+vem no pacote npm `@aretw0/dgk-cli`; não há instalação pip separada. Avisos
+sobre notas curtas ou promoções de pasta orientam curadoria futura mas não
+bloqueiam.
 
 > **Desenvolvedor do template:** use `pnpm run validate` para o pipeline
 > completo de CI (testes, lint, smoke de site, etc.).

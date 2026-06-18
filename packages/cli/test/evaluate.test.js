@@ -36,3 +36,20 @@ test('evaluate com --profile passa o perfil ao script', async () => {
   assert.ok(profileIdx !== -1, 'deve incluir --profile');
   assert.equal(args[profileIdx + 1], 'ultra-rigor');
 });
+
+test('evaluate repassa --only-published e --strict ao avaliador de textos', async () => {
+  const { calls, runner } = captureRun();
+  await evaluate(['--only-published', '--strict'], runner);
+  const { args } = calls[0];
+  assert.ok(args.includes('--only-published'), 'deve repassar --only-published');
+  assert.ok(args.includes('--strict'), 'deve repassar --strict');
+});
+
+test('evaluate --presentations usa avaliador de apresentações', async () => {
+  const { calls, runner } = captureRun();
+  await evaluate(['--presentations'], runner);
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].cmd, 'uv');
+  assert.ok(calls[0].args.some((a) => a.includes('avaliar_apresentacoes.py')), 'deve referenciar apresentações');
+  assert.ok(!calls[0].args.includes('--note'), 'apresentações não devem receber --note');
+});

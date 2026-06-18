@@ -33,8 +33,12 @@ pnpm add -D @aretw0/dgk-cli
 | `dgk lint` | Lint Markdown em todas as pastas do vault |
 | `dgk setup` | Configura git, Python e Node localmente (requer shell POSIX — use devcontainer ou WSL no Windows) |
 | `dgk doctor` | Diagnostica o ambiente: node, pnpm, uv, python, binários do node_modules |
-| `dgk check` | Verifica saúde do vault (links, estrutura PARA, qualidade de texto) |
-| `dgk evaluate [nota]` | Avalia qualidade de escrita de uma nota (determinístico, sem API) |
+| `dgk check` | Verifica saúde do vault (links, estrutura PARA, texto e apresentações) |
+| `dgk evaluate [nota]` | Avalia qualidade de escrita de uma nota ou do lote configurado |
+| `dgk evaluate --presentations` | Avalia a prosa dos slides Marimo (`mo.md`) |
+
+O avaliador de escrita é distribuído dentro de `@aretw0/dgk-cli`; não há pacote
+pip separado. Ele usa Python via `uv`, mas o motor e as regras ficam no vault/CLI.
 
 ## Uso
 

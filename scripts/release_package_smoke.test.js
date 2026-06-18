@@ -66,6 +66,12 @@ test("release package smoke keeps release and package publishing explicitly gate
   );
   assert.deepEqual(
     report.releasePackages.map((pkg) => pkg.name),
-    ["@aretw0/dgk-cli", "@aretw0/dgk-channels", "@aretw0/dgk-astro-plugins"],
+    [
+      "@aretw0/dgk-cli",
+      "@aretw0/dgk-channels",
+      "@aretw0/dgk-astro-plugins",
+      "@aretw0/dgk-runner",
+      "@aretw0/dgk-skills",
+    ],
   );
 });

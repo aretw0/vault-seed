@@ -37,7 +37,11 @@ test('Astro header keeps theme controls discoverable without mobile duplication'
   assert.match(customCss, /data-vault-sidebar-right='collapsed'/);
   assert.match(customCss, /data-vault-sidebar-right='collapsed'[\s\S]*\.main-pane[\s\S]*--sl-content-margin-inline: auto/);
   assert.doesNotMatch(customCss, /data-vault-focus='content'/);
-  assert.match(footer, /Feito com ♥ por/);
+  // "Feito com ♥" agora vem de vault.config.json (kudos), não está mais
+  // hardcoded no template — Footer.astro só precisa renderizá-lo quando presente.
+  const vaultConfig = JSON.parse(read('vault.config.json'));
+  assert.match(footer, /\{vaultKudos\}/, 'Footer deve renderizar o kudos configurável');
+  assert.match(vaultConfig.kudos, /Feito com ♥/, 'vault-seed deve enviar o kudos pessoal por padrão (initialize.yml o remove para o usuário)');
   assert.doesNotMatch(footer, /made with/);
   assert.match(header, /href={`\$\{base\}\/explorar\/`}>Explorar/);
   assert.match(header, /href={`\$\{base\}\/lab\/`}>Lab/);

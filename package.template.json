@@ -18,6 +18,8 @@
     "validate:pt-text": "node scripts/check_pt_text.js",
     "validate:theme": "node scripts/check_theme.js",
     "validate:mermaid": "node scripts/check_mermaid.js",
+    "validate:texto": "dgk evaluate",
+    "validate:apresentacoes": "dgk evaluate --presentations",
     "site:dev": "astro dev",
     "site:build": "pnpm --filter @aretw0/dgk-astro-plugins build && astro build",
     "site:preview": "astro preview",
@@ -41,7 +43,7 @@
     "notebooks:export:slides": "node scripts/export_notebook_slides.mjs",
     "site:dev:lab": "pnpm run notebooks:export:public && astro dev",
     "site:dev:lab:host": "pnpm run notebooks:export:public && astro dev --host 0.0.0.0",
-    "validate": "pnpm run lint && pnpm run audit:ia && pnpm run site:audit:sidebar && pnpm run test && pnpm run validate:onboarding && pnpm run validate:pt-text && pnpm run validate:theme && pnpm run validate:mermaid"
+    "validate": "pnpm run lint && pnpm run audit:ia && pnpm run site:audit:sidebar && pnpm run test && pnpm run validate:onboarding && pnpm run validate:pt-text && pnpm run validate:theme && pnpm run validate:mermaid && pnpm run validate:texto && pnpm run validate:apresentacoes"
   },
   "keywords": [],
   "author": "",
