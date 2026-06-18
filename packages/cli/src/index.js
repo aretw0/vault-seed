@@ -6,6 +6,7 @@ import { validate } from './commands/validate.js';
 import { lint } from './commands/lint.js';
 import { setup } from './commands/setup.js';
 import { check } from './commands/check.js';
+import { evaluate } from './commands/evaluate.js';
 import { lab } from './commands/lab.js';
 import { obsidian } from './commands/obsidian.js';
 import { note } from './commands/note.js';
@@ -18,7 +19,7 @@ import { inbox } from './commands/inbox.js';
 import { vscode } from './commands/vscode.js';
 import { preview } from './commands/preview.js';
 
-const COMMANDS = { validate, lint, setup, check, lab, obsidian, vscode, note, publish, sow, serve, etl, outbox, inbox, preview };
+const COMMANDS = { validate, lint, setup, check, evaluate, lab, obsidian, vscode, note, publish, sow, serve, etl, outbox, inbox, preview };
 
 export function resolveCommand(name) {
   return name in COMMANDS ? name : null;
@@ -46,6 +47,7 @@ Uso: dgk <comando> [opções]
 Comandos:
   setup              Configura o ambiente local (git, deps, Python tools)
   check              Verifica a saúde do vault (onboarding, IA, texto)
+  evaluate [nota]    Avalia qualidade de escrita (determinístico, sem API)
   lint               Valida o markdown do vault
   sow                Configura credenciais de publicação (~/.dgk/silo.json)
   etl                Executa o pipeline de dados do vault
@@ -56,7 +58,7 @@ Comandos:
   obsidian [nome]    Abre o vault no Obsidian
   vscode             Abre o vault no VS Code (Foam pré-configurado)
   note <cmd>         Executa um comando no Obsidian CLI
-  lab <sub>          Laboratório: notebooks, evaluate, curate, export
+  lab <sub>          Laboratório: notebooks, curate, export
   publish <sub>      Scaffolda skills e extensões Pi no npm
   validate           Pipeline de CI completo (dev)
 

@@ -6,17 +6,19 @@ version: 0.1.0
 
 # Vault Evaluate
 
-Avalie a qualidade de escrita de uma nota com `dgk lab evaluate`:
+Avalie a qualidade de escrita de uma nota com `dgk evaluate`. `dgk check`
+também roda essa avaliação em batch (apenas notas `status: published`)
+como parte da verificação geral de saúde do vault.
 
 ```bash
 # Avaliação de uma nota específica
-dgk lab evaluate "40 - Recursos/Jardim digital.md"
+dgk evaluate "40 - Recursos/Jardim digital.md"
 
 # Com perfil mais rigoroso
-dgk lab evaluate "40 - Recursos/Jardim digital.md" --profile ultra-rigor
+dgk evaluate "40 - Recursos/Jardim digital.md" --profile ultra-rigor
 
 # Avaliação em batch de todas as notas configuradas
-dgk lab evaluate
+dgk evaluate
 ```
 
 O output é um relatório Markdown com status, achados e frases longas.
@@ -47,10 +49,11 @@ O status geral é:
 | `ai-chatbot-artifacts` | Frases conversacionais de chatbot ("espero que isso ajude", "me avise se") |
 | `ai-atribuicao-vaga` | Atribuições sem fonte ("especialistas afirmam", "relatórios do setor") |
 | `ai-tropo-persuasivo` | Retórica de autoridade sem conteúdo ("no cerne da questão", "fundamentalmente") |
-| `ai-conclusao-generica` | Conclusões genéricas sem dado verificável ("rumo à excelência") |
+| `ai-conclusao-generica` | Conclusões genéricas/promocionais sem dado verificável ("rumo à excelência") — severidade `fail` |
 | `ai-filler-hedging` | Hedging excessivo ("poderia potencialmente", "de certa forma") |
-| `draft-markers` | Marcadores de rascunho não removidos (TODO, FIXME, PENDENTE) |
+| `draft-markers` | Marcadores de rascunho não removidos (TODO, FIXME, PENDENTE) — severidade `fail` |
 | `metatransicao-redundante` | Frases de costura que só anunciam o próximo parágrafo |
+| `autopromocao` | Autoelogio retórico explícito ("somos incríveis", "ferramenta revolucionária") |
 
 ## Fluxo recomendado
 

@@ -44,18 +44,15 @@ ${notebookList}
 Subcomandos:
   export           Exporta notebooks para HTML empacotado
   curate           Classifica feeds com IA (requer chave de LLM via dgk sow)
-  evaluate [nota]  Avalia qualidade de escrita (determinístico, sem API)
 
-Para pipeline de dados e publicação, use os comandos top-level:
+Para pipeline de dados, publicação e avaliação de escrita, use os comandos top-level:
   dgk etl                   → processa dados do vault
   dgk outbox telegram       → publica notas da fila
   dgk inbox telegram        → importa mensagens para 00 - Entrada/
+  dgk evaluate [nota]       → avalia qualidade de escrita (determinístico, sem API)
 
 Exemplos:
-  dgk lab analise-feeds
-  dgk lab evaluate
-  dgk lab evaluate "40 - Recursos/Jardim digital.md"
-  dgk lab evaluate --profile ultra-rigor`);
+  dgk lab analise-feeds`);
 }
 
 async function openNotebook(name, runner, root) {
@@ -66,16 +63,6 @@ async function openNotebook(name, runner, root) {
     process.exit(1);
   }
   await runner('uv', ['run', '--with', 'marimo', 'marimo', 'edit', path]);
-}
-
-async function evaluate(args, runner) {
-  const noteArg = args.find((a) => !a.startsWith('--'));
-  const profileIdx = args.indexOf('--profile');
-  const profile = profileIdx !== -1 ? args[profileIdx + 1] : null;
-  const pyArgs = ['scripts/avaliar_textos.py'];
-  if (noteArg) pyArgs.push('--note', noteArg);
-  if (profile) pyArgs.push('--profile', profile);
-  await runner('uv', ['run', 'python', ...pyArgs]);
 }
 
 async function exportNotebooks(_args, runner) {
@@ -95,7 +82,6 @@ async function curate(_args, runner) {
 const PIPELINE_COMMANDS = {
   export: exportNotebooks,
   curate,
-  evaluate,
 };
 
 export async function lab(args, runner = run, root) {

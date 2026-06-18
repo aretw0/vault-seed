@@ -11,7 +11,7 @@ e o painel admin local.
 | `dgk sow telegram` — descoberta de CHAT_ID via getUpdates | ✓ |
 | `dgk outbox telegram` + `dgk inbox telegram` | ✓ |
 | `dgk etl` — pipeline de dados top-level (era `dgk lab etl`) | ✓ |
-| `dgk lab evaluate` — avaliação determinística de escrita | ✓ |
+| `dgk evaluate` — avaliação determinística de escrita (top-level, era `dgk lab evaluate`) | ✓ |
 | 180+ testes (etl, outbox, inbox, frontmatter, lab, silo, sow, serve, obsidian, note, publish) | ✓ |
 | Publicar no npm | ☐ |
 

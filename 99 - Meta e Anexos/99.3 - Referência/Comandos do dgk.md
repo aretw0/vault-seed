@@ -6,6 +6,7 @@ aliases:
 tags:
   - meta/cli
   - meta/referencia
+  - meta/setup
 status: published
 created: 2026-06-17
 updated: 2026-06-17
@@ -36,6 +37,7 @@ editar o template para propagar a mudança aqui.
 |---|---|
 | `dgk setup` | Configura o ambiente local (git, deps, Python tools) |
 | `dgk check` | Verifica a saúde do vault (onboarding, IA, texto) |
+| `dgk evaluate [nota]` | Avalia qualidade de escrita (determinístico, sem API) |
 | `dgk lint` | Valida o markdown do vault |
 | `dgk sow <canal>` | Configura credenciais de publicação (`~/.dgk/silo.json`) |
 | `dgk etl` | Executa o pipeline de dados do vault |
@@ -45,7 +47,7 @@ editar o template para propagar a mudança aqui.
 | `dgk obsidian [nome]` | Abre o vault no Obsidian |
 | `dgk vscode` | Abre o vault no VS Code (Foam pré-configurado) |
 | `dgk note <cmd>` | Executa um comando no Obsidian CLI |
-| `dgk lab <sub>` | Laboratório: notebooks, evaluate, curate, export |
+| `dgk lab <sub>` | Laboratório: notebooks, curate, export |
 | `dgk publish <sub>` | Scaffolda skills e extensões Pi no npm |
 | `dgk validate` | Pipeline de CI completo (dev) |
 <!-- {/dgk-commands-table} -->
@@ -56,7 +58,6 @@ editar o template para propagar a mudança aqui.
 | Subcomando | Descrição |
 |---|---|
 | `dgk lab <notebook>` | Abre notebook no Marimo (ex: `analise-feeds`) |
-| `dgk lab evaluate [nota]` | Avalia qualidade de escrita (determinístico, sem API) |
 | `dgk lab curate` | Classifica feeds com IA (requer chave de LLM via `dgk sow`) |
 | `dgk lab export` | Exporta notebooks para HTML empacotado |
 <!-- {/dgk-lab-subcommands} -->
@@ -74,6 +75,6 @@ dgk outbox telegram       # publica
 
 ## Onde cada comando é usado em detalhe
 
-- `dgk setup`, `dgk check` → [[Configurando Localmente]]
+- `dgk setup`, `dgk check`, `dgk evaluate` → [[Configurando Localmente]]
 - `dgk etl`, `dgk lab <notebook>`, `dgk lab export` → [[Trilha do Lab Interativo]]
 - `dgk sow <canal>`, `dgk outbox <canal>` → [[Trilha de Publicação em Canal]]
