@@ -1,6 +1,9 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { detectObsidian, INSTALL_HINTS } from '../launcher.js';
+
+const CHECK_SUBSTRATE = fileURLToPath(new URL('../../vendor/check-substrate.mjs', import.meta.url));
 
 function checkNodeVersion() {
   const major = parseInt(process.versions.node.split('.')[0], 10);
@@ -92,7 +95,7 @@ export async function setup(args, runner) {
 
   console.log('\nVerificando o ambiente...');
   try {
-    await _runner('node', ['scripts/check-substrate.mjs']);
+    await _runner('node', [CHECK_SUBSTRATE]);
     console.log('\nSetup completo. Use `dgk check` para verificar a saúde do vault.');
   } catch {
     console.log('\nSetup com pendências — rode `dgk doctor` para ver o que falta corrigir.');

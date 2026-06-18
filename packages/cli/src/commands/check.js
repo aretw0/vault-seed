@@ -1,5 +1,8 @@
+import { fileURLToPath } from 'node:url';
 import { run } from '../runner.js';
 import { siloStatus } from '../silo.js';
+
+const AVALIAR_TEXTOS = fileURLToPath(new URL('../../vendor/quality/avaliar_textos.py', import.meta.url));
 
 function printSiloStatus() {
   const status = siloStatus();
@@ -26,7 +29,7 @@ export async function check(args, runner = run) {
     await runner('node', ['scripts/validate_onboarding.js']);
     await runner('node', ['scripts/audit_information_architecture.mjs', ...jsonFlag]);
     await runner('node', ['scripts/check_pt_text.js', ...jsonFlag]);
-    await runner('uv', ['run', 'python', 'scripts/avaliar_textos.py', '--only-published']);
+    await runner('uv', ['run', 'python', AVALIAR_TEXTOS, '--only-published']);
   } catch {
     console.error('\nPróximo passo: consulte 99 - Meta e Anexos/99.1 - Onboarding/');
     console.error('Documentação: https://github.com/aretw0/vault-seed/tree/main/docs');

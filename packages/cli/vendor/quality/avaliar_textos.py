@@ -1,13 +1,18 @@
 ﻿#!/usr/bin/env python3
 """Avaliador determinístico de qualidade de escrita para notas do vault.
 
-Uso típico:
-  uv run python scripts/avaliar_textos.py
-  uv run python scripts/avaliar_textos.py --note "40 - Recursos/Jardim digital.md"
-  uv run python scripts/avaliar_textos.py --profile ultra-rigor --json .dgk/qualidade-textos.json
+Vendorizado em @aretw0/dgk-cli (packages/cli/vendor/quality/) — invocado
+pela CLI `dgk` via `dgk evaluate` / `dgk check`, sempre a partir da raiz do
+vault (process.cwd() no momento da chamada). Não depende de scripts/ no
+vault do usuário; sobrevive mesmo que o usuário apague a pasta scripts/.
+
+Uso típico (raiz do vault):
+  dgk evaluate
+  dgk evaluate "40 - Recursos/Jardim digital.md"
+  dgk evaluate --profile ultra-rigor
 
 Sem dependências externas. Lê as regras em quality-rules.json na raiz do vault.
-Engine: scripts/text_scorer.py
+Engine: text_scorer.py (mesmo diretório)
 """
 
 from __future__ import annotations
@@ -43,7 +48,7 @@ def evaluate(text: str, config: dict[str, Any], note_path: Path) -> tuple[list[F
 
 
 def main(argv: list[str] | None = None) -> int:
-    vault_root = Path(__file__).resolve().parent.parent
+    vault_root = Path.cwd()
     default_config = vault_root / "quality-rules.json"
     default_output = vault_root / ".dgk" / "qualidade-textos.json"
 

@@ -6,6 +6,12 @@
   "bin": {
     "dgk": "./src/index.js"
   },
+  "files": [
+    "src",
+    "vendor",
+    "README.md",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "test": "node --test test/*.test.js"
   },

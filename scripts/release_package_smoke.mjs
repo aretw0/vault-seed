@@ -69,7 +69,7 @@ export function buildReleasePackageSmokeReport(options = {}) {
   const rootPackage = readJson("package.json");
   const changesetConfig = readJson(".changeset/config.json");
   const releaseWorkflow = readText(".github/workflows/release.yml");
-  const publishWorkflow = readText(".github/workflows/publish-cli.yml");
+  const publishWorkflow = readText(".github/workflows/publish-packages.yml");
   const prepareWorkflow = readText(".github/workflows/prepare-release-pr.yml");
   const packageDirs = listWorkspacePackages();
 

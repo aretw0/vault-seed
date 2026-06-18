@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 """Avalia a prosa dos notebooks Marimo de apresentação com o mesmo motor
-de scripts/avaliar_textos.py — sem isso, mo.md("...") nunca era escaneado
-porque o avaliador só lê arquivos .md.
+de avaliar_textos.py — sem isso, mo.md("...") nunca era escaneado porque
+o avaliador de notas só lê arquivos .md.
+
+Vendorizado em @aretw0/dgk-cli (packages/cli/vendor/quality/) — invocado
+pela CLI `dgk` via `dgk check`, sempre a partir da raiz do vault
+(process.cwd() no momento da chamada).
 
 Extrai os blocos mo.md(<bloco triplo-aspas>) via ast (não regex, evita
 falso parse em código Python dentro do próprio texto) e concatena por notebook,
 preservando a numeração de linha original para os achados.
 
-Uso:
-  uv run python scripts/avaliar_apresentacoes.py
-  uv run python scripts/avaliar_apresentacoes.py --json .dgk/qualidade-apresentacoes.json
+Uso (raiz do vault):
+  uv run python packages/cli/vendor/quality/avaliar_apresentacoes.py
 """
 
 from __future__ import annotations
@@ -26,7 +29,7 @@ from typing import Any
 
 from text_scorer import build_effective_config, score_text, severity_counts
 
-VAULT_ROOT = Path(__file__).resolve().parent.parent
+VAULT_ROOT = Path.cwd()
 PRESENTATIONS_DIR = VAULT_ROOT / "99 - Meta e Anexos" / "Notebooks" / "apresentacoes"
 
 

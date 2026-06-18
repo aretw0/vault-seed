@@ -41,10 +41,10 @@ jobs:
 
       - name: Run Python test suites
         run: |
-          uv run python scripts/test_avaliar_textos.py -v
-          uv run python scripts/test_text_scorer.py -v
+          uv run python packages/cli/vendor/quality/test_avaliar_textos.py -v
+          uv run python packages/cli/vendor/quality/test_text_scorer.py -v
           uv run python scripts/test_llm_client.py -v
-          uv run python scripts/test_avaliar_apresentacoes.py -v
+          uv run python packages/cli/vendor/quality/test_avaliar_apresentacoes.py -v
 
   mdt-check:
     name: MDT template drift (advisory)

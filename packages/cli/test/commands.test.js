@@ -39,17 +39,17 @@ test('setup não usa bash — apenas pnpm/uv/node via runner quando necessário'
   );
 });
 
-test('setup roda o diagnóstico de ambiente (check-substrate) ao final', async () => {
+test('setup roda o diagnóstico de ambiente (check-substrate vendorizado) ao final', async () => {
   const { calls, runner } = captureRun();
   await setup([], runner);
-  const doctorCall = calls.find((c) => c.cmd === 'node' && c.args.includes('scripts/check-substrate.mjs'));
-  assert.ok(doctorCall, 'deve rodar scripts/check-substrate.mjs ao final do setup');
+  const doctorCall = calls.find((c) => c.cmd === 'node' && c.args[0]?.endsWith('check-substrate.mjs'));
+  assert.ok(doctorCall, 'deve rodar o check-substrate vendorizado ao final do setup');
 });
 
 test('setup não diz "completo" quando o diagnóstico de ambiente falha', async () => {
   const runner = async (cmd, args) => {
-    if (cmd === 'node' && args.includes('scripts/check-substrate.mjs')) {
-      throw new Error("'node scripts/check-substrate.mjs' exited with code 1");
+    if (cmd === 'node' && args[0]?.endsWith('check-substrate.mjs')) {
+      throw new Error("check-substrate exited with code 1");
     }
   };
   const logs = [];

@@ -89,7 +89,7 @@ test("substrate check detects unapplied devcontainer node_modules volume", () =>
       }, null, 2)}\n`,
     );
 
-    const result = spawnSync(process.execPath, [path.resolve("scripts/check-substrate.mjs"), "--json"], {
+    const result = spawnSync(process.execPath, [path.resolve("packages/cli/vendor/check-substrate.mjs"), "--json"], {
       cwd: tempDir,
       encoding: "utf8",
       env: {
