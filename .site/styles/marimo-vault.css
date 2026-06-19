@@ -1027,7 +1027,7 @@ iframe {
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .markdown,
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .prose {
   max-width: min(100%, var(--vault-marimo-presentation-content-width));
-  margin-inline: auto;
+  margin-inline: 0;
 }
 
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .markdown,
