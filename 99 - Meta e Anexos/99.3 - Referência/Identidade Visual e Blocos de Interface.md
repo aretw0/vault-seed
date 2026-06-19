@@ -110,6 +110,19 @@ O Lab usa Marimo, mas não deve parecer outro produto. O shell de notebooks, o
 seletor de tema recolhido e a navegação de notebooks publicados seguem a mesma
 intenção do site Astro: orientar sem capturar a tela.
 
+O Lab não precisa copiar cada peça do Starlight. Ele deve compartilhar os
+sinais que ajudam o usuário a se localizar: marca, link para o vault, link para
+a listagem do Lab, paleta, sidebar de notebooks e rodapé de atribuição. Busca
+interna de notebooks pode existir no Lab porque ali a lista é curta e dinâmica;
+ela não substitui a busca global do site.
+
+O rodapé do Lab deve usar os mesmos dados do footer do site, mas com ergonomia
+de notebook. Enquanto o Marimo renderiza conteúdo como aplicação, o rodapé pode
+ser compacto e não competir com o selo "made with marimo". Se o shell passar a
+controlar o fluxo completo da página, a estratégia preferida é mover o rodapé
+para depois do `#root`, de modo que ele apareça apenas após o scroll do
+notebook.
+
 Slides são exceção: em apresentação, o conteúdo precisa respirar. Por isso os
 slides usam o modo nativo do Marimo com menos chrome, enquanto notebooks comuns
 recebem o shell do Lab.

@@ -1030,17 +1030,30 @@ iframe {
   margin-inline: 0;
 }
 
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content .output:has(table),
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content .output:has(marimo-table),
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content .markdown:has(table),
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content .prose:has(table) {
+  margin-inline: auto;
+}
+
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .markdown,
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .prose {
   font-size: clamp(1.05rem, 1.15vw, 1.3rem);
 }
 
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content marimo-table,
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .markdown table,
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .prose table {
   display: table;
   width: auto;
   max-width: 100%;
   margin-inline: auto;
+}
+
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content marimo-table {
+  display: block;
+  width: fit-content;
 }
 
 [data-vault-marimo-fullscreen-button] {

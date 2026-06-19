@@ -26,10 +26,11 @@ def _(mo):
     mo.md("""
     # Agentes e o vault
 
-    O vault é um ambiente de primeiro time para agentes de IA:
-    tudo é arquivo, tudo é texto, tudo é versionável.
-    Os agentes editam arquivos, rodam comandos e deixam diff para revisão.
-    Sem APIs proprietárias. Sem plugins que quebram com atualizações.
+    O vault é um ambiente favorável para agentes de IA porque quase tudo que
+    importa aparece como arquivo versionado.
+
+    Agentes podem editar notas, rodar comandos e deixar diffs para revisão.
+    O Git continua sendo o limite entre sugestão e mudança aceita.
     """)
     return
 
@@ -48,7 +49,8 @@ def _(mo):
     - Fundamentos do projeto (PARA, ferramentas, fluxo de trabalho)
     - Regras de comportamento (ação direta, cross-referência, verificação)
 
-    Um contrato único, lido por todos os agentes, mantido no Git.
+    Um contrato único reduz instruções duplicadas e mantém a orientação junto
+    do código e das notas.
     """)
     return
 
@@ -132,8 +134,8 @@ def _(mo):
     O resultado alimenta o notebook `analise-feeds.py` e a outbox.
     A chave de API fica no silo local — nunca no repositório.
 
-    Classificação com IA como etapa do pipeline local, não como
-    dependência de serviço online.
+    A classificação com IA é uma etapa opcional do pipeline local, não uma
+    exigência para usar o vault.
     """)
     return
 
@@ -176,7 +178,8 @@ def _(mo):
 
     Em cada etapa: arquivo editável, diff revisável, histórico preservado.
 
-    **Os agentes são ferramentas. A soberania é sua.**
+    Agentes ajudam quando deixam rastros claros: arquivos alterados, comandos
+    executados, testes rodados e decisões ainda humanas.
     """)
     return
 

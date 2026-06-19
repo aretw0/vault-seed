@@ -259,6 +259,8 @@ requireCondition(
     notebooksExportScript.includes("cpSync(sourceLayoutsDir") &&
     marimoCss.includes("overflow-x: hidden") &&
     marimoCss.includes("-webkit-overflow-scrolling: touch") &&
+    marimoCss.includes(".mo-slide-content .output:has(table)") &&
+    marimoCss.includes(".mo-slide-content marimo-table") &&
     marimoCss.includes("data-vault-marimo-presentation"),
   "Marimo presentation notebook must use the native slides layout and export its layout file with the notebook source.",
 );

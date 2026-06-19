@@ -38,8 +38,8 @@ def _(mo, profile, tier):
     mo.md(f"""
     # Publicando com soberania
 
-    Do Markdown no vault ao site, ao canal e ao feed — sem intermediários
-    que controlem sua voz ou seus dados.
+    Do Markdown no vault ao site, ao feed e, quando fizer sentido, a canais
+    externos com revisão antes do envio.
 
     **{note_count} notas** · **{published} publicadas** · *{tier}*
     """)
@@ -148,7 +148,8 @@ def _(mo):
     Fontes externas → ETL → curadoria-feeds.json → Lab → outbox → publicação
     ```
 
-    RSS como protocolo de soberania: sem plataforma no meio do caminho.
+    RSS entra como contrato simples: quem assina recebe atualizações sem
+    depender do ranking de uma plataforma.
     """)
     return
 
@@ -166,8 +167,8 @@ def _(mo):
     - Build do site com Astro
     - Testes de contratos (notebooks, scripts, estrutura)
 
-    Só chega ao site o que passou em todos os gates.
-    O deploy para GitHub Pages é acionado automaticamente após o CI verde.
+    Só chega ao site o que passou nos gates configurados. O deploy pode ser
+    automatizado, mas continua dependente do processo que o repositório define.
     """)
     return
 
@@ -184,8 +185,7 @@ def _(mo):
     Cada publicação requer uma decisão no frontmatter.
     O CI valida. O Git registra. A outbox executa.
 
-    **Você controla o que sai, quando sai e para onde vai.**
-    Nenhuma plataforma decide por você.
+    O ponto é manter a decisão visível no arquivo e revisável no histórico.
     """)
     return
 
@@ -202,8 +202,8 @@ def _(mo):
     - A outbox separa revisar de publicar
     - O CI impede que o site avance com quebra conhecida
 
-    Próximo passo: escolher uma nota, promover para `published`, rodar o build
-    e verificar o resultado antes de acionar qualquer canal.
+    Próximo passo: escolher uma nota pequena, promover para `published`, rodar
+    o build e verificar o resultado antes de conectar qualquer canal externo.
     """)
     return
 

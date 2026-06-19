@@ -76,8 +76,8 @@ def _(mo):
     | `marimo run` | Servidor Python | Mesmo acesso local + HTTP clients |
     | HTML WebAssembly | Navegador (Pyodide) | Dados bundled · APIs públicas · Sem secrets |
 
-    O mesmo código fonte funciona nos três modos.
-    A detecção de tier é automática via `lab_runtime_context()`.
+    A intenção é manter o mesmo notebook legível nos três contextos, com
+    limites explícitos para o que só pode acontecer localmente.
     """)
     return
 
@@ -101,8 +101,8 @@ def _(mo):
     Primitivas WASM (fetch_wasm_json, fetch_wasm_feed, ...)
     usam `pyfetch` do Pyodide no lugar de `urllib`.
 
-    Um teste de contrato valida que nenhum notebook referencia
-    uma chave que não existe no dict do runtime.
+    Testes de contrato mantêm esse vocabulário estável para os notebooks
+    publicados e para o pacote de runtime.
     """)
     return
 
@@ -125,7 +125,8 @@ def _(mo):
     ```
 
     Coleta e transformação rodam antes da publicação (ETL local ou CI).
-    O notebook é camada de leitura — não modifica notas diretamente.
+    O notebook publicado é camada de leitura. Coleta, escrita e segredos ficam
+    antes do export, no ambiente local ou no CI.
     """)
     return
 
@@ -156,7 +157,8 @@ def _(dataset_count, mo, note_count):
     - **{dataset_count}** dataset(s) declarados no manifesto
     - Notebooks publicados: análise de publicação, grafo, feeds, outbox, ETL e apresentações
 
-    Todos rodando no mesmo repositório que contém as notas.
+    O valor está na proximidade: dados, explicação e origem continuam no mesmo
+    repositório que contém as notas.
     """)
     return
 
@@ -174,8 +176,8 @@ def _(mo):
     - O HTML publicado mostra o resultado sem exigir servidor
     - O modo local fica para rede, filesystem, OCR e segredos
 
-    Próximo passo: abrir um notebook publicado e comparar com o mesmo notebook
-    rodando localmente via `dgk lab <nome>`.
+    Próximo passo: abrir um notebook publicado, depois rodar o mesmo notebook
+    localmente com `dgk lab <nome>` e observar quais capacidades mudam.
     """)
     return
 

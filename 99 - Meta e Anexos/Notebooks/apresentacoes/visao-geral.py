@@ -45,8 +45,8 @@ def _(collected_at, mo, note_count, tier):
     mo.md(f"""
     # vault-seed
 
-    Conhecimento como código: vault versionado, site, notebooks e automação
-    no mesmo repositório Git — sem dependência de plataformas proprietárias.
+    Um ponto de partida para manter notas, site, notebooks e automações no
+    mesmo repositório Git.
 
     **{note_count} notas** no snapshot{f' · coletado em `{collected_at}`' if collected_at else ''} · *{tier}*
     """)
@@ -62,8 +62,8 @@ def _(mo):
     Notas em um app, publicações em outro, dados em uma planilha, automações
     presas em serviços que podem mudar de preço ou desaparecer.
 
-    A alternativa: **tudo em arquivos de texto aberto, versionados no Git,
-    que você controla localmente e pode hospedar em qualquer lugar.**
+    A alternativa aqui é prática: arquivos de texto aberto, versionados no Git,
+    com publicação e análise derivadas da mesma base.
     """)
     return
 
@@ -80,7 +80,8 @@ def _(mo):
     - **Lab de análise** — notebooks Marimo que rodam localmente e no navegador
     - **Plataforma de publicação** — outbox multi-canal com revisão antes de enviar
 
-    Tudo auditável, tudo versionado, tudo portátil.
+    O objetivo é reduzir cópia manual entre ferramentas, sem substituir o modo
+    como cada pessoa prefere escrever.
     """)
     return
 
@@ -170,7 +171,8 @@ def _(mo):
     4. Explore os notebooks com `dgk lab <nome>`
     5. Publique o site com `pnpm run site:build` e GitHub Pages
 
-    O template cuida da infraestrutura. O conhecimento é seu.
+    O template prepara a base. A curadoria, a estrutura final e o ritmo de
+    publicação continuam sendo decisões suas.
     """)
     return
 
@@ -180,15 +182,16 @@ def _(mo):
     mo.md("""
     ## Fechamento
 
-    A ideia central é simples: o repositório é a fonte de verdade.
+    A ideia central é simples: o repositório guarda a fonte editável.
 
     - As notas ficam em Markdown
     - O histórico fica no Git
     - O site e o Lab são artefatos gerados
     - As automações entram como apoio, não como obrigação
 
-    Próximo passo: criar o repositório a partir do template, deixar a
-    inicialização rodar e abrir o vault no editor em que você já trabalha.
+    O próximo passo não é adotar tudo de uma vez. É criar o repositório,
+    confirmar que a inicialização terminou e abrir o vault no editor em que
+    você já trabalha.
     """)
     return
 
