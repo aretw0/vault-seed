@@ -88,6 +88,7 @@ def _(mo, perfil):
         .encode(
             x=alt.X("notas:Q", title="notas"),
             y=alt.Y("pasta:N", sort="-x", title=None),
+            color=alt.value("#2d7a4d"),
             tooltip=["pasta:N", "notas:Q"],
         )
         .properties(height=max(60, len(folder_df) * 28), title="Notas por pasta")
@@ -111,6 +112,7 @@ def _(alt, mo, pd, perfil):
         .encode(
             x=alt.X("ocorrências:Q"),
             y=alt.Y("tag:N", sort="-x", title=None),
+            color=alt.value("#1b5e3b"),
             tooltip=["tag:N", "ocorrências:Q"],
         )
         .properties(height=max(80, len(tag_df) * 22), title="Top 20 tags")
@@ -139,6 +141,7 @@ def _(curadoria, mo, pd):
             .encode(
                 x=_alt.X("notas:Q"),
                 y=_alt.Y("intenção:N", sort="-x", title=None),
+                color=_alt.value("#2d7a4d"),
                 tooltip=["intenção:N", "notas:Q"],
             )
             .properties(height=max(60, len(intent_df) * 28), title="Distribuição de intenção")
@@ -225,7 +228,14 @@ def _(alt, context, mo, pd):
                 .encode(
                     x=alt.X("mes:O", title="mês", axis=alt.Axis(labelAngle=-45)),
                     y=alt.Y("notas:Q"),
-                    color=alt.Color("status:N"),
+                    color=alt.Color(
+                        "status:N",
+                        scale=alt.Scale(
+                            domain=["published", "ready", "draft", "sem status"],
+                            range=["#22c55e", "#3b82f6", "#f59e0b", "#94a3b8"],
+                        ),
+                        legend=alt.Legend(title="status"),
+                    ),
                     tooltip=["mes:O", "status:N", "notas:Q"],
                 )
                 .properties(

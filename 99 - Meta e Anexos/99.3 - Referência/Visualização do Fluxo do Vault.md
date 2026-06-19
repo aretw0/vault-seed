@@ -127,6 +127,3 @@ flowchart TD
     P2 -.-> Concept_A & Note_Daily & Project_A
 ```
 <!-- {/vault-flow} -->
-
----
-Voltar para o [[Guia do Jardineiro Digital]]

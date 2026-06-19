@@ -96,6 +96,3 @@ O Frontmatter é um pequeno bloco de texto no topo de suas notas que contém met
     -   `- [x] Tarefa concluída.`
 
 -   **Contexto:** Coloque tarefas dentro das notas às quais elas se referem (ex: em uma nota de projeto, ou em uma nota de reunião). Para tarefas do dia, use sua `Daily Note`.
-
----
-Voltar para o [[Guia do Jardineiro Digital]]

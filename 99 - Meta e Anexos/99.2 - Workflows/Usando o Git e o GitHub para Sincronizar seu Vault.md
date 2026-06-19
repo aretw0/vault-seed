@@ -162,6 +162,3 @@ emergência e aprendizado, não uma obrigação diária.
 - Para configurar o plugin: [[Configurando o Obsidian Git]]
 - Para entender desktop e celular: [[Usando o Vault no Celular vs. Desktop]]
 - Para plugins: [[Plugins Essenciais e Recomendados]]
-
----
-Voltar para o [[Guia do Jardineiro Digital]]

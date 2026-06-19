@@ -102,7 +102,3 @@ No celular, o fluxo mais simples é deixar o Obsidian Git fazer pull e commit-an
 - [[MOC Vault Seed]] para ver o template como mapa navegável.
 - [[Evoluindo seu Vault com Links, Tags e MOCs]] para aprender quando usar links, tags, MOCs, Bases e Dataview.
 - [[Criando seu Painel de Controle (Dashboard)]] para montar uma página inicial do seu próprio vault.
-
----
-
-Voltar para [[Guia do Jardineiro Digital]]

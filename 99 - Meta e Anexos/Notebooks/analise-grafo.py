@@ -61,6 +61,7 @@ def _(mo, notes):
         .encode(
             x=alt.X("inbound:Q", title="links recebidos"),
             y=alt.Y("title:N", sort="-x", title=None),
+            color=alt.value("#1b5e3b"),
             tooltip=["title:N", "folder:N", "inbound:Q", "outbound:Q"],
         )
         .properties(height=max(80, len(hubs_df) * 28), title="Top 10 hubs (mais referenciadas)")
@@ -108,6 +109,7 @@ def _(alt, mo, notes, pd):
         .encode(
             x=alt.X("links/nota:Q", title="links de saída por nota"),
             y=alt.Y("pasta:N", sort="-x", title=None),
+            color=alt.value("#2d7a4d"),
             tooltip=["pasta:N", "notas:Q", "links/nota:Q"],
         )
         .properties(height=max(60, len(density_df) * 28), title="Densidade de links por pasta")

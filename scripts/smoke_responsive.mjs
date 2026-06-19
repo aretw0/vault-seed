@@ -479,6 +479,11 @@ async function assertThemeSelectorDoesNotCoverMarimoBadge(page, target, viewport
     .boundingBox()
     .catch(() => null);
   if (!badge || !selector) return;
+  const labFooter = await page
+    .locator('[data-vault-lab-footer]')
+    .first()
+    .boundingBox()
+    .catch(() => null);
 
   const badgeBox = {
     left: badge.x,
@@ -495,6 +500,17 @@ async function assertThemeSelectorDoesNotCoverMarimoBadge(page, target, viewport
 
   if (boxesOverlap(selectorBox, badgeBox)) {
     fail(`${label}: theme selector overlaps the Marimo attribution badge`);
+  }
+  if (labFooter) {
+    const footerBox = {
+      left: labFooter.x,
+      right: labFooter.x + labFooter.width,
+      top: labFooter.y,
+      bottom: labFooter.y + labFooter.height,
+    };
+    if (boxesOverlap(footerBox, badgeBox)) {
+      fail(`${label}: Lab footer overlaps the Marimo attribution badge`);
+    }
   }
 
   if (viewport.width <= 704) {

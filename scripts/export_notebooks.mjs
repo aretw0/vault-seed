@@ -21,6 +21,7 @@ import { writeVaultData } from "./generate_vault_data.mjs";
 import { buildLabDatasets } from "./prepare_lab_datasets.mjs";
 import { ensureLabDatasetSnapshots } from "./ensure_lab_snapshots.mjs";
 import { replaceImportAndInjectRuntimeHelpers } from "./notebook_export_runtime_helpers.mjs";
+import { vaultKudos } from "../.site/lib/vault-config.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const SCRIPT_PATH = fileURLToPath(import.meta.url);
@@ -80,6 +81,15 @@ function escapeHtml(value) {
 		.replaceAll('"', "&quot;");
 }
 
+function labKudosHtml() {
+	if (!vaultKudos) return "";
+	const html = escapeHtml(vaultKudos).replace(
+		"♥",
+		'<span class="vault-lab-footer__heart" aria-label="amor">♥</span>',
+	);
+	return `<footer class="vault-lab-footer" lang="pt-BR" data-vault-lab-footer>${html}</footer>`;
+}
+
 function labNavigationHtml(currentOutput) {
 	const labIndexHref = notebooksPath === "lab" ? "./" : "../lab/";
 
@@ -119,9 +129,7 @@ function labNavigationHtml(currentOutput) {
       ${notebookLinks}
     </nav>
   </aside>
-  <footer class="vault-lab-footer" lang="pt-BR" data-vault-lab-footer>
-    feito com <span class="vault-lab-footer__heart" aria-label="amor">♥</span> por <a href="https://github.com/aretw0">aretw0</a>
-  </footer>
+  ${labKudosHtml()}
 </div>
 <script data-vault-marimo-navigation-script>
 (() => {

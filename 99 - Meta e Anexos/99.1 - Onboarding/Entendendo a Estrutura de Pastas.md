@@ -71,6 +71,3 @@ Para manter a clareza na organização da documentação, é importante entender
     *   **Analogia**: Pense nisso como o **guia de direção defensiva e dicas de viagem**. Ele explica a *filosofia* de como dirigir com segurança, as *melhores rotas* para diferentes tipos de viagem, ou *como manter o carro limpo* para uma melhor experiência. É sobre a *experiência e as melhores práticas* de usar o carro, não sobre o funcionamento interno.
 
 Essa distinção ajuda a manter a documentação organizada e fácil de navegar, direcionando o leitor para o tipo de informação que ele procura.
-
----
-Voltar para o [[Guia do Jardineiro Digital]]

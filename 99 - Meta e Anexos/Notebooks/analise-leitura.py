@@ -74,6 +74,7 @@ def _(leitura, mo):
             .encode(
                 x=alt.X("count:Q", title="itens"),
                 y=alt.Y("topic:N", sort="-x", title=None),
+                color=alt.value("#2d7a4d"),
                 tooltip=["topic:N", "count:Q"],
             )
             .properties(height=max(60, len(topic_df) * 28), title="Itens por tópico")

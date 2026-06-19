@@ -180,6 +180,7 @@ test('Graph toolbar buttons have consistent sizing and do not shrink', () => {
 test('Footer kudos renders as compact pill consistent with marimo footer style', () => {
   const footer = read('.site/components/Footer.astro');
   const marimoVault = read('.site/styles/marimo-vault.css');
+  const exportNotebooks = read('scripts/export_notebooks.mjs');
 
   // pill shape: inline-flex + border-radius + fit-content width
   assert.match(footer, /\.kudos[\s\S]*display: inline-flex/);
@@ -196,6 +197,9 @@ test('Footer kudos renders as compact pill consistent with marimo footer style',
   // both footers use the same font-size so they feel consistent
   assert.match(footer, /\.kudos[\s\S]*font-size: 0\.8125rem/);
   assert.match(marimoVault, /\.vault-lab-footer[\s\S]*font-size: 0\.8125rem/);
+  assert.match(exportNotebooks, /import \{ vaultKudos \} from "\.\.\/\.site\/lib\/vault-config\.mjs"/);
+  assert.match(exportNotebooks, /function labKudosHtml\(\)/);
+  assert.doesNotMatch(exportNotebooks, /por <a href="https:\/\/github\.com\/aretw0">aretw0<\/a>/);
 });
 
 test('Graph interactions expose expand/collapse/zoom/pan affordances', () => {

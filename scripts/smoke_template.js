@@ -276,8 +276,10 @@ requireCondition(
 requireCondition(
   notebooksExportScript.includes("data-vault-marimo-navigation") &&
     notebooksExportScript.includes("data-vault-lab-footer") &&
-    (/feito com <span[^>]*class="[^"]*vault-lab-footer__heart[^"]*"[^>]*aria-label="amor">♥<\/span> por/.test(notebooksExportScript) ||
-      notebooksExportScript.includes("feito com <span aria-label=\"amor\">♥</span> por")) &&
+    notebooksExportScript.includes('import { vaultKudos } from "../.site/lib/vault-config.mjs"') &&
+    notebooksExportScript.includes("function labKudosHtml()") &&
+    notebooksExportScript.includes("vault-lab-footer__heart") &&
+    !notebooksExportScript.includes('por <a href="https://github.com/aretw0">aretw0</a>') &&
     notebooksExportScript.includes('href="${labIndexHref}"') &&
     notebooksExportScript.includes("data-vault-marimo-presentation-fullscreen") &&
     notebooksExportScript.includes("vaultMarimoFullscreenButton") &&
@@ -717,6 +719,29 @@ requireCondition(
     requireCondition(
       !content.includes("npx "),
       `${file}: uses \`npx\` — this is a pnpm project. Use \`pnpm exec\` for local packages or \`pnpm run\` for scripts.`,
+    );
+  }
+}
+
+// ── Information architecture hygiene: no stale manual backlinks ───────────
+// The vault can be read in Obsidian, VS Code, and the generated site. Manual
+// "back to guide" links from an older documentation tree look like loose site
+// navigation once rendered, so the source content must not carry them.
+{
+  const VAULT_CONTENT_DIRS = [
+    "00 - Entrada/", "10 - Diário/", "20 - Projetos/", "30 - Áreas/",
+    "40 - Recursos/", "50 - Arquivo/", "90 - Modelos/", "99 - Meta e Anexos/",
+  ];
+  const staleBacklinkRe = /Voltar para (?:o )?\[\[Guia do Jardineiro Digital\]\]/;
+  for (const file of gitLsFiles()) {
+    if (!file.endsWith(".md")) continue;
+    if (!VAULT_CONTENT_DIRS.some((d) => file.startsWith(d))) continue;
+    let content;
+    try { content = read(file); } catch { continue; }
+    requireCondition(
+      !staleBacklinkRe.test(content),
+      `${file}: remove stale "Voltar para [[Guia do Jardineiro Digital]]" navigation. ` +
+      "Use the shared IA/sidebar instead of manual return links.",
     );
   }
 }

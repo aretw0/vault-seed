@@ -180,6 +180,7 @@ def _(feeds_df, mo, pd):
             .encode(
                 x=alt.X("feeds:Q", title="feeds"),
                 y=alt.Y("grupo:N", sort="-x", title=None),
+                color=alt.value("#2d7a4d"),
                 tooltip=["grupo", "feeds"],
             )
             .properties(height=max(80, len(group_df) * 28), title="Feeds por grupo")

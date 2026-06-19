@@ -128,6 +128,3 @@ Use GitHub Desktop em vez de Obsidian Git quando:
 
 Obsidian Git é excelente para rotina diária de notas. Para mudanças grandes, uma
 interface dedicada de Git dá mais controle.
-
----
-Voltar para o [[Guia do Jardineiro Digital]]

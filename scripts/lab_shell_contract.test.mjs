@@ -79,7 +79,10 @@ test("published Lab pages keep the vault shell contract", () => {
   assert.match(exportNotebooks, /vault-lab-topbar/);
   assert.match(exportNotebooks, /vault-lab-sidebar/);
   assert.match(exportNotebooks, /data-vault-lab-footer/);
-  assert.match(exportNotebooks, /feito com <span[^>]*class="[^"]*vault-lab-footer__heart[^"]*"[^>]*aria-label="amor">♥<\/span> por/);
+  assert.match(exportNotebooks, /import \{ vaultKudos \} from "\.\.\/\.site\/lib\/vault-config\.mjs"/);
+  assert.match(exportNotebooks, /function labKudosHtml\(\)/);
+  assert.match(exportNotebooks, /vault-lab-footer__heart/);
+  assert.doesNotMatch(exportNotebooks, /por <a href="https:\/\/github\.com\/aretw0">aretw0<\/a>/);
   assert.match(exportNotebooks, /vault-seed:lab-sidebar-collapsed/);
   assert.match(exportNotebooks, /matchMedia\("\(max-width: 44rem\)"\)/);
   assert.match(exportNotebooks, /return sidebarMedia\.matches/);
@@ -102,6 +105,8 @@ test("published Lab pages keep the vault shell contract", () => {
   assert.match(marimoCss, /#vg-tooltip-element/);
   assert.match(marimoCss, /\.vega-embed svg text/);
   assert.match(marimoCss, /var\(--popover-foreground\)/);
+  assert.match(marimoCss, /\.vault-lab-footer[\s\S]*width: fit-content/);
+  assert.match(marimoCss, /\.vault-lab-footer[\s\S]*white-space: nowrap/);
 
   for (const palette of ["oceano", "terracota"]) {
     assert.match(marimoCss, new RegExp(`data-vault-marimo-palette="${palette}"`));

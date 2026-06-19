@@ -60,6 +60,3 @@ A estrutura inicial é só um ponto de partida. A verdadeira organização emerg
       ```
       ````
       _Com o plugin `Bases`, você alcançaria um resultado similar criando uma nova "Base", adicionando a pasta "20 - Projetos" como fonte de dados e aplicando um filtro visual pela tag `#status/em-progresso`._
-
----
-Voltar para o [[Guia do Jardineiro Digital]]

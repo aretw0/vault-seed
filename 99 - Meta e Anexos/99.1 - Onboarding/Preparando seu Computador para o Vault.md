@@ -202,6 +202,3 @@ Em todo dispositivo:
 
 Essa rotina simples evita a maioria dos conflitos entre desktop, notebook e
 celular.
-
----
-Voltar para o [[Guia do Jardineiro Digital]]
