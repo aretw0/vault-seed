@@ -12,7 +12,8 @@ jobs:
     permissions:
       contents: write
       pages: write
-      administration: write
+    env:
+      VAULT_ADMIN_TOKEN: ${{ secrets.VAULT_ADMIN_TOKEN }}
     steps:
       - name: 🏗️ Initialize Project from Template
         uses: aretw0/template-initializer@cf2249f8a97563d5bf3bc82bec5d3bcc3c816469 # v1.0.1
@@ -38,8 +39,9 @@ jobs:
           git push
 
       - name: 🔒 Protect main branch
+        if: ${{ env.VAULT_ADMIN_TOKEN != '' }}
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ env.VAULT_ADMIN_TOKEN }}
         run: |
           gh api \
             --method PUT \
@@ -56,6 +58,12 @@ jobs:
           }
           JSON
           echo "Main branch protected against force pushes and deletions."
+
+      - name: 🔒 Skip branch protection without admin token
+        if: ${{ env.VAULT_ADMIN_TOKEN == '' }}
+        run: |
+          echo "VAULT_ADMIN_TOKEN not configured — skipping branch protection setup."
+          echo "GitHub Pages setup and vault initialization continue normally."
 
       - name: 🌐 Enable GitHub Pages
         env:
