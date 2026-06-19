@@ -8,6 +8,7 @@ on:
 
 jobs:
   initialize-and-self-destruct:
+    if: ${{ github.repository != 'aretw0/vault-seed' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
