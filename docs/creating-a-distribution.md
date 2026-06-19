@@ -35,6 +35,11 @@ Uma distribuição é um repositório Git inicializado a partir do vault-seed qu
 
 O arquivo `.github/workflows/initialize.yml` é o único ponto de acoplamento
 entre o template e a distribuição. Após executar, ele se auto-destrói.
+Ele não configura proteção de branches: um repositório recém-criado ainda não
+tem secrets administrativos próprios, e o `GITHUB_TOKEN` da primeira execução
+não deve ser tratado como permissão de administração. A proteção de `main` e
+`develop` é uma etapa de governança pós-criação, descrita em
+[`docs/git-workflow.md`](git-workflow.md).
 
 ### Contrato técnico do initialize.yml
 
@@ -51,8 +56,13 @@ criado a partir do template, ele:
 3. Mantém a stack que o usuário realmente usa: Git, GitHub Actions, Astro,
    Obsidian, VS Code/Foam e Marimo.
 4. Publica apenas a nota de boas-vindas inicial.
-5. Remove o próprio `.github/workflows/initialize.yml` após a recepção, para
+5. Habilita GitHub Pages com o `GITHUB_TOKEN` padrão do repositório gerado.
+6. Remove o próprio `.github/workflows/initialize.yml` após a recepção, para
    garantir que a inicialização rode uma única vez.
+
+Esse contrato não deve depender de secrets pré-configurados no repositório do
+usuário. Qualquer ação que exija permissão administrativa, como proteger
+branches, precisa acontecer depois que a distribuição já existe.
 
 Se precisar auditar esse comportamento, revise `.github/workflows/initialize.yml`
 antes de criar ou validar uma nova distribuição.
