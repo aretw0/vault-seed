@@ -74,4 +74,10 @@ test("release package smoke keeps release and package publishing explicitly gate
       "@aretw0/dgk-skills",
     ],
   );
+  assert.deepEqual(
+    report.pythonReleasePackages.map((pkg) => pkg.name),
+    ["dgk-lab-runtime"],
+  );
+  assert.equal(report.pypiRelease.tagGated, true);
+  assert.equal(report.pypiRelease.trustedPublishing, true);
 });

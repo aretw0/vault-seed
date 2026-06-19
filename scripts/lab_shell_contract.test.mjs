@@ -72,6 +72,11 @@ test("published Lab charts use the shared Altair theme helpers", () => {
   assert.match(runtime, /pyfetch\(url, cache="no-store"\)/);
   assert.match(packageRuntime, /set_embed_options\(renderer="svg"\)/);
   assert.match(packageRuntime, /except ModuleNotFoundError:[\s\S]*xml\.etree\.ElementTree/);
+  assert.match(packageRuntime, /"fetch_wasm_json"/);
+  assert.match(packageRuntime, /"fetch_wasm_feed"/);
+  assert.match(packageRuntime, /async def fetch_wasm_json\(/);
+  assert.match(packageRuntime, /async def fetch_wasm_feed\(/);
+  assert.match(packageRuntime, /pyfetch\(url, cache="no-store"\)/);
   assert.match(packageRuntime, /def _runtime_cache_busted_url/);
   assert.match(packageRuntime, /open_url\(_runtime_cache_busted_url\(candidate\)\)/);
   assert.match(exportHelpers, /"lab_altair_chart"/);

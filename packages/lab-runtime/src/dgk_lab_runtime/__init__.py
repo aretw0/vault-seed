@@ -25,6 +25,8 @@ __all__ = [
     "read_local_text_file",
     "read_local_bytes_file",
     "parse_feed_xml",
+    "fetch_wasm_json",
+    "fetch_wasm_feed",
     "fetch_local_feed",
     "fetch_local_url_text",
     "scrape_local_page_text",
@@ -522,6 +524,25 @@ def parse_feed_xml(xml_text: str, *, source_url: str = None, limit: int = 50):
         "itemCount": len(items),
         "items": items,
     }
+
+
+async def fetch_wasm_json(url: str):
+    """Busca JSON no runtime Pyodide/WASM usando o fetch do navegador."""
+
+    from pyodide.http import pyfetch  # type: ignore
+
+    response = await pyfetch(url, cache="no-store")
+    return await response.json()
+
+
+async def fetch_wasm_feed(url: str, *, limit: int = 50):
+    """Busca RSS/Atom no runtime Pyodide/WASM usando o fetch do navegador."""
+
+    from pyodide.http import pyfetch  # type: ignore
+
+    response = await pyfetch(url, cache="no-store")
+    xml_text = await response.string()
+    return parse_feed_xml(xml_text, source_url=url, limit=limit)
 
 
 def fetch_local_feed(url: str, *, timeout: int = 20, user_agent: str = "vault-seed-lab/1.0", limit: int = 50):
