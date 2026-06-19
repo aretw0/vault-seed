@@ -74,13 +74,19 @@ except ImportError:
         return candidates
 
 
+    def _runtime_cache_busted_url(url: str) -> str:
+        import time as _time
+        separator = "&" if "?" in url else "?"
+        return f"{url}{separator}v={int(_time.time() * 1000)}"
+
+
     def _read_lab_json_runtime(candidates):
         import json as _json
         from pyodide.http import open_url  # type: ignore
         last_error = None
         for candidate in candidates:
             try:
-                return _json.loads(open_url(candidate).read())
+                return _json.loads(open_url(_runtime_cache_busted_url(candidate)).read())
             except Exception as exc:
                 last_error = exc
                 continue
@@ -396,13 +402,13 @@ except ImportError:
 
     async def fetch_wasm_json(url: str):
         from pyodide.http import pyfetch  # type: ignore
-        response = await pyfetch(url)
+        response = await pyfetch(url, cache="no-store")
         return await response.json()
 
 
     async def fetch_wasm_feed(url: str, *, limit: int = 50):
         from pyodide.http import pyfetch  # type: ignore
-        response = await pyfetch(url)
+        response = await pyfetch(url, cache="no-store")
         xml_text = await response.string()
         return parse_feed_xml(xml_text, source_url=url, limit=limit)
 

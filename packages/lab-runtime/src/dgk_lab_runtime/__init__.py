@@ -107,6 +107,13 @@ def dataset_candidate_paths(path_or_url: str):
     return candidates
 
 
+def _runtime_cache_busted_url(url: str) -> str:
+    import time as _time
+
+    separator = "&" if "?" in url else "?"
+    return f"{url}{separator}v={int(_time.time() * 1000)}"
+
+
 def _read_lab_json_runtime(candidates):
     import json as _json
 
@@ -115,7 +122,7 @@ def _read_lab_json_runtime(candidates):
     last_error = None
     for candidate in candidates:
         try:
-            return _json.loads(open_url(candidate).read())
+            return _json.loads(open_url(_runtime_cache_busted_url(candidate)).read())
         except Exception as exc:
             last_error = exc
             continue
