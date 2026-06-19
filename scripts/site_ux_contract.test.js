@@ -37,7 +37,11 @@ test('Astro header keeps theme controls discoverable without mobile duplication'
   assert.match(customCss, /data-vault-sidebar-right='collapsed'/);
   assert.match(customCss, /data-vault-sidebar-right='collapsed'[\s\S]*\.main-pane[\s\S]*--sl-content-margin-inline: auto/);
   assert.doesNotMatch(customCss, /data-vault-focus='content'/);
-  assert.match(footer, /Feito com ♥ por/);
+  // "Feito com ♥" agora vem de vault.config.json (kudos), não está mais
+  // hardcoded no template — Footer.astro só precisa renderizá-lo quando presente.
+  const vaultConfig = JSON.parse(read('vault.config.json'));
+  assert.match(footer, /\{vaultKudos\}/, 'Footer deve renderizar o kudos configurável');
+  assert.match(vaultConfig.kudos, /Feito com ♥/, 'vault-seed deve enviar o kudos pessoal por padrão (initialize.yml o remove para o usuário)');
   assert.doesNotMatch(footer, /made with/);
   assert.match(header, /href={`\$\{base\}\/explorar\/`}>Explorar/);
   assert.match(header, /href={`\$\{base\}\/lab\/`}>Lab/);
@@ -176,6 +180,7 @@ test('Graph toolbar buttons have consistent sizing and do not shrink', () => {
 test('Footer kudos renders as compact pill consistent with marimo footer style', () => {
   const footer = read('.site/components/Footer.astro');
   const marimoVault = read('.site/styles/marimo-vault.css');
+  const exportNotebooks = read('scripts/export_notebooks.mjs');
 
   // pill shape: inline-flex + border-radius + fit-content width
   assert.match(footer, /\.kudos[\s\S]*display: inline-flex/);
@@ -192,6 +197,9 @@ test('Footer kudos renders as compact pill consistent with marimo footer style',
   // both footers use the same font-size so they feel consistent
   assert.match(footer, /\.kudos[\s\S]*font-size: 0\.8125rem/);
   assert.match(marimoVault, /\.vault-lab-footer[\s\S]*font-size: 0\.8125rem/);
+  assert.match(exportNotebooks, /import \{ vaultKudos \} from "\.\.\/\.site\/lib\/vault-config\.mjs"/);
+  assert.match(exportNotebooks, /function labKudosHtml\(\)/);
+  assert.doesNotMatch(exportNotebooks, /por <a href="https:\/\/github\.com\/aretw0">aretw0<\/a>/);
 });
 
 test('Graph interactions expose expand/collapse/zoom/pan affordances', () => {
@@ -277,26 +285,31 @@ test('Accessibility foundations: skip link, lang, and license link are present',
   assert.match(astroConfig, /href: '\/LICENSE\.md'/);
 });
 
-test('Homepage cards render body text without interactive gating', () => {
+test('Homepage post list and capabilities render without interactive gating', () => {
   const home = read('.site/pages/index.astro');
   const css = read('.site/styles/custom.css');
 
-  // Body text must be in a plain <p>, never locked behind a <details> expand pattern.
+  // Content must never be gated behind a <details> expand pattern.
   assert.doesNotMatch(home, /class="vault-card__details"/);
   assert.doesNotMatch(home, /vault-card__body-full/);
   assert.doesNotMatch(home, /<summary[^>]*vault-card__body/);
 
-  // Each card section must contain a direct <p class="vault-card__body">.
-  const cardBodies = home.match(/<p class="vault-card__body">/g);
-  assert.ok(cardBodies && cardBodies.length >= 6, 'Expected at least 6 card body paragraphs in the homepage grid');
+  // Homepage uses the monospace post-list layout (cassidoo-style).
+  assert.match(home, /vault-home-mono/);
+  assert.match(home, /vault-post-list/);
+  assert.match(home, /vault-post-item/);
 
-  // The homepage section must override the global line-clamp so no body text is truncated.
-  assert.match(home, /vault-home-section[\s\S]*vault-card__body[\s\S]*-webkit-line-clamp:\s*unset/);
-  assert.match(home, /vault-home-section[\s\S]*vault-card__body[\s\S]*overflow:\s*visible/);
+  // Capabilities section replaces the old card grid — must have at least 6 bullet items.
+  const capItems = home.match(/<li>/g);
+  assert.ok(capItems && capItems.length >= 6, 'Expected at least 6 capability list items in the homepage');
 
-  // The global component CSS defines the clamp variable; the homepage overrides it per-section.
-  assert.match(css, /--vault-card-body-lines/);
-  assert.match(css, /vault-card__body[\s\S]*-webkit-line-clamp: var\(--vault-card-body-lines\)/);
+  // Capabilities section must be present.
+  assert.match(home, /vault-capabilities/);
+
+  // CSS defines the post-list and capabilities classes used by the homepage.
+  assert.match(css, /vault-post-list/);
+  assert.match(css, /vault-capabilities/);
+  assert.match(css, /vault-home-mono/);
 });
 
 test('Package license fields align with LICENSE.md (GPL-3.0-only)', () => {

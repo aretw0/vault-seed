@@ -5,7 +5,8 @@
     "referencia": { "label": "Referência", "aliases": ["referência"] },
     "ferramenta": { "label": "Ferramenta" },
     "moc": { "label": "MOC" },
-    "workflow": { "label": "Workflow" }
+    "workflow": { "label": "Workflow" },
+    "post": { "label": "Post", "aliases": ["ensaio", "artigo"] }
   },
   "audiences": {
     "iniciante": { "label": "Iniciante" },
@@ -27,14 +28,13 @@
     },
     "explorar": {
       "label": "Explorar",
-      "description": "Lab, dados, diagramas, visualizações e exploração do acervo.",
-      "tags": ["meta/lab", "meta/notebooks", "meta/dados", "meta/diagramas", "meta/ui", "obsidian/dataview", "obsidian/bases", "obsidian/dashboard"],
-      "categories": ["workflow"]
+      "description": "Lab, notebooks, diagramas, visualizações e exploração do acervo.",
+      "tags": ["meta/lab", "meta/notebooks", "meta/diagramas", "meta/ui", "obsidian/dataview", "obsidian/bases", "obsidian/dashboard"]
     },
     "publicar": {
       "label": "Publicar",
-      "description": "Publicação web, Astro, GitHub Pages e experiência pública.",
-      "tags": ["meta/site", "meta/astro", "meta/github-actions"]
+      "description": "Publicação web, Astro, GitHub Pages, RSS e experiência pública.",
+      "tags": ["meta/site", "meta/astro", "meta/publicacao"]
     },
     "automatizar": {
       "label": "Automatizar",
@@ -44,7 +44,7 @@
     "manter": {
       "label": "Manter",
       "description": "Setup, sincronização, Git, ambiente local e manutenção do vault.",
-      "tags": ["meta/setup", "meta/git", "meta/github", "meta/sincronizacao", "meta/devops", "meta/devenv", "meta/devcontainer", "meta/mobile", "meta/desktop", "meta/ferramentas", "meta/vscode", "meta/foam", "obsidian/plugin", "meta/ci", "meta/qualidade"]
+      "tags": ["meta/setup", "meta/git", "meta/github", "meta/sincronizacao", "meta/devenv", "meta/devcontainer", "meta/mobile", "meta/desktop", "meta/vscode", "meta/foam", "obsidian/plugin", "meta/qualidade"]
     }
   }
 }

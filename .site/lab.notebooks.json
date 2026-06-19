@@ -35,10 +35,35 @@
     "publish": true
   },
   {
-    "title": "Apresentação",
-    "source": "99 - Meta e Anexos/Notebooks/apresentacao-vault-seed.py",
-    "output": "vault-seed-slides.html",
-    "description": "apresentação navegável do vault-seed e do Lab",
-    "publish": true
+    "title": "Apresentação: Visão Geral",
+    "source": "99 - Meta e Anexos/Notebooks/apresentacoes/visao-geral.py",
+    "output": "visao-geral-slides.html",
+    "description": "vault-seed — o que é, como funciona, a filosofia local-first",
+    "publish": true,
+    "type": "presentation"
+  },
+  {
+    "title": "Apresentação: O Lab",
+    "source": "99 - Meta e Anexos/Notebooks/apresentacoes/o-lab.py",
+    "output": "o-lab-slides.html",
+    "description": "notebooks Marimo, pipeline de dados e os três modos de execução",
+    "publish": true,
+    "type": "presentation"
+  },
+  {
+    "title": "Apresentação: Publicação",
+    "source": "99 - Meta e Anexos/Notebooks/apresentacoes/publicacao.py",
+    "output": "publicacao-slides.html",
+    "description": "site, outbox, canais, RSS e CI como infraestrutura",
+    "publish": true,
+    "type": "presentation"
+  },
+  {
+    "title": "Apresentação: Agentes de IA",
+    "source": "99 - Meta e Anexos/Notebooks/apresentacoes/agentes.py",
+    "output": "agentes-slides.html",
+    "description": "Pi, Claude Code, inbox soberana e curadoria com IA",
+    "publish": true,
+    "type": "presentation"
   }
 ]

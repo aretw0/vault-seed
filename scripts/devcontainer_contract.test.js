@@ -40,7 +40,7 @@ test("devcontainer provides the baseline sandbox tools expected by agents", () =
 
   assert.deepEqual(config.build, { dockerfile: "Dockerfile", context: "." });
   assert.deepEqual(config.features["ghcr.io/devcontainers/features/github-cli:1"], {});
-  assert.deepEqual(config.features["ghcr.io/jsburckhardt/devcontainer-features/uv:1"], {});
+  assert.deepEqual(config.features["ghcr.io/jsburckhardt/devcontainer-features/uv:1"], { version: "0.11.11" });
 
   for (const packageName of [
     "bash-completion",
@@ -89,7 +89,7 @@ test("substrate check detects unapplied devcontainer node_modules volume", () =>
       }, null, 2)}\n`,
     );
 
-    const result = spawnSync(process.execPath, [path.resolve("scripts/check-substrate.mjs"), "--json"], {
+    const result = spawnSync(process.execPath, [path.resolve("packages/cli/vendor/check-substrate.mjs"), "--json"], {
       cwd: tempDir,
       encoding: "utf8",
       env: {

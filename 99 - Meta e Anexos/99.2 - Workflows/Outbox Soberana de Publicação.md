@@ -1,4 +1,4 @@
----
+﻿---
 title: Outbox Soberana de Publicação
 aliases:
   - Outbox Soberana
@@ -7,8 +7,6 @@ status: published
 created: 2026-05-26
 updated: 2026-05-26
 tags:
-  - meta/dados
-  - meta/workflow
   - meta/ia
   - meta/site
 category: workflow
@@ -53,10 +51,10 @@ Crie uma nota em `00 - Entrada/` com o template:
 O dataset do Lab é gerado por:
 
 ```bash
-pnpm run outbox:prepare
+dgk etl
 ```
 
-O script procura notas com pelo menos um destes sinais no frontmatter:
+O pipeline ETL inclui a preparação da outbox: procura notas com pelo menos um destes sinais no frontmatter:
 
 - `outbox: true`;
 - `publicationStatus`;
@@ -65,7 +63,7 @@ O script procura notas com pelo menos um destes sinais no frontmatter:
 Depois ele gera:
 
 ```text
-dados/lab/outbox-publicacao.json
+.dgk/outbox-publicacao.json
 ```
 
 ## Campos De Controle
@@ -78,7 +76,7 @@ dados/lab/outbox-publicacao.json
 | `sha256` | fingerprint do item ou da nota |
 | `license` | licença, termos ou `verificar` |
 | `privacy` | limite de exposição antes de publicar |
-| `channels` | canais candidatos, como `rss`, `mastodon`, `newsletter` |
+| `channels` | canais candidatos, como `telegram`, `mastodon`, `newsletter` |
 | `publicationStatus` | `draft`, `review`, `scheduled`, `published` ou `blocked` |
 
 ## Notebook De Revisão

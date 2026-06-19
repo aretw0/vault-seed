@@ -1,4 +1,4 @@
-name: Deploy Site
+﻿name: Deploy Site
 
 on:
   push:
@@ -70,6 +70,13 @@ jobs:
           fi
         env:
           GH_TOKEN: ${{ github.token }}
+
+      - name: Generate lab datasets (ETL)
+        # ETL gera .dgk/ e public/lab/datasets/ antes do astro build.
+        # O Astro copia public/lab/datasets/ para dist/lab/datasets/;
+        # os notebooks WASM leem esses datasets em runtime via fetch.
+        # .dgk/ é ignorado pelo git — os snapshots nunca precisam ser commitados.
+        run: pnpm run notebooks:etl
 
       - name: Build @aretw0/dgk-astro-plugins
         run: pnpm --filter @aretw0/dgk-astro-plugins build

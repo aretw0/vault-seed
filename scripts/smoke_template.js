@@ -1,4 +1,4 @@
-const fs = require("node:fs");
+﻿const fs = require("node:fs");
 const path = require("node:path");
 const { execFileSync } = require("node:child_process");
 
@@ -6,7 +6,7 @@ const root = process.cwd();
 const errors = [];
 
 function readJson(relativePath) {
-  return JSON.parse(fs.readFileSync(path.join(root, relativePath), "utf8"));
+  return JSON.parse(fs.readFileSync(path.join(root, relativePath), "utf8").replace(/^\uFEFF/, ""));
 }
 
 function exists(relativePath) {
@@ -60,7 +60,7 @@ const notebooksDevScript = read("scripts/notebooks_dev.mjs");
 const notebooksCheckScript = read("scripts/notebooks_check.mjs");
 const notebooksExportScript = read("scripts/export_notebooks.mjs");
 const notebooksSlidesScript = read("scripts/export_notebook_slides.mjs");
-const presentationNotebook = read("99 - Meta e Anexos/Notebooks/apresentacao-vault-seed.py");
+const presentationNotebook = read("99 - Meta e Anexos/Notebooks/apresentacoes/visao-geral.py");
 const etlNotebook = read("99 - Meta e Anexos/Notebooks/etl-demo.py");
 const labDatasetsManifest = readJson(".site/lab.datasets.json");
 const labNotebooksManifest = readJson(".site/lab.notebooks.json");
@@ -89,6 +89,10 @@ const vaultLoader = read(".site/content.config.ts");
 const customCss = read(".site/styles/custom.css");
 const curationRoutineGuide = read("99 - Meta e Anexos/99.2 - Workflows/Rotina de Curadoria Editorial.md");
 const labDataGuide = read("99 - Meta e Anexos/99.2 - Workflows/Preparando Dados para o Lab.md");
+const distributionGuide = read("docs/creating-a-distribution.md");
+const vaultConfigJson = readJson("vault.config.json");
+const vaultConfigMjs = read(".site/lib/vault-config.mjs");
+const footerComponent = read(".site/components/Footer.astro");
 
 requireCondition(
   typeof pkg.packageManager === "string" &&
@@ -125,6 +129,12 @@ requireCondition(
   "package.template.json scripts must not reference release-only changelog or version tooling.",
 );
 requireCondition(
+  !templatePkg.scripts?.["smoke:template"] &&
+    !templatePkg.scripts?.["smoke:user-vault"] &&
+    !templatePkg.scripts?.["smoke:init:reset"],
+  "package.template.json must not include template-dev smoke scripts — they read files removed by initialize.yml and would fail in user vaults.",
+);
+requireCondition(
   !templatePkg.scripts?.["lint:docs"] &&
     templatePkg.scripts?.lint === "pnpm run lint:main && pnpm run lint:templates" &&
     templatePkg.scripts?.test?.includes("scripts/*.test.mjs") &&
@@ -133,8 +143,12 @@ requireCondition(
     templatePkg.scripts?.validate?.includes("site:audit:sidebar") &&
     templatePkg.scripts?.validate?.includes("validate:pt-text") &&
     templatePkg.scripts?.validate?.includes("validate:theme") &&
-    templatePkg.scripts?.validate?.includes("validate:mermaid"),
-  "package.template.json must keep generated-vault validation aligned with JS, MJS, CJS tests and content audits.",
+    templatePkg.scripts?.validate?.includes("validate:mermaid") &&
+    templatePkg.scripts?.validate?.includes("validate:texto") &&
+    templatePkg.scripts?.validate?.includes("validate:apresentacoes") &&
+    templatePkg.scripts?.["validate:texto"] === "dgk evaluate" &&
+    templatePkg.scripts?.["validate:apresentacoes"] === "dgk evaluate --presentations",
+  "package.template.json must keep generated-vault validation aligned with JS, MJS, CJS tests, content audits, text quality, and Marimo presentation prose.",
 );
 requireCondition(
   ciWorkflow.includes("pnpm run validate") &&
@@ -148,8 +162,10 @@ requireCondition(
     templatePkg.scripts?.["notebooks:etl:demo"] === "node scripts/lab_etl_demo.mjs" &&
     templatePkg.scripts?.["feeds:opml"] === "node scripts/prepare_feed_sources.mjs" &&
     templatePkg.scripts?.["outbox:prepare"] === "node scripts/prepare_publication_outbox.mjs" &&
-    templatePkg.scripts?.["notebooks:etl"] === "pnpm run notebooks:etl:demo && pnpm run feeds:opml && pnpm run outbox:prepare && node scripts/prepare_lab_datasets.mjs" &&
+    templatePkg.scripts?.["notebooks:etl"] === "pnpm run notebooks:etl:demo && pnpm run feeds:opml && pnpm run outbox:prepare && pnpm run validate:texto && node scripts/prepare_lab_datasets.mjs" &&
     templatePkg.scripts?.["notebooks:extract:local"] === "pnpm run notebooks:etl" &&
+    templatePkg.scripts?.["notebooks:extract:check"] === "uv run --no-project --with-requirements requirements.local-etl.txt python scripts/check_lab_extract_tools.py" &&
+    templatePkg.scripts?.["notebooks:extract:browser"] === "uv run --no-project --with-requirements requirements.local-etl.txt playwright install chromium" &&
     templatePkg.scripts?.["notebooks:dev"] === "node scripts/notebooks_dev.mjs" &&
     templatePkg.scripts?.["notebooks:check"] === "node scripts/notebooks_check.mjs" &&
     templatePkg.scripts?.["notebooks:pair"] === "node scripts/notebooks_pair.mjs" &&
@@ -236,8 +252,8 @@ requireCondition(
   "Marimo exported notebooks must harden table, data-grid, and select colors for accessible dark/light themes.",
 );
 requireCondition(
-  /app = marimo\.App\(\r?\n    width="medium",\r?\n    layout_file="layouts\/apresentacao-vault-seed\.slides\.json",\r?\n\)/.test(presentationNotebook) &&
-    exists("99 - Meta e Anexos/Notebooks/layouts/apresentacao-vault-seed.slides.json") &&
+  /app = marimo\.App\(\r?\n    width="medium",\r?\n    layout_file="layouts\/visao-geral\.slides\.json",\r?\n\)/.test(presentationNotebook) &&
+    exists("99 - Meta e Anexos/Notebooks/apresentacoes/layouts/visao-geral.slides.json") &&
     !presentationNotebook.includes("mo.carousel") &&
     !presentationNotebook.includes("def slide(source):") &&
     notebooksExportScript.includes("cpSync(sourceLayoutsDir") &&
@@ -260,8 +276,10 @@ requireCondition(
 requireCondition(
   notebooksExportScript.includes("data-vault-marimo-navigation") &&
     notebooksExportScript.includes("data-vault-lab-footer") &&
-    (/feito com <span[^>]*class="[^"]*vault-lab-footer__heart[^"]*"[^>]*aria-label="amor">♥<\/span> por/.test(notebooksExportScript) ||
-      notebooksExportScript.includes("feito com <span aria-label=\"amor\">♥</span> por")) &&
+    notebooksExportScript.includes('import { vaultKudos } from "../.site/lib/vault-config.mjs"') &&
+    notebooksExportScript.includes("function labKudosHtml()") &&
+    notebooksExportScript.includes("vault-lab-footer__heart") &&
+    !notebooksExportScript.includes('por <a href="https://github.com/aretw0">aretw0</a>') &&
     notebooksExportScript.includes('href="${labIndexHref}"') &&
     notebooksExportScript.includes("data-vault-marimo-presentation-fullscreen") &&
     notebooksExportScript.includes("vaultMarimoFullscreenButton") &&
@@ -282,13 +300,17 @@ requireCondition(
     pkg.scripts?.["notebooks:etl"]?.includes("outbox:prepare") &&
     pkg.scripts?.["notebooks:etl"]?.includes("feeds:opml") &&
     pkg.scripts?.["notebooks:etl"]?.includes("notebooks:etl:demo") &&
+    pkg.scripts?.["notebooks:etl"]?.includes("validate:texto") &&
     pkg.scripts?.["notebooks:extract:local"] === "pnpm run notebooks:etl" &&
-    labEtlDemoScript.includes("dados\", \"lab\", \"perfil-do-vault.json") &&
-    labEtlDemoScript.includes("dados\", \"lab\", \"curadoria-ia.json") &&
-    labDatasetsManifest.some((entry) => entry.id === "perfil-do-vault" && entry.source === "dados/lab/perfil-do-vault.json") &&
-    labDatasetsManifest.some((entry) => entry.id === "curadoria-ia" && entry.source === "dados/lab/curadoria-ia.json") &&
-    labDatasetsManifest.some((entry) => entry.id === "feeds-assinados" && entry.source === "dados/lab/feeds-assinados.json") &&
-    labDatasetsManifest.some((entry) => entry.id === "outbox-publicacao" && entry.source === "dados/lab/outbox-publicacao.json") &&
+    pkg.scripts?.["notebooks:extract:check"] === "uv run --no-project --with-requirements requirements.local-etl.txt python scripts/check_lab_extract_tools.py" &&
+    pkg.scripts?.["notebooks:extract:browser"] === "uv run --no-project --with-requirements requirements.local-etl.txt playwright install chromium" &&
+    labEtlDemoScript.includes('join(ROOT, ".dgk", "perfil-do-vault.json")') &&
+    labEtlDemoScript.includes('join(ROOT, ".dgk", "curadoria-ia.json")') &&
+    labEtlDemoScript.includes('join(ROOT, ".dgk", "grafo-do-vault.json")') &&
+    labDatasetsManifest.some((entry) => entry.id === "perfil-do-vault" && entry.source === ".dgk/perfil-do-vault.json") &&
+    labDatasetsManifest.some((entry) => entry.id === "curadoria-ia" && entry.source === ".dgk/curadoria-ia.json") &&
+    labDatasetsManifest.some((entry) => entry.id === "feeds-assinados" && entry.source === ".dgk/feeds-assinados.json") &&
+    labDatasetsManifest.some((entry) => entry.id === "outbox-publicacao" && entry.source === ".dgk/outbox-publicacao.json") &&
     labDatasetsManifest.some((entry) => entry.id === "json-remoto-opcional" && entry.runtimeUrl) &&
     labNotebooksManifest.some((entry) => entry.source === "99 - Meta e Anexos/Notebooks/etl-demo.py" && entry.publish === true) &&
     labNotebooksManifest.some((entry) => entry.source === "99 - Meta e Anexos/Notebooks/analise-feeds.py" && entry.publish === true) &&
@@ -527,6 +549,288 @@ requireCondition(
   exists("scripts/notebook_cell_output_lint.test.mjs"),
   "scripts/notebook_cell_output_lint.test.mjs must be present so generated vaults guard against invisible notebook output.",
 );
+
+// Note status contract — two categories:
+//
+// PUBLISHED: notes that initialize.yml promotes from draft to published during
+//   vault init. Must be draft in source so vault-seed's site does not show them.
+//
+// DRAFT_FOR_USERS: user content (onboarding, welcome, concept stubs).
+//   Must be status: draft in source — vault-seed does not publish these as its
+//   own content. Users promote notes individually as they make them their own.
+//   The global catch-all below catches any note that escapes this contract.
+const NOTE_STATUS_CONTRACT = {
+  // Notes that initialize.yml promotes to published during vault init.
+  // Must be status: draft in source (vault-seed site does not show them)
+  // but arrive as status: published in user vaults.
+  published: [],
+  // User content: onboarding guides and concept stubs with "you, the new user" voice.
+  // vault-seed's site must NOT show these — they only make sense
+  // in a freshly initialized vault. Users receive them as draft.
+  draftForUsers: [
+    "00 - Entrada/Bem-vindo ao seu vault.md",
+    "99 - Meta e Anexos/99.1 - Onboarding/Configurando com Devcontainer.md",
+    "99 - Meta e Anexos/99.1 - Onboarding/Configurando Localmente.md",
+    "99 - Meta e Anexos/99.1 - Onboarding/Depois da Recepcao do Template.md",
+    "99 - Meta e Anexos/99.1 - Onboarding/Entendendo a Estrutura de Pastas.md",
+    "99 - Meta e Anexos/99.1 - Onboarding/Exploracao Guiada do Vault.md",
+    "99 - Meta e Anexos/99.1 - Onboarding/Guia do Jardineiro Digital.md",
+    "99 - Meta e Anexos/99.1 - Onboarding/MOC Vault Seed.md",
+    "99 - Meta e Anexos/99.1 - Onboarding/Preparando seu Computador para o Vault.md",
+    "99 - Meta e Anexos/99.1 - Onboarding/Seus Primeiros Passos.md",
+    // Concept stubs — user fills in as they learn
+    "40 - Recursos/Filosofia e Conceitos Fundamentais.md",
+    "40 - Recursos/O que é o método PARA.md",
+    "40 - Recursos/O que é o método Zettelkasten.md",
+    "40 - Recursos/O que são MOCs (Mapas de Conteúdo).md",
+  ],
+};
+
+function extractStatus(content) {
+  const m = content.replace(/^﻿/, "").match(/^---[\s\S]*?^status:\s*(\S+)/m);
+  return m ? m[1] : null;
+}
+
+for (const notePath of NOTE_STATUS_CONTRACT.published) {
+  const content = read(notePath);
+  const status = extractStatus(content);
+  requireCondition(
+    status === "published",
+    `${notePath} must have status: published (stays published for users). Got: ${status ?? "(absent)"}`,
+  );
+}
+
+for (const notePath of NOTE_STATUS_CONTRACT.draftForUsers) {
+  const content = read(notePath);
+  const status = extractStatus(content);
+  requireCondition(
+    status === "draft",
+    `${notePath} must have status: draft in source — user content must not appear as published on the vault-seed site. Got: ${status ?? "(absent)"}`,
+  );
+}
+
+// Global catch-all: notes in draftForUsers must never have status: published.
+// Guards against regressions where an onboarding/setup note is accidentally
+// restored to published — those notes have "new user" voice and must not
+// appear on vault-seed's site or arrive published in user vaults.
+{
+  const draftPaths = new Set(NOTE_STATUS_CONTRACT.draftForUsers.map((p) => p.replace(/\\/g, "/")));
+  for (const trackedFile of gitLsFiles()) {
+    if (!trackedFile.endsWith(".md")) continue;
+    const normalized = trackedFile.replace(/\\/g, "/");
+    if (!draftPaths.has(normalized)) continue;
+    let content;
+    try { content = read(normalized); } catch { continue; }
+    const status = extractStatus(content);
+    requireCondition(
+      status !== "published",
+      `[NOTE_CATCH_ALL] ${normalized} is in draftForUsers but has status: published — ` +
+      `onboarding/setup notes must not appear on vault-seed's site or arrive published for users.`,
+    );
+  }
+}
+
+// ── Footer & kudos contract ────────────────────────────────────────────────
+// vault-seed's own showcase must have a kudos string configured so its footer
+// shows "Feito com ♥". initialize.yml removes it for user vaults (Contract H
+// in smoke_user_vault.mjs). vaultKudos must be exported from vault-config.mjs.
+
+requireCondition(
+  typeof vaultConfigJson.kudos === "string" && vaultConfigJson.kudos.trim().length > 0,
+  "vault.config.json must define a non-empty kudos string for the vault-seed showcase footer. " +
+  "User vaults get this field removed by initialize.yml.",
+);
+requireCondition(
+  vaultConfigMjs.includes("export const vaultKudos"),
+  "vault-config.mjs must export vaultKudos so Footer.astro can read it without prop drilling.",
+);
+requireCondition(
+  footerComponent.includes("vaultKudos") &&
+    footerComponent.includes("license-row") &&
+    footerComponent.includes("license-badge"),
+  "Footer.astro must render a persistent license-row (legal) and a conditional kudos pill (personal).",
+);
+requireCondition(
+  footerComponent.includes("{vaultKudos &&") || footerComponent.includes("vaultKudos &&"),
+  "Footer.astro kudos must be conditional — user vaults with kudos=null must not render the kudos pill.",
+);
+
+// ── Template-dev docs boundary ─────────────────────────────────────────────
+// initialize.yml is template-maintainer documentation. It belongs in docs/,
+// which initialize.yml removes from user vaults, not in 99 - Meta e Anexos.
+{
+  requireCondition(
+    !exists("99 - Meta e Anexos/99.3 - Referência/Automatizando a Inicialização do Vault.md"),
+    `"Automatizando a Inicialização do Vault" must stay out of 99 - Meta e Anexos — it is template-dev docs and docs/ is removed from user vaults.`,
+  );
+  requireCondition(
+    distributionGuide.includes("Contrato técnico do initialize.yml") &&
+      distributionGuide.includes("docs/") &&
+      distributionGuide.includes(".github/workflows/initialize.yml") &&
+      distributionGuide.includes("Remove o próprio"),
+    "docs/creating-a-distribution.md must document the maintainer-only initialize.yml contract.",
+  );
+}
+
+// Explorar intent must not use categories:workflow (too broad — catches all
+// workflow notes regardless of topic, polluting the section with publishing
+// and automation notes). Publicar must not use meta/github-actions (matches
+// template-internal automation, not user publishing workflows).
+{
+  const ia = JSON.parse(informationArchitecture);
+  requireCondition(
+    !ia.intents?.explorar?.categories?.includes("workflow"),
+    "information-architecture.json explorar intent must not use categories:workflow — " +
+    "it routes all workflow-category notes into Explorar regardless of topic.",
+  );
+  requireCondition(
+    !ia.intents?.publicar?.tags?.includes("meta/github-actions"),
+    "information-architecture.json publicar intent must not use meta/github-actions — " +
+    "this tag matches template-internal automation (initialize.yml) in addition to publishing workflows.",
+  );
+}
+
+// ── Homepage curated start section ────────────────────────────────────────
+// "Por onde começar" must use curated notes (iniciante/meta/onboarding tags)
+// not algorithmic hubs. Hub data can change with vault content; curated tags
+// are intentional and stable.
+requireCondition(
+  homePage.includes("COMECAR_TAGS") &&
+    homePage.includes("meta/onboarding") &&
+    homePage.includes("iniciante") &&
+    !homePage.includes("graph.insights.hubs"),
+  'Homepage "Por onde começar" must use curated iniciante/meta/onboarding notes, not algorithmic graph hubs.',
+);
+
+// ── Factual integrity: npx must not appear in vault notes ─────────────────
+// This is a pnpm project. Using `npx` in documentation suggests falling back to
+// downloading packages from npm — use `pnpm exec` (local devDeps) or `pnpm run`
+// (defined scripts) instead. npx crept into one note as a manual lint example.
+{
+  const VAULT_CONTENT_DIRS = [
+    "00 - Entrada/", "10 - Diário/", "20 - Projetos/", "30 - Áreas/",
+    "40 - Recursos/", "50 - Arquivo/", "90 - Modelos/", "99 - Meta e Anexos/",
+  ];
+  for (const file of gitLsFiles()) {
+    if (!file.endsWith(".md")) continue;
+    if (!VAULT_CONTENT_DIRS.some((d) => file.startsWith(d))) continue;
+    let content;
+    try { content = read(file); } catch { continue; }
+    requireCondition(
+      !content.includes("npx "),
+      `${file}: uses \`npx\` — this is a pnpm project. Use \`pnpm exec\` for local packages or \`pnpm run\` for scripts.`,
+    );
+  }
+}
+
+// ── Information architecture hygiene: no stale manual backlinks ───────────
+// The vault can be read in Obsidian, VS Code, and the generated site. Manual
+// "back to guide" links from an older documentation tree look like loose site
+// navigation once rendered, so the source content must not carry them.
+{
+  const VAULT_CONTENT_DIRS = [
+    "00 - Entrada/", "10 - Diário/", "20 - Projetos/", "30 - Áreas/",
+    "40 - Recursos/", "50 - Arquivo/", "90 - Modelos/", "99 - Meta e Anexos/",
+  ];
+  const staleBacklinkRe = /Voltar para (?:o )?\[\[Guia do Jardineiro Digital\]\]/;
+  for (const file of gitLsFiles()) {
+    if (!file.endsWith(".md")) continue;
+    if (!VAULT_CONTENT_DIRS.some((d) => file.startsWith(d))) continue;
+    let content;
+    try { content = read(file); } catch { continue; }
+    requireCondition(
+      !staleBacklinkRe.test(content),
+      `${file}: remove stale "Voltar para [[Guia do Jardineiro Digital]]" navigation. ` +
+      "Use the shared IA/sidebar instead of manual return links.",
+    );
+  }
+}
+
+// ── Factual integrity: dgk command references ─────────────────────────────
+// Notes must only reference registered dgk subcommands. Non-existent commands
+// (e.g. `dgk feeds`) have been introduced by LLM hallucination. The valid set
+// mirrors COMMANDS in packages/cli/src/index.js — update both when adding commands.
+{
+  const VALID_DGK_COMMANDS = new Set([
+    "validate", "lint", "setup", "check", "doctor", "evaluate", "lab", "obsidian", "vscode",
+    "note", "publish", "sow", "serve", "etl", "outbox", "inbox", "preview",
+  ]);
+  const VAULT_CONTENT_DIRS = [
+    "00 - Entrada/", "10 - Diário/", "20 - Projetos/", "30 - Áreas/",
+    "40 - Recursos/", "50 - Arquivo/", "90 - Modelos/", "99 - Meta e Anexos/",
+  ];
+  const dgkCmdRe = /`dgk ([a-z][\w-]*)/g;
+  for (const file of gitLsFiles()) {
+    if (!file.endsWith(".md")) continue;
+    if (!VAULT_CONTENT_DIRS.some((d) => file.startsWith(d))) continue;
+    let content;
+    try { content = read(file); } catch { continue; }
+    for (const m of content.matchAll(dgkCmdRe)) {
+      const cmd = m[1];
+      requireCondition(
+        VALID_DGK_COMMANDS.has(cmd),
+        `${file}: references non-existent \`dgk ${cmd}\`. ` +
+        `Valid commands: ${[...VALID_DGK_COMMANDS].join(", ")}.`,
+      );
+    }
+  }
+}
+
+// ── Factual integrity: PARA folder names must be in Portuguese ────────────
+// English variants crept in via LLM outputs trained on older English templates.
+// Vault content directories use PT names; these patterns should never appear.
+{
+  const ENGLISH_PARA = [
+    { re: /\b10\s*-\s*Projects?\b/i, correct: "20 - Projetos" },
+    { re: /\b20\s*-\s*Projects?\b/i, correct: "20 - Projetos" },
+    { re: /\b30\s*-\s*Areas?\b/i,    correct: "30 - Áreas" },
+    { re: /\b30\s*-\s*Resources?\b/i, correct: "40 - Recursos" },
+    { re: /\b40\s*-\s*Resources?\b/i, correct: "40 - Recursos" },
+    { re: /\b50\s*-\s*Archive\b/i,    correct: "50 - Arquivo" },
+  ];
+  const VAULT_CONTENT_DIRS = [
+    "00 - Entrada/", "10 - Diário/", "20 - Projetos/", "30 - Áreas/",
+    "40 - Recursos/", "50 - Arquivo/", "90 - Modelos/", "99 - Meta e Anexos/",
+  ];
+  for (const file of gitLsFiles()) {
+    if (!file.endsWith(".md")) continue;
+    if (!VAULT_CONTENT_DIRS.some((d) => file.startsWith(d))) continue;
+    let content;
+    try { content = read(file); } catch { continue; }
+    for (const { re, correct } of ENGLISH_PARA) {
+      requireCondition(
+        !re.test(content),
+        `${file}: contains English PARA folder name matching /${re.source}/. ` +
+        `Use Portuguese: ${correct}.`,
+      );
+    }
+  }
+}
+
+// ── Factual integrity: no fabricated script paths in published notes ───────
+// Notes must not reference scripts that do not exist in the repo. Wrong paths
+// were introduced when LLMs invented plausible-sounding file names.
+{
+  const VAULT_CONTENT_DIRS = [
+    "00 - Entrada/", "10 - Diário/", "20 - Projetos/", "30 - Áreas/",
+    "40 - Recursos/", "50 - Arquivo/", "90 - Modelos/", "99 - Meta e Anexos/",
+  ];
+  // Matches paths like `scripts/foo.mjs` or `scripts/foo.py` inside backtick spans
+  const scriptRefRe = /`(scripts\/[\w\-\.]+\.(js|mjs|cjs|py|sh))`/g;
+  for (const file of gitLsFiles()) {
+    if (!file.endsWith(".md")) continue;
+    if (!VAULT_CONTENT_DIRS.some((d) => file.startsWith(d))) continue;
+    let content;
+    try { content = read(file); } catch { continue; }
+    for (const m of content.matchAll(scriptRefRe)) {
+      const scriptPath = m[1];
+      requireCondition(
+        exists(scriptPath),
+        `${file}: references \`${scriptPath}\` but that file does not exist.`,
+      );
+    }
+  }
+}
 
 if (errors.length > 0) {
   console.error("Template smoke failed:");

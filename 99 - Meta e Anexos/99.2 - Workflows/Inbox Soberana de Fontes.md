@@ -8,9 +8,9 @@ status: published
 created: 2026-05-26
 updated: 2026-05-26
 tags:
-  - meta/dados
-  - meta/workflow
+  - meta/automacao
   - meta/ia
+  - meta/workflow
 category: workflow
 audience: todos
 related:

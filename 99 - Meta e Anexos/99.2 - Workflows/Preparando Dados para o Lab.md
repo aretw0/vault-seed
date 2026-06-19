@@ -1,4 +1,4 @@
----
+﻿---
 title: Preparando Dados para o Lab
 aliases:
   - ETL para o Lab
@@ -45,7 +45,7 @@ Para empacotar um arquivo local junto com o Lab:
     "id": "exemplo",
     "title": "Exemplo",
     "description": "Snapshot usado por um notebook do Lab",
-    "source": "dados/exemplo.json",
+    "source": "fontes/exemplo.json",
     "output": "exemplo.json",
     "format": "json",
     "publish": true
@@ -77,7 +77,7 @@ que o notebook saiba onde buscar os dados quando estiver rodando no navegador.
 Para preparar apenas os datasets:
 
 ```bash
-pnpm run notebooks:etl
+dgk etl
 ```
 
 Esse comando escreve:
@@ -115,27 +115,41 @@ Receitas completas de scraping, OCR, APIs com token e snapshot local ficam em
 Os comandos do Lab também preparam os datasets automaticamente:
 
 ```bash
-pnpm run notebooks:dev
+dgk lab <nome-do-notebook>
 pnpm run notebooks:check
-pnpm run notebooks:export
+dgk lab export
 pnpm run site:dev:lab
 ```
 
+## ETL no deploy
+
+O workflow `deploy-site.yml` executa `pnpm run notebooks:etl` automaticamente
+antes de `astro build` e do export dos notebooks. O usuário não precisa commitar
+`.dgk/` localmente — os snapshots são gerados em CI a cada push para `main`,
+a partir das notas do vault no momento do deploy.
+
+### Separação entre `.dgk/` e `fontes/`
+
+`.dgk/` é uma pasta oculta, ignorada pelo git. Segue a convenção `.<toolname>/`
+usada por outras ferramentas (`.git/`, `.astro/`, `.pi/`): estado de runtime da
+CLI, regenerável a cada `dgk etl`, nunca commitado.
+
+`fontes/` é a pasta editável pelo usuário: `fontes/feeds.opml` e
+`fontes/lista-leitura.json` são conteúdo que o usuário cuida e que o ETL lê
+como entrada. Esses arquivos são commitados porque são decisões do usuário, não
+artefatos de build.
+
 ## Exemplo incluído
 
-O comando `pnpm run notebooks:etl` roda primeiro um exemplo pequeno de ETL local:
+O comando `dgk etl` inclui automaticamente um exemplo pequeno de ETL local (equivalente ao antigo `pnpm run notebooks:etl:demo`).
 
-```bash
-pnpm run notebooks:etl:demo
-```
-
-Esse script lê as notas Markdown no computador, calcula um perfil simples do
-vault e escreve `dados/lab/perfil-do-vault.json`. Ele também roda a auditoria
+O ETL lê as notas Markdown no computador, calcula um perfil simples do
+vault e escreve `.dgk/perfil-do-vault.json`. Ele também roda a auditoria
 compartilhada de arquitetura de informação e escreve
-`dados/lab/curadoria-ia.json`, um relatório JSON com notas avaliadas, avisos
+`.dgk/curadoria-ia.json`, um relatório JSON com notas avaliadas, avisos
 editoriais, candidatas a promoção e distribuição por intenção. O mesmo fluxo
-normaliza OPML em `dados/lab/feeds-assinados.json` e gera a outbox a partir de
-frontmatter em `dados/lab/outbox-publicacao.json`. Depois,
+normaliza OPML em `.dgk/feeds-assinados.json` e gera a outbox a partir de
+frontmatter em `.dgk/outbox-publicacao.json`. Depois,
 `prepare_lab_datasets.mjs` empacota esses arquivos em `public/lab/datasets/` e
 `public/lab/assets/datasets/`.
 

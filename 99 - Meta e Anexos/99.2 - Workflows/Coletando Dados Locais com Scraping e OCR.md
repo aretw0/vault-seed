@@ -1,4 +1,4 @@
----
+﻿---
 title: Coletando Dados Locais com Scraping e OCR
 aliases:
   - Scraping e OCR no Lab
@@ -27,8 +27,8 @@ Pense em três etapas:
 
 1. **Extract local:** baixar páginas, ler arquivos privados, executar OCR ou
    chamar APIs com token.
-2. **Snapshot versionável:** gravar o resultado limpo em `dados/lab/` ou outra
-   pasta do vault.
+2. **Snapshot efêmero:** gravar o resultado limpo em `.dgk/` — pasta oculta
+   da CLI, gitignored, regenerada a cada execução do ETL.
 3. **Lab publicado:** declarar o snapshot em `.site/lab.datasets.json` e ler o
    arquivo no notebook Marimo exportado.
 
@@ -99,7 +99,7 @@ para, por exemplo:
 Depois abra o Lab local:
 
 ```bash
-pnpm run notebooks:dev
+dgk lab minha-coleta
 ```
 
 O starter já traz campos para:
@@ -107,19 +107,19 @@ O starter já traz campos para:
 - coletar uma URL simples;
 - executar OCR em uma imagem local;
 - verificar se um segredo de ambiente existe;
-- gravar um snapshot JSON em `dados/lab/`;
+- gravar um snapshot JSON em `.dgk/`;
 - bloquear a escrita quando o notebook estiver publicado em HTML.
 
 ## Receita: Página Simples
 
-Use quando a página tem HTML suficiente sem precisar de navegador real:
+Essa receita serve quando a página tem HTML suficiente sem precisar de navegador real:
 
 ```python
 from _lab_notebook_runtime import fetch_local_url_text, write_local_json_snapshot
 
 page = fetch_local_url_text("https://example.com")
 write_local_json_snapshot(
-    "dados/lab/minha-pagina.json",
+    ".dgk/minha-pagina.json",
     {
         "schemaVersion": 1,
         "source": page["url"],
@@ -131,27 +131,27 @@ write_local_json_snapshot(
 
 ## Receita: Página Dinâmica
 
-Use quando a página precisa renderizar JavaScript. A função é assíncrona:
+Escolha esta opção quando a página precisa renderizar JavaScript. A função é assíncrona:
 
 ```python
 from _lab_notebook_runtime import scrape_local_page_text, write_local_json_snapshot
 
 page = await scrape_local_page_text("https://example.com")
-write_local_json_snapshot("dados/lab/minha-pagina-dinamica.json", page)
+write_local_json_snapshot(".dgk/minha-pagina-dinamica.json", page)
 ```
 
 Se o navegador local ainda não existir, rode `pnpm run notebooks:extract:browser`.
 
 ## Receita: OCR De Imagem
 
-Use quando o dado está em imagem, print ou documento já convertido para imagem:
+Para dados em imagem, print ou documento já convertido para imagem:
 
 ```python
 from _lab_notebook_runtime import extract_local_image_text, write_local_json_snapshot
 
 text = extract_local_image_text("anexos/exemplo.png", languages="por+eng")
 write_local_json_snapshot(
-    "dados/lab/ocr-exemplo.json",
+    ".dgk/ocr-exemplo.json",
     {
         "schemaVersion": 1,
         "source": "anexos/exemplo.png",
@@ -180,7 +180,7 @@ request = Request(
 with urlopen(request, timeout=20) as response:
     payload = json.loads(response.read())
 
-write_local_json_snapshot("dados/lab/minha-api.json", payload)
+write_local_json_snapshot(".dgk/minha-api.json", payload)
 ```
 
 Depois que o snapshot existir, declare o arquivo em `.site/lab.datasets.json`:
@@ -190,7 +190,7 @@ Depois que o snapshot existir, declare o arquivo em `.site/lab.datasets.json`:
   "id": "minha-api",
   "title": "Minha API",
   "description": "Snapshot local gerado antes da publicação",
-  "source": "dados/lab/minha-api.json",
+  "source": ".dgk/minha-api.json",
   "output": "minha-api.json",
   "format": "json",
   "publish": true
@@ -200,8 +200,8 @@ Depois que o snapshot existir, declare o arquivo em `.site/lab.datasets.json`:
 Finalize com:
 
 ```bash
-pnpm run notebooks:etl
-pnpm run notebooks:check
+dgk etl
+pnpm run notebooks:check  # verificação extra (dev)
 ```
 
 ## Limites Intencionais

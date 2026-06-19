@@ -16,14 +16,18 @@ function notebookAnchor(output: string): string {
   return `notebook-${output.replace(/\.html$/, '').replace(/[^A-Za-z0-9_-]+/g, '-')}`;
 }
 
-const notebooks = manifest
+const allNotebooks = manifest
   .filter((notebook) => notebook.publish)
   .map((notebook) => ({
     title: notebook.title,
     href: `${base}/${notebooksPath}/${notebook.output}`,
     description: notebook.description,
     anchor: notebookAnchor(notebook.output),
+    type: (notebook as { type?: string }).type ?? 'notebook',
   }));
+
+const notebooks = allNotebooks.filter((n) => n.type !== 'presentation');
+const presentations = allNotebooks.filter((n) => n.type === 'presentation');
 ---
 
 <StarlightPage frontmatter={{ title: 'Lab' }}>
@@ -44,7 +48,7 @@ const notebooks = manifest
     snapshots antes da publicação; os notebooks publicados consomem esses dados preparados.
   </p>
 
-  <section class="vault-card-grid notebook-grid" aria-label="Notebooks publicados">
+  <section class="vault-card-grid notebook-grid" aria-label="Notebooks analíticos">
     {notebooks.map((notebook) => (
       <article class="vault-card notebook-card" id={notebook.anchor} data-notebook-link={notebook.href}>
         <span class="vault-card__eyebrow">Notebook</span>
@@ -57,6 +61,26 @@ const notebooks = manifest
       </article>
     ))}
   </section>
+
+  {presentations.length > 0 && (
+    <>
+      <h2>Apresentações</h2>
+      <p>Slides interativos sobre o vault-seed e seus componentes. Navegáveis no navegador, exportados como WebAssembly.</p>
+      <section class="vault-card-grid notebook-grid" aria-label="Apresentações publicadas">
+        {presentations.map((notebook) => (
+          <article class="vault-card notebook-card" id={notebook.anchor} data-notebook-link={notebook.href}>
+            <span class="vault-card__eyebrow">Apresentação</span>
+            <h2 class="vault-card__title">{notebook.title.replace(/^Apresentação:\s*/, '')}</h2>
+            <p class="vault-card__body">{notebook.description}</p>
+            <div class="vault-actions">
+              <span class="vault-status" data-availability>Aguardando exportação</span>
+              <a class="vault-button vault-button--secondary" data-notebook-open hidden>Abrir</a>
+            </div>
+          </article>
+        ))}
+      </section>
+    </>
+  )}
 
   <p>
     Para rodar os notebooks localmente: <code>pnpm run notebooks:dev</code>

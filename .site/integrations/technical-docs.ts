@@ -55,10 +55,6 @@ function slugFromMarkdownTarget(target: string): string {
     return slugify(normalized);
   }
 
-  if (normalized.includes('/')) {
-    return slugify(normalized);
-  }
-
   return `${TECHNICAL_DOCS_ROOT}/${slugify(normalized)}`;
 }
 
@@ -74,7 +70,7 @@ export function readTechnicalDocEntries(root = process.cwd()): TechnicalDocEntry
 
   return globSync(`${TECHNICAL_DOCS_ROOT}/**/*.md`, {
     cwd: root,
-    ignore: [`${TECHNICAL_DOCS_ROOT}/superpowers/**`],
+    ignore: [`${TECHNICAL_DOCS_ROOT}/superpowers/**`, `${TECHNICAL_DOCS_ROOT}/**/.templates/**`],
   })
     .sort((a, b) => {
       if (a === TECHNICAL_DOCS_INDEX) return -1;

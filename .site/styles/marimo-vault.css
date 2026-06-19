@@ -935,7 +935,10 @@ iframe {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
+  width: fit-content;
+  max-width: calc(100vw - 1.5rem);
   padding: 0.45rem 0.7rem;
+  white-space: nowrap;
   transition: left 160ms ease;
 }
 

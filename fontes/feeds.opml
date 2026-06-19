@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0">
+  <head>
+    <title>Feeds iniciais do vault</title>
+    <ownerName>vault-seed</ownerName>
+    <dateCreated>Tue, 26 May 2026 00:00:00 GMT</dateCreated>
+  </head>
+  <body>
+    <outline text="Jardim digital" title="Jardim digital">
+      <outline text="Feed deste vault" title="Feed deste vault" type="rss" xmlUrl="./rss.xml" htmlUrl="./" category="vault" />
+      <outline text="vault-seed Releases" title="vault-seed Releases" type="rss" xmlUrl="https://github.com/aretw0/vault-seed/releases.atom" htmlUrl="https://github.com/aretw0/vault-seed/releases" category="vault" />
+    </outline>
+    <outline text="Social soberano" title="Social soberano">
+      <outline text="aretw0 (Mastodon)" title="aretw0 (Mastodon)" type="rss" xmlUrl="https://mastodon.social/@aretw0.rss" htmlUrl="https://mastodon.social/@aretw0" category="social" />
+      <outline text="aretw0 (Bluesky)" title="aretw0 (Bluesky)" type="rss" xmlUrl="https://bsky.app/profile/aretw0.bsky.social/rss" htmlUrl="https://bsky.app/profile/aretw0.bsky.social" category="social" />
+    </outline>
+    <outline text="Tecnologia" title="Tecnologia">
+      <outline text="GitHub Blog" title="GitHub Blog" type="rss" xmlUrl="https://github.blog/feed/" htmlUrl="https://github.blog/" category="tecnologia" />
+      <outline text="Hacker News" title="Hacker News" type="rss" xmlUrl="https://news.ycombinator.com/rss" htmlUrl="https://news.ycombinator.com/" category="tecnologia" />
+      <outline text="Lobste.rs" title="Lobste.rs" type="rss" xmlUrl="https://lobste.rs/rss" htmlUrl="https://lobste.rs/" category="tecnologia" />
+    </outline>
+    <outline text="Engenharia de software" title="Engenharia de software">
+      <outline text="Simon Willison" title="Simon Willison" type="rss" xmlUrl="https://simonwillison.net/atom/everything/" htmlUrl="https://simonwillison.net/" category="engenharia" />
+      <outline text="Julia Evans" title="Julia Evans" type="rss" xmlUrl="https://jvns.ca/atom.xml" htmlUrl="https://jvns.ca/" category="engenharia" />
+      <outline text="Thoughtbot" title="Thoughtbot" type="rss" xmlUrl="https://thoughtbot.com/blog/feed.xml" htmlUrl="https://thoughtbot.com/blog/" category="engenharia" />
+      <outline text="The Morning Paper" title="The Morning Paper" type="rss" xmlUrl="https://blog.acolyer.org/feed/" htmlUrl="https://blog.acolyer.org/" category="engenharia" />
+    </outline>
+    <outline text="Ferramentas e web" title="Ferramentas e web">
+      <outline text="Astro Blog" title="Astro Blog" type="rss" xmlUrl="https://astro.build/rss.xml" htmlUrl="https://astro.build/blog/" category="ferramentas" />
+      <outline text="Cassidy Williams" title="Cassidy Williams" type="rss" xmlUrl="https://cassidoo.co/rss.xml" htmlUrl="https://cassidoo.co/" category="ferramentas" />
+      <outline text="Forgejo Blog" title="Forgejo Blog" type="rss" xmlUrl="https://forgejo.org/rss.xml" htmlUrl="https://forgejo.org/blog/" category="ferramentas" />
+    </outline>
+    <outline text="Ciência de dados e IA" title="Ciência de dados e IA">
+      <outline text="Marimo Releases" title="Marimo Releases" type="rss" xmlUrl="https://github.com/marimo-team/marimo/releases.atom" htmlUrl="https://github.com/marimo-team/marimo/releases" category="ia" />
+      <outline text="Hugging Face Blog" title="Hugging Face Blog" type="rss" xmlUrl="https://huggingface.co/blog/feed.xml" htmlUrl="https://huggingface.co/blog/" category="ia" />
+    </outline>
+    <outline text="Privacidade e segurança" title="Privacidade e segurança">
+      <outline text="Cartilha de Segurança para Internet (CERT.br)" title="Cartilha de Segurança para Internet (CERT.br)" type="rss" xmlUrl="https://cartilha.cert.br/rss/" htmlUrl="https://cartilha.cert.br/" category="seguranca" />
+    </outline>
+  </body>
+</opml>

@@ -71,6 +71,3 @@ Isso significa que você precisará instalar os plugins da comunidade em cada di
 
 - **`QuickAdd`**: O "motor" de automação do seu vault. Permite criar macros, capturar informações rapidamente para notas específicas e automatizar fluxos de trabalho complexos.
 - **`Meta Bind`**: A "interface" para suas automações. Permite criar botões, caixas de seleção e campos de texto diretamente em suas notas. Substitui o antigo plugin "Buttons". **Use em conjunto com o QuickAdd para criar Dashboards Acionáveis.**
-
----
-Voltar para o [[Guia do Jardineiro Digital]]

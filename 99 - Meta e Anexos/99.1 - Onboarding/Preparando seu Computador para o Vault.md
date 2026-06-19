@@ -8,7 +8,7 @@ tags:
   - meta/setup
   - meta/git
   - iniciante
-status: published
+status: draft
 created: 2026-05-18
 updated: 2026-05-18
 category: guia
@@ -202,6 +202,3 @@ Em todo dispositivo:
 
 Essa rotina simples evita a maioria dos conflitos entre desktop, notebook e
 celular.
-
----
-Voltar para o [[Guia do Jardineiro Digital]]

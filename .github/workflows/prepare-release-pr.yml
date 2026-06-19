@@ -51,6 +51,7 @@ jobs:
         run: |
           set -euo pipefail
           pnpm changeset version
+          node scripts/sync_lockfile_template.mjs --from-workspace
           if git diff --quiet package.json; then
             echo "::error::No changeset files found. Run 'pnpm changeset' to create one before triggering this workflow."
             exit 1

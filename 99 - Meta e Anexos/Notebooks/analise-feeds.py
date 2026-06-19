@@ -13,99 +13,213 @@ def _():
 
 @app.cell
 def _():
-    from _lab_notebook_runtime import load_lab_manifest, read_lab_dataset
+    from _lab_notebook_runtime import (
+        fetch_local_feed,
+        fetch_wasm_feed,
+        is_pyodide_runtime,
+        lab_runtime_context,
+        load_lab_manifest,
+        read_lab_dataset,
+    )
 
     manifest = load_lab_manifest()
     feeds = read_lab_dataset("feeds-assinados", manifest)
-    return (feeds,)
+    context = lab_runtime_context()
+    return (
+        context,
+        feeds,
+        fetch_local_feed,
+        fetch_wasm_feed,
+        is_pyodide_runtime,
+        manifest,
+    )
 
 
 @app.cell
-def _(feeds, mo):
-    mo.md(f"""
-    # Radar de feeds
-
-    Este notebook lê a lista OPML normalizada em `feeds-assinados.json` e
-    transforma assinaturas RSS/Atom em uma superfície auditável para o Lab.
-
-    - feeds assinados: **{feeds['subscriptionCount']}**
-    - grupos OPML: **{len(feeds.get('groups', []))}**
-    - fonte: `{feeds['source']}`
-    - coletado em: `{feeds['collectedAt']}`
-    - privacidade: `{feeds['privacy']}`
-    - fingerprint: `{feeds['sha256']}`
-    """)
-    return
-
-
-@app.cell
-def _(feeds):
-    from urllib.parse import urlparse
-
-    import pandas as pd
-
-    subscriptions = feeds.get("subscriptions", [])
-    rows = []
-    for subscription in subscriptions:
-        url = subscription.get("xmlUrl") or ""
-        html_url = subscription.get("htmlUrl") or ""
-        parsed = urlparse(url if "://" in url else html_url)
-        rows.append(
-            {
-                "titulo": subscription.get("title"),
-                "feed": url,
-                "site": html_url,
-                "dominio": parsed.netloc or "local",
-                "tipo": subscription.get("type") or "rss",
-                "categorias": ", ".join(subscription.get("categories") or []),
-            }
-        )
-
-    feeds_df = pd.DataFrame(rows)
-    return feeds_df, pd
-
-
-@app.cell
-def _(feeds_df, mo):
+def _(context, feeds, mo):
     mo.vstack([
-        mo.md("## Assinaturas"),
-        mo.ui.table(feeds_df),
+        mo.md(f"""
+# Radar de feeds
+
+Modo atual: **{"WASM · browser" if context["isPackaged"] else "local · Python"}**
+
+| Capacidade | WASM | Local | CI |
+|---|:---:|:---:|:---:|
+| Assinaturas do bundle | ✓ | ✓ | ✓ |
+| Itens ao vivo (feed público CORS-ok) | ✓ | — | — |
+| Todos os feeds ao vivo | — | ✓ | ✓ |
+| Análise de itens por grupo | — | ✓ | ✓ |
+
+- feeds assinados: **{feeds["subscriptionCount"]}**
+- última coleta: `{feeds["collectedAt"]}`
+- fingerprint: `{feeds["sha256"][:16]}…`
+"""),
     ])
     return
 
 
 @app.cell
-def _(feeds_df, mo, pd):
-    if feeds_df.empty:
-        domain_df = pd.DataFrame(columns=["dominio", "feeds"])
-        category_df = pd.DataFrame(columns=["categoria", "feeds"])
+def _(feeds, mo):
+    import pandas as pd
+    from urllib.parse import urlparse
+
+    subscriptions = feeds.get("subscriptions", [])
+    rows = []
+    for sub in subscriptions:
+        url = sub.get("xmlUrl") or ""
+        html_url = sub.get("htmlUrl") or ""
+        parsed = urlparse(url if "://" in url else html_url)
+        rows.append({
+            "título": sub.get("title"),
+            "domínio": parsed.netloc or "local",
+            "grupo": sub.get("group") or "—",
+            "feed": url,
+        })
+    feeds_df = pd.DataFrame(rows)
+    mo.vstack([
+        mo.md("## Assinaturas"),
+        mo.ui.table(feeds_df),
+    ])
+    return (feeds_df, pd)
+
+
+@app.cell
+async def _(fetch_wasm_feed, is_pyodide_runtime, mo, pd):
+    if not is_pyodide_runtime():
+        wasm_live = None
+        wasm_result = mo.vstack([
+            mo.md("## Itens ao vivo (WASM)"),
+            mo.callout(
+                mo.md("Abra este notebook no browser para buscar itens ao vivo do GitHub Blog sem instalar nada."),
+                kind="info",
+            ),
+        ])
     else:
-        domain_df = (
-            feeds_df.groupby("dominio", dropna=False)
+        try:
+            wasm_live = await fetch_wasm_feed("https://github.blog/feed/")
+            live_df = pd.DataFrame(wasm_live.get("items", []))[["title", "url", "published"]]
+            wasm_result = mo.vstack([
+                mo.md(f"## Itens ao vivo (WASM)\n\n**{wasm_live['title']}** · {wasm_live['itemCount']} itens recentes"),
+                mo.ui.table(live_df),
+            ])
+        except Exception as exc:
+            wasm_live = None
+            wasm_result = mo.vstack([
+                mo.md("## Itens ao vivo (WASM)"),
+                mo.callout(mo.md(f"Não foi possível buscar o feed: {exc}"), kind="warn"),
+            ])
+    wasm_result
+    return (wasm_live,)
+
+
+@app.cell
+def _(context, feeds, fetch_local_feed, mo, pd):
+    if not context["isLocal"]:
+        local_items_df = pd.DataFrame()
+        local_result = mo.vstack([
+            mo.md("## Coleta local"),
+            mo.callout(
+                mo.md(
+                    "Execute com `uv run marimo edit` para coletar todos os feeds ao vivo "
+                    "e ver a análise de itens por período."
+                ),
+                kind="info",
+            ),
+        ])
+    else:
+        all_items = []
+        errors = []
+        for _sub in feeds.get("subscriptions", []):
+            _url = _sub.get("xmlUrl", "")
+            if not _url or _url.startswith("."):
+                continue
+            try:
+                _result = fetch_local_feed(_url)
+                for _item in _result.get("items", []):
+                    all_items.append({
+                        "feed": _sub.get("title", _url),
+                        "grupo": _sub.get("group") or "—",
+                        "título": _item.get("title"),
+                        "publicado": _item.get("published"),
+                        "url": _item.get("url"),
+                    })
+            except Exception as _exc:
+                errors.append(f"{_sub.get('title', _url)}: {_exc}")
+
+        local_items_df = pd.DataFrame(all_items) if all_items else pd.DataFrame()
+        parts = [mo.md(f"## Coleta local\n\n{len(all_items)} itens coletados de {feeds['subscriptionCount']} feeds.")]
+        if errors:
+            parts.append(mo.callout(
+                mo.md("Feeds com erro:\n" + "\n".join(f"- {e}" for e in errors)),
+                kind="warn",
+            ))
+        if not local_items_df.empty:
+            parts.append(mo.ui.table(local_items_df.head(100)))
+        local_result = mo.vstack(parts)
+
+    local_result
+    return (local_items_df,)
+
+
+@app.cell
+def _(feeds_df, mo, pd):
+    import altair as alt
+
+    if feeds_df.empty:
+        coverage_result = mo.md("_Sem dados de assinaturas._")
+    else:
+        group_df = (
+            feeds_df.groupby("grupo", dropna=False)
             .size()
             .reset_index(name="feeds")
-            .sort_values(["feeds", "dominio"], ascending=[False, True])
+            .sort_values("feeds", ascending=False)
         )
-        category_rows = []
-        for _, _category_row in feeds_df.iterrows():
-            for category in str(_category_row.get("categorias") or "").split(","):
-                category = category.strip()
-                if category:
-                    category_rows.append({"categoria": category})
-        category_df = (
-            pd.DataFrame(category_rows)
-            .groupby("categoria")
-            .size()
-            .reset_index(name="feeds")
-            .sort_values(["feeds", "categoria"], ascending=[False, True])
-            if category_rows
-            else pd.DataFrame(columns=["categoria", "feeds"])
+        chart = (
+            alt.Chart(group_df)
+            .mark_bar()
+            .encode(
+                x=alt.X("feeds:Q", title="feeds"),
+                y=alt.Y("grupo:N", sort="-x", title=None),
+                color=alt.value("#2d7a4d"),
+                tooltip=["grupo", "feeds"],
+            )
+            .properties(height=max(80, len(group_df) * 28), title="Feeds por grupo")
         )
+        coverage_result = mo.vstack([
+            mo.md("## Cobertura por grupo"),
+            mo.ui.altair_chart(chart),
+        ])
+    coverage_result
+    return (alt,)
+
+
+@app.cell
+def _(feeds, mo):
+    from datetime import datetime, timezone
+
+    collected = feeds.get("collectedAt", "")
+    if collected and collected != "1970-01-01T00:00:00.000Z":
+        try:
+            dt = datetime.fromisoformat(collected.replace("Z", "+00:00"))
+            age_h = (datetime.now(timezone.utc) - dt).total_seconds() / 3600
+            freshness = f"{age_h:.0f}h atrás" if age_h < 48 else f"{age_h / 24:.0f} dias atrás"
+        except Exception:
+            freshness = collected
+    else:
+        freshness = "dados de exemplo (timestamp de época)"
 
     mo.vstack([
-        mo.md("## Cobertura editorial"),
-        mo.ui.table(domain_df),
-        mo.ui.table(category_df),
+        mo.md(f"""## Atualização automática (CI)
+
+Os dados em `feeds-assinados.json` são gerados por `pnpm run feeds:opml` e
+podem ser mantidos frescos pelo workflow `refresh-lab-data.yml`.
+
+- última coleta: **{freshness}**
+- fonte: `{feeds.get("source", "—")}`
+
+Para ativar o refresh diário, copie `.github/workflows/refresh-lab-data.yml`
+do repositório do template para o seu vault.
+"""),
     ])
     return
 
@@ -113,91 +227,23 @@ def _(feeds_df, mo, pd):
 @app.cell
 def _(feeds_df, mo, pd):
     candidates = []
-    for _, _feed_row in feeds_df.iterrows():
-        title = _feed_row.get("titulo") or _feed_row.get("dominio") or "Feed"
-        candidates.append(
-            {
-                "arquivo sugerido": f"00 - Entrada/Feed - {title}.md",
-                "titulo": f"Feed - {title}",
-                "fonte": _feed_row.get("feed"),
-                "proximo passo": "decidir se vira fonte recorrente, nota de leitura ou descarte",
-            }
-        )
+    for _, _row in feeds_df.iterrows():
+        title = _row.get("título") or _row.get("domínio") or "Feed"
+        candidates.append({
+            "arquivo sugerido": f"00 - Entrada/Feed - {title}.md",
+            "título": f"Feed - {title}",
+            "fonte": _row.get("feed"),
+            "próximo passo": "decidir se vira fonte recorrente, nota de leitura ou descarte",
+        })
     candidates_df = pd.DataFrame(candidates)
     mo.vstack([
         mo.md(
-            "## Candidatas para inbox soberana\n\n"
-            "A tabela abaixo não cria notas automaticamente. Ela mostra o formato de "
-            "triagem: feed observado → evidência → decisão humana ou agente assistido."
+            "## Candidatas para inbox\n\n"
+            "A tabela abaixo não cria notas automaticamente. "
+            "Ela mostra o formato de triagem: feed observado → decisão humana."
         ),
         mo.ui.table(candidates_df),
     ])
-    return (candidates_df,)
-
-
-@app.cell
-def _(candidates_df, mo):
-    preview = "\n".join(
-        [
-            "---",
-            "title: \"Feed - Exemplo\"",
-            "status: draft",
-            "category: fonte",
-            "audience: pessoal",
-            "source: \"https://example.com/feed.xml\"",
-            "collectedAt: \"2026-05-26T00:00:00.000Z\"",
-            "license: \"verificar\"",
-            "privacy: \"public\"",
-            "---",
-            "",
-            "# Feed - Exemplo",
-            "",
-            "## Por que entrou no inbox",
-            "",
-            "- ",
-            "",
-            "## Evidências",
-            "",
-            "- Fonte: https://example.com/feed.xml",
-            "",
-            "## Decisão",
-            "",
-            "- [ ] manter como assinatura recorrente",
-            "- [ ] transformar itens em notas",
-            "- [ ] descartar",
-        ]
-    )
-    mo.md(
-        "## Modelo de nota derivada\n\n"
-        f"```markdown\n{preview}\n```\n\n"
-        f"Candidatas listadas nesta execução: **{len(candidates_df)}**."
-    )
-    return
-
-
-@app.cell
-def _(mo):
-    mo.md(
-        "## 🧭 Lane de entendimento\n\n"
-        "Use esta trilha para evoluir o notebook de um uso pontual para uma rotina de "
-        "curadoria contínua:\n\n"
-        "### Nível inicial — leitura rápida\n\n"
-        "- Mapear quais fontes realmente aparecem na trilha atual;\n"
-        "- Classificar por domínio e tag para reduzir ruído;\n"
-        "- Preparar notas candidatas sem publicar ou enviar nada automaticamente.\n\n"
-        "### Nível intermediário — decisão local\n\n"
-        "- Cruzar candidatas com prioridade por frequência e privacidade;\n"
-        "- Transformar listas em critérios de revisão humana por pasta/público;\n"
-        "- Criar checklists de triagem para revisão rápida antes de abrir o outbox.\n\n"
-        "### Nível avançado — operação em ciclo\n\n"
-        "- Rodar esse notebook em `notebooks:extract:local` durante o sync;\n"
-        "- Comparar snapshots para detectar deriva em fontes e sinais novos;\n"
-        "- Conectar os resultados ao pipeline de templates e revisão editorial.\n\n"
-        "### Nível de excelência — curadoria como sistema\n\n"
-        "- Fechar os pontos com trilha de decisão explícita para aprovar fontes, revisão e publicação;\n"
-        "- Transformar descobertas repetidas em uma política de limpeza de ruído e uma rotina de auditoria semanal;\n"
-        "- Publicar um resumo de impacto por ciclo (fontes novas, candidatos aprovados, exceções tratadas)."
-    )
     return
 
 

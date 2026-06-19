@@ -9,7 +9,7 @@ tags:
   - obsidian/bases
   - obsidian/dataview
   - obsidian/moc
-status: published
+status: draft
 created: 2026-05-19
 updated: 2026-05-23
 category: moc
@@ -120,7 +120,3 @@ SORT file.name ASC
 ```
 
 Use Bases quando quiser uma interface visual e nativa. Use Dataview quando precisar de consultas mais expressivas, especialmente em dashboards ou revisões periódicas.
-
----
-
-Voltar para [[Guia do Jardineiro Digital]]

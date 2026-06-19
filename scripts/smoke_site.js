@@ -2,7 +2,7 @@
 // Run after `pnpm run site:build`. Catches:
 //   - 0-page builds (vault loader misconfiguration)
 //   - missing root redirect (404 at /)
-//   - missing template-contract pages (slugify regressions, status not published)
+//   - missing published contract pages (slugify regressions, status not published)
 //   - empty content pages (schema/rendering failures)
 //   - duplicate <h1> titles (vault loader must strip leading # heading)
 //   - protocol-relative URLs like href="//path" (remark-wiki-links base normalization)
@@ -12,6 +12,7 @@
 //   - missing mermaid CDN script (head[] injection lost)
 //   - missing mermaid code blocks in known diagram pages (pipeline regression)
 //   - missing or empty Pagefind index (search broken)
+//   - audience:user-vault notes leaking into explore data (vault-explore filter regression)
 
 const fs = require("node:fs");
 const path = require("node:path");
@@ -116,29 +117,24 @@ requireCondition(
   "dist/index.html missing — root URL (/) returns 404. Add .site/pages/index.astro.",
 );
 
-// ── 3. template-contract pages ────────────────────────────────────────────────
-// These slugs are derived from the files that validate_onboarding.js marks as
-// required AND that carry status:published in the template. If any is missing,
-// something in the build pipeline broke (slugify regression, status field lost,
-// vault loader crash, etc.).
+// ── 3. published contract pages ───────────────────────────────────────────────
+// These slugs are deliberately public in the template. Draft onboarding notes
+// are validated by initialize/user-vault smokes instead; this smoke protects the
+// built site surface from slugify, status, or loader regressions.
 
 const REQUIRED_DIST_PATHS = [
   // Astro-first exploration surface
   "explorar",
   "explorar/intencoes",
-  // Onboarding guides — required by validate_onboarding.js
-  "meta-e-anexos/onboarding/guia-do-jardineiro-digital",
-  "meta-e-anexos/onboarding/seus-primeiros-passos",
-  "meta-e-anexos/onboarding/exploracao-guiada-do-vault",
-  "meta-e-anexos/onboarding/preparando-seu-computador-para-o-vault",
+  // Public onboarding / reference / workflow notes
+  "meta-e-anexos/apresentacoes/bem-vindo-ao-vault-seed",
+  "meta-e-anexos/apresentacoes/apresentacoes",
+  "meta-e-anexos/referencia/comandos-do-dgk",
+  "meta-e-anexos/referencia/verificando-a-configuracao-do-vault",
   "meta-e-anexos/workflows/configurando-o-obsidian-git",
-  "meta-e-anexos/onboarding/depois-da-recepcao-do-template",
-  "meta-e-anexos/onboarding/moc-vault-seed",
-  // Core resource notes
-  "recursos/bases",
-  "recursos/dataview",
+  "meta-e-anexos/workflows/publicando-seu-vault-como-site",
+  // Core resource note
   "recursos/mermaid",
-  "recursos/o-que-sao-system-prompts-de-ia",
 ];
 
 for (const slug of REQUIRED_DIST_PATHS) {
@@ -203,6 +199,34 @@ if (fs.existsSync(exploreDataPath)) {
       noteIds.has(edge?.source) && noteIds.has(edge?.target),
       `dist/explorar/dados.json: graph edge references unknown note ids (${edge?.source} -> ${edge?.target}).`,
     );
+  }
+
+  // No audience:user-vault note should leak into explore data.
+  // Scan source markdown for the frontmatter field and assert paths are absent from dados.json.
+  const explorePaths = new Set(notes.map((n) => n?.path).filter(Boolean));
+  const VAULT_SOURCE_FOLDERS = [
+    '00 - Entrada', '10 - Diário', '20 - Projetos', '30 - Áreas',
+    '40 - Recursos', '50 - Arquivo', '90 - Modelos', '99 - Meta e Anexos',
+  ];
+  function findMdFiles(dir, results = []) {
+    if (!fs.existsSync(dir)) return results;
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) findMdFiles(full, results);
+      else if (entry.name.endsWith('.md')) results.push(full);
+    }
+    return results;
+  }
+  for (const folder of VAULT_SOURCE_FOLDERS) {
+    for (const absPath of findMdFiles(path.join(root, folder))) {
+      const content = fs.readFileSync(absPath, 'utf8').replace(/^﻿/, '');
+      if (!/^audience:\s*user-vault\s*$/m.test(content)) continue;
+      const relPath = path.relative(root, absPath).replace(/\\/g, '/');
+      requireCondition(
+        !explorePaths.has(relPath),
+        `dist/explorar/dados.json: note "${relPath}" has audience:user-vault and must not appear in explore data.`,
+      );
+    }
   }
 }
 
@@ -300,7 +324,10 @@ function isMarimoNotebook(relPath) {
 }
 
 function isNotebookArtifact(relPath) {
-  return isMarimoNotebook(relPath) || /(^|\/)vault-seed-slides-lite\.html$/.test(relPath);
+  return (
+    isMarimoNotebook(relPath) ||
+    (relPath.startsWith(`${notebooksPath}/`) && relPath.endsWith('.html') && relPath !== `${notebooksPath}/index.html`)
+  );
 }
 
 function hasMarimoRuntime(content) {
@@ -391,8 +418,8 @@ const SIDEBAR_SECTIONS = ["recursos", "meta-e-anexos"];
 const mocHtmlPath = path.join(
   distDir,
   "meta-e-anexos",
-  "onboarding",
-  "moc-vault-seed",
+  "referencia",
+  "comandos-do-dgk",
   "index.html",
 );
 
@@ -426,9 +453,9 @@ if (fs.existsSync(mocHtmlPath)) {
           `The sidebar filter in astro.config.mjs may be including sections with no published notes.`,
       );
     }
-  } else {
+} else {
     errors.push(
-      "meta-e-anexos/onboarding/moc-vault-seed/index.html: starlight__sidebar element not found.",
+      "meta-e-anexos/referencia/comandos-do-dgk/index.html: starlight__sidebar element not found.",
     );
   }
 
@@ -492,12 +519,51 @@ if (fs.existsSync(pagefindIndexDir)) {
   );
 }
 
-// ── 9. sitemap (warning only — requires ASTRO_SITE to be set) ────────────────
+// ── 9a. homepage structure ────────────────────────────────────────────────────
+// The homepage must render the curated "Por onde começar" section and a
+// persistent license-row in the footer. These are build-time signals that
+// vault.config.json and vault-explore.ts are wired up correctly.
+
+const indexPath = path.join(distDir, "index.html");
+if (fs.existsSync(indexPath)) {
+  const indexHtml = fs.readFileSync(indexPath, "utf8");
+  requireCondition(
+    indexHtml.includes("vault-hubs") || indexHtml.includes("Por onde começar"),
+    "dist/index.html: missing curated start section — vault-hubs or 'Por onde começar' label not found. " +
+    "Check that explore.notes has notes tagged meta/onboarding or iniciante.",
+  );
+  requireCondition(
+    indexHtml.includes("vault-metrics") || indexHtml.includes("notas"),
+    "dist/index.html: metrics strip missing — vault-explore.ts metrics may not be wiring through to the homepage.",
+  );
+  requireCondition(
+    indexHtml.includes("license-row") || indexHtml.includes("license-badge"),
+    "dist/index.html: license attribution not found in footer — vault.config.json license may not be configured, " +
+    "or Footer.astro license-row is broken.",
+  );
+}
+
+// ── 9b. sitemap (warning only — requires ASTRO_SITE to be set) ───────────────
 
 warnCondition(
   fs.existsSync(path.join(distDir, "sitemap-index.xml")),
   "dist/sitemap-index.xml missing — sitemap not generated. Set ASTRO_SITE env var to enable.",
 );
+
+// ── 10. kudos comment ─────────────────────────────────────────────────────────
+// This check documents expected footer states. Not an error — kudos presence
+// depends on vault.config.json and is intentionally absent in user vaults.
+if (fs.existsSync(indexPath)) {
+  const indexHtml = fs.readFileSync(indexPath, "utf8");
+  const hasKudos = indexHtml.includes('class="kudos"');
+  const hasLicense = indexHtml.includes("license-row") || indexHtml.includes("license-badge");
+  warnCondition(
+    hasLicense,
+    "dist/index.html: no license-row found — if vault.config.json has a license, this is a regression. " +
+    "If license is intentionally absent, this warning is expected.",
+  );
+  // (kudos is not required — user vaults omit it by design, so no requireCondition)
+}
 
 // ── report ────────────────────────────────────────────────────────────────────
 

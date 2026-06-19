@@ -7,7 +7,6 @@ aliases:
   - Design do Vault Seed
 tags:
   - meta/site
-  - meta/ui
   - meta/design
 status: published
 created: 2026-05-25

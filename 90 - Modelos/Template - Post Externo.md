@@ -1,5 +1,6 @@
 ---
 title: "{{title}}"
+description: ""
 created: "{{date}}"
 updated: "{{date}}"
 tags:
@@ -22,6 +23,12 @@ related: []
 ---
 
 # {{title}}
+
+## Texto de Compartilhamento
+
+> Preencha o campo `description` no frontmatter acima com 1–2 frases que funcionem como
+> gancho para qualquer canal (og:description, Telegram, Mastodon, Bluesky, newsletter).
+> Se ausente, os scripts usarão um recorte automático do corpo da nota.
 
 ## Base Canônica
 
@@ -58,6 +65,7 @@ related: []
 
 ## Checklist Antes De Publicar
 
+- [ ] `description` preenchido com texto de compartilhamento intencional
 - [ ] a nota canônica está revisada
 - [ ] a privacidade permite publicação externa
 - [ ] licença e termos foram verificados

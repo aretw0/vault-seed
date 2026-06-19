@@ -1,6 +1,6 @@
 # Organização Técnica do Projeto
 
-Este documento descreve a estrutura de pastas e arquivos do repositório sob uma perspectiva técnica, complementando a visão conceitual apresentada em [Entendendo a Estrutura de Pastas](../99%20-%20Meta%20e%20Anexos/99.1%20-%20Onboarding/Entendendo%20a%20Estrutura%20de%20Pastas.md).
+Este documento descreve a estrutura de pastas e arquivos do repositório sob uma perspectiva técnica, complementando a visão conceitual mantida em `99 - Meta e Anexos/99.1 - Onboarding/Entendendo a Estrutura de Pastas.md`.
 
 ## Estrutura de Pastas e Arquivos
 

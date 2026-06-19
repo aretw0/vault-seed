@@ -1,4 +1,4 @@
----
+﻿---
 title: Publicando e Consumindo RSS no Vault
 aliases:
   - RSS no Vault
@@ -6,8 +6,6 @@ aliases:
   - Sindicação do Vault
 tags:
   - meta/site
-  - meta/dados
-  - meta/lab
   - meta/automacao
 status: published
 created: 2026-05-26
@@ -32,7 +30,7 @@ No `vault-seed`, RSS tem dois papéis:
 
 1. **Produzir seu feed:** o site gera `/rss.xml` com as notas publicadas.
 2. **Consumir feeds externos:** o Lab local pode baixar RSS/Atom, normalizar os
-   itens e gravar snapshots em `dados/lab/`.
+   itens e gravar snapshots em `.dgk/`.
 
 ## Produzindo Seu Feed
 
@@ -81,7 +79,7 @@ https://USUARIO.github.io/REPOSITORIO/rss.xml
 A lista inicial de feeds fica em:
 
 ```text
-dados/fontes/feeds.opml
+fontes/feeds.opml
 ```
 
 Ela é um OPML editável: você pode importar em leitores RSS ou exportar de outros
@@ -89,12 +87,15 @@ leitores para dentro do vault. Para normalizar essa lista como dataset do Lab,
 rode:
 
 ```bash
-pnpm run feeds:opml
+dgk etl
 ```
 
-O comando gera `dados/lab/feeds-assinados.json`, com `source`, `collectedAt`,
+O ETL inclui o processamento de feeds OPML. Ele gera `.dgk/feeds-assinados.json`, com `source`, `collectedAt`,
 `sha256`, `license` e `privacy`. Esse dataset é publicado pelo manifesto do Lab
 e alimenta o notebook `/lab/feeds.html`.
+
+> `fontes/feeds.opml` é conteúdo seu — commitado, versionado, editado por você.
+> `.dgk/feeds-assinados.json` é o snapshot gerado pelo ETL — oculto, efêmero, nunca commitado.
 
 ## Consumindo Feeds Como Dados
 
@@ -107,7 +108,7 @@ Use a primitiva `fetch_local_feed()`:
 from _lab_notebook_runtime import fetch_local_feed, write_local_json_snapshot
 
 feed = fetch_local_feed("https://example.com/feed.xml")
-write_local_json_snapshot("dados/lab/feed-exemplo.json", feed)
+write_local_json_snapshot(".dgk/feed-exemplo.json", feed)
 ```
 
 O snapshot gerado tem uma forma simples:
@@ -140,7 +141,7 @@ Depois declare o snapshot em `.site/lab.datasets.json`:
   "id": "feed-exemplo",
   "title": "Feed Exemplo",
   "description": "Itens normalizados de um feed RSS externo",
-  "source": "dados/lab/feed-exemplo.json",
+  "source": ".dgk/feed-exemplo.json",
   "output": "feed-exemplo.json",
   "format": "json",
   "publish": true
@@ -150,7 +151,7 @@ Depois declare o snapshot em `.site/lab.datasets.json`:
 Finalize com:
 
 ```bash
-pnpm run notebooks:etl
+dgk etl
 pnpm run notebooks:check
 ```
 

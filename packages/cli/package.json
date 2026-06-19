@@ -6,6 +6,14 @@
   "bin": {
     "dgk": "./src/index.js"
   },
+  "files": [
+    "src",
+    "vendor",
+    "!vendor/**/__pycache__",
+    "!vendor/**/*.pyc",
+    "README.md",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "test": "node --test test/*.test.js"
   },
@@ -16,6 +24,10 @@
     "type": "git",
     "url": "https://github.com/aretw0/vault-seed.git",
     "directory": "packages/cli"
+  },
+  "dependencies": {
+    "@aretw0/dgk-channels": "workspace:*",
+    "@aretw0/dgk-runner": "workspace:*"
   },
   "license": "GPL-3.0-only",
   "engines": {

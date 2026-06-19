@@ -1,7 +1,7 @@
 ---
 title: Lab Roadmap — Notebooks e Outbox Multi-canal
 status: em andamento
-updated: 2026-06-10
+updated: 2026-06-14
 ---
 
 # Lab Roadmap
@@ -170,9 +170,10 @@ Bloco CI     → mostra timestamp do último refresh automático + diff de novos
 - [ ] `analise-grafo.py` e `analise-publicacao.py` ainda usam `try/except` direto
       para carregar dados em vez do `_lab_notebook_runtime` helper —
       unificar para o padrão dos outros notebooks
-- [ ] Cache de export de notebooks não invalida quando `notebook_export_runtime_helpers.mjs`
+- [x] Cache de export de notebooks não invalida quando `notebook_export_runtime_helpers.mjs`
       muda (resolvido: adicionado ao `notebookExportDependencies`)
-- [ ] `apresentacao-vault-seed.py` também usa `try/except` direto — mesma dívida
+- [x] `apresentacao-vault-seed.py` substituído por 4 notebooks focados em
+      `99 - Meta e Anexos/Notebooks/apresentacoes/` — cada um usa `_lab_notebook_runtime`
 
 ---
 

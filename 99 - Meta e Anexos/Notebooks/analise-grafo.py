@@ -1,188 +1,190 @@
 import marimo
 
-__generated_with = "0.23.8"
+__generated_with = "0.23.9"
 app = marimo.App(width="medium")
 
 
 @app.cell
 def _():
     import marimo as mo
-    import json
-    import os
-    return json, mo, os
+
+    return (mo,)
 
 
 @app.cell
-def _(json, os):
-    try:
-        import pyodide  # type: ignore
-        from pyodide.http import open_url  # type: ignore
-        data = json.loads(open_url("./vault-data.json").read())
-    except ImportError:
-        _notebooks_path = os.environ.get("VAULT_NOTEBOOKS_PATH", "lab")
-        _path = os.path.join(os.getcwd(), "public", _notebooks_path, "vault-data.json")
-        with open(_path, encoding="utf-8") as _f:
-            data = json.load(_f)
-    notes = data["notes"]
-    return data, notes
-
-
-@app.cell
-def _(data, mo, notes):
-    mo.md(
-        f"# 🕸️ Análise de Grafo\n\n"
-        f"**{len(notes)} notas** · gerado em `{data['generated'][:10]}`"
+def _():
+    from _lab_notebook_runtime import (
+        lab_runtime_context,
+        load_lab_manifest,
+        read_lab_dataset,
     )
-    return ()
+
+    manifest = load_lab_manifest()
+    grafo = read_lab_dataset("grafo-do-vault", manifest)
+    context = lab_runtime_context()
+    return context, grafo, manifest
 
 
 @app.cell
-def _(notes):
-    def slugify(value):
-        import re
-        import unicodedata
+def _(context, grafo, mo):
+    notes = grafo.get("notes", [])
+    mo.vstack([
+        mo.md(f"""
+# Análise de grafo
 
-        def _segment_slug(segment):
-            segment = re.sub(r"^\d+\s*-\s*", "", segment)
-            segment = unicodedata.normalize("NFD", segment)
-            segment = segment.encode("ascii", "ignore").decode("ascii")
-            segment = re.sub(r"\s+", "-", segment.lower().strip())
-            segment = re.sub(r"[^a-z0-9-]", "", segment)
-            segment = re.sub(r"-+", "-", segment)
-            return segment.strip("-")
+Modo atual: **{"WASM · browser" if context["isPackaged"] else "local · Python"}**
 
-        return "/".join(filter(None, [_segment_slug(segment) for segment in value.split("/")]))
+| Capacidade | WASM | Local | CI |
+|---|:---:|:---:|:---:|
+| Hubs, órfãs e densidade de links | ✓ | ✓ | ✓ |
+| Links quebrados (bundle) | ✓ | ✓ | ✓ |
+| Links quebrados (verificação ao vivo) | — | ✓ | ✓ |
 
-    all_slugs = {n["id"] for n in notes}
-    inverse_index: dict[str, list[str]] = {n["id"]: [] for n in notes}
-    for _n in notes:
-        for _link in _n.get("links", []):
-            _link_id = slugify(_link)
-            if _link_id in inverse_index:
-                inverse_index[_link_id].append(_n["id"])
-    return all_slugs, inverse_index, slugify
-
-
-@app.cell
-def _(inverse_index, mo, notes):
-    import pandas as pd
-
-    _orphans = [
-        n for n in notes
-        if not n.get("links") and not inverse_index.get(n["id"])
-    ]
-    mo.md(f"## 🏝️ Notas Órfãs\n\n{len(_orphans)} notas sem links de entrada ou saída.")
-    return (pd,)
-
-
-@app.cell
-def _(inverse_index, mo, notes, pd):
-    _orphans = [
-        {"id": n["id"], "title": n["title"], "folder": n["folder"], "status": n.get("status")}
-        for n in notes
-        if not n.get("links") and not inverse_index.get(n["id"])
-    ]
-    mo.ui.table(pd.DataFrame(_orphans)) if _orphans else mo.md("_Nenhuma nota órfã._")
-    return ()
-
-
-@app.cell
-def _(all_slugs, mo, notes, slugify):
-    import pandas as _pd2
-
-    _broken = [
-        {"nota": n["id"], "link_quebrado": link}
-        for n in notes
-        for link in n.get("links", [])
-        if slugify(link) not in all_slugs
-    ]
-    mo.md(f"## 🔗 Links Quebrados\n\n{len(_broken)} links apontam para notas inexistentes no vault.")
-    return ()
-
-
-@app.cell
-def _(all_slugs, mo, notes, slugify):
-    import pandas as _pd3
-
-    _broken = [
-        {"nota": n["id"], "link_quebrado": link}
-        for n in notes
-        for link in n.get("links", [])
-        if slugify(link) not in all_slugs
-    ]
-    mo.ui.table(_pd3.DataFrame(_broken)) if _broken else mo.md("_Nenhum link quebrado._")
-    return ()
+- **{grafo["noteCount"]}** notas · **{grafo["linkCount"]}** links
+"""),
+    ])
+    return (notes,)
 
 
 @app.cell
 def _(mo, notes):
     import altair as alt
-    import pandas as _pd4
-    from collections import Counter
+    import pandas as pd
 
-    _folder_notes = Counter(n["folder"] for n in notes)
-    _folder_links = Counter(n["folder"] for n in notes for _ in n.get("links", []))
-    _density = [
-        {
-            "pasta": folder,
-            "notas": count,
-            "links_saida": _folder_links.get(folder, 0),
-            "densidade": round(_folder_links.get(folder, 0) / count, 2),
-        }
-        for folder, count in _folder_notes.items()
-    ]
-    _df = _pd4.DataFrame(_density)
-    _chart = (
-        alt.Chart(_df)
+    orphans = [n for n in notes if n["inbound"] == 0 and n["outbound"] == 0]
+    hubs = sorted(notes, key=lambda n: n["inbound"], reverse=True)[:10]
+    hubs_df = pd.DataFrame(hubs)[["title", "folder", "inbound", "outbound"]]
+
+    chart_hubs = (
+        alt.Chart(hubs_df)
         .mark_bar()
         .encode(
-            x=alt.X("densidade:Q", title="Links por nota"),
-            y=alt.Y("pasta:N", sort="-x", title="Pasta"),
-            tooltip=["pasta:N", "notas:Q", "links_saida:Q", "densidade:Q"],
+            x=alt.X("inbound:Q", title="links recebidos"),
+            y=alt.Y("title:N", sort="-x", title=None),
+            color=alt.value("#1b5e3b"),
+            tooltip=["title:N", "folder:N", "inbound:Q", "outbound:Q"],
         )
-        .properties(title="Densidade de Links por Pasta", height=250)
+        .properties(height=max(80, len(hubs_df) * 28), title="Top 10 hubs (mais referenciadas)")
     )
-    mo.ui.altair_chart(_chart)
-    return Counter, alt
 
-
-@app.cell
-def _(inverse_index, mo, notes):
-    import pandas as _pd5
-
-    _top = sorted(
-        [{"nota": n["id"], "titulo": n["title"], "inbound": len(inverse_index.get(n["id"], []))}
-         for n in notes],
-        key=lambda x: x["inbound"],
-        reverse=True,
-    )[:10]
     mo.vstack([
-        mo.md("## ⭐ Top 10 Mais Referenciadas"),
-        mo.ui.table(_pd5.DataFrame(_top)),
+        mo.md(f"## Hubs e órfãs\n\n**{len(hubs)} hubs** mais referenciadas · **{len(orphans)} notas órfãs** (sem links de entrada ou saída)"),
+        mo.ui.altair_chart(chart_hubs),
     ])
-    return ()
+    return alt, hubs_df, orphans, pd
 
 
 @app.cell
-def _(mo):
-    mo.md(
-        "## 🧭 Lane de entendimento\n\n"
-        "Conduza esse notebook como uma trilha de maturação da visão estrutural do vault:\n\n"
-        "### Nível inicial — topologia\n\n"
-        "- Ler hubs e órfãs para perceber lacunas;\n"
-        "- Identificar notas com links quebrados e priorizar reparos simples.\n\n"
-        "### Nível intermediário — métrica\n\n"
-        "- Acompanhar densidade por pasta e distribuição de inbound para mapear "
-        "fronteiras de conhecimento;\n"
-        "- Relacionar outliers a perguntas de arquitetura antes de mexer no conteúdo.\n\n"
-        "### Nível avançado — intervenção\n\n"
-        "- Usar os sinais deste painel para propor refatorações de estrutura;\n"
-        "- Repetir a análise após cada ciclo para medir redução de nós órfãos e melhoria de cobertura.\n\n"
-        "### Nível de excelência — arquitetura de coesão\n\n"
-        "- Consolidar um glossário de hubs por domínio e manter uma regra de exceção para grafos locais;\n"
-        "- Criar alertas de regressão (queda abrupta de densidade ou explosão de órfãos);\n"
-        "- Fechar uma revisão de arquitetura a cada sprint com plano de refatoração priorizado."
+def _(mo, orphans, pd):
+    orphans_df = pd.DataFrame(orphans)[["title", "folder", "status"]] if orphans else pd.DataFrame()
+    mo.vstack([
+        mo.md(f"### Notas órfãs ({len(orphans)})"),
+        mo.ui.table(orphans_df) if not orphans_df.empty else mo.md("_Nenhuma nota órfã._"),
+    ])
+    return
+
+
+@app.cell
+def _(alt, mo, notes, pd):
+    from collections import defaultdict
+
+    density_map = defaultdict(lambda: {"notas": 0, "links_saida": 0})
+    for _n in notes:
+        _f = _n["folder"]
+        density_map[_f]["notas"] += 1
+        density_map[_f]["links_saida"] += _n["outbound"]
+
+    density_df = pd.DataFrame([
+        {
+            "pasta": folder,
+            "notas": v["notas"],
+            "links/nota": round(v["links_saida"] / v["notas"], 2) if v["notas"] else 0,
+        }
+        for folder, v in density_map.items()
+    ]).sort_values("links/nota", ascending=False)
+
+    chart_density = (
+        alt.Chart(density_df)
+        .mark_bar()
+        .encode(
+            x=alt.X("links/nota:Q", title="links de saída por nota"),
+            y=alt.Y("pasta:N", sort="-x", title=None),
+            color=alt.value("#2d7a4d"),
+            tooltip=["pasta:N", "notas:Q", "links/nota:Q"],
+        )
+        .properties(height=max(60, len(density_df) * 28), title="Densidade de links por pasta")
     )
+    mo.vstack([
+        mo.md("## Densidade de links"),
+        mo.ui.altair_chart(chart_density),
+    ])
+    return (density_df,)
+
+
+@app.cell
+def _(mo, notes, pd):
+    broken = [
+        {"nota": n["title"], "pasta": n["folder"], "link quebrado": bl}
+        for n in notes
+        for bl in n.get("brokenLinks", [])
+    ]
+    broken_df = pd.DataFrame(broken) if broken else pd.DataFrame()
+    mo.vstack([
+        mo.md(f"## Links quebrados\n\n{len(broken)} links apontam para notas que não existem no bundle."),
+        mo.ui.table(broken_df) if not broken_df.empty else mo.md("_Nenhum link quebrado detectado._"),
+    ])
+    return
+
+
+@app.cell
+def _(context, mo, pd):
+    if not context["isLocal"]:
+        live_check_result = mo.vstack([
+            mo.md("## Verificação ao vivo de links (local)"),
+            mo.callout(
+                mo.md("Execute com `uv run marimo edit` para verificar links contra o vault atual no disco."),
+                kind="info",
+            ),
+        ])
+    else:
+        import os
+        import re
+
+        _vault_root = context["cwd"]
+        _slug_re = re.compile(r"\[\[([^\]|#]+)")
+
+        def _slugify(title):
+            import unicodedata
+            t = unicodedata.normalize("NFD", title).encode("ascii", "ignore").decode()
+            return re.sub(r"[^a-z0-9-/]", "", re.sub(r"\s+", "-", t.lower().strip()))
+
+        _all_slugs = set()
+        for _root_dir, _, _files in os.walk(_vault_root):
+            for _f in _files:
+                if _f.endswith(".md"):
+                    _all_slugs.add(_slugify(os.path.splitext(_f)[0]))
+
+        live_broken = []
+        for _root_dir, _, _files in os.walk(_vault_root):
+            for _fname in _files:
+                if not _fname.endswith(".md"):
+                    continue
+                try:
+                    with open(os.path.join(_root_dir, _fname), encoding="utf-8") as _fp:
+                        _text = _fp.read()
+                    for _match in _slug_re.findall(_text):
+                        if _slugify(_match.strip()) not in _all_slugs:
+                            live_broken.append({"nota": _fname, "link": _match.strip()})
+                except Exception:
+                    pass
+
+        live_broken_df = pd.DataFrame(live_broken) if live_broken else pd.DataFrame()
+        live_check_result = mo.vstack([
+            mo.md(f"## Verificação ao vivo de links (local)\n\n{len(live_broken)} links para notas inexistentes no disco."),
+            mo.ui.table(live_broken_df) if not live_broken_df.empty else mo.md("_Nenhum link quebrado ao vivo._"),
+        ])
+
+    live_check_result
     return
 
 

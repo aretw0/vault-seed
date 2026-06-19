@@ -85,7 +85,7 @@ Para **ativar** uma regra adicional que faça sentido no seu contexto, consulte 
 **Antes de ativar algo novo**, teste contra seu conteúdo real:
 
 ```bash
-npx markdownlint --config .markdownlint.json "99 - Meta e Anexos/**/*.md"
+pnpm exec markdownlint --config .markdownlint.json "99 - Meta e Anexos/**/*.md"
 ```
 
 ---

@@ -303,7 +303,7 @@ except ImportError:
 
 
     def parse_feed_xml(xml_text: str, *, source_url: str = None, limit: int = 50):
-        import xml.etree.ElementTree as _ET
+        import defusedxml.ElementTree as _ET
         root = _ET.fromstring(xml_text)
         items = []
         channel = root.find("channel")
@@ -333,6 +333,19 @@ except ImportError:
             })
         return {"schemaVersion": 1, "kind": "feed", "format": "atom",
                 "source": source_url, "title": feed_title, "itemCount": len(items), "items": items}
+
+
+    async def fetch_wasm_json(url: str):
+        from pyodide.http import pyfetch  # type: ignore
+        response = await pyfetch(url)
+        return await response.json()
+
+
+    async def fetch_wasm_feed(url: str, *, limit: int = 50):
+        from pyodide.http import pyfetch  # type: ignore
+        response = await pyfetch(url)
+        xml_text = await response.string()
+        return parse_feed_xml(xml_text, source_url=url, limit=limit)
 
 
     def fetch_local_feed(url: str, *, timeout: int = 20, user_agent: str = "vault-seed-lab/1.0", limit: int = 50):

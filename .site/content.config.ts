@@ -181,6 +181,18 @@ export const collections = {
     schema: docsSchema({
       extend: z.object({
         showGraphView: z.boolean().optional(),
+        // Content licensing — per-note overrides vault.config.json site default.
+        // license: SPDX short ID or CC shorthand ("CC BY 4.0", "CC0", etc.)
+        // author:  displayed in footer when note has a distinct creator.
+        // attributions: third-party assets used in this note (images, icons, etc.)
+        license: z.string().optional(),
+        author: z.string().optional(),
+        attributions: z.array(z.object({
+          file:    z.string(),
+          license: z.string(),
+          author:  z.string().optional(),
+          source:  z.string().optional(),
+        })).optional(),
       }),
     }),
   }),

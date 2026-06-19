@@ -31,6 +31,10 @@ const KNOWN_TYPES = [
 ];
 
 // Pages that must contain at least one mermaid block.
+// recursos/mermaid is vault-seed reference content (status: published) and is
+// verified here. The smoke_template note-status contract enforces that it stays
+// published. Pages in 99 - Meta e Anexos/ are developer-only (removed by
+// initialize.yml) and are also verified here.
 const MERMAID_PAGES = [
   "recursos/mermaid",
   "meta-e-anexos/diagramas/exemplos",

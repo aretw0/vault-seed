@@ -6,7 +6,7 @@ aliases:
 tags:
   - meta/setup
   - meta/devenv
-status: published
+status: draft
 created: 2026-05-19
 updated: 2026-05-21
 category: guia
@@ -18,7 +18,34 @@ related:
 # Configurando Localmente
 
 Setup do ambiente local para usar o vault com VS Code, terminal e scripts
-de automação. Funciona no Windows (Git Bash ou WSL), macOS e Linux.
+de automação. Funciona no Windows, macOS e Linux.
+
+## Instalação rápida do dgk
+
+A CLI do vault (`dgk`) é distribuída via npm. Com Node.js 22+ instalado:
+
+**macOS / Linux:**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/aretw0/vault-seed/main/install.sh | sh
+```
+
+**Windows (PowerShell 7+):**
+
+```powershell
+irm https://raw.githubusercontent.com/aretw0/vault-seed/main/install.ps1 | iex
+```
+
+Ou diretamente:
+
+```bash
+npm install -g @aretw0/dgk-cli
+```
+
+Após a instalação, `dgk --version` confirma que está disponível globalmente.
+Depois, na raiz do vault: `dgk setup` configura o ambiente.
+
+---
 
 ## Ferramentas necessárias
 
@@ -45,7 +72,7 @@ winget install Schniz.fnm
 brew install fnm
 ```
 
-**Linux / WSL:**
+**Linux e WSL:**
 
 ```bash
 curl -fsSL https://fnm.vercel.app/install | bash
@@ -70,7 +97,7 @@ winget install --id=astral-sh.uv
 brew install uv
 ```
 
-**Linux / WSL:**
+**Linux, WSL ou shell compatível:**
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -94,73 +121,56 @@ winget install Python.Python.3
 brew install python
 ```
 
-**Linux / WSL:**
+**Distribuições Debian/Ubuntu e WSL:**
 
 ```bash
 sudo apt install python3
 ```
 
-## 4. Rodar o script de setup
+## 4. Configurar o ambiente local
 
-### Git Bash, WSL ou Linux/macOS
-
-Com as três ferramentas instaladas, rode na raiz do repositório:
+Com `dgk` instalado globalmente e as dependências acima disponíveis,
+rode na raiz do repositório clonado:
 
 ```bash
-bash scripts/setup.sh
+dgk setup
 ```
 
-O script configura:
+O comando configura:
 
 - Git (encoding UTF-8, template de commit)
 - `git-filter-repo` via `uv` (ferramenta de manutenção do histórico)
-- Node.js via `fnm` + `pnpm` via Corepack
-- Dependências do projeto (`pnpm install`)
+- Dependências Node.js via `pnpm install` (se ainda não instaladas)
 
-### Windows (PowerShell nativo, sem Git Bash ou WSL)
-
-Se você está no PowerShell puro, execute os passos manualmente:
-
-```powershell
-# 1. Ativar a versão correta do Node.js
-fnm use --install-if-missing
-
-# 2. Ativar o pnpm via Corepack
-corepack enable
-corepack prepare --activate
-
-# 3. Instalar dependências
-pnpm install --frozen-lockfile
-
-# 4. Configurar o Git
-git config core.autocrlf false
-git config core.eol lf
-git config i18n.commitEncoding utf-8
-git config i18n.logOutputEncoding utf-8
-```
-
-> O `scripts/setup.sh` usa bash. No Windows sem Git Bash ou WSL, execute
-> os passos acima manualmente uma vez. Para instalar o Git Bash (recomendado),
-> use `winget install Git.Git` — ele inclui um terminal bash completo.
+Funciona em Windows (PowerShell ou Git Bash), macOS e Linux — sem dependência de bash.
 
 ## 5. Verificar o ambiente
 
-```bash
-node -v      # deve mostrar v22.x
-pnpm --version
-uv --version
-```
-
-Depois rode a validação completa:
+`dgk setup` já roda esse diagnóstico ao final, mas você pode rodá-lo a
+qualquer momento:
 
 ```bash
-pnpm run validate
+dgk doctor
 ```
 
-Resultado esperado: todos os checks terminam sem erro. A auditoria editorial
-pode mostrar avisos sobre notas curtas ou possíveis promoções de pasta; esses
-avisos orientam curadoria futura, mas não bloqueiam quando o comando termina
-com sucesso.
+Confirma node, pnpm, uv, Python e os binários do `node_modules` em um único
+comando — sem precisar saber os nomes dos pacotes internos ou digitar
+`pnpm run` para verificar o ambiente.
+
+Depois verifique o vault:
+
+```bash
+dgk check
+```
+
+Resultado esperado: onboarding, arquitetura de informação, checagem de texto,
+avaliação de escrita e prosa das apresentações terminam sem erro. O avaliador
+vem no pacote npm `@aretw0/dgk-cli`; não há instalação pip separada. Avisos
+sobre notas curtas ou promoções de pasta orientam curadoria futura mas não
+bloqueiam.
+
+> **Desenvolvedor do template:** use `pnpm run validate` para o pipeline
+> completo de CI (testes, lint, smoke de site, etc.).
 
 ---
 

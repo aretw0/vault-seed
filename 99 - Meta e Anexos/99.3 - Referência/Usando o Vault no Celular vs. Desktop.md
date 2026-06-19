@@ -54,6 +54,3 @@ No celular, a abordagem é similar, usando aplicativos que se integram ao sistem
 
 *   **iOS:**
     *   **Opção prática:** [Working Copy](https://workingcopy.app/) é a alternativa mais conhecida para trabalhar com repositórios Git no iOS. Antes de adotar esse fluxo, confirme custo, permissões de arquivos e compatibilidade com a pasta que o Obsidian consegue abrir no seu dispositivo.
-
----
-Voltar para o [[Guia do Jardineiro Digital]]

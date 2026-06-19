@@ -33,6 +33,7 @@ export type ExploreNote = {
   created: string | null;
   updated: string | null;
   words: number;
+  description: string;
   summary: string;
   outgoing: string[];
 };
@@ -169,6 +170,8 @@ export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData
     const raw = readFileSync(join(cwd, file), 'utf-8');
     const { data, content } = matter(raw);
     if (data.status !== 'published') continue;
+    // audience: user-vault = ships published to user vaults but excluded from any site's explore/graph.
+    if (data.audience === 'user-vault') continue;
 
     const slug = makeSlug(normalizedFile);
     const title = data.title ? String(data.title) : basename(file, '.md');
@@ -197,6 +200,7 @@ export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData
       created: normalizeDate(data.created),
       updated: normalizeDate(data.updated),
       words: countWords(content),
+      description: typeof data.description === 'string' ? data.description : summarize(content),
       summary: summarize(content),
       outgoing: [],
       aliases: normalizeList(data.aliases),

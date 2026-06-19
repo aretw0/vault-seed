@@ -1,0 +1,180 @@
+{
+  "version": 1,
+  "description": "Regras determinísticas de qualidade de escrita para notas do vault. Adapte riskPatterns e audiences ao seu contexto.",
+  "riskPatterns": [
+    {
+      "id": "draft-markers",
+      "severity": "fail",
+      "description": "Marcadores de rascunho não devem ficar em notas promovidas.",
+      "regex": "(?-i:\\bTODO\\b|\\bFIXME\\b|\\bPENDENTE\\b|\\bPENDENTES\\b)"
+    },
+    {
+      "id": "ai-chatbot-artifacts",
+      "severity": "warn",
+      "description": "Remover artefatos conversacionais de chatbot no corpo da nota.",
+      "regex": "\\b(espero que isso ajude|se (quiser|precisar),? (posso|eu posso)|me avise se|posso detalhar|vamos mergulhar|vamos explorar|aqui est[aá] o que voc[eê] precisa saber|sem mais delongas)\\b"
+    },
+    {
+      "id": "ai-atribuicao-vaga",
+      "severity": "warn",
+      "description": "Evitar atribuições vagas sem fonte explícita.",
+      "regex": "\\b(especialistas (acreditam|afirmam|defendem)|observadores (apontam|notam)|alguns cr[ií]ticos (argumentam|afirmam)|relat[oó]rios do setor indicam)\\b"
+    },
+    {
+      "id": "ai-tropo-persuasivo",
+      "severity": "warn",
+      "description": "Evitar frases de autoridade retórica sem ganho de conteúdo.",
+      "regex": "\\b(em sua ess[eê]ncia|no cerne da quest[aã]o|o que realmente importa|a verdadeira quest[aã]o [ée]|fundamentalmente)\\b"
+    },
+    {
+      "id": "ai-conclusao-generica",
+      "severity": "fail",
+      "description": "Evitar conclusões genéricas ou promocionais sem dado verificável.",
+      "regex": "\\b(o futuro (parece|e|é) (promissor|brilhante)|tempos (empolgantes|animadores)|rumo [àa] excel[eê]ncia|passo (importante|decisivo) na dire[cç][aã]o certa)\\b"
+    },
+    {
+      "id": "autopromocao",
+      "severity": "warn",
+      "description": "Evitar autoelogio retórico — preferir mostrar o que foi feito em vez de declarar qualidade. Ver [[feedback_discurso_humildade_curadoria]].",
+      "regex": "\\b(somos (incr[ií]veis|os melhores|excelentes)|ferramenta (incr[ií]vel|revolucion[aá]ria)|muito orgulhosos (em|de) (anunciar|apresentar)|estamos (muito )?felizes em anunciar|simplesmente (incr[ií]vel|fant[aá]stico))\\b"
+    },
+    {
+      "id": "ai-filler-hedging",
+      "severity": "warn",
+      "description": "Evitar enchimentos e hedging excessivo típicos de texto sintético.",
+      "regex": "\\b(devido ao fato de que|com o intuito de|poderia potencialmente|pode-se dizer que|de certa forma)\\b"
+    },
+    {
+      "id": "metatransicao-redundante",
+      "severity": "info",
+      "description": "Frases de costura que só anunciam o próximo parágrafo sem ganho de conteúdo.",
+      "regex": "\\b(Com esse diagn[oó]stico|Partindo desse diagn[oó]stico|Com o panorama comparativo estabelecido|[ÀA] luz desse panorama|Com os fundamentos estabelecidos|Com esse enquadramento),?\\b"
+    }
+  ],
+  "mechanicalOpeners": {
+    "windowParagraphs": 8,
+    "phrases": [
+      "Também é",
+      "Também é importante",
+      "Também é recomendável",
+      "Também é necessário",
+      "Outro ponto",
+      "Além disso",
+      "Por fim",
+      "Em resumo",
+      "De forma geral",
+      "De modo geral",
+      "Vale ressaltar",
+      "Vale destacar",
+      "Cabe ressaltar",
+      "É importante notar",
+      "É importante destacar"
+    ]
+  },
+  "repetitionHeuristics": {
+    "paragraphStarter": {
+      "enabled": true,
+      "ngramWords": 2,
+      "windowParagraphs": 12,
+      "minOccurrencesInWindow": 3,
+      "minWordLength": 2,
+      "ignoreStarters": [
+        "de um",
+        "de uma",
+        "em um",
+        "em uma",
+        "por meio",
+        "a figura",
+        "o primeiro",
+        "a primeira",
+        "por exemplo"
+      ]
+    },
+    "sentenceStarter": {
+      "enabled": true,
+      "ngramWords": 3,
+      "windowSentences": 10,
+      "minOccurrencesInWindow": 3,
+      "minWordLength": 2,
+      "ignoreStarters": [
+        "por exemplo",
+        "em termos de",
+        "no entanto"
+      ]
+    },
+    "parallelCopula": {
+      "enabled": true,
+      "starterWords": 2,
+      "minWordLength": 2,
+      "maxFindings": 5
+    },
+    "paragraphTemplate": {
+      "enabled": true,
+      "windowParagraphs": 14,
+      "minOccurrencesInWindow": 4,
+      "maxWords": 12,
+      "minLiteralTokens": 3,
+      "ignoreTemplates": [
+        "a figura #",
+        "em termos de",
+        "por exemplo #"
+      ]
+    }
+  },
+  "longSentenceWords": 45,
+  "scanDirs": [
+    "20 - Projetos",
+    "30 - Áreas",
+    "40 - Recursos",
+    "99 - Meta e Anexos"
+  ],
+  "institutionalFiles": [
+    "README.md",
+    "ROADMAP.md",
+    "00 - Entrada/Bem-vindo ao seu vault.md"
+  ],
+  "profiles": {
+    "default": {},
+    "ultra-rigor": {
+      "longSentenceWords": 38,
+      "mechanicalOpeners": {
+        "windowParagraphs": 6
+      },
+      "repetitionHeuristics": {
+        "paragraphStarter": {
+          "windowParagraphs": 10,
+          "minOccurrencesInWindow": 3
+        },
+        "sentenceStarter": {
+          "windowSentences": 8,
+          "minOccurrencesInWindow": 3
+        },
+        "parallelCopula": {
+          "maxFindings": 3
+        },
+        "paragraphTemplate": {
+          "windowParagraphs": 12,
+          "minOccurrencesInWindow": 3
+        }
+      }
+    }
+  },
+  "audiences": {
+    "iniciante": {
+      "longSentenceWords": 32,
+      "mechanicalOpeners": {
+        "windowParagraphs": 6
+      }
+    },
+    "intermediario": {},
+    "avancado": {
+      "longSentenceWords": 55,
+      "repetitionHeuristics": {
+        "paragraphStarter": {
+          "minOccurrencesInWindow": 4
+        }
+      }
+    },
+    "todos": {}
+  }
+}

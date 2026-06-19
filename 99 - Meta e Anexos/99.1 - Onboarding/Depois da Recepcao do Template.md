@@ -8,7 +8,7 @@ tags:
   - meta/workflow
   - git/github
   - obsidian/git
-status: published
+status: draft
 created: 2026-05-19
 updated: 2026-05-19
 category: guia
@@ -24,7 +24,7 @@ related:
 
 # Depois da Recepção do Template
 
-Quando você cria um vault a partir do template, o workflow de inicialização faz a recepção: limpa histórico de release do template, renomeia arquivos `.template.md` e remove automações que só servem para manter o projeto original.
+Quando você cria um vault a partir do template, o workflow de inicialização faz a recepção: renomeia arquivos `.template.md` para os nomes finais e remove automações que só servem para manter o projeto original. O histórico de commits do template fica preservado no repositório.
 
 Depois disso, o repositório é seu. Esta nota ajuda a conferir se o ambiente ficou pronto para uso diário.
 
@@ -35,6 +35,19 @@ Depois disso, o repositório é seu. Esta nota ajuda a conferir se o ambiente fi
 3. Abra o repositório no GitHub Desktop ou no VS Code e veja se não há arquivos pendentes antes de editar.
 4. Configure o Obsidian Git seguindo [[Configurando o Obsidian Git]].
 5. Faça uma nota pequena em `00 - Entrada/`, rode um primeiro commit e confirme se ela aparece no GitHub.
+6. **Personalize** o arquivo `vault.config.json` na raiz do repositório: troque `"holder"` pelo seu nome ou apelido e revise a licença do conteúdo que deseja declarar. O campo `kudos` é opcional — defina uma mensagem sua ou remova-o para ter só a linha de licença no footer.
+
+```json
+{
+  "license": {
+    "type": "CC BY-SA 4.0",
+    "holder": "Seu Nome"
+  },
+  "kudos": "Feito com ♥"
+}
+```
+
+O campo `type` aceita qualquer variante CC (`CC BY 4.0`, `CC BY-NC-SA 4.0`, `CC0`, etc.) ou outro texto livre. O rodapé do site gerado exibirá `© ano · Seu Nome [licença]` e, se o campo `kudos` estiver presente, também mostrará a pílula personalizada. Para ter só a linha de licença, remova o campo `kudos` ou defina `"kudos": null`.
 
 ## O Que Virá Vazio — e É Intencional
 
@@ -89,7 +102,3 @@ No celular, o fluxo mais simples é deixar o Obsidian Git fazer pull e commit-an
 - [[MOC Vault Seed]] para ver o template como mapa navegável.
 - [[Evoluindo seu Vault com Links, Tags e MOCs]] para aprender quando usar links, tags, MOCs, Bases e Dataview.
 - [[Criando seu Painel de Controle (Dashboard)]] para montar uma página inicial do seu próprio vault.
-
----
-
-Voltar para [[Guia do Jardineiro Digital]]

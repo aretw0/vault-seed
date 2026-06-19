@@ -7,146 +7,298 @@ app = marimo.App(width="medium")
 @app.cell
 def _():
     import marimo as mo
-    import json
-    import os
 
-    return json, mo, os
+    return (mo,)
 
 
 @app.cell
-def _(json, os):
-    try:
-        import pyodide  # type: ignore
-        from pyodide.http import open_url  # type: ignore
-        _raw = open_url("./vault-data.json").read()
-        data = json.loads(_raw)
-    except ImportError:
-        _notebooks_path = os.environ.get("VAULT_NOTEBOOKS_PATH", "lab")
-        _path = os.path.join(os.getcwd(), "public", _notebooks_path, "vault-data.json")
-        with open(_path, encoding="utf-8") as _f:
-            data = json.load(_f)
-    notes = data["notes"]
-    return data, notes
-
-
-@app.cell
-def _(data, mo, notes):
-    mo.md(
-        f"# 📊 Análise de Publicação\n\n"
-        f"**{len(notes)} notas** no vault · gerado em `{data['generated'][:10]}`"
+def _():
+    from _lab_notebook_runtime import (
+        is_pyodide_runtime,
+        lab_runtime_context,
+        load_lab_manifest,
+        read_lab_dataset,
     )
+
+    manifest = load_lab_manifest()
+    perfil = read_lab_dataset("perfil-do-vault", manifest)
+    curadoria = read_lab_dataset("curadoria-ia", manifest)
+    context = lab_runtime_context()
+    return context, curadoria, is_pyodide_runtime, manifest, perfil
+
+
+@app.cell
+def _(context, mo, perfil):
+    mo.vstack([
+        mo.md(f"""
+# Análise de publicação
+
+Modo atual: **{"WASM · browser" if context["isPackaged"] else "local · Python"}**
+
+| Capacidade | WASM | Local | CI |
+|---|:---:|:---:|:---:|
+| Distribuição de status e pastas | ✓ | ✓ | ✓ |
+| Auditoria de arquitetura de informação | ✓ | ✓ | ✓ |
+| Timeline por data de publicação | — | ✓ | ✓ |
+| Lista de notas com filtro | — | ✓ | ✓ |
+
+- **{perfil["noteCount"]}** notas · **{perfil["totalWords"]:,}** palavras · média **{perfil["averageWords"]}** palavras/nota
+"""),
+    ])
     return
 
 
 @app.cell
-def _(mo, notes):
+def _(mo, perfil):
     import altair as alt
     import pandas as pd
-    from collections import Counter
 
-    _counts = Counter((n.get("status") or "sem status") for n in notes)
-    _df = pd.DataFrame([{"status": k, "count": v} for k, v in _counts.items()])
-    _chart = (
-        alt.Chart(_df)
+    statuses = perfil.get("statuses", [])
+    status_df = pd.DataFrame(statuses).rename(columns={"name": "status", "count": "notas"})
+
+    _color_map = {
+        "published": "#22c55e",
+        "ready": "#3b82f6",
+        "draft": "#f59e0b",
+        "sem status": "#94a3b8",
+    }
+    _domain = status_df["status"].tolist()
+    _range = [_color_map.get(s, "#cbd5e1") for s in _domain]
+
+    chart_status = (
+        alt.Chart(status_df)
         .mark_arc(innerRadius=50)
         .encode(
-            theta=alt.Theta("count:Q"),
+            theta=alt.Theta("notas:Q"),
             color=alt.Color(
                 "status:N",
-                scale=alt.Scale(
-                    domain=["published", "draft", "sem status"],
-                    range=["#22c55e", "#f59e0b", "#94a3b8"],
-                ),
+                scale=alt.Scale(domain=_domain, range=_range),
+                legend=alt.Legend(title="status"),
             ),
-            tooltip=["status:N", "count:Q"],
+            tooltip=["status:N", "notas:Q"],
         )
-        .properties(title="Status das Notas", width=300, height=300)
+        .properties(width=260, height=260, title="Status das notas")
     )
-    mo.ui.altair_chart(_chart)
-    return Counter, alt, pd
 
-
-@app.cell
-def _(Counter, alt, mo, notes, pd):
-    _counts = Counter(n["folder"] for n in notes)
-    _df = pd.DataFrame([{"pasta": k, "notas": v} for k, v in _counts.most_common()])
-    _chart = (
-        alt.Chart(_df)
+    folders = perfil.get("folders", [])
+    folder_df = pd.DataFrame(folders).rename(columns={"name": "pasta", "count": "notas"})
+    chart_folders = (
+        alt.Chart(folder_df)
         .mark_bar()
         .encode(
-            x=alt.X("notas:Q", title="Notas"),
-            y=alt.Y("pasta:N", sort="-x", title="Pasta"),
+            x=alt.X("notas:Q", title="notas"),
+            y=alt.Y("pasta:N", sort="-x", title=None),
+            color=alt.value("#2d7a4d"),
             tooltip=["pasta:N", "notas:Q"],
         )
-        .properties(title="Notas por Pasta", height=250)
+        .properties(height=max(60, len(folder_df) * 28), title="Notas por pasta")
     )
-    mo.ui.altair_chart(_chart)
-    return
+
+    mo.vstack([
+        mo.md("## Distribuição"),
+        mo.hstack([mo.ui.altair_chart(chart_status), mo.ui.altair_chart(chart_folders)]),
+    ])
+    return alt, folder_df, pd, status_df
 
 
 @app.cell
-def _(Counter, alt, mo, notes, pd):
-    _all_tags = [tag for n in notes for tag in n.get("tags", [])]
-    _counts = Counter(_all_tags).most_common(20)
-    _df = pd.DataFrame(_counts, columns=["tag", "count"])
-    _chart = (
-        alt.Chart(_df)
+def _(alt, mo, pd, perfil):
+    tags = perfil.get("tags", [])
+    tag_df = pd.DataFrame(tags).rename(columns={"name": "tag", "count": "ocorrências"}).head(20)
+
+    chart_tags = (
+        alt.Chart(tag_df)
         .mark_bar()
         .encode(
-            x=alt.X("count:Q", title="Frequência"),
-            y=alt.Y("tag:N", sort="-x", title="Tag"),
-            tooltip=["tag:N", "count:Q"],
+            x=alt.X("ocorrências:Q"),
+            y=alt.Y("tag:N", sort="-x", title=None),
+            color=alt.value("#1b5e3b"),
+            tooltip=["tag:N", "ocorrências:Q"],
         )
-        .properties(title="Top 20 Tags", height=400)
+        .properties(height=max(80, len(tag_df) * 22), title="Top 20 tags")
     )
-    mo.ui.altair_chart(_chart)
+    mo.vstack([
+        mo.md("## Tags"),
+        mo.ui.altair_chart(chart_tags),
+    ])
+    return (tag_df,)
+
+
+@app.cell
+def _(curadoria, mo, pd):
+    intent_dist = curadoria.get("intentDistribution", [])
+    promotion = curadoria.get("promotionCandidates", [])
+    thin = curadoria.get("thinPublishedResources", [])
+
+    parts = [mo.md("## Auditoria de arquitetura de informação")]
+
+    if intent_dist:
+        import altair as _alt
+        intent_df = pd.DataFrame(intent_dist).rename(columns={"label": "intenção", "count": "notas"})
+        chart_intent = (
+            _alt.Chart(intent_df)
+            .mark_bar()
+            .encode(
+                x=_alt.X("notas:Q"),
+                y=_alt.Y("intenção:N", sort="-x", title=None),
+                color=_alt.value("#2d7a4d"),
+                tooltip=["intenção:N", "notas:Q"],
+            )
+            .properties(height=max(60, len(intent_df) * 28), title="Distribuição de intenção")
+        )
+        parts.append(mo.ui.altair_chart(chart_intent))
+
+    if promotion:
+        promo_df = pd.DataFrame(promotion)
+        cols = [c for c in ["title", "folder", "status"] if c in promo_df.columns]
+        parts.append(mo.vstack([
+            mo.md(f"**{len(promotion)} candidatas a promoção** — notas que atendem critérios para mudar de status"),
+            mo.ui.table(promo_df[cols] if cols else promo_df),
+        ]))
+
+    if thin:
+        thin_df = pd.DataFrame(thin)
+        cols = [c for c in ["title", "folder", "words"] if c in thin_df.columns]
+        parts.append(mo.vstack([
+            mo.md(f"**{len(thin)} notas publicadas com conteúdo raso** — considere expandir ou arquivar"),
+            mo.ui.table(thin_df[cols] if cols else thin_df),
+        ]))
+
+    mo.vstack(parts)
     return
 
 
 @app.cell
-def _(mo, notes):
-    _no_title = [n for n in notes if n["title"] == n["id"].split("/")[-1].replace("-", " ")]
-    mo.md(f"## 🏷️ Notas sem título explícito\n\n{len(_no_title)} notas usam o basename como título.")
+def _(alt, context, mo, pd):
+    import os
+    import re
+
+    if not context["isLocal"]:
+        timeline_result = mo.vstack([
+            mo.md("## Timeline de publicação (local)"),
+            mo.callout(
+                mo.md("Execute com `uv run marimo edit` para ver a evolução de publicações por mês."),
+                kind="info",
+            ),
+        ])
+    else:
+        _vault_root = context["cwd"]
+        _folders_scan = [
+            "10 - Diário", "20 - Projetos", "30 - Áreas",
+            "40 - Recursos", "50 - Arquivo", "99 - Meta e Anexos",
+        ]
+        _date_re = re.compile(r"^(?:published_at|date|created):\s*(.+)$", re.MULTILINE)
+        _status_re = re.compile(r"^status:\s*(.+)$", re.MULTILINE)
+
+        rows = []
+        for _folder in _folders_scan:
+            _folder_path = os.path.join(_vault_root, _folder)
+            if not os.path.isdir(_folder_path):
+                continue
+            for _root, _, _files in os.walk(_folder_path):
+                for _fname in _files:
+                    if not _fname.endswith(".md"):
+                        continue
+                    try:
+                        with open(os.path.join(_root, _fname), encoding="utf-8") as _f:
+                            _text = _f.read(2000)
+                        _date_m = _date_re.search(_text)
+                        if not _date_m:
+                            continue
+                        _date_raw = _date_m.group(1).strip().strip('"').strip("'")[:10]
+                        _status_m = _status_re.search(_text)
+                        _status = _status_m.group(1).strip() if _status_m else "sem status"
+                        rows.append({"data": _date_raw, "status": _status, "pasta": _folder})
+                    except Exception:
+                        pass
+
+        if rows:
+            tl_df = pd.DataFrame(rows)
+            tl_df["mes"] = pd.to_datetime(tl_df["data"], errors="coerce").dt.to_period("M").astype(str)
+            tl_df = tl_df.dropna(subset=["mes"])
+            tl_month = (
+                tl_df.groupby(["mes", "status"])
+                .size()
+                .reset_index(name="notas")
+                .sort_values("mes")
+            )
+            chart_tl = (
+                alt.Chart(tl_month)
+                .mark_bar()
+                .encode(
+                    x=alt.X("mes:O", title="mês", axis=alt.Axis(labelAngle=-45)),
+                    y=alt.Y("notas:Q"),
+                    color=alt.Color(
+                        "status:N",
+                        scale=alt.Scale(
+                            domain=["published", "ready", "draft", "sem status"],
+                            range=["#22c55e", "#3b82f6", "#f59e0b", "#94a3b8"],
+                        ),
+                        legend=alt.Legend(title="status"),
+                    ),
+                    tooltip=["mes:O", "status:N", "notas:Q"],
+                )
+                .properties(
+                    height=220,
+                    title=f"Notas com data por mês ({len(rows)} notas com data detectada)",
+                )
+            )
+            timeline_result = mo.vstack([
+                mo.md("## Timeline de publicação (local)"),
+                mo.ui.altair_chart(chart_tl),
+            ])
+        else:
+            timeline_result = mo.vstack([
+                mo.md("## Timeline de publicação (local)"),
+                mo.callout(
+                    mo.md("Nenhuma nota com `published_at`, `date` ou `created` no frontmatter encontrada."),
+                    kind="warn",
+                ),
+            ])
+
+    timeline_result
     return
 
 
 @app.cell
-def _(mo, notes):
-    import pandas as _pd
-    _folders = sorted({n["folder"] for n in notes})
-    dropdown = mo.ui.dropdown(options=["Todas"] + _folders, value="Todas", label="Filtrar por pasta")
-    dropdown
-    return (dropdown,)
+def _(context, mo, pd, perfil):
+    if not context["isLocal"]:
+        filter_result = mo.vstack([
+            mo.md("## Maiores notas (local)"),
+            mo.callout(
+                mo.md("Execute localmente para filtrar notas individualmente."),
+                kind="info",
+            ),
+        ])
+        _notes_df = pd.DataFrame()
+    else:
+        largest = perfil.get("largestNotes", [])
+        _notes_df = pd.DataFrame(largest) if largest else pd.DataFrame()
+        _folders_opts = (
+            sorted(_notes_df["folder"].unique().tolist())
+            if not _notes_df.empty and "folder" in _notes_df.columns
+            else []
+        )
+        folder_filter = mo.ui.dropdown(
+            options=["Todas"] + _folders_opts,
+            value="Todas",
+            label="Filtrar por pasta",
+        )
+        filter_result = mo.vstack([
+            mo.md("## Maiores notas"),
+            folder_filter,
+        ])
+
+    filter_result
+    return (_notes_df,)
 
 
 @app.cell
-def _(dropdown, mo, notes):
-    import pandas as _pd2
-    _filtered = notes if dropdown.value == "Todas" else [n for n in notes if n["folder"] == dropdown.value]
-    _df = _pd2.DataFrame(_filtered)[["id", "title", "folder", "status"]]
-    mo.ui.table(_df)
-    return
-
-
-@app.cell
-def _(mo):
-    mo.md(
-        "## 🧭 Lane de entendimento\n\n"
-        "Passe da leitura de distribuição para uma disciplina editorial contínua:\n\n"
-        "### Nível inicial — visão\n\n"
-        "- Entender a composição do corpus por status, pasta e tag;\n"
-        "- Detectar notas com título fraco que exigem padronização.\n\n"
-        "### Nível intermediário — higiene\n\n"
-        "- Aplicar filtros por pasta/área antes da revisão final;\n"
-        "- Preparar plano para reduzir inconsistências de metadata e status.\n\n"
-        "### Nível avançado — governança\n\n"
-        "- Estabelecer meta de publicação por etapa e medir evolução por sprints;\n"
-        "- Consolidar regras de revisão cruzada e validar contratos de export.\n\n"
-        "### Nível de excelência — maturidade editorial\n\n"
-        "- Mapear gargalos por etapa e automatizar sinalização de bloqueios recorrentes;\n"
-        "- Criar playbook de revisão final com critérios de cobertura, qualidade e consistência;\n"
-        "- Transformar os alertas em métricas revisadas no fim de cada ciclo de publicação."
-    )
+def _(context, mo, _notes_df):
+    if context["isLocal"] and not _notes_df.empty:
+        mo.ui.table(_notes_df)
+    else:
+        mo.md("")
     return
 
 

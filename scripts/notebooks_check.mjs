@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { globSync } from "glob";
 import { writeVaultData } from "./generate_vault_data.mjs";
 import { buildLabDatasets } from "./prepare_lab_datasets.mjs";
+import { ensureLabDatasetSnapshots } from "./ensure_lab_snapshots.mjs";
 import { resolveNotebooksPath } from "./notebook_path.mjs";
 import { uvEnv } from "./uv_env.mjs";
 
@@ -27,6 +28,7 @@ function run(label, args) {
 
 const { data } = writeVaultData();
 console.log(`[notebooks:data] ${data.noteCount} notas`);
+ensureLabDatasetSnapshots();
 const { data: datasetData } = buildLabDatasets();
 console.log(`[notebooks:etl] ${datasetData.datasetCount} dataset(s)`);
 

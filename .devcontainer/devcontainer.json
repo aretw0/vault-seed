@@ -13,7 +13,9 @@
       "version": "22",
       "nodeGypDependencies": false
     },
-    "ghcr.io/jsburckhardt/devcontainer-features/uv:1": {}
+    "ghcr.io/jsburckhardt/devcontainer-features/uv:1": {
+      "version": "0.11.11"
+    }
   },
   "containerEnv": {
     "LANG": "pt_BR.UTF-8",

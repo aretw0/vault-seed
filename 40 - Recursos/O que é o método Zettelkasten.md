@@ -1,6 +1,6 @@
 ---
 title: O que é o método Zettelkasten
-status: published
+status: draft
 category: conceito
 audience: iniciante
 tags:

@@ -1,0 +1,26 @@
+{
+  "name": "@aretw0/dgk-channels",
+  "version": "0.1.0",
+  "description": "Platform-agnostic rate limiter and contact topology for dgk publishing pipelines",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js",
+    "./rate-limiter": "./src/rate_limiter.js",
+    "./contacts": "./src/contacts.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aretw0/vault-seed.git",
+    "directory": "packages/dgk-channels"
+  },
+  "license": "GPL-3.0-only",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  }
+}

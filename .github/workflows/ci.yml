@@ -26,6 +26,49 @@ jobs:
       - name: Validate third-party action pins
         run: node scripts/check_github_action_pins.mjs
 
+  test-python:
+    name: Python tests
+    needs: [action-pins]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Install uv
+        run: curl -fsSL https://astral.sh/uv/install.sh | sh && echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Run Python test suites
+        run: |
+          uv run python packages/cli/vendor/quality/test_avaliar_textos.py -v
+          uv run python packages/cli/vendor/quality/test_text_scorer.py -v
+          uv run python scripts/test_llm_client.py -v
+          uv run python packages/cli/vendor/quality/test_avaliar_apresentacoes.py -v
+
+  mdt-check:
+    name: MDT template drift (advisory)
+    needs: [action-pins]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@d8352f6b1d2e870bc5716e7a6d9b65c4cc244a1a # stable
+        with:
+          toolchain: stable
+
+      - name: Install mdt_cli
+        run: cargo install mdt_cli --locked --version 0.7.0
+
+      - name: Check MDT template sync
+        run: mdt check
+        # report-only: drift detectado não bloqueia merge
+
   validate:
     name: Validate vault
     needs: [action-pins]
@@ -40,6 +83,9 @@ jobs:
         uses: ./.github/actions/setup
         with:
           install-playwright: "true"
+
+      - name: Install uv
+        run: curl -fsSL https://astral.sh/uv/install.sh | sh && echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
       - name: Validate vault quality gates
         run: pnpm run validate

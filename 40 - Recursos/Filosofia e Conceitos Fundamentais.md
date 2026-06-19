@@ -1,6 +1,6 @@
 ---
 title: Filosofia e Conceitos Fundamentais
-status: published
+status: draft
 category: conceito
 audience: iniciante
 tags:
@@ -32,6 +32,4 @@ Não foque demais na estrutura de pastas no começo. Uma hierarquia rígida pode
 
 ## Como este vault combina métodos
 
-O [[O que é o método PARA]] fornece a estrutura operacional: projetos, áreas, recursos e arquivo. O [[O que é o método Zettelkasten]] inspira notas atômicas e conectadas. Os MOCs criam portais navegáveis quando o grafo fica grande demais para ser lido de uma só vez.
-
-Voltar para o [[Guia do Jardineiro Digital]].
+O [[O que é o método PARA]] fornece a estrutura operacional: projetos, áreas, recursos e arquivo. Já o [[O que é o método Zettelkasten]] inspira notas atômicas e conectadas. Os MOCs criam portais navegáveis quando o grafo fica grande demais para ser lido de uma só vez.

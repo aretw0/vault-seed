@@ -74,6 +74,3 @@ Para documentar um prompt de IA:
 3. Preencha objetivo, contexto, prompt enviado, critérios de boa resposta e ajustes para a próxima versão.
 
 Esse padrão mantém prompts auditáveis sem prender o vault a um fornecedor específico.
-
----
-Voltar para o [[Guia do Jardineiro Digital]]
