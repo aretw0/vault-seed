@@ -35,6 +35,8 @@ test("Lab ETL demo uses shared local/published runtime primitives", () => {
   const etlDemo = read("99 - Meta e Anexos/Notebooks/etl-demo.py");
 
   assert.match(runtime, /def read_lab_dataset/);
+  assert.match(runtime, /def lab_altair_chart/);
+  assert.match(runtime, /def lab_altair_status_color/);
   assert.match(runtime, /def write_local_json_snapshot/);
   assert.match(runtime, /def write_local_dataframe_snapshot/);
   assert.match(runtime, /def write_local_markdown_note/);
@@ -51,6 +53,25 @@ test("Lab ETL demo uses shared local/published runtime primitives", () => {
   assert.match(etlDemo, /Primitivas locais vs publicadas/);
   assert.match(etlDemo, /Extract local, carga publicada/);
   assert.match(etlDemo, /avisos editoriais não bloqueantes/);
+});
+
+test("published Lab charts use the shared Altair theme helpers", () => {
+  const runtime = read("99 - Meta e Anexos/Notebooks/_lab_notebook_runtime.py");
+  const exportHelpers = read("scripts/notebook_export_runtime_helpers.mjs");
+  const publicacao = read("99 - Meta e Anexos/Notebooks/analise-publicacao.py");
+  const grafo = read("99 - Meta e Anexos/Notebooks/analise-grafo.py");
+  const escrita = read("99 - Meta e Anexos/Notebooks/analise-escrita.py");
+
+  assert.match(runtime, /LAB_CHART_PALETTE/);
+  assert.match(exportHelpers, /"lab_altair_chart"/);
+  assert.match(exportHelpers, /"lab_altair_status_color"/);
+
+  for (const notebook of [publicacao, grafo, escrita]) {
+    assert.match(notebook, /lab_altair_chart/);
+  }
+
+  assert.match(publicacao, /lab_altair_status_color\(/);
+  assert.match(escrita, /lab_altair_status_color\(/);
 });
 
 test("published Lab pages keep the vault shell contract", () => {

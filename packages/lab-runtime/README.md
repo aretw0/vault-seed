@@ -23,6 +23,8 @@ from dgk_lab_runtime import (
     load_lab_manifest,
     read_lab_dataset,
     write_local_json_snapshot,
+    lab_altair_chart,
+    lab_altair_status_color,
     fetch_local_feed,
     fingerprint_data,
     with_data_provenance,
@@ -36,6 +38,9 @@ data = read_lab_dataset("my-dataset")
 
 # Write a versioned JSON snapshot to the vault
 write_local_json_snapshot("40 - Recursos/data/snapshot.json", data)
+
+# Keep charts aligned with the Lab shell instead of Vega defaults
+chart = lab_altair_chart(chart.encode(color=lab_altair_status_color("status:N")))
 ```
 
 ## Configuration

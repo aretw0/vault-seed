@@ -13,6 +13,8 @@ const LAB_RUNTIME_HELPER_EXPORT_NAMES = [
 	"write_local_json_snapshot",
 	"write_local_dataframe_snapshot",
 	"get_local_secret",
+	"lab_altair_chart",
+	"lab_altair_status_color",
 	"clean_lab_text",
 	"fingerprint_data",
 	"read_local_text_file",

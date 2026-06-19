@@ -14,6 +14,7 @@ def _():
 @app.cell
 def _():
     from _lab_notebook_runtime import (
+        lab_altair_chart,
         lab_runtime_context,
         load_lab_manifest,
         read_lab_dataset,
@@ -22,7 +23,7 @@ def _():
     manifest = load_lab_manifest()
     grafo = read_lab_dataset("grafo-do-vault", manifest)
     context = lab_runtime_context()
-    return context, grafo, manifest
+    return context, grafo, lab_altair_chart
 
 
 @app.cell
@@ -30,24 +31,24 @@ def _(context, grafo, mo):
     notes = grafo.get("notes", [])
     mo.vstack([
         mo.md(f"""
-# Análise de grafo
+    # Análise de grafo
 
-Modo atual: **{"WASM · browser" if context["isPackaged"] else "local · Python"}**
+    Modo atual: **{"WASM · browser" if context["isPackaged"] else "local · Python"}**
 
-| Capacidade | WASM | Local | CI |
-|---|:---:|:---:|:---:|
-| Hubs, órfãs e densidade de links | ✓ | ✓ | ✓ |
-| Links quebrados (bundle) | ✓ | ✓ | ✓ |
-| Links quebrados (verificação ao vivo) | — | ✓ | ✓ |
+    | Capacidade | WASM | Local | CI |
+    |---|:---:|:---:|:---:|
+    | Hubs, órfãs e densidade de links | ✓ | ✓ | ✓ |
+    | Links quebrados (bundle) | ✓ | ✓ | ✓ |
+    | Links quebrados (verificação ao vivo) | — | ✓ | ✓ |
 
-- **{grafo["noteCount"]}** notas · **{grafo["linkCount"]}** links
-"""),
+    - **{grafo["noteCount"]}** notas · **{grafo["linkCount"]}** links
+    """),
     ])
     return (notes,)
 
 
 @app.cell
-def _(mo, notes):
+def _(lab_altair_chart, mo, notes):
     import altair as alt
     import pandas as pd
 
@@ -55,7 +56,7 @@ def _(mo, notes):
     hubs = sorted(notes, key=lambda n: n["inbound"], reverse=True)[:10]
     hubs_df = pd.DataFrame(hubs)[["title", "folder", "inbound", "outbound"]]
 
-    chart_hubs = (
+    chart_hubs = lab_altair_chart(
         alt.Chart(hubs_df)
         .mark_bar()
         .encode(
@@ -71,7 +72,7 @@ def _(mo, notes):
         mo.md(f"## Hubs e órfãs\n\n**{len(hubs)} hubs** mais referenciadas · **{len(orphans)} notas órfãs** (sem links de entrada ou saída)"),
         mo.ui.altair_chart(chart_hubs),
     ])
-    return alt, hubs_df, orphans, pd
+    return alt, orphans, pd
 
 
 @app.cell
@@ -85,7 +86,7 @@ def _(mo, orphans, pd):
 
 
 @app.cell
-def _(alt, mo, notes, pd):
+def _(alt, lab_altair_chart, mo, notes, pd):
     from collections import defaultdict
 
     density_map = defaultdict(lambda: {"notas": 0, "links_saida": 0})
@@ -103,7 +104,7 @@ def _(alt, mo, notes, pd):
         for folder, v in density_map.items()
     ]).sort_values("links/nota", ascending=False)
 
-    chart_density = (
+    chart_density = lab_altair_chart(
         alt.Chart(density_df)
         .mark_bar()
         .encode(
@@ -118,7 +119,7 @@ def _(alt, mo, notes, pd):
         mo.md("## Densidade de links"),
         mo.ui.altair_chart(chart_density),
     ])
-    return (density_df,)
+    return
 
 
 @app.cell

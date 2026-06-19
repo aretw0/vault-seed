@@ -252,7 +252,7 @@ requireCondition(
   "Marimo exported notebooks must harden table, data-grid, and select colors for accessible dark/light themes.",
 );
 requireCondition(
-  /app = marimo\.App\(\r?\n    width="medium",\r?\n    layout_file="layouts\/visao-geral\.slides\.json",\r?\n\)/.test(presentationNotebook) &&
+  /app = marimo\.App\([\s\S]*?width="medium"[\s\S]*?layout_file="layouts\/visao-geral\.slides\.json"[\s\S]*?\)/.test(presentationNotebook) &&
     exists("99 - Meta e Anexos/Notebooks/apresentacoes/layouts/visao-geral.slides.json") &&
     !presentationNotebook.includes("mo.carousel") &&
     !presentationNotebook.includes("def slide(source):") &&

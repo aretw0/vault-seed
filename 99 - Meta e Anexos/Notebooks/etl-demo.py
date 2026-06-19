@@ -1,4 +1,4 @@
-﻿import marimo
+import marimo
 
 __generated_with = "0.23.9"
 app = marimo.App(width="medium")
@@ -41,18 +41,14 @@ def _():
     return (
         clean_lab_text,
         curation,
-        extract_local_image_text,
-        fetch_local_feed,
         fetch_local_url_text,
         fingerprint_data,
         get_local_secret,
         manifest,
-        read_lab_dataset,
         read_lab_json,
         read_local_text_file,
         runtime_context,
         runtime_sources,
-        scrape_local_page_text,
         snapshot,
         write_local_dataframe_snapshot,
         write_local_json_snapshot,
@@ -177,7 +173,7 @@ def _(DataLoader, DataTransformer, snapshot):
     export_json = loader.to_json(export_payload)
     export_csv = loader.to_csv(notes_df)
     snapshot_hash = loader.fingerprint(snapshot)
-    return dimensions_df, export_csv, export_json, export_payload, notes_df, pd, snapshot_hash
+    return dimensions_df, export_csv, export_json, notes_df, pd, snapshot_hash
 
 
 @app.cell
@@ -205,7 +201,7 @@ def _(mo, runtime_context):
         "acesso a arquivos, Playwright, OCR ou segredos, e continuar segura quando "
         "for exportada para HTML/WASM."
     )
-    return runtime_rows
+    return (runtime_rows,)
 
 
 @app.cell
@@ -290,7 +286,7 @@ def _(mo, pd):
         ),
         mo.ui.table(primitives),
     ])
-    return primitives,
+    return
 
 
 @app.cell
@@ -399,11 +395,17 @@ def _(
         ),
         mo.ui.table(local_probe_rows),
     ])
-    return local_probe_rows,
+    return
 
 
 @app.cell
-def _(mo, run_local_extract, runtime_context, snapshot, write_local_json_snapshot):
+def _(
+    mo,
+    run_local_extract,
+    runtime_context,
+    snapshot,
+    write_local_json_snapshot,
+):
     if run_local_extract.value and runtime_context["isLocal"]:
         payload = {
             "schemaVersion": 1,
@@ -486,7 +488,7 @@ def _(mo, pd, runtime_context):
         ),
         mo.ui.table(capabilities),
     ])
-    return capabilities, local_status
+    return
 
 
 @app.cell
@@ -565,7 +567,7 @@ def _(export_csv, export_json, mo, snapshot_hash):
 
 
 @app.cell
-def _(mo, runtime_sources):
+def _(mo):
     load_remote = mo.ui.checkbox(
         label="Carregar exemplo remoto no navegador",
         value=False,
@@ -579,7 +581,7 @@ def _(mo, runtime_sources):
         ),
         load_remote,
     ])
-    return load_remote
+    return (load_remote,)
 
 
 @app.cell
@@ -665,17 +667,17 @@ def _(get_local_secret, mo, runtime_context):
 
 @app.cell
 def _(mo):
-    mo.md(
-        "## Ciclo ETL no CI\n\n"
-        "O workflow `refresh-lab-data.yml` repete este ciclo diariamente:\n\n"
-        "1. **Extract** — `pnpm run notebooks:etl` lê as notas do vault e as fontes externas\n"
-        "2. **Transform** — scripts em `scripts/` normalizam e enriquecem os dados\n"
-        "3. **Load** — os arquivos em `.dgk/` são commitados com `[skip ci]` "
-        "para não disparar novamente o workflow de deploy\n\n"
-        "O notebook é a interface humana para o mesmo ciclo. "
-        "O CI é a automação sem interface. "
-        "Os datasets em `.dgk/` são o ponto de encontro entre os dois."
-    )
+    mo.md("""
+    ## Ciclo ETL no CI
+
+    O workflow `refresh-lab-data.yml` repete este ciclo diariamente:
+
+    1. **Extract** — `pnpm run notebooks:etl` lê as notas do vault e as fontes externas
+    2. **Transform** — scripts em `scripts/` normalizam e enriquecem os dados
+    3. **Load** — os arquivos em `.dgk/` são commitados com `[skip ci]` para não disparar novamente o workflow de deploy
+
+    O notebook é a interface humana para o mesmo ciclo. O CI é a automação sem interface. Os datasets em `.dgk/` são o ponto de encontro entre os dois.
+    """)
     return
 
 

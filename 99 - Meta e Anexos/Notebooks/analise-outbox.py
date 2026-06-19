@@ -14,6 +14,8 @@ def _():
 @app.cell
 def _():
     from _lab_notebook_runtime import (
+        lab_altair_chart,
+        lab_altair_status_color,
         lab_runtime_context,
         load_lab_manifest,
         read_lab_dataset,
@@ -22,7 +24,7 @@ def _():
     manifest = load_lab_manifest()
     outbox = read_lab_dataset("outbox-publicacao", manifest)
     context = lab_runtime_context()
-    return context, manifest, outbox
+    return context, lab_altair_chart, lab_altair_status_color, outbox
 
 
 @app.cell
@@ -30,30 +32,30 @@ def _(context, mo, outbox):
     policy = outbox.get("policy", {})
     mo.vstack([
         mo.md(f"""
-# Outbox multi-canal
+    # Outbox multi-canal
 
-Modo atual: **{"WASM · browser" if context["isPackaged"] else "local · Python"}**
+    Modo atual: **{"WASM · browser" if context["isPackaged"] else "local · Python"}**
 
-| Capacidade | WASM | Local | CI |
-|---|:---:|:---:|:---:|
-| Itens por canal e status | ✓ | ✓ | ✓ |
-| Tabela de candidatos com filtro | ✓ | ✓ | ✓ |
-| Prévia de caption Instagram | ✓ | ✓ | ✓ |
-| Modelo mínimo de frontmatter | ✓ | ✓ | ✓ |
-| Prévia de thread social (conteúdo real) | — | ✓ | — |
-| Checklist interativo de publicação | — | ✓ | — |
+    | Capacidade | WASM | Local | CI |
+    |---|:---:|:---:|:---:|
+    | Itens por canal e status | ✓ | ✓ | ✓ |
+    | Tabela de candidatos com filtro | ✓ | ✓ | ✓ |
+    | Prévia de caption Instagram | ✓ | ✓ | ✓ |
+    | Modelo mínimo de frontmatter | ✓ | ✓ | ✓ |
+    | Prévia de thread social (conteúdo real) | — | ✓ | — |
+    | Checklist interativo de publicação | — | ✓ | — |
 
-- candidatos: **{outbox.get("itemCount", 0)}**
-- revisão humana obrigatória: **{policy.get("humanReviewRequired", True)}**
-- dry-run primeiro: **{policy.get("dryRunFirst", True)}**
-- coletado em: `{outbox.get("collectedAt", "—")}`
-"""),
+    - candidatos: **{outbox.get("itemCount", 0)}**
+    - revisão humana obrigatória: **{policy.get("humanReviewRequired", True)}**
+    - dry-run primeiro: **{policy.get("dryRunFirst", True)}**
+    - coletado em: `{outbox.get("collectedAt", "—")}`
+    """),
     ])
     return
 
 
 @app.cell
-def _(mo, outbox):
+def _(lab_altair_chart, lab_altair_status_color, mo, outbox):
     import altair as alt
     import pandas as pd
 
@@ -72,17 +74,17 @@ def _(mo, outbox):
 
         _status_colors = {"published": "#22c55e", "ready": "#3b82f6", "draft": "#f59e0b"}
         _domain = ch_df["status"].unique().tolist()
-        _range = [_status_colors.get(s, "#94a3b8") for s in _domain]
 
-        chart_channels = (
+        chart_channels = lab_altair_chart(
             alt.Chart(ch_summary)
             .mark_bar()
             .encode(
                 x=alt.X("notas:Q"),
                 y=alt.Y("canal:N", sort="-x", title=None),
-                color=alt.Color(
+                color=lab_altair_status_color(
                     "status:N",
-                    scale=alt.Scale(domain=_domain, range=_range),
+                    domain=_domain,
+                    colors=_status_colors,
                 ),
                 tooltip=["canal:N", "status:N", "notas:Q"],
             )
@@ -104,11 +106,11 @@ def _(mo, outbox):
             ),
         ])
     channel_result
-    return alt, items, pd
+    return items, pd
 
 
 @app.cell
-def _(items, mo, pd):
+def _(items, mo):
     _channel_opts = sorted({ch for item in items for ch in (item.get("channels") or [])})
     channel_filter = mo.ui.dropdown(
         options=["Todos"] + _channel_opts,
@@ -134,12 +136,13 @@ def _(channel_filter, items, mo, pd):
         }
 
     if not items:
-        mo.md("_Nenhum candidato no outbox._")
+        candidates_result = mo.md("_Nenhum candidato no outbox._")
     elif channel_filter.value == "Todos":
-        mo.ui.table(pd.DataFrame([_row(i) for i in items]))
+        candidates_result = mo.ui.table(pd.DataFrame([_row(i) for i in items]))
     else:
         _filtered = [i for i in items if channel_filter.value in (i.get("channels") or [])]
-        mo.ui.table(pd.DataFrame([_row(i) for i in _filtered]) if _filtered else pd.DataFrame())
+        candidates_result = mo.ui.table(pd.DataFrame([_row(i) for i in _filtered]) if _filtered else pd.DataFrame())
+    candidates_result
     return
 
 
