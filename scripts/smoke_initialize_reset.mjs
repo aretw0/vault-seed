@@ -48,6 +48,10 @@ if (/VAULT_ADMIN_TOKEN|branches\/main\/protection|administration:\s*write/.test(
   );
 }
 
+if (!initializeWorkflow.includes("github.repository != 'aretw0/vault-seed'")) {
+  errors.push("initialize.yml must skip itself in the source template repository.");
+}
+
 for (const notePath of DRAFT_IN_SOURCE) {
   const fullPath = join(root, notePath);
 
