@@ -56,6 +56,7 @@ export function parseOpmlFeeds(opmlText) {
         htmlUrl: attrs.htmlUrl || null,
         type: attrs.type || "rss",
         description: attrs.description || null,
+        group: categories[0] || null,
         categories: Array.from(new Set(categories)),
       });
     } else if (label) {

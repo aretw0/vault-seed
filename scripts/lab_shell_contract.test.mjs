@@ -144,6 +144,8 @@ test("published Lab pages keep the vault shell contract", () => {
 
   assert.match(marimoCss, /#vg-tooltip-element/);
   assert.match(marimoCss, /\.vega-embed svg text/);
+  assert.match(marimoCss, /marimo-table[\s\S]*width: fit-content/);
+  assert.match(marimoCss, /data-vault-marimo-presentation="slides"[\s\S]*\.mo-slide-content \.markdown table[\s\S]*display: table/);
   assert.match(responsiveSmoke, /assertPublishedVegaUsesSvg/);
   assert.match(responsiveSmoke, /\.chart-wrapper canvas/);
   assert.match(responsiveSmoke, /\.chart-wrapper svg/);

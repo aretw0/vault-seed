@@ -186,11 +186,15 @@ def _(mo):
     mo.md("""
     ## Fechamento
 
-    O ponto não é escolher um agente vencedor.
+    O agente não substitui o processo do vault; ele entra dentro dele.
 
-    O ponto é manter o trabalho em arquivos, comandos e diffs que qualquer
-    pessoa consegue revisar. Quando a IA ajuda, ela entra no mesmo processo
-    que já protege o vault: Git, testes, CI e decisão humana.
+    - `AGENTS.md` define o contrato do repositório
+    - As mudanças aparecem como arquivos e diffs
+    - Os comandos de validação continuam sendo o critério
+    - A decisão final continua humana
+
+    Próximo passo: usar um agente para uma tarefa pequena, revisar o diff e
+    só então deixar o CI confirmar que a mudança cabe no projeto.
     """)
     return
 

@@ -166,10 +166,16 @@ def _(mo):
     mo.md("""
     ## Fechamento
 
-    O Lab é a bancada de leitura do vault: ele explica o que foi coletado,
-    mostra limites do ambiente e reaproveita snapshots versionados. Quando uma
-    análise precisa de rede, segredo ou filesystem, ela roda localmente antes
-    de virar artefato publicado.
+    O Lab não é outro produto dentro do vault. Ele é a camada de leitura para
+    perguntas que Markdown sozinho não responde bem.
+
+    - O ETL prepara snapshots versionados
+    - O notebook explica o dado e seus limites
+    - O HTML publicado mostra o resultado sem exigir servidor
+    - O modo local fica para rede, filesystem, OCR e segredos
+
+    Próximo passo: abrir um notebook publicado e comparar com o mesmo notebook
+    rodando localmente via `dgk lab <nome>`.
     """)
     return
 

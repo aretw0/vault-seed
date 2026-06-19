@@ -180,9 +180,15 @@ def _(mo):
     mo.md("""
     ## Fechamento
 
-    O vault-seed é uma base inicial, não uma promessa de automação mágica.
-    Ele entrega convenções, validações e caminhos de publicação para que você
-    possa evoluir o próprio sistema sem perder rastreabilidade.
+    A ideia central é simples: o repositório é a fonte de verdade.
+
+    - As notas ficam em Markdown
+    - O histórico fica no Git
+    - O site e o Lab são artefatos gerados
+    - As automações entram como apoio, não como obrigação
+
+    Próximo passo: criar o repositório a partir do template, deixar a
+    inicialização rodar e abrir o vault no editor em que você já trabalha.
     """)
     return
 

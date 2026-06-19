@@ -195,9 +195,15 @@ def _(mo):
     mo.md("""
     ## Fechamento
 
-    A publicação aqui é uma cadeia curta e auditável: Markdown, validação,
-    build estático, outbox e revisão humana. O objetivo é reduzir surpresa,
-    não substituir julgamento editorial.
+    Publicar no vault é uma decisão registrada, não um efeito colateral.
+
+    - `status: published` coloca a nota no site e no RSS
+    - `channels` prepara envio para canais externos
+    - A outbox separa revisar de publicar
+    - O CI impede que o site avance com quebra conhecida
+
+    Próximo passo: escolher uma nota, promover para `published`, rodar o build
+    e verificar o resultado antes de acionar qualquer canal.
     """)
     return
 

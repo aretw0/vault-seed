@@ -70,10 +70,13 @@ def _(feeds, mo):
         url = sub.get("xmlUrl") or ""
         html_url = sub.get("htmlUrl") or ""
         parsed = urlparse(url if "://" in url else html_url)
+        categories = sub.get("categories") or []
+        group = sub.get("group") or (categories[0] if categories else "Sem grupo")
         rows.append({
             "título": sub.get("title"),
             "domínio": parsed.netloc or "local",
-            "grupo": sub.get("group") or "—",
+            "grupo": group,
+            "categorias": ", ".join(categories) if categories else "—",
             "feed": url,
         })
     feeds_df = pd.DataFrame(rows)
@@ -241,7 +244,7 @@ def _(feeds_df, mo, pd):
         mo.md(
             "## Candidatas para inbox\n\n"
             "A tabela abaixo não cria notas automaticamente. "
-            "Ela mostra o formato de triagem: feed observado → decisão humana."
+            "Ela mostra o formato de triagem: feed observado -> decisão humana."
         ),
         mo.ui.table(candidates_df),
     ])

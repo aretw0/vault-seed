@@ -14,5 +14,6 @@ test("parseOpmlFeeds extracts nested RSS subscriptions with categories", () => {
   assert.equal(parsed.subscriptions.length, 1);
   assert.equal(parsed.subscriptions[0].title, "Feed Exemplo");
   assert.equal(parsed.subscriptions[0].xmlUrl, "https://example.com/feed.xml");
+  assert.equal(parsed.subscriptions[0].group, "Tecnologia");
   assert.deepEqual(parsed.subscriptions[0].categories, ["Tecnologia", "web", "pesquisa"]);
 });
