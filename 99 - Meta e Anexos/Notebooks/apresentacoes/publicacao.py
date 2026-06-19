@@ -190,5 +190,17 @@ def _(mo):
     return
 
 
+@app.cell
+def _(mo):
+    mo.md("""
+    ## Fechamento
+
+    A publicação aqui é uma cadeia curta e auditável: Markdown, validação,
+    build estático, outbox e revisão humana. O objetivo é reduzir surpresa,
+    não substituir julgamento editorial.
+    """)
+    return
+
+
 if __name__ == "__main__":
     app.run()

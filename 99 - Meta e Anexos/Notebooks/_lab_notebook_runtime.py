@@ -266,6 +266,9 @@ except ImportError:
 
     def lab_altair_chart(chart):
         """Aplica acabamento visual comum aos gráficos Altair do Lab."""
+        import altair as _alt
+
+        _alt.renderers.set_embed_options(renderer="svg")
         return (
             chart.configure_axis(
                 labelColor=LAB_CHART_PALETTE["text"],
@@ -355,7 +358,11 @@ except ImportError:
 
 
     def parse_feed_xml(xml_text: str, *, source_url: str = None, limit: int = 50):
-        import defusedxml.ElementTree as _ET
+        try:
+            import defusedxml.ElementTree as _ET
+        except ModuleNotFoundError:
+            import xml.etree.ElementTree as _ET
+
         root = _ET.fromstring(xml_text)
         items = []
         channel = root.find("channel")

@@ -175,5 +175,17 @@ def _(mo):
     return
 
 
+@app.cell
+def _(mo):
+    mo.md("""
+    ## Fechamento
+
+    O vault-seed é uma base inicial, não uma promessa de automação mágica.
+    Ele entrega convenções, validações e caminhos de publicação para que você
+    possa evoluir o próprio sistema sem perder rastreabilidade.
+    """)
+    return
+
+
 if __name__ == "__main__":
     app.run()

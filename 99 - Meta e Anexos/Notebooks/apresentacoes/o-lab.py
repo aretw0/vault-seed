@@ -161,5 +161,18 @@ def _(dataset_count, mo, note_count):
     return
 
 
+@app.cell
+def _(mo):
+    mo.md("""
+    ## Fechamento
+
+    O Lab é a bancada de leitura do vault: ele explica o que foi coletado,
+    mostra limites do ambiente e reaproveita snapshots versionados. Quando uma
+    análise precisa de rede, segredo ou filesystem, ela roda localmente antes
+    de virar artefato publicado.
+    """)
+    return
+
+
 if __name__ == "__main__":
     app.run()

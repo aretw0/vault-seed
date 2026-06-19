@@ -375,6 +375,66 @@ async function assertLabShellLayout(page, target, viewport, label) {
   }
 }
 
+async function assertPublishedVegaUsesSvg(page, target, label, externalNetworkAvailable) {
+  if (target.type !== "notebook" || !externalNetworkAvailable) {
+    return;
+  }
+
+  const vegaCount = await page.locator("marimo-vega").count().catch(() => 0);
+  if (vegaCount === 0) {
+    return;
+  }
+
+  await page
+    .waitForFunction(
+      () =>
+        Array.from(document.querySelectorAll("marimo-vega")).every((element) =>
+          String(element.getAttribute("data-embed-options") || "").includes('"renderer":"svg'),
+        ),
+      null,
+      { timeout: 10000 },
+    )
+    .catch(() => {});
+
+  await page
+    .waitForFunction(
+      () =>
+        Array.from(document.querySelectorAll("marimo-vega")).some((element) => {
+          const shadow = element.shadowRoot;
+          return Boolean(shadow?.querySelector(".chart-wrapper canvas, .chart-wrapper svg"));
+        }),
+      null,
+      { timeout: 30000 },
+    )
+    .catch(() => {});
+
+  const report = await page.evaluate(() => {
+    return Array.from(document.querySelectorAll("marimo-vega")).map((element) => {
+      const shadow = element.shadowRoot;
+      return {
+        embedOptions: element.getAttribute("data-embed-options") || "",
+        canvasCount: shadow?.querySelectorAll(".chart-wrapper canvas").length ?? 0,
+        svgCount: shadow?.querySelectorAll(".chart-wrapper svg").length ?? 0,
+      };
+    });
+  });
+
+  const missingRenderer = report.filter((item) => !item.embedOptions.includes('"renderer":"svg'));
+  if (missingRenderer.length > 0) {
+    fail(`${label}: published Vega chart is missing renderer=svg embed options`);
+  }
+
+  const canvasCount = report.reduce((total, item) => total + item.canvasCount, 0);
+  if (canvasCount > 0) {
+    fail(`${label}: published Vega chart rendered ${canvasCount} canvas element(s) instead of SVG`);
+  }
+
+  const svgCount = report.reduce((total, item) => total + item.svgCount, 0);
+  if (svgCount === 0) {
+    fail(`${label}: published Vega chart did not render an SVG chart`);
+  }
+}
+
 function parsePx(value) {
   const number = Number.parseFloat(value);
   return Number.isFinite(number) ? number : null;
@@ -609,6 +669,7 @@ async function run() {
         );
         await assertLabShellLayout(page, effectiveTarget, viewport, label);
         await assertThemeSelectorDoesNotCoverMarimoBadge(page, effectiveTarget, viewport, label);
+        await assertPublishedVegaUsesSvg(page, effectiveTarget, label, externalNetworkAvailable);
       }
 
       await context.close();

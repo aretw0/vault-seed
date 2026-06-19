@@ -39,8 +39,8 @@ def _(mo):
     mo.md("""
     ## AGENTS.md: o contrato agnóstico
 
-    `AGENTS.md` é o system prompt do repositório — lido por Claude, Codex,
-    Gemini, Pi ou qualquer agente que respeite convenções de arquivo.
+    `AGENTS.md` é o contrato operacional do repositório — lido por Codex,
+    Claude, Gemini, Pi ou qualquer agente que respeite convenções de arquivo.
 
     O que ele define:
     - Persona e área de expertise esperada
@@ -56,19 +56,19 @@ def _(mo):
 @app.cell
 def _(mo):
     mo.md("""
-    ## Pi: terminal coding harness
+    ## Pi: harness de terminal
 
     Pi é um coding harness de terminal criado pela Earendil Inc. (pi.dev).
-    Assim como Claude Code, opera diretamente no repositório via terminal:
-    lê e edita arquivos, executa comandos e propõe diffs para revisão.
+    Ele opera diretamente no repositório via terminal: lê e edita arquivos,
+    executa comandos e propõe diffs para revisão.
 
     O diferencial é a extensibilidade: o núcleo é minimal e o usuário
     adiciona capacidades via skills TypeScript, templates de prompt
     e integrações com múltiplos provedores de IA.
 
-    No vault, Pi pode ser usado para as mesmas tarefas que Claude Code:
-    editar notas, refatorar scripts, rodar validações e criar commits.
-    O `AGENTS.md` instrui qualquer agente que respeite convenções de arquivo.
+    No vault, Pi é uma opção para tarefas como editar notas, refatorar scripts,
+    rodar validações e criar commits. O `AGENTS.md` mantém a orientação
+    fora de um provider específico.
     """)
     return
 
@@ -76,9 +76,9 @@ def _(mo):
 @app.cell
 def _(mo):
     mo.md("""
-    ## Claude Code: o arquiteto no terminal
+    ## Agentes no terminal
 
-    Claude Code opera diretamente no repositório via terminal:
+    Um agente de terminal opera diretamente no repositório:
 
     - Lê e edita arquivos `.py`, `.md`, `.ts`, `.json`
     - Roda comandos de validação (`pnpm run validate`, `notebooks:check`)
@@ -88,8 +88,8 @@ def _(mo):
     O diff é sempre revisável. Nenhuma mudança chega ao repositório
     sem passar pelo Git e pelo CI.
 
-    `AGENTS.md` instrui o agente sobre o projeto.
-    `CLAUDE.md` aponta para `AGENTS.md` como fonte canônica.
+    `AGENTS.md` instrui o agente sobre o projeto. Arquivos de compatibilidade,
+    como `CLAUDE.md`, devem apontar para essa fonte canônica.
     """)
     return
 
@@ -119,7 +119,7 @@ def _(mo):
     mo.md("""
     ## Lab com IA: curadoria de feeds
 
-    `curadoria-feeds-ia.py` classifica itens de feed com Claude API:
+    `curadoria-feeds-ia.py` classifica itens de feed com um provider de IA:
 
     ```python
     # local-only: usa get_local_secret("ANTHROPIC_API_KEY")
@@ -146,7 +146,7 @@ def _(mo):
     **Local-first**: o trabalho acontece no computador. A nuvem é espelho,
     não origem. Os dados são seus antes de qualquer sync.
 
-    **Agnóstico de provider**: Claude hoje, outro modelo amanhã.
+    **Agnóstico de provider**: um modelo hoje, outro amanhã.
     GitHub agora, outro host Git depois. A interface é o arquivo.
 
     **Auditável**: cada transformação tem um script. Cada publicação
@@ -166,7 +166,7 @@ def _(mo):
 
     ```
     Nota em 00 - Entrada/
-        → Claude (ou outro agente) revisa, enriquece, move para a pasta certa
+        → agente opcional revisa, enriquece, move para a pasta certa
         → Lint e CI validam
         → Frontmatter muda para published
         → Site atualiza via deploy
@@ -177,6 +177,20 @@ def _(mo):
     Em cada etapa: arquivo editável, diff revisável, histórico preservado.
 
     **Os agentes são ferramentas. A soberania é sua.**
+    """)
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md("""
+    ## Fechamento
+
+    O ponto não é escolher um agente vencedor.
+
+    O ponto é manter o trabalho em arquivos, comandos e diffs que qualquer
+    pessoa consegue revisar. Quando a IA ajuda, ela entra no mesmo processo
+    que já protege o vault: Git, testes, CI e decisão humana.
     """)
     return
 

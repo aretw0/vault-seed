@@ -56,20 +56,31 @@ def _(lab_altair_chart, mo, notes):
     hubs = sorted(notes, key=lambda n: n["inbound"], reverse=True)[:10]
     hubs_df = pd.DataFrame(hubs)[["title", "folder", "inbound", "outbound"]]
 
+    base_hubs = alt.Chart(hubs_df)
     chart_hubs = lab_altair_chart(
-        alt.Chart(hubs_df)
-        .mark_bar()
-        .encode(
-            x=alt.X("inbound:Q", title="links recebidos"),
-            y=alt.Y("title:N", sort="-x", title=None),
-            color=alt.value("#1b5e3b"),
-            tooltip=["title:N", "folder:N", "inbound:Q", "outbound:Q"],
+        (
+            base_hubs
+            .mark_bar()
+            .encode(
+                x=alt.X("inbound:Q", title="links recebidos"),
+                y=alt.Y("title:N", sort="-x", title=None),
+                color=alt.value("#1b5e3b"),
+                tooltip=["title:N", "folder:N", "inbound:Q", "outbound:Q"],
+            )
+            + base_hubs
+            .mark_text(align="left", baseline="middle", dx=4)
+            .encode(
+                x=alt.X("inbound:Q"),
+                y=alt.Y("title:N", sort="-x"),
+                text=alt.Text("inbound:Q"),
+                color=alt.value("#3d3935"),
+            )
         )
         .properties(height=max(80, len(hubs_df) * 28), title="Top 10 hubs (mais referenciadas)")
     )
 
     mo.vstack([
-        mo.md(f"## Hubs e órfãs\n\n**{len(hubs)} hubs** mais referenciadas · **{len(orphans)} notas órfãs** (sem links de entrada ou saída)"),
+        mo.md(f"## Hubs e órfãs\n\nAs barras mostram quantos links internos apontam para cada nota. **{len(hubs)} hubs** mais referenciadas · **{len(orphans)} notas órfãs** (sem links de entrada ou saída)"),
         mo.ui.altair_chart(chart_hubs),
     ])
     return alt, orphans, pd

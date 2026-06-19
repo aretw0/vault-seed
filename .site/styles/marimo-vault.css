@@ -1022,6 +1022,13 @@ iframe {
   font-size: clamp(1.05rem, 1.15vw, 1.3rem);
 }
 
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content .markdown table,
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content .prose table {
+  width: max-content;
+  max-width: 100%;
+  margin-inline: auto;
+}
+
 [data-vault-marimo-fullscreen-button] {
   min-width: 2.25rem !important;
   min-height: 2.25rem !important;

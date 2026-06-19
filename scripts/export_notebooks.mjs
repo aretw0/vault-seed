@@ -476,6 +476,38 @@ function injectThemeSelector(htmlPath) {
 	);
 }
 
+function postprocessNotebookHtml(output, notebook) {
+	injectNotebookNavigation(output, notebook.output);
+	if (isOverviewPresentation(notebook)) {
+		writePresentationLiteFallback();
+		injectPresentationMobileFallback(output);
+		injectPresentationFullscreen(output);
+		copyLegacyOverviewPresentationAlias(output);
+	}
+	if (shouldInjectThemeSelector) {
+		injectThemeSelector(output);
+	}
+}
+
+function patchMarimoVegaRendererAssets() {
+	const assetsDir = join(outDir, "assets");
+	if (!existsSync(assetsDir)) return;
+
+	for (const asset of readdirSync(assetsDir)) {
+		if (!/^vega-component-.*\.js$/.test(asset)) continue;
+		const assetPath = join(assetsDir, asset);
+		const source = readFileSync(assetPath, "utf8");
+		const next = source.replaceAll(
+			'renderer:"canvas"',
+			'renderer:r?.renderer??"canvas"',
+		);
+		if (next !== source) {
+			writeFileSync(assetPath, next, "utf8");
+			console.log(`[notebooks:export] patched Vega renderer asset: ${asset}`);
+		}
+	}
+}
+
 function injectPresentationFullscreen(htmlPath) {
 	const html = readFileSync(htmlPath, "utf8");
 	if (html.includes(PRESENTATION_FULLSCREEN_MARKER)) {
@@ -623,6 +655,7 @@ for (const notebook of manifest.filter((entry) => entry.publish)) {
 
 	if (isNotebookExportFresh(output, source)) {
 		console.log(`skip notebook: ${notebook.source} -> ${outputLabel} (sem mudanças)`);
+		postprocessNotebookHtml(output, notebook);
 		continue;
 	}
 
@@ -669,14 +702,7 @@ for (const notebook of manifest.filter((entry) => entry.publish)) {
 		}
 	}
 
-	injectNotebookNavigation(output, notebook.output);
-	if (isOverviewPresentation(notebook)) {
-		writePresentationLiteFallback();
-		injectPresentationMobileFallback(output);
-		injectPresentationFullscreen(output);
-		copyLegacyOverviewPresentationAlias(output);
-	}
-	if (shouldInjectThemeSelector) {
-		injectThemeSelector(output);
-	}
+	postprocessNotebookHtml(output, notebook);
 }
+
+patchMarimoVegaRendererAssets();

@@ -57,20 +57,31 @@ test("Lab ETL demo uses shared local/published runtime primitives", () => {
 
 test("published Lab charts use the shared Altair theme helpers", () => {
   const runtime = read("99 - Meta e Anexos/Notebooks/_lab_notebook_runtime.py");
+  const packageRuntime = read("packages/lab-runtime/src/dgk_lab_runtime/__init__.py");
   const exportHelpers = read("scripts/notebook_export_runtime_helpers.mjs");
+  const labEtl = read("scripts/lab_etl_demo.mjs");
   const publicacao = read("99 - Meta e Anexos/Notebooks/analise-publicacao.py");
   const grafo = read("99 - Meta e Anexos/Notebooks/analise-grafo.py");
   const escrita = read("99 - Meta e Anexos/Notebooks/analise-escrita.py");
 
   assert.match(runtime, /LAB_CHART_PALETTE/);
+  assert.match(runtime, /set_embed_options\(renderer="svg"\)/);
+  assert.match(runtime, /except ModuleNotFoundError:[\s\S]*xml\.etree\.ElementTree/);
+  assert.match(packageRuntime, /set_embed_options\(renderer="svg"\)/);
+  assert.match(packageRuntime, /except ModuleNotFoundError:[\s\S]*xml\.etree\.ElementTree/);
   assert.match(exportHelpers, /"lab_altair_chart"/);
   assert.match(exportHelpers, /"lab_altair_status_color"/);
+  assert.match(labEtl, /function resolveNoteLink/);
+  assert.match(labEtl, /slugify\(note\.title\)/);
+  assert.match(labEtl, /inboundCount\.set\(resolved/);
 
   for (const notebook of [publicacao, grafo, escrita]) {
     assert.match(notebook, /lab_altair_chart/);
   }
 
   assert.match(publicacao, /lab_altair_status_color\(/);
+  assert.match(grafo, /mark_text/);
+  assert.match(grafo, /text=alt\.Text\("inbound:Q"\)/);
   assert.match(escrita, /lab_altair_status_color\(/);
 });
 
@@ -97,6 +108,9 @@ test("published Lab pages keep the vault shell contract", () => {
   assert.match(ensureSnapshots, /command: "pnpm"/);
   assert.match(exportNotebooks, /MARIMO_VAULT_CSS/);
   assert.match(exportNotebooks, /data-vault-marimo-shell-css/);
+  assert.match(exportNotebooks, /postprocessNotebookHtml\(output, notebook\)/);
+  assert.match(exportNotebooks, /patchMarimoVegaRendererAssets/);
+  assert.match(exportNotebooks, /renderer:r\?\.renderer\?\?"canvas"/);
   assert.match(exportNotebooks, /vault-lab-topbar/);
   assert.match(exportNotebooks, /vault-lab-sidebar/);
   assert.match(exportNotebooks, /data-vault-lab-footer/);
@@ -125,6 +139,9 @@ test("published Lab pages keep the vault shell contract", () => {
 
   assert.match(marimoCss, /#vg-tooltip-element/);
   assert.match(marimoCss, /\.vega-embed svg text/);
+  assert.match(responsiveSmoke, /assertPublishedVegaUsesSvg/);
+  assert.match(responsiveSmoke, /\.chart-wrapper canvas/);
+  assert.match(responsiveSmoke, /\.chart-wrapper svg/);
   assert.match(marimoCss, /var\(--popover-foreground\)/);
   assert.match(marimoCss, /\.vault-lab-footer[\s\S]*width: fit-content/);
   assert.match(marimoCss, /\.vault-lab-footer[\s\S]*white-space: nowrap/);
