@@ -41,6 +41,13 @@ if (!initializeWorkflow.includes('sed -i \'s/^status: draft$/status: published/\
   errors.push("initialize.yml must promote only the welcome note from draft to published.");
 }
 
+if (/VAULT_ADMIN_TOKEN|branches\/main\/protection|administration:\s*write/.test(initializeWorkflow)) {
+  errors.push(
+    "initialize.yml must not require or reference admin branch-protection setup. " +
+    "Generated repositories do not have template secrets during first initialization.",
+  );
+}
+
 for (const notePath of DRAFT_IN_SOURCE) {
   const fullPath = join(root, notePath);
 

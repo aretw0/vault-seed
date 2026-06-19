@@ -12,8 +12,6 @@ jobs:
     permissions:
       contents: write
       pages: write
-    env:
-      VAULT_ADMIN_TOKEN: ${{ secrets.VAULT_ADMIN_TOKEN }}
     steps:
       - name: 🏗️ Initialize Project from Template
         uses: aretw0/template-initializer@cf2249f8a97563d5bf3bc82bec5d3bcc3c816469 # v1.0.1
@@ -37,33 +35,6 @@ jobs:
           git add "00 - Entrada/Bem-vindo ao seu vault.md" vault.config.json
           git diff --cached --quiet || git commit -m "chore(init): publish welcome note and reset kudos"
           git push
-
-      - name: 🔒 Protect main branch
-        if: ${{ env.VAULT_ADMIN_TOKEN != '' }}
-        env:
-          GH_TOKEN: ${{ env.VAULT_ADMIN_TOKEN }}
-        run: |
-          gh api \
-            --method PUT \
-            -H "Accept: application/vnd.github+json" \
-            /repos/${{ github.repository }}/branches/main/protection \
-            --input - <<'JSON'
-          {
-            "required_status_checks": null,
-            "enforce_admins": false,
-            "required_pull_request_reviews": null,
-            "restrictions": null,
-            "allow_force_pushes": false,
-            "allow_deletions": false
-          }
-          JSON
-          echo "Main branch protected against force pushes and deletions."
-
-      - name: 🔒 Skip branch protection without admin token
-        if: ${{ env.VAULT_ADMIN_TOKEN == '' }}
-        run: |
-          echo "VAULT_ADMIN_TOKEN not configured — skipping branch protection setup."
-          echo "GitHub Pages setup and vault initialization continue normally."
 
       - name: 🌐 Enable GitHub Pages
         env:
