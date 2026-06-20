@@ -219,8 +219,14 @@ export function buildReleasePackageSmokeReport(options = {}) {
   if (!/softprops\/action-gh-release@[0-9a-f]{40}/.test(releaseWorkflow)) {
     blockers.push("release workflow must keep GitHub Release action pinned to a full SHA");
   }
-  if (!/pnpm changeset publish -- --provenance/.test(releaseWorkflow)) {
+  if (!/pnpm changeset publish/.test(releaseWorkflow)) {
     blockers.push("release workflow must publish npm packages directly after creating the GitHub Release");
+  }
+  if (/changeset publish\s+--\s+--provenance/.test(releaseWorkflow)) {
+    blockers.push("release workflow must not pass --provenance as a changeset arg (changesets v2 rejects it and aborts the publish); enable provenance via the NPM_CONFIG_PROVENANCE env var instead");
+  }
+  if (!/NPM_CONFIG_PROVENANCE:\s*\S/.test(releaseWorkflow)) {
+    blockers.push("release workflow must enable npm provenance via the NPM_CONFIG_PROVENANCE env (repo variable vars.NPM_CONFIG_PROVENANCE)");
   }
   if (!/id-token:\s*write/.test(releaseWorkflow)) {
     blockers.push("release workflow must grant id-token:write for npm provenance publishing");
@@ -236,6 +242,12 @@ export function buildReleasePackageSmokeReport(options = {}) {
   }
   if (!/pnpm changeset publish/.test(publishWorkflow)) {
     blockers.push("publish-packages workflow must publish via changesets");
+  }
+  if (/changeset publish\s+--\s+--provenance/.test(publishWorkflow)) {
+    blockers.push("publish-packages workflow must not pass --provenance as a changeset arg; enable provenance via the NPM_CONFIG_PROVENANCE env var instead");
+  }
+  if (!/NPM_CONFIG_PROVENANCE:\s*\S/.test(publishWorkflow)) {
+    blockers.push("publish-packages workflow must enable npm provenance via the NPM_CONFIG_PROVENANCE env (repo variable vars.NPM_CONFIG_PROVENANCE)");
   }
   if (!/pnpm --filter @aretw0\/dgk-astro-plugins build/.test(publishWorkflow)) {
     blockers.push("publish-packages workflow must build @aretw0/dgk-astro-plugins before npm publishing");
