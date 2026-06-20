@@ -64,9 +64,20 @@ Este processo é exclusivo para a manutenção do repositório `aretw0/vault-see
 4.  **Revise e Mescle o PR:**
     *   Revise as alterações no Pull Request, especialmente o `CHANGELOG.md`, para garantir que tudo está correto.
     *   Após a aprovação, mescle o PR no branch `main`.
-5.  **Publicação Automática:**
-    *   O merge na `main` acionará o workflow **"Publish Release"**.
-    *   Este workflow irá automaticamente criar a tag Git e publicar uma nova Release no GitHub, contendo as notas extraídas do `CHANGELOG.md`.
+5.  **Publicação Automática (template + pacotes npm):**
+    *   O merge na `main` aciona o workflow **"Publish Release"** (`release.yml`).
+    *   O workflow valida a árvore (`pnpm run validate`), cria a tag `vX.Y.Z`, publica a Release no GitHub com as notas extraídas do `CHANGELOG.md` e roda `pnpm changeset publish`. Esse último passo publica no npm os pacotes do workspace (`@aretw0/dgk-cli`, `@aretw0/dgk-channels`, `@aretw0/dgk-runner`, `@aretw0/dgk-skills`, `@aretw0/dgk-astro-plugins`) cuja versão ainda não existe no registry; pacotes já publicados são pulados (operação idempotente).
+
+6.  **Publicação do pacote Python (`dgk-lab-runtime`):**
+    *   O pacote PyPI **não** é versionado por changesets nem publicado pelo "Publish Release" — ele tem uma trilha de versionamento própria e manual.
+    *   Ao alterar o pacote, incremente a versão em **dois** arquivos que precisam coincidir: `packages/lab-runtime/pyproject.toml` e `packages/lab-runtime/src/dgk_lab_runtime/__init__.py` (o contrato `scripts/lab_runtime_version_contract.test.mjs` falha se divergirem).
+    *   A publicação é acionada pelo push de uma tag `dgk-lab-runtime@X.Y.Z`:
+        ```bash
+        VERSION=$(node -p "require('node:fs').readFileSync('packages/lab-runtime/pyproject.toml','utf8').match(/^version = \"(.*)\"/m)[1]")
+        git tag "dgk-lab-runtime@$VERSION"
+        git push origin "dgk-lab-runtime@$VERSION"
+        ```
+    *   O push da tag dispara o workflow **"Publish dgk-lab-runtime"** (`publish-lab-runtime.yml`), que builda com `hatch` e publica no PyPI via trusted publisher.
 
 ### 3.3. Processos de Release Manual (Fallback)
 
