@@ -67,6 +67,7 @@ Este processo é exclusivo para a manutenção do repositório `aretw0/vault-see
 5.  **Publicação Automática (template + pacotes npm):**
     *   O merge na `main` aciona o workflow **"Publish Release"** (`release.yml`).
     *   O workflow valida a árvore (`pnpm run validate`), cria a tag `vX.Y.Z`, publica a Release no GitHub com as notas extraídas do `CHANGELOG.md` e roda `pnpm changeset publish`. Esse último passo publica no npm os pacotes do workspace (`@aretw0/dgk-cli`, `@aretw0/dgk-channels`, `@aretw0/dgk-runner`, `@aretw0/dgk-skills`, `@aretw0/dgk-astro-plugins`) cuja versão ainda não existe no registry; pacotes já publicados são pulados (operação idempotente).
+    *   A publicação habilita [npm provenance](https://docs.npmjs.com/generating-provenance-statements) via a variável de repositório `NPM_CONFIG_PROVENANCE` (Settings → Secrets and variables → Actions → Variables), lida pelo npm como env var; o job concede `id-token: write` para a atestação. Não passe `--provenance` como argumento ao `changeset publish` — o `@changesets/cli` v2 rejeita o argumento e aborta a publicação.
 
 6.  **Publicação do pacote Python (`dgk-lab-runtime`):**
     *   O pacote PyPI **não** é versionado por changesets nem publicado pelo "Publish Release" — ele tem uma trilha de versionamento própria e manual.

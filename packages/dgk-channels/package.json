@@ -1,6 +1,6 @@
 {
   "name": "@aretw0/dgk-channels",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Platform-agnostic rate limiter and contact topology for dgk publishing pipelines",
   "type": "module",
   "exports": {
