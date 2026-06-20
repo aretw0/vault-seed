@@ -1,6 +1,6 @@
-# @aretw0/dgk-cli
+# @aretw0/dgk-runner
 
-## 0.2.0
+## 0.1.0
 
 ### Minor Changes
 
@@ -29,17 +29,3 @@
   **`dgk publish extension <name>`** — same scaffold for TypeScript Pi extensions with `src/index.ts` boilerplate calling `pi.registerTool()`.
 
   Users can now publish their own skills from curated vault content without touching the vault-seed CI pipeline.
-
-### Patch Changes
-
-- Updated dependencies [7eb572b]
-- Updated dependencies [5b0c42c]
-- Updated dependencies [ee10fdf]
-  - @aretw0/dgk-channels@0.1.0
-  - @aretw0/dgk-runner@0.1.0
-
-## 0.1.1
-
-### Patch Changes
-
-- 4c79e8c: Add deterministic Lab dataset preparation for local snapshots and runtime data sources, and remove the unsupported `dgk release` command until a generated-vault release flow exists.
