@@ -1,6 +1,6 @@
 {
   "name": "@aretw0/dgk-skills",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "Pi skills para gerenciar um vault dgk — busca, leitura e criação de notas via Obsidian CLI",
   "keywords": [
     "pi-package",

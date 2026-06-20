@@ -1,6 +1,6 @@
 """dgk-lab-runtime — Lab notebook runtime utilities for Marimo notebooks in Obsidian vaults."""
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __all__ = [
     "is_pyodide_runtime",

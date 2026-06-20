@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "dgk-lab-runtime"
-version = "0.1.0"
+version = "0.2.0"
 description = "Digital Gardening Kit — Lab notebook runtime utilities for Marimo notebooks in Obsidian vaults"
 readme = "README.md"
 requires-python = ">=3.11"
