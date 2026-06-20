@@ -112,6 +112,8 @@ def _(mo):
     mo.md("""
     ## O pipeline de dados
 
+    O Lab só faz sentido se o dado chegar com origem clara.
+
     ```
     Notas Markdown
         ↓  generate_vault_data.mjs
@@ -168,17 +170,18 @@ def _(mo):
     mo.md("""
     ## Para seguir
 
-    O Lab não é outro produto dentro do vault. Ele é a camada de leitura para
-    perguntas que Markdown sozinho não responde bem.
+    O fio da apresentação é este: o Lab não substitui o vault; ele lê dados
+    preparados a partir do vault e mostra perguntas que Markdown sozinho não
+    responde bem.
 
     - O ETL prepara snapshots efêmeros e regeneráveis
     - O notebook explica o dado e seus limites
     - O HTML publicado mostra o resultado sem exigir servidor
     - O modo local fica para rede, filesystem, OCR e segredos
 
-    A apresentação termina aqui: abra um notebook publicado, depois rode o
-    mesmo notebook localmente com `dgk lab <nome>` e observe quais capacidades
-    mudam.
+    Fim da apresentação. O próximo passo é abrir um notebook publicado, depois
+    rodar o mesmo notebook localmente com `dgk lab <nome>` e comparar as
+    capacidades disponíveis.
     """)
     return
 

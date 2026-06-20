@@ -73,6 +73,9 @@ def _(mo):
     mo.md("""
     ## A solução: vault local-first
 
+    A resposta do template é juntar a fonte editável, a publicação e a
+    validação no mesmo lugar.
+
     Um repositório Git que é ao mesmo tempo:
 
     - **Vault de notas** — Markdown editável no Obsidian, VS Code ou qualquer editor
@@ -182,16 +185,16 @@ def _(mo):
     mo.md("""
     ## Para seguir
 
-    A ideia central é simples: o repositório guarda a fonte editável.
+    O fio da apresentação é este: primeiro vem a fonte editável; depois vêm
+    site, Lab e automações como artefatos derivados.
 
     - As notas ficam em Markdown
     - O histórico fica no Git
     - O site e o Lab são artefatos gerados
     - As automações entram como apoio, não como obrigação
 
-    A apresentação termina aqui: crie o repositório, confirme que a
-    inicialização terminou e abra o vault no editor em que você já trabalha.
-    O restante pode ser adotado aos poucos.
+    Fim da apresentação. O próximo passo é criar o repositório, confirmar a
+    inicialização e abrir o vault no editor em que você já trabalha.
     """)
     return
 

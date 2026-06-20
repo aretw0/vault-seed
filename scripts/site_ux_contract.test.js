@@ -142,6 +142,15 @@ test('Marimo shell spacing remains topbar-aware and smoke-tested', () => {
   assert.match(shellTest, /assert\.match\(exportNotebooks, \/vault-seed-slides-lite\\\.html\//);
 });
 
+test('Marimo presentation slides keep prose left-aligned while centering tables', () => {
+  const css = read('.site/styles/marimo-vault.css');
+
+  assert.match(css, /\.mo-slide-content \{[\s\S]*text-align: left !important/);
+  assert.match(css, /\.mo-slide-content \.output,[\s\S]*margin-inline: 0 !important;[\s\S]*text-align: left !important/);
+  assert.match(css, /\.mo-slide-content \.output:has\(table\),[\s\S]*margin-inline: 0 !important/);
+  assert.match(css, /\.mo-slide-content marimo-table,[\s\S]*margin-inline: auto !important/);
+});
+
 
 test('Graph canvas is clipped, square, and sidebar graph is centered', () => {
   const css = read('.site/styles/custom.css');

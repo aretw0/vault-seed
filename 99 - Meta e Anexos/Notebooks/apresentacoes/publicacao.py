@@ -91,6 +91,9 @@ def _(mo):
     mo.md("""
     ## A Outbox: revisão humana antes de publicar
 
+    Depois que a nota está pronta para o site, a mesma fonte pode alimentar
+    canais externos sem virar cópia solta.
+
     A nota no vault é a fonte de verdade. A outbox lê frontmatter
     para saber o que foi aprovado para cada canal.
 
@@ -142,7 +145,7 @@ def _(mo):
 
     **Consumir**: `feeds-assinados.json` é a lista de fontes que você segue.
     O ETL local coleta e normaliza os itens. O Lab analisa e classifica
-    com IA. A curation decide o que entra na outbox.
+    com IA. A curadoria decide o que entra na outbox.
 
     ```
     Fontes externas → ETL → curadoria-feeds.json → Lab → outbox → publicação
@@ -195,15 +198,16 @@ def _(mo):
     mo.md("""
     ## Para seguir
 
-    Publicar no vault é uma decisão registrada, não um efeito colateral.
+    O fio da apresentação é este: publicar no vault é uma decisão registrada,
+    não um efeito colateral.
 
     - `status: published` coloca a nota no site e no RSS
     - `channels` prepara envio para canais externos
     - A outbox separa revisar de publicar
     - O CI impede que o site avance com quebra conhecida
 
-    A apresentação termina aqui: escolha uma nota pequena, promova para
-    `published`, rode o build e verifique o resultado antes de conectar
+    Fim da apresentação. O próximo passo é escolher uma nota pequena, promover
+    para `published`, rodar o build e verificar o resultado antes de conectar
     qualquer canal externo.
     """)
     return

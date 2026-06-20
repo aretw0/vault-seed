@@ -80,6 +80,9 @@ def _(mo):
     mo.md("""
     ## Agentes no terminal
 
+    Com o contrato definido, o agente trabalha no mesmo lugar que a pessoa:
+    o repositório.
+
     Um agente de terminal opera diretamente no repositório:
 
     - Lê e edita arquivos `.py`, `.md`, `.ts`, `.json`
@@ -189,15 +192,17 @@ def _(mo):
     mo.md("""
     ## Para seguir
 
-    O agente não substitui o processo do vault; ele entra dentro dele.
+    O fio da apresentação é este: o agente não substitui o processo do vault;
+    ele entra dentro dele.
 
     - `AGENTS.md` define o contrato do repositório
     - As mudanças aparecem como arquivos e diffs
     - Os comandos de validação continuam sendo o critério
     - A decisão final continua humana
 
-    A apresentação termina aqui: use um agente em uma tarefa pequena, revise o
-    diff e só então deixe o CI confirmar que a mudança cabe no projeto.
+    Fim da apresentação. O próximo passo é usar um agente em uma tarefa
+    pequena, revisar o diff e só então deixar o CI confirmar que a mudança cabe
+    no projeto.
     """)
     return
 

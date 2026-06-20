@@ -1022,20 +1022,22 @@ iframe {
   overflow: visible !important;
   padding-block: var(--vault-marimo-slide-padding-block) !important;
   padding-inline: var(--vault-marimo-slide-padding-inline) !important;
+  text-align: left !important;
 }
 
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .output,
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .markdown,
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .prose {
   max-width: min(100%, var(--vault-marimo-presentation-content-width));
-  margin-inline: 0;
+  margin-inline: 0 !important;
+  text-align: left !important;
 }
 
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .output:has(table),
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .output:has(marimo-table),
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .markdown:has(table),
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .prose:has(table) {
-  margin-inline: auto;
+  margin-inline: 0 !important;
 }
 
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .markdown,
