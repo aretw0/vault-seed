@@ -117,13 +117,20 @@ test('Marimo shell spacing remains topbar-aware and smoke-tested', () => {
   assert.match(css, /\[class~="min-w-\[400px\]"\]/);
   assert.match(css, /\[class~="px-1"\][\s\S]*padding-inline: clamp\(0\.75rem/);
   assert.match(css, /\[class~="fixed"\]\[class~="top-0"\]\[class~="right-0"\]/);
-  assert.match(css, /position: sticky/);
+  // The Lab shell pins its chrome and keeps a single scroll (the notebook's own
+  // inner scroller). The topbar and kudos footer are fixed to the viewport — not
+  // sticky/relative in body flow — and the body hides its outer scroll so the
+  // page does not double-scroll. Regression guard for the drifting topbar/footer.
+  assert.match(css, /\.vault-lab-topbar \{[^}]*position: fixed/);
+  assert.match(css, /:root\[data-vault-marimo-shell="lab"\] body \{[^}]*overflow: hidden/);
+  assert.match(css, /:root\[data-vault-marimo-shell="lab"\] #root \{[^}]*height: 100dvh/);
   assert.match(css, /padding-top: var\(--vault-lab-content-gap\) !important/);
   assert.match(css, /padding-top: calc\(var\(--vault-lab-content-gap\) \+ env\(safe-area-inset-top, 0px\)\) !important/);
   assert.match(css, /--vault-lab-content-gap: 5rem/);
-  assert.match(css, /\.vault-lab-footer[\s\S]*position: relative/);
-  assert.match(css, /\.vault-lab-footer[\s\S]*margin-left: calc\(var\(--vault-lab-sidebar-width\) \+ 1rem\)/);
-  assert.doesNotMatch(css, /\.vault-lab-footer[\s\S]*position: fixed/);
+  assert.match(css, /\.vault-lab-footer \{[^}]*position: fixed/);
+  assert.match(css, /\.vault-lab-footer \{[^}]*inset-block-end: 1rem/);
+  assert.match(css, /\.vault-lab-footer \{[^}]*inset-inline-start: calc\(var\(--vault-lab-sidebar-width\) \+ 1rem\)/);
+  assert.doesNotMatch(css, /\.vault-lab-footer \{[^}]*position: relative/);
   assert.match(exportNotebooks, /function injectNotebookFooter\(htmlPath\)/);
   assert.match(exportNotebooks, /html\.replace\("<\/body>", `\$\{labKudosHtml\(\)\}\\n<\/body>`\)/);
   assert.match(exportNotebooks, /vault-seed-slides-lite\.html[\s\S]*\$\{themeSelectorHtml\}/);

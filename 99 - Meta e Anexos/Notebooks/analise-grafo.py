@@ -64,7 +64,7 @@ def _(lab_altair_chart, mo, notes):
             .encode(
                 x=alt.X("inbound:Q", title="links recebidos"),
                 y=alt.Y("title:N", sort="-x", title=None),
-                color=alt.value("#1b5e3b"),
+                color=alt.value("#2d7a4d"),
                 tooltip=["title:N", "folder:N", "inbound:Q", "outbound:Q"],
             )
             + base_hubs

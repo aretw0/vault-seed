@@ -120,7 +120,7 @@ def _(alt, lab_altair_chart, mo, pd, perfil):
         .encode(
             x=alt.X("ocorrências:Q"),
             y=alt.Y("tag:N", sort="-x", title=None),
-            color=alt.value("#1b5e3b"),
+            color=alt.value("#2d7a4d"),
             tooltip=["tag:N", "ocorrências:Q"],
         )
         .properties(height=max(80, len(tag_df) * 22), title="Top 20 tags")
