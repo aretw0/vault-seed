@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.2
+
+### Patch Changes
+
+- a37540f: Generalize internal downstream-instance references to vendor-neutral phrasing in
+  the architecture docs and the frontmatter utility comment, drop a maintainer-local
+  checkout path from the technical docs, and harden the doc boundary contract to
+  catch relative sibling-checkout and internal-reference regressions.
+
 ## 0.4.1
 
 ### Patch Changes
