@@ -348,6 +348,16 @@ const presentationFullscreenHtml = String.raw`
   const originalLabels = new WeakMap();
   document.documentElement.dataset.vaultMarimoPresentation = "slides";
 
+  function markCoverSlide() {
+    const slides = Array.from(document.querySelectorAll(".mo-slide-content"));
+    slides.forEach((slide) => {
+      delete slide.dataset.vaultMarimoSlideCover;
+    });
+    if (slides[0]) {
+      slides[0].dataset.vaultMarimoSlideCover = "true";
+    }
+  }
+
   function candidates() {
     return Array.from(document.querySelectorAll("button, [role='button'], [role='menuitem']"));
   }
@@ -383,6 +393,7 @@ const presentationFullscreenHtml = String.raw`
 
   function sync() {
     const active = Boolean(document.fullscreenElement);
+    markCoverSlide();
     candidates().filter(isFullscreenButton).forEach((button) => setLabel(button, active));
   }
 
