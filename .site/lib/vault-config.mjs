@@ -29,8 +29,11 @@ function readVaultConfig() {
 const _cfg = readVaultConfig();
 
 export const vaultLicense = {
-  type:   _cfg.license?.type   ?? null,
-  holder: _cfg.license?.holder ?? null,
+  type:      _cfg.license?.type      ?? null,
+  holder:    _cfg.license?.holder    ?? null,
+  // Optional URL the footer links the holder/author to (e.g. the owner's GitHub).
+  // initialize.yml sets this to the new repo owner's profile for generated vaults.
+  holderUrl: _cfg.license?.holderUrl ?? null,
 };
 
 // Optional personal sign-off shown below the license row.

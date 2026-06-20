@@ -77,7 +77,7 @@ importers:
 packages:
 
   '@aretw0/dgk-channels@0.1.0':
-    resolution: {integrity: sha512-uujrmGsevYx8MPycZ9oGROmJbxu+aLsqGSQV+xAqiY6iE+KSCp5nmurtWrGtYBkctC6dK1FV/igma7pPe8MxoQ==}
+    resolution: {integrity: sha512-GFFcu8n2eYhPdQ8Ji81wxo+n0J6IvZdHIFg7vNWdplBSIaTSNx9Z0lG+19wOXuf+jzkATAfpRyeIzKuvdGGpNg==}
     engines: {node: '>=22'}
 
   '@aretw0/dgk-cli@0.2.0':
