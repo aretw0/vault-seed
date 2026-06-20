@@ -6,9 +6,9 @@ apoiar o desenvolvimento do `vault-seed`, especialmente skills, extensões,
 tools e pesquisas operacionais sobre agentes.
 
 Ele não faz parte deste repositório e também não faz parte do vault gerado para
-o usuário final. Nesta máquina de desenvolvimento, o checkout local fica em
-`../../agents-lab`; essa localização é contexto de mantenedor, não contrato do
-template.
+o usuário final. Onde cada mantenedor mantém esse projeto é detalhe do ambiente
+local, não contrato do template — nenhuma documentação ou automação aqui deve
+assumir um caminho específico de checkout para ele.
 
 Referências a esse projeto devem ficar em documentação técnica do template,
 specs, planos ou notas de manutenção. Notas em `99 - Meta e Anexos/` devem falar
