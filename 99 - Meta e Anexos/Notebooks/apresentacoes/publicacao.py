@@ -193,7 +193,7 @@ def _(mo):
 @app.cell
 def _(mo):
     mo.md("""
-    ## Fechamento
+    ## Para seguir
 
     Publicar no vault é uma decisão registrada, não um efeito colateral.
 
@@ -202,8 +202,9 @@ def _(mo):
     - A outbox separa revisar de publicar
     - O CI impede que o site avance com quebra conhecida
 
-    Próximo passo: escolher uma nota pequena, promover para `published`, rodar
-    o build e verificar o resultado antes de conectar qualquer canal externo.
+    A apresentação termina aqui: escolha uma nota pequena, promova para
+    `published`, rode o build e verifique o resultado antes de conectar
+    qualquer canal externo.
     """)
     return
 

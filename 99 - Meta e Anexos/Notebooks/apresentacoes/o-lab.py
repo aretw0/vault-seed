@@ -166,7 +166,7 @@ def _(dataset_count, mo, note_count):
 @app.cell
 def _(mo):
     mo.md("""
-    ## Fechamento
+    ## Para seguir
 
     O Lab não é outro produto dentro do vault. Ele é a camada de leitura para
     perguntas que Markdown sozinho não responde bem.
@@ -176,8 +176,9 @@ def _(mo):
     - O HTML publicado mostra o resultado sem exigir servidor
     - O modo local fica para rede, filesystem, OCR e segredos
 
-    Próximo passo: abrir um notebook publicado, depois rodar o mesmo notebook
-    localmente com `dgk lab <nome>` e observar quais capacidades mudam.
+    A apresentação termina aqui: abra um notebook publicado, depois rode o
+    mesmo notebook localmente com `dgk lab <nome>` e observe quais capacidades
+    mudam.
     """)
     return
 

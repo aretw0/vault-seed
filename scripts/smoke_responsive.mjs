@@ -254,7 +254,7 @@ async function assertVisibleContent(page, target, label) {
 }
 
 async function assertPresentationSizing(page, target, viewport, label, externalNetworkAvailable) {
-  if (!target.path.endsWith("vault-seed-slides.html") || viewport.width < 1024) {
+  if (!target.path.endsWith("-slides.html") || viewport.width < 1024) {
     return;
   }
 
@@ -294,6 +294,11 @@ async function assertPresentationSizing(page, target, viewport, label, externalN
 
   if (!externalNetworkAvailable) {
     return;
+  }
+
+  const presentationMarker = await page.evaluate(() => document.documentElement.dataset.vaultMarimoPresentation || "");
+  if (presentationMarker !== "slides") {
+    fail(`${label}: presentation page did not set data-vault-marimo-presentation=slides`);
   }
 
   const fullscreenLabel = await page

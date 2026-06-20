@@ -278,6 +278,8 @@ requireCondition(
 requireCondition(
   notebooksExportScript.includes("data-vault-marimo-navigation") &&
     notebooksExportScript.includes("data-vault-lab-footer") &&
+    notebooksExportScript.includes("function injectNotebookFooter(htmlPath)") &&
+    !notebooksExportScript.includes("  ${labKudosHtml()}") &&
     notebooksExportScript.includes('import { vaultKudos } from "../.site/lib/vault-config.mjs"') &&
     notebooksExportScript.includes("function labKudosHtml()") &&
     notebooksExportScript.includes("vault-lab-footer__heart") &&
@@ -286,6 +288,8 @@ requireCondition(
     notebooksExportScript.includes("data-vault-marimo-presentation-fullscreen") &&
     notebooksExportScript.includes("vaultMarimoFullscreenButton") &&
     notebooksExportScript.includes("Fechar tela cheia") &&
+    notebooksExportScript.includes("function isPresentationNotebook(notebook)") &&
+    notebooksExportScript.includes('notebook.type === "presentation"') &&
     !notebooksExportScript.includes("vault-marimo-fullscreen-toggle") &&
     !notebooksExportScript.includes("Abrir versão interativa") &&
     notebooksSlidesScript.includes("data-vault-marimo-navigation") &&

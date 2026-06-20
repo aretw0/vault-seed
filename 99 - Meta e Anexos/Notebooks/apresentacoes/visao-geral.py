@@ -180,7 +180,7 @@ def _(mo):
 @app.cell
 def _(mo):
     mo.md("""
-    ## Fechamento
+    ## Para seguir
 
     A ideia central é simples: o repositório guarda a fonte editável.
 
@@ -189,9 +189,9 @@ def _(mo):
     - O site e o Lab são artefatos gerados
     - As automações entram como apoio, não como obrigação
 
-    O próximo passo não é adotar tudo de uma vez. É criar o repositório,
-    confirmar que a inicialização terminou e abrir o vault no editor em que
-    você já trabalha.
+    A apresentação termina aqui: crie o repositório, confirme que a
+    inicialização terminou e abra o vault no editor em que você já trabalha.
+    O restante pode ser adotado aos poucos.
     """)
     return
 

@@ -129,7 +129,6 @@ function labNavigationHtml(currentOutput) {
       ${notebookLinks}
     </nav>
   </aside>
-  ${labKudosHtml()}
 </div>
 <script data-vault-marimo-navigation-script>
 (() => {
@@ -462,6 +461,20 @@ function injectNotebookNavigation(htmlPath, currentOutput) {
 	);
 }
 
+function injectNotebookFooter(htmlPath) {
+	const html = readFileSync(htmlPath, "utf8");
+	if (html.includes("data-vault-lab-footer") || !vaultKudos) {
+		return;
+	}
+	if (!html.includes("</body>")) {
+		throw new Error(`HTML exportado sem </body>: ${htmlPath}`);
+	}
+	writeFileSync(
+		htmlPath,
+		html.replace("</body>", `${labKudosHtml()}\n</body>`),
+	);
+}
+
 function injectThemeSelector(htmlPath) {
 	const html = readFileSync(htmlPath, "utf8");
 	if (html.includes(THEME_SELECTOR_MARKER)) {
@@ -478,11 +491,14 @@ function injectThemeSelector(htmlPath) {
 
 function postprocessNotebookHtml(output, notebook) {
 	injectNotebookNavigation(output, notebook.output);
-	if (isOverviewPresentation(notebook)) {
-		writePresentationLiteFallback();
-		injectPresentationMobileFallback(output);
+	injectNotebookFooter(output);
+	if (isPresentationNotebook(notebook)) {
 		injectPresentationFullscreen(output);
-		copyLegacyOverviewPresentationAlias(output);
+		if (isOverviewPresentation(notebook)) {
+			writePresentationLiteFallback();
+			injectPresentationMobileFallback(output);
+			copyLegacyOverviewPresentationAlias(output);
+		}
 	}
 	if (shouldInjectThemeSelector) {
 		injectThemeSelector(output);
@@ -549,6 +565,10 @@ function isOverviewPresentation(notebook) {
 		OVERVIEW_PRESENTATION_OUTPUT,
 		LEGACY_OVERVIEW_PRESENTATION_OUTPUT,
 	].includes(notebook.output);
+}
+
+function isPresentationNotebook(notebook) {
+	return notebook.type === "presentation" || isOverviewPresentation(notebook);
 }
 
 function copyLegacyOverviewPresentationAlias(output) {

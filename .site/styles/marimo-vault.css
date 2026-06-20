@@ -933,10 +933,8 @@ iframe {
 }
 
 .vault-lab-footer {
-  position: fixed;
-  z-index: 9998;
-  bottom: 0;
-  left: calc(var(--vault-lab-sidebar-width) + 0.75rem);
+  position: relative;
+  z-index: 1;
   border: 1px solid var(--border);
   border-radius: 999px;
   background: color-mix(in srgb, var(--card) 94%, transparent);
@@ -950,9 +948,12 @@ iframe {
   gap: 0.3rem;
   width: fit-content;
   max-width: calc(100vw - 1.5rem);
+  margin-block: 0 1rem;
+  margin-left: calc(var(--vault-lab-sidebar-width) + 1rem);
+  margin-right: 1rem;
   padding: 0.45rem 0.7rem;
   white-space: nowrap;
-  transition: left 160ms ease;
+  transition: margin-left 160ms ease;
 }
 
 .vault-lab-footer__heart {
@@ -975,7 +976,7 @@ iframe {
 }
 
 :root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] .vault-lab-footer {
-  left: 0.75rem;
+  margin-left: 1rem;
 }
 
 :root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] .vault-lab-sidebar {
@@ -1045,15 +1046,30 @@ iframe {
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content marimo-table,
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .markdown table,
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .prose table {
-  display: table;
-  width: auto;
-  max-width: 100%;
-  margin-inline: auto;
+  display: table !important;
+  width: auto !important;
+  inline-size: auto !important;
+  max-width: 100% !important;
+  max-inline-size: 100% !important;
+  margin-inline: auto !important;
+  table-layout: auto !important;
+}
+
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content :is(.markdown.prose, .markdown, .prose) table {
+  display: table !important;
+  width: auto !important;
+  inline-size: auto !important;
+  max-inline-size: 100% !important;
+  table-layout: auto !important;
 }
 
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content marimo-table {
-  display: block;
-  width: fit-content;
+  overflow-x: auto;
+}
+
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content .markdown table,
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content .prose table {
+  overflow-x: auto;
 }
 
 [data-vault-marimo-fullscreen-button] {
@@ -1137,8 +1153,8 @@ iframe {
 
   .vault-lab-footer,
   :root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] .vault-lab-footer {
-    left: 0.75rem;
-    bottom: 0;
+    margin-left: 1rem;
+    margin-right: 1rem;
   }
 
   :root[data-vault-marimo-shell="lab"] .vault-marimo-theme-selector {

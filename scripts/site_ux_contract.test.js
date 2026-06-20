@@ -115,7 +115,11 @@ test('Marimo shell spacing remains topbar-aware and smoke-tested', () => {
   assert.match(css, /padding-top: var\(--vault-lab-content-gap\) !important/);
   assert.match(css, /padding-top: calc\(var\(--vault-lab-content-gap\) \+ env\(safe-area-inset-top, 0px\)\) !important/);
   assert.match(css, /--vault-lab-content-gap: 5rem/);
-  assert.match(css, /\.vault-lab-footer[\s\S]*bottom: 0/);
+  assert.match(css, /\.vault-lab-footer[\s\S]*position: relative/);
+  assert.match(css, /\.vault-lab-footer[\s\S]*margin-left: calc\(var\(--vault-lab-sidebar-width\) \+ 1rem\)/);
+  assert.doesNotMatch(css, /\.vault-lab-footer[\s\S]*position: fixed/);
+  assert.match(exportNotebooks, /function injectNotebookFooter\(htmlPath\)/);
+  assert.match(exportNotebooks, /html\.replace\("<\/body>", `\$\{labKudosHtml\(\)\}\\n<\/body>`\)/);
   assert.match(exportNotebooks, /vault-seed-slides-lite\.html[\s\S]*\$\{themeSelectorHtml\}/);
   assert.match(exportNotebooks, /\.vault-lite-slides \{ width: 100%; max-width: 100%;/);
   assert.match(exportNotebooks, /attachSelectorToTopbar/);

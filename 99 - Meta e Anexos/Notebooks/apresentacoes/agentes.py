@@ -187,7 +187,7 @@ def _(mo):
 @app.cell
 def _(mo):
     mo.md("""
-    ## Fechamento
+    ## Para seguir
 
     O agente não substitui o processo do vault; ele entra dentro dele.
 
@@ -196,8 +196,8 @@ def _(mo):
     - Os comandos de validação continuam sendo o critério
     - A decisão final continua humana
 
-    Próximo passo: usar um agente para uma tarefa pequena, revisar o diff e
-    só então deixar o CI confirmar que a mudança cabe no projeto.
+    A apresentação termina aqui: use um agente em uma tarefa pequena, revise o
+    diff e só então deixe o CI confirmar que a mudança cabe no projeto.
     """)
     return
 
