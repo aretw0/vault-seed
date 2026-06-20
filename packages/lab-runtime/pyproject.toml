@@ -11,7 +11,7 @@ requires-python = ">=3.11"
 license = { text = "GPL-3.0-only" }
 keywords = ["marimo", "obsidian", "vault", "notebook", "digital-garden"]
 classifiers = [
-  "Development Status :: 3 - Alpha",
+  "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
   "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
   "Programming Language :: Python :: 3",
