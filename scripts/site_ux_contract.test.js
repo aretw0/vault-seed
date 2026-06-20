@@ -144,8 +144,17 @@ test('Marimo shell spacing remains topbar-aware and smoke-tested', () => {
 
 test('Marimo presentation slides keep prose left-aligned while centering tables', () => {
   const css = read('.site/styles/marimo-vault.css');
+  const proseFontBlock = css.match(
+    /:root\[data-vault-marimo-presentation="slides"\] \.mo-slide-content \.markdown,[\s\S]*?font-size:[\s\S]*?\n\}/,
+  )?.[0] ?? '';
 
   assert.match(css, /\.mo-slide-content \{[\s\S]*text-align: left !important/);
+  assert.match(css, /\.mo-slide-content \{[\s\S]*margin-block: 0 !important;[\s\S]*margin-inline: 0 !important/);
+  assert.match(css, /\.mo-slide-content \{[\s\S]*overflow: auto !important/);
+  assert.doesNotMatch(css, /\.mo-slide-content \{[\s\S]*margin: auto !important/);
+  assert.match(proseFontBlock, /font-size: 1\.05rem/);
+  assert.doesNotMatch(proseFontBlock, /vw/);
+  assert.doesNotMatch(css, /font-size:\s*clamp\([^)]*vw/);
   assert.match(css, /\.mo-slide-content \.output,[\s\S]*margin-inline: 0 !important;[\s\S]*text-align: left !important/);
   assert.match(css, /\.mo-slide-content \.output:has\(table\),[\s\S]*margin-inline: 0 !important/);
   assert.match(css, /\.mo-slide-content marimo-table,[\s\S]*margin-inline: auto !important/);

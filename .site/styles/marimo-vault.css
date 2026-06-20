@@ -989,7 +989,7 @@ iframe {
 }
 
 :root[data-vault-marimo-presentation="slides"] {
-  --vault-marimo-slide-padding-block: clamp(2.5rem, 6vh, 4.5rem);
+  --vault-marimo-slide-padding-block: clamp(1.75rem, 5vh, 3rem);
   --vault-marimo-slide-padding-inline: clamp(3rem, 9vw, 8rem);
   scrollbar-gutter: auto;
 }
@@ -1018,8 +1018,9 @@ iframe {
   width: min(var(--vault-marimo-presentation-width), calc(100vw - (2 * var(--vault-marimo-presentation-viewport-gutter)))) !important;
   min-height: 0 !important;
   max-height: 100%;
-  margin: auto !important;
-  overflow: visible !important;
+  margin-block: 0 !important;
+  margin-inline: 0 !important;
+  overflow: auto !important;
   padding-block: var(--vault-marimo-slide-padding-block) !important;
   padding-inline: var(--vault-marimo-slide-padding-inline) !important;
   text-align: left !important;
@@ -1042,7 +1043,18 @@ iframe {
 
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .markdown,
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .prose {
-  font-size: clamp(1.05rem, 1.15vw, 1.3rem);
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content h1 {
+  font-size: 2.4rem;
+  line-height: 1.08;
+}
+
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content h2 {
+  font-size: 1.8rem;
+  line-height: 1.15;
 }
 
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content marimo-table,
@@ -1097,13 +1109,13 @@ iframe {
 
   .markdown h1,
   .prose h1 {
-    font-size: clamp(1.9rem, 10vw, 2.5rem);
+    font-size: 2rem;
     line-height: 1.05;
   }
 
   .markdown h2,
   .prose h2 {
-    font-size: clamp(1.35rem, 7vw, 1.8rem);
+    font-size: 1.45rem;
     line-height: 1.15;
   }
 
@@ -1113,7 +1125,7 @@ iframe {
   }
 
   :root[data-vault-marimo-presentation="slides"] {
-    --vault-marimo-slide-padding-block: clamp(2.5rem, 6vh, 3.5rem);
+    --vault-marimo-slide-padding-block: clamp(1.25rem, 5vh, 2rem);
     --vault-marimo-slide-padding-inline: clamp(1.25rem, 6vw, 2.5rem);
   }
 
