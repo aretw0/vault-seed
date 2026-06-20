@@ -56,6 +56,7 @@ jobs:
         run: pnpm --filter @aretw0/dgk-astro-plugins build
 
       - name: Publish
-        run: pnpm changeset publish -- --provenance
+        run: pnpm changeset publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: "true"
