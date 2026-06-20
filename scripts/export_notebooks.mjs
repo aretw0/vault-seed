@@ -129,7 +129,6 @@ function labNavigationHtml(currentOutput) {
       ${notebookLinks}
     </nav>
   </aside>
-  ${labKudosHtml()}
 </div>
 <script data-vault-marimo-navigation-script>
 (() => {
@@ -349,6 +348,16 @@ const presentationFullscreenHtml = String.raw`
   const originalLabels = new WeakMap();
   document.documentElement.dataset.vaultMarimoPresentation = "slides";
 
+  function markCoverSlide() {
+    const slides = Array.from(document.querySelectorAll(".mo-slide-content"));
+    slides.forEach((slide) => {
+      delete slide.dataset.vaultMarimoSlideCover;
+    });
+    if (slides[0]) {
+      slides[0].dataset.vaultMarimoSlideCover = "true";
+    }
+  }
+
   function candidates() {
     return Array.from(document.querySelectorAll("button, [role='button'], [role='menuitem']"));
   }
@@ -384,6 +393,7 @@ const presentationFullscreenHtml = String.raw`
 
   function sync() {
     const active = Boolean(document.fullscreenElement);
+    markCoverSlide();
     candidates().filter(isFullscreenButton).forEach((button) => setLabel(button, active));
   }
 
@@ -462,6 +472,20 @@ function injectNotebookNavigation(htmlPath, currentOutput) {
 	);
 }
 
+function injectNotebookFooter(htmlPath) {
+	const html = readFileSync(htmlPath, "utf8");
+	if (html.includes("data-vault-lab-footer") || !vaultKudos) {
+		return;
+	}
+	if (!html.includes("</body>")) {
+		throw new Error(`HTML exportado sem </body>: ${htmlPath}`);
+	}
+	writeFileSync(
+		htmlPath,
+		html.replace("</body>", `${labKudosHtml()}\n</body>`),
+	);
+}
+
 function injectThemeSelector(htmlPath) {
 	const html = readFileSync(htmlPath, "utf8");
 	if (html.includes(THEME_SELECTOR_MARKER)) {
@@ -474,6 +498,41 @@ function injectThemeSelector(htmlPath) {
 		htmlPath,
 		html.replace("</body>", `${themeSelectorHtml}\n</body>`),
 	);
+}
+
+function postprocessNotebookHtml(output, notebook) {
+	injectNotebookNavigation(output, notebook.output);
+	injectNotebookFooter(output);
+	if (isPresentationNotebook(notebook)) {
+		injectPresentationFullscreen(output);
+		if (isOverviewPresentation(notebook)) {
+			writePresentationLiteFallback();
+			injectPresentationMobileFallback(output);
+			copyLegacyOverviewPresentationAlias(output);
+		}
+	}
+	if (shouldInjectThemeSelector) {
+		injectThemeSelector(output);
+	}
+}
+
+function patchMarimoVegaRendererAssets() {
+	const assetsDir = join(outDir, "assets");
+	if (!existsSync(assetsDir)) return;
+
+	for (const asset of readdirSync(assetsDir)) {
+		if (!/^vega-component-.*\.js$/.test(asset)) continue;
+		const assetPath = join(assetsDir, asset);
+		const source = readFileSync(assetPath, "utf8");
+		const next = source.replaceAll(
+			'renderer:"canvas"',
+			'renderer:r?.renderer??"canvas"',
+		);
+		if (next !== source) {
+			writeFileSync(assetPath, next, "utf8");
+			console.log(`[notebooks:export] patched Vega renderer asset: ${asset}`);
+		}
+	}
 }
 
 function injectPresentationFullscreen(htmlPath) {
@@ -517,6 +576,10 @@ function isOverviewPresentation(notebook) {
 		OVERVIEW_PRESENTATION_OUTPUT,
 		LEGACY_OVERVIEW_PRESENTATION_OUTPUT,
 	].includes(notebook.output);
+}
+
+function isPresentationNotebook(notebook) {
+	return notebook.type === "presentation" || isOverviewPresentation(notebook);
 }
 
 function copyLegacyOverviewPresentationAlias(output) {
@@ -623,6 +686,7 @@ for (const notebook of manifest.filter((entry) => entry.publish)) {
 
 	if (isNotebookExportFresh(output, source)) {
 		console.log(`skip notebook: ${notebook.source} -> ${outputLabel} (sem mudanças)`);
+		postprocessNotebookHtml(output, notebook);
 		continue;
 	}
 
@@ -669,14 +733,7 @@ for (const notebook of manifest.filter((entry) => entry.publish)) {
 		}
 	}
 
-	injectNotebookNavigation(output, notebook.output);
-	if (isOverviewPresentation(notebook)) {
-		writePresentationLiteFallback();
-		injectPresentationMobileFallback(output);
-		injectPresentationFullscreen(output);
-		copyLegacyOverviewPresentationAlias(output);
-	}
-	if (shouldInjectThemeSelector) {
-		injectThemeSelector(output);
-	}
+	postprocessNotebookHtml(output, notebook);
 }
+
+patchMarimoVegaRendererAssets();

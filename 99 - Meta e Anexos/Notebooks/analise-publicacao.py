@@ -15,6 +15,8 @@ def _():
 def _():
     from _lab_notebook_runtime import (
         is_pyodide_runtime,
+        lab_altair_chart,
+        lab_altair_status_color,
         lab_runtime_context,
         load_lab_manifest,
         read_lab_dataset,
@@ -24,32 +26,38 @@ def _():
     perfil = read_lab_dataset("perfil-do-vault", manifest)
     curadoria = read_lab_dataset("curadoria-ia", manifest)
     context = lab_runtime_context()
-    return context, curadoria, is_pyodide_runtime, manifest, perfil
+    return (
+        context,
+        curadoria,
+        lab_altair_chart,
+        lab_altair_status_color,
+        perfil,
+    )
 
 
 @app.cell
 def _(context, mo, perfil):
     mo.vstack([
         mo.md(f"""
-# Análise de publicação
+    # Análise de publicação
 
-Modo atual: **{"WASM · browser" if context["isPackaged"] else "local · Python"}**
+    Modo atual: **{"WASM · browser" if context["isPackaged"] else "local · Python"}**
 
-| Capacidade | WASM | Local | CI |
-|---|:---:|:---:|:---:|
-| Distribuição de status e pastas | ✓ | ✓ | ✓ |
-| Auditoria de arquitetura de informação | ✓ | ✓ | ✓ |
-| Timeline por data de publicação | — | ✓ | ✓ |
-| Lista de notas com filtro | — | ✓ | ✓ |
+    | Capacidade | WASM | Local | CI |
+    |---|:---:|:---:|:---:|
+    | Distribuição de status e pastas | ✓ | ✓ | ✓ |
+    | Auditoria de arquitetura de informação | ✓ | ✓ | ✓ |
+    | Timeline por data de publicação | — | ✓ | ✓ |
+    | Lista de notas com filtro | — | ✓ | ✓ |
 
-- **{perfil["noteCount"]}** notas · **{perfil["totalWords"]:,}** palavras · média **{perfil["averageWords"]}** palavras/nota
-"""),
+    - **{perfil["noteCount"]}** notas · **{perfil["totalWords"]:,}** palavras · média **{perfil["averageWords"]}** palavras/nota
+    """),
     ])
     return
 
 
 @app.cell
-def _(mo, perfil):
+def _(lab_altair_chart, lab_altair_status_color, mo, perfil):
     import altair as alt
     import pandas as pd
 
@@ -63,17 +71,17 @@ def _(mo, perfil):
         "sem status": "#94a3b8",
     }
     _domain = status_df["status"].tolist()
-    _range = [_color_map.get(s, "#cbd5e1") for s in _domain]
 
-    chart_status = (
+    chart_status = lab_altair_chart(
         alt.Chart(status_df)
         .mark_arc(innerRadius=50)
         .encode(
             theta=alt.Theta("notas:Q"),
-            color=alt.Color(
+            color=lab_altair_status_color(
                 "status:N",
-                scale=alt.Scale(domain=_domain, range=_range),
-                legend=alt.Legend(title="status"),
+                domain=_domain,
+                legend_title="status",
+                colors=_color_map,
             ),
             tooltip=["status:N", "notas:Q"],
         )
@@ -82,7 +90,7 @@ def _(mo, perfil):
 
     folders = perfil.get("folders", [])
     folder_df = pd.DataFrame(folders).rename(columns={"name": "pasta", "count": "notas"})
-    chart_folders = (
+    chart_folders = lab_altair_chart(
         alt.Chart(folder_df)
         .mark_bar()
         .encode(
@@ -98,15 +106,15 @@ def _(mo, perfil):
         mo.md("## Distribuição"),
         mo.hstack([mo.ui.altair_chart(chart_status), mo.ui.altair_chart(chart_folders)]),
     ])
-    return alt, folder_df, pd, status_df
+    return alt, pd
 
 
 @app.cell
-def _(alt, mo, pd, perfil):
+def _(alt, lab_altair_chart, mo, pd, perfil):
     tags = perfil.get("tags", [])
     tag_df = pd.DataFrame(tags).rename(columns={"name": "tag", "count": "ocorrências"}).head(20)
 
-    chart_tags = (
+    chart_tags = lab_altair_chart(
         alt.Chart(tag_df)
         .mark_bar()
         .encode(
@@ -121,11 +129,11 @@ def _(alt, mo, pd, perfil):
         mo.md("## Tags"),
         mo.ui.altair_chart(chart_tags),
     ])
-    return (tag_df,)
+    return
 
 
 @app.cell
-def _(curadoria, mo, pd):
+def _(curadoria, lab_altair_chart, mo, pd):
     intent_dist = curadoria.get("intentDistribution", [])
     promotion = curadoria.get("promotionCandidates", [])
     thin = curadoria.get("thinPublishedResources", [])
@@ -135,7 +143,7 @@ def _(curadoria, mo, pd):
     if intent_dist:
         import altair as _alt
         intent_df = pd.DataFrame(intent_dist).rename(columns={"label": "intenção", "count": "notas"})
-        chart_intent = (
+        chart_intent = lab_altair_chart(
             _alt.Chart(intent_df)
             .mark_bar()
             .encode(
@@ -169,7 +177,7 @@ def _(curadoria, mo, pd):
 
 
 @app.cell
-def _(alt, context, mo, pd):
+def _(alt, context, lab_altair_chart, lab_altair_status_color, mo, pd):
     import os
     import re
 
@@ -222,19 +230,16 @@ def _(alt, context, mo, pd):
                 .reset_index(name="notas")
                 .sort_values("mes")
             )
-            chart_tl = (
+            chart_tl = lab_altair_chart(
                 alt.Chart(tl_month)
                 .mark_bar()
                 .encode(
                     x=alt.X("mes:O", title="mês", axis=alt.Axis(labelAngle=-45)),
                     y=alt.Y("notas:Q"),
-                    color=alt.Color(
+                    color=lab_altair_status_color(
                         "status:N",
-                        scale=alt.Scale(
-                            domain=["published", "ready", "draft", "sem status"],
-                            range=["#22c55e", "#3b82f6", "#f59e0b", "#94a3b8"],
-                        ),
-                        legend=alt.Legend(title="status"),
+                        domain=["published", "ready", "draft", "sem status"],
+                        legend_title="status",
                     ),
                     tooltip=["mes:O", "status:N", "notas:Q"],
                 )
@@ -270,13 +275,13 @@ def _(context, mo, pd, perfil):
                 kind="info",
             ),
         ])
-        _notes_df = pd.DataFrame()
+        notes_df = pd.DataFrame()
     else:
         largest = perfil.get("largestNotes", [])
-        _notes_df = pd.DataFrame(largest) if largest else pd.DataFrame()
+        notes_df = pd.DataFrame(largest) if largest else pd.DataFrame()
         _folders_opts = (
-            sorted(_notes_df["folder"].unique().tolist())
-            if not _notes_df.empty and "folder" in _notes_df.columns
+            sorted(notes_df["folder"].unique().tolist())
+            if not notes_df.empty and "folder" in notes_df.columns
             else []
         )
         folder_filter = mo.ui.dropdown(
@@ -290,15 +295,16 @@ def _(context, mo, pd, perfil):
         ])
 
     filter_result
-    return (_notes_df,)
+    return (notes_df,)
 
 
 @app.cell
-def _(context, mo, _notes_df):
-    if context["isLocal"] and not _notes_df.empty:
-        mo.ui.table(_notes_df)
+def _(context, mo, notes_df):
+    if context["isLocal"] and not notes_df.empty:
+        notes_table_result = mo.ui.table(notes_df)
     else:
-        mo.md("")
+        notes_table_result = mo.md("")
+    notes_table_result
     return
 
 

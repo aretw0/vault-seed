@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
 import { buildInformationArchitectureReport } from "../.site/lib/information-architecture-audit.mjs";
-import { buildVaultData } from "./generate_vault_data.mjs";
+import { buildVaultData, slugify } from "./generate_vault_data.mjs";
 
 /**
  * Returns the existing timestamp when the payload content (excluding the timestamp field)
@@ -104,11 +104,38 @@ const curationData = {
   ...buildInformationArchitectureReport({ root: ROOT }),
 };
 
-const allIds = new Set(notes.map((n) => n.id));
+function lastPathSegment(value) {
+  return String(value || "").split("/").filter(Boolean).at(-1) || "";
+}
+
+function linkLookupKey(value) {
+  return slugify(String(value || "").split("#")[0].trim());
+}
+
+const linkIndex = new Map();
+for (const note of notes) {
+  for (const key of [
+    note.id,
+    slugify(note.title),
+    slugify(lastPathSegment(note.id)),
+  ]) {
+    if (key && !linkIndex.has(key)) linkIndex.set(key, note.id);
+  }
+}
+
+function resolveNoteLink(link) {
+  const key = linkLookupKey(link);
+  if (!key) return null;
+  return linkIndex.get(key) ?? null;
+}
+
 const inboundCount = new Map(notes.map((n) => [n.id, 0]));
 for (const note of notes) {
   for (const link of note.links) {
-    if (inboundCount.has(link)) inboundCount.set(link, inboundCount.get(link) + 1);
+    const resolved = resolveNoteLink(link);
+    if (resolved && inboundCount.has(resolved)) {
+      inboundCount.set(resolved, inboundCount.get(resolved) + 1);
+    }
   }
 }
 const graphNotes = notes.map((n) => ({
@@ -118,7 +145,7 @@ const graphNotes = notes.map((n) => ({
   status: n.status,
   outbound: n.links.length,
   inbound: inboundCount.get(n.id) ?? 0,
-  brokenLinks: n.links.filter((l) => !allIds.has(l)),
+  brokenLinks: n.links.filter((link) => !resolveNoteLink(link)),
 }));
 const graphData = {
   schemaVersion: 1,

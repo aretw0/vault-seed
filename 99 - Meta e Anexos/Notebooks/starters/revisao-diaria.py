@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.23.8"
+__generated_with = "0.23.9"
 app = marimo.App(width="medium")
 
 
@@ -8,6 +8,7 @@ app = marimo.App(width="medium")
 def _():
     import marimo as mo
     from datetime import date
+
     return date, mo
 
 
@@ -26,6 +27,7 @@ def _():
         sys.path.insert(0, str(_runtime_dir))
 
     from _lab_notebook_runtime import read_lab_json
+
     return (read_lab_json,)
 
 
@@ -33,7 +35,7 @@ def _():
 def _(read_lab_json):
     data = read_lab_json("vault-data.json")
     notes = data["notes"]
-    return data, notes
+    return (notes,)
 
 
 @app.cell
@@ -83,7 +85,7 @@ def _(mo, notes, pd):
         mo.md("## 📥 Entrada"),
         mo.ui.table(pd.DataFrame(_inbox)) if _inbox else mo.md("_Entrada vazia._"),
     ])
-    return ()
+    return
 
 
 if __name__ == "__main__":

@@ -111,7 +111,7 @@ Bloco CI     → mostra timestamp do último refresh automático + diff de novos
 ### 3.1 `etl-demo.py` — ciclo completo
 - [ ] Célula "Extract" mostra snapshot atual do vault
 - [ ] Célula "Transform" filtra notas publicáveis, classifica por canal
-- [ ] Célula "Load" local: `write_local_json_snapshot` → `dados/lab/` → commit
+- [ ] Célula "Load" local: `write_local_json_snapshot` → `.dgk/` → artefato publicado
 - [ ] Célula "CI" explica que o refresh-lab-data.yml repete esse ciclo
 - [ ] Demonstração de `get_local_secret` para GitHub API com token
 

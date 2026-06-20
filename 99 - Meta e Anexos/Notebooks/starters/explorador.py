@@ -1,12 +1,13 @@
 import marimo
 
-__generated_with = "0.23.8"
+__generated_with = "0.23.9"
 app = marimo.App(width="medium")
 
 
 @app.cell
 def _():
     import marimo as mo
+
     return (mo,)
 
 
@@ -27,6 +28,7 @@ def _():
         sys.path.insert(0, str(_runtime_dir))
 
     from _lab_notebook_runtime import read_lab_json
+
     return (read_lab_json,)
 
 
@@ -34,7 +36,7 @@ def _():
 def _(read_lab_json):
     data = read_lab_json("vault-data.json")
     notes = data["notes"]
-    return data, notes
+    return (notes,)
 
 
 @app.cell
@@ -56,7 +58,7 @@ def _(mo, notes):
 @app.cell
 def _(mo, tags_sel):
     mo.vstack([tags_sel])
-    return ()
+    return
 
 
 @app.cell
@@ -84,7 +86,7 @@ def _(folder_sel, mo, notes, status_sel, tags_sel):
         mo.md(f"**{len(_filtered)} notas** encontradas"),
         mo.ui.table(_df),
     ])
-    return (pd,)
+    return
 
 
 if __name__ == "__main__":

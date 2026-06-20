@@ -23,7 +23,7 @@ def _():
     manifest = load_lab_manifest()
     outbox = read_lab_dataset("outbox-publicacao", manifest)
     context = lab_runtime_context()
-    return context, get_local_secret, manifest, outbox
+    return context, get_local_secret, outbox
 
 
 @app.cell
@@ -33,24 +33,24 @@ def _(context, mo, outbox):
     newsletter_items = [i for i in items if "newsletter" in (i.get("channels") or [])]
     mo.vstack([
         mo.md(f"""
-# Publicar thread e newsletter
+    # Publicar thread e newsletter
 
-Modo atual: **{"WASM · browser" if context["isPackaged"] else "local · Python"}**
+    Modo atual: **{"WASM · browser" if context["isPackaged"] else "local · Python"}**
 
-| Capacidade | WASM | Local | CI |
-|---|:---:|:---:|:---:|
-| Prévia de thread (Mastodon/Bluesky) | ✓ | ✓ | ✓ |
-| Prévia de newsletter HTML | ✓ | ✓ | ✓ |
-| Postar no Mastodon via API | — | ✓ | — |
-| Postar no Bluesky via AT Protocol | — | ✓ | — |
-| Enviar rascunho no Buttondown | — | ✓ | — |
+    | Capacidade | WASM | Local | CI |
+    |---|:---:|:---:|:---:|
+    | Prévia de thread (Mastodon/Bluesky) | ✓ | ✓ | ✓ |
+    | Prévia de newsletter HTML | ✓ | ✓ | ✓ |
+    | Postar no Mastodon via API | — | ✓ | — |
+    | Postar no Bluesky via AT Protocol | — | ✓ | — |
+    | Enviar rascunho no Buttondown | — | ✓ | — |
 
-- itens sociais (Mastodon/Bluesky): **{len(social_items)}**
-- itens de newsletter: **{len(newsletter_items)}**
-- revisão humana obrigatória: **{outbox.get("policy", {}).get("humanReviewRequired", True)}**
-"""),
+    - itens sociais (Mastodon/Bluesky): **{len(social_items)}**
+    - itens de newsletter: **{len(newsletter_items)}**
+    - revisão humana obrigatória: **{outbox.get("policy", {}).get("humanReviewRequired", True)}**
+    """),
     ])
-    return items, newsletter_items, social_items
+    return newsletter_items, social_items
 
 
 @app.cell
@@ -227,10 +227,10 @@ def _(mo, newsletter_items):
       </td></tr>""")
 
     _html_preview = f"""<!DOCTYPE html>
-<html lang="pt-BR">
-<head><meta charset="utf-8"><title>Newsletter Preview</title></head>
-<body style="font-family:system-ui,sans-serif;max-width:600px;margin:40px auto;padding:0 20px;color:#1e293b;">
-  <table width="100%" cellpadding="0" cellspacing="0">
+    <html lang="pt-BR">
+    <head><meta charset="utf-8"><title>Newsletter Preview</title></head>
+    <body style="font-family:system-ui,sans-serif;max-width:600px;margin:40px auto;padding:0 20px;color:#1e293b;">
+      <table width="100%" cellpadding="0" cellspacing="0">
     <tr><td style="padding:24px 0 16px 0;border-bottom:2px solid #e2e8f0;">
       <h1 style="margin:0;font-size:22px;">Newsletter — Vault</h1>
       <p style="color:#64748b;margin:4px 0 0 0;font-size:14px;">
@@ -241,9 +241,9 @@ def _(mo, newsletter_items):
     <tr><td style="padding:24px 0 0 0;border-top:2px solid #e2e8f0;color:#64748b;font-size:12px;">
       Gerado por vault-seed · analise-outbox pipeline
     </td></tr>
-  </table>
-</body>
-</html>"""
+      </table>
+    </body>
+    </html>"""
 
     mo.vstack([
         mo.md(f"## Prévia de newsletter HTML\n\n{len(newsletter_items)} itens com canal `newsletter`"),

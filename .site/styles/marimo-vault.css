@@ -30,8 +30,8 @@
   --grass-7: #2d7a4d;
   --grass-9: #1b5e3b;
   --grass-11: #0f3d26;
-  --vault-marimo-presentation-width: 78rem;
-  --vault-marimo-presentation-content-width: 74rem;
+  --vault-marimo-presentation-width: 86rem;
+  --vault-marimo-presentation-content-width: 80rem;
   --vault-marimo-presentation-gutter: clamp(0.5rem, 1.5vw, 1.25rem);
   --vault-marimo-presentation-viewport-gutter: clamp(0.75rem, 3vw, 4rem);
 }
@@ -131,6 +131,7 @@ iframe {
   max-width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  margin-inline: auto;
 }
 
 :root[data-vault-marimo-theme="light"] {
@@ -190,6 +191,13 @@ iframe {
   --border: var(--border);
   background: var(--background) !important;
   color: var(--foreground) !important;
+}
+
+:root[data-vault-marimo-theme] marimo-table {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
 }
 
 :root[data-vault-marimo-theme] thead,
@@ -731,9 +739,9 @@ iframe {
   align-items: center;
   gap: 0.5rem;
   height: var(--vault-lab-topbar-height);
-  border-bottom: 1px solid var(--border);
-  background: color-mix(in srgb, var(--card) 94%, transparent);
-  box-shadow: 0 0.75rem 2rem color-mix(in srgb, var(--foreground) 10%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
+  background: color-mix(in srgb, var(--background) 96%, transparent);
+  box-shadow: 0 0.35rem 1rem color-mix(in srgb, var(--foreground) 7%, transparent);
   padding: 0.5rem 0.75rem;
 }
 
@@ -799,13 +807,18 @@ iframe {
 
 .vault-lab-brand,
 .vault-lab-section {
-  padding: 0.45rem 0.6rem;
+  padding: 0.42rem 0.55rem;
 }
 
 .vault-lab-brand,
 .vault-lab-section {
   color: var(--foreground);
   font-weight: 650;
+}
+
+.vault-lab-section {
+  border-left: 1px solid var(--border);
+  color: var(--muted-foreground);
 }
 
 .vault-lab-sidebar {
@@ -816,7 +829,7 @@ iframe {
   left: 0;
   width: var(--vault-lab-sidebar-width);
   border-right: 1px solid var(--border);
-  background: color-mix(in srgb, var(--card) 96%, transparent);
+  background: color-mix(in srgb, var(--background) 97%, transparent);
   overflow: auto;
   padding: 1rem 0.75rem;
   transition: transform 160ms ease;
@@ -874,7 +887,7 @@ iframe {
 
 .vault-lab-notebook-list a {
   display: block;
-  padding: 0.65rem 0.7rem;
+  padding: 0.58rem 0.65rem;
 }
 
 .vault-lab-notebook-list a:hover,
@@ -920,10 +933,8 @@ iframe {
 }
 
 .vault-lab-footer {
-  position: fixed;
-  z-index: 9998;
-  bottom: 0;
-  left: calc(var(--vault-lab-sidebar-width) + 0.75rem);
+  position: relative;
+  z-index: 1;
   border: 1px solid var(--border);
   border-radius: 999px;
   background: color-mix(in srgb, var(--card) 94%, transparent);
@@ -937,9 +948,12 @@ iframe {
   gap: 0.3rem;
   width: fit-content;
   max-width: calc(100vw - 1.5rem);
+  margin-block: 0 1rem;
+  margin-left: calc(var(--vault-lab-sidebar-width) + 1rem);
+  margin-right: 1rem;
   padding: 0.45rem 0.7rem;
   white-space: nowrap;
-  transition: left 160ms ease;
+  transition: margin-left 160ms ease;
 }
 
 .vault-lab-footer__heart {
@@ -962,7 +976,7 @@ iframe {
 }
 
 :root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] .vault-lab-footer {
-  left: 0.75rem;
+  margin-left: 1rem;
 }
 
 :root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] .vault-lab-sidebar {
@@ -975,8 +989,8 @@ iframe {
 }
 
 :root[data-vault-marimo-presentation="slides"] {
-  --vault-marimo-slide-padding-block: clamp(2.5rem, 6vh, 4.5rem);
-  --vault-marimo-slide-padding-inline: clamp(3rem, 9vw, 8rem);
+  --vault-marimo-slide-padding-block: clamp(1.5rem, 4.5vh, 2.75rem);
+  --vault-marimo-slide-padding-inline: clamp(2rem, 5vw, 4.5rem);
   scrollbar-gutter: auto;
 }
 
@@ -997,6 +1011,7 @@ iframe {
 :root[data-vault-marimo-presentation="slides"] .reveal .slides section,
 :root[data-vault-marimo-presentation="slides"] .reveal .slides section > div:has(> .mo-slide-content) {
   overflow: hidden !important;
+  text-align: left !important;
 }
 
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content {
@@ -1005,21 +1020,95 @@ iframe {
   min-height: 0 !important;
   max-height: 100%;
   margin: auto !important;
-  overflow: visible !important;
+  overflow: auto !important;
   padding-block: var(--vault-marimo-slide-padding-block) !important;
   padding-inline: var(--vault-marimo-slide-padding-inline) !important;
+  text-align: left !important;
 }
 
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .output,
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .markdown,
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .prose {
   max-width: min(100%, var(--vault-marimo-presentation-content-width));
-  margin-inline: auto;
+  margin-inline: 0 !important;
+  text-align: left !important;
+}
+
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content .output:has(table),
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content .output:has(marimo-table),
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content .markdown:has(table),
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content .prose:has(table) {
+  margin-inline: 0 !important;
+}
+
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content[data-vault-marimo-slide-cover="true"] {
+  display: grid !important;
+  align-content: center !important;
+  justify-items: center !important;
+  margin: auto !important;
+  text-align: center !important;
+}
+
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content[data-vault-marimo-slide-cover="true"] .output,
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content[data-vault-marimo-slide-cover="true"] .markdown,
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content[data-vault-marimo-slide-cover="true"] .prose {
+  margin-inline: auto !important;
+  text-align: center !important;
 }
 
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .markdown,
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .prose {
-  font-size: clamp(1.05rem, 1.15vw, 1.3rem);
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content h1 {
+  color: var(--primary);
+  font-size: 2.75rem;
+  line-height: 1.06;
+  margin-block: 0 1.05rem;
+}
+
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content h2 {
+  color: var(--primary);
+  font-size: 2.15rem;
+  line-height: 1.12;
+  margin-block: 0 1rem;
+}
+
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content[data-vault-marimo-slide-cover="true"] h1 {
+  font-size: 3.6rem;
+  line-height: 1.02;
+  margin-block-end: 1rem;
+}
+
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content marimo-table,
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content .markdown table,
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content .prose table {
+  display: table !important;
+  width: auto !important;
+  inline-size: auto !important;
+  max-width: 100% !important;
+  max-inline-size: 100% !important;
+  margin-inline: auto !important;
+  table-layout: auto !important;
+}
+
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content :is(.markdown.prose, .markdown, .prose) table {
+  display: table !important;
+  width: auto !important;
+  inline-size: auto !important;
+  max-inline-size: 100% !important;
+  table-layout: auto !important;
+}
+
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content marimo-table {
+  overflow-x: auto;
+}
+
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content .markdown table,
+:root[data-vault-marimo-presentation="slides"] .mo-slide-content .prose table {
+  overflow-x: auto;
 }
 
 [data-vault-marimo-fullscreen-button] {
@@ -1045,13 +1134,13 @@ iframe {
 
   .markdown h1,
   .prose h1 {
-    font-size: clamp(1.9rem, 10vw, 2.5rem);
+    font-size: 2rem;
     line-height: 1.05;
   }
 
   .markdown h2,
   .prose h2 {
-    font-size: clamp(1.35rem, 7vw, 1.8rem);
+    font-size: 1.45rem;
     line-height: 1.15;
   }
 
@@ -1061,7 +1150,7 @@ iframe {
   }
 
   :root[data-vault-marimo-presentation="slides"] {
-    --vault-marimo-slide-padding-block: clamp(2.5rem, 6vh, 3.5rem);
+    --vault-marimo-slide-padding-block: clamp(1.25rem, 5vh, 2rem);
     --vault-marimo-slide-padding-inline: clamp(1.25rem, 6vw, 2.5rem);
   }
 
@@ -1103,8 +1192,8 @@ iframe {
 
   .vault-lab-footer,
   :root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] .vault-lab-footer {
-    left: 0.75rem;
-    bottom: 0;
+    margin-left: 1rem;
+    margin-right: 1rem;
   }
 
   :root[data-vault-marimo-shell="lab"] .vault-marimo-theme-selector {

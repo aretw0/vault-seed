@@ -74,13 +74,19 @@ except ImportError:
         return candidates
 
 
+    def _runtime_cache_busted_url(url: str) -> str:
+        import time as _time
+        separator = "&" if "?" in url else "?"
+        return f"{url}{separator}v={int(_time.time() * 1000)}"
+
+
     def _read_lab_json_runtime(candidates):
         import json as _json
         from pyodide.http import open_url  # type: ignore
         last_error = None
         for candidate in candidates:
             try:
-                return _json.loads(open_url(candidate).read())
+                return _json.loads(open_url(_runtime_cache_busted_url(candidate)).read())
             except Exception as exc:
                 last_error = exc
                 continue
@@ -248,6 +254,61 @@ except ImportError:
         return value
 
 
+    LAB_CHART_PALETTE = {
+        "primary": "#2d7a4d",
+        "primaryDark": "#1b5e3b",
+        "text": "#3d3935",
+        "muted": "#6b6560",
+        "border": "#b8b2a7",
+        "published": "#22c55e",
+        "ready": "#3b82f6",
+        "draft": "#f59e0b",
+        "fail": "#ef4444",
+        "warn": "#f59e0b",
+        "info": "#94a3b8",
+        "fallback": "#94a3b8",
+    }
+
+
+    def lab_altair_chart(chart):
+        """Aplica acabamento visual comum aos gráficos Altair do Lab."""
+        import altair as _alt
+
+        _alt.renderers.set_embed_options(renderer="svg")
+        return (
+            chart.configure_axis(
+                labelColor=LAB_CHART_PALETTE["text"],
+                titleColor=LAB_CHART_PALETTE["text"],
+                gridColor=LAB_CHART_PALETTE["border"],
+                domainColor=LAB_CHART_PALETTE["border"],
+                tickColor=LAB_CHART_PALETTE["border"],
+            )
+            .configure_legend(
+                labelColor=LAB_CHART_PALETTE["text"],
+                titleColor=LAB_CHART_PALETTE["text"],
+            )
+            .configure_title(color=LAB_CHART_PALETTE["primaryDark"])
+            .configure_view(stroke=LAB_CHART_PALETTE["border"])
+            .configure_mark(color=LAB_CHART_PALETTE["primary"])
+        )
+
+
+    def lab_altair_status_color(field: str, *, domain=None, legend_title: str = None, colors=None):
+        """Retorna encoding de cor Altair sem cair na paleta padrão do Vega."""
+        import altair as _alt
+
+        palette = dict(LAB_CHART_PALETTE)
+        if colors:
+            palette.update(colors)
+        resolved_domain = list(domain or ["published", "ready", "draft", "sem status"])
+        resolved_range = [palette.get(value, palette["fallback"]) for value in resolved_domain]
+        return _alt.Color(
+            field,
+            scale=_alt.Scale(domain=resolved_domain, range=resolved_range),
+            legend=_alt.Legend(title=legend_title) if legend_title else None,
+        )
+
+
     def clean_lab_text(text, *, lower: bool = False) -> str:
         import re as _re
         cleaned = _re.sub(r"[\n\x0c\r]+", " ", str(text or ""))
@@ -303,7 +364,11 @@ except ImportError:
 
 
     def parse_feed_xml(xml_text: str, *, source_url: str = None, limit: int = 50):
-        import defusedxml.ElementTree as _ET
+        try:
+            import defusedxml.ElementTree as _ET
+        except ModuleNotFoundError:
+            import xml.etree.ElementTree as _ET
+
         root = _ET.fromstring(xml_text)
         items = []
         channel = root.find("channel")
@@ -337,13 +402,13 @@ except ImportError:
 
     async def fetch_wasm_json(url: str):
         from pyodide.http import pyfetch  # type: ignore
-        response = await pyfetch(url)
+        response = await pyfetch(url, cache="no-store")
         return await response.json()
 
 
     async def fetch_wasm_feed(url: str, *, limit: int = 50):
         from pyodide.http import pyfetch  # type: ignore
-        response = await pyfetch(url)
+        response = await pyfetch(url, cache="no-store")
         xml_text = await response.string()
         return parse_feed_xml(xml_text, source_url=url, limit=limit)
 

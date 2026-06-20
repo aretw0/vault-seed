@@ -1,6 +1,6 @@
-﻿import marimo
+import marimo
 
-__generated_with = "0.23.8"
+__generated_with = "0.23.9"
 app = marimo.App(width="medium")
 
 
@@ -8,7 +8,7 @@ app = marimo.App(width="medium")
 def _():
     import marimo as mo
 
-    return mo
+    return (mo,)
 
 
 @app.cell
@@ -38,7 +38,6 @@ def _():
         extract_local_image_text,
         fetch_local_url_text,
         get_local_secret,
-        read_local_text_file,
         with_data_provenance,
         write_local_json_snapshot,
     )
@@ -70,7 +69,14 @@ def _(mo):
     )
     token_name = mo.ui.text(label="Nome de segredo opcional", value="LAB_DEMO_TOKEN")
     mo.vstack([source_url, run_url_extract, image_path, run_ocr_extract, output_path, token_name])
-    return image_path, output_path, run_ocr_extract, run_url_extract, source_url, token_name
+    return (
+        image_path,
+        output_path,
+        run_ocr_extract,
+        run_url_extract,
+        source_url,
+        token_name,
+    )
 
 
 @app.cell
@@ -111,7 +117,6 @@ def _(
                 "text": text,
             }
         )
-
     return raw_extracts, secret_available
 
 
@@ -144,7 +149,7 @@ def _(clean_lab_text, raw_extracts, with_data_provenance):
 def _(mo):
     save_snapshot = mo.ui.checkbox(label="Gravar snapshot JSON local", value=False)
     save_snapshot
-    return save_snapshot,
+    return (save_snapshot,)
 
 
 @app.cell

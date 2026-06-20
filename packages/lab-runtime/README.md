@@ -23,6 +23,10 @@ from dgk_lab_runtime import (
     load_lab_manifest,
     read_lab_dataset,
     write_local_json_snapshot,
+    lab_altair_chart,
+    lab_altair_status_color,
+    fetch_wasm_feed,
+    fetch_wasm_json,
     fetch_local_feed,
     fingerprint_data,
     with_data_provenance,
@@ -34,8 +38,11 @@ ctx = lab_runtime_context()
 # Read a dataset from the Lab manifest (local or Pyodide/WASM)
 data = read_lab_dataset("my-dataset")
 
-# Write a versioned JSON snapshot to the vault
-write_local_json_snapshot("40 - Recursos/data/snapshot.json", data)
+# Write a local JSON snapshot for the ETL/export boundary
+write_local_json_snapshot(".dgk/my-dataset.json", data)
+
+# Keep charts aligned with the Lab shell instead of Vega defaults
+chart = lab_altair_chart(chart.encode(color=lab_altair_status_color("status:N")))
 ```
 
 ## Configuration
@@ -46,7 +53,7 @@ write_local_json_snapshot("40 - Recursos/data/snapshot.json", data)
 
 ## Runtime boundary
 
-Every function that writes files, reads secrets, or makes outbound requests calls `require_local_runtime()` and raises `RuntimeError` when running inside a packaged HTML/WASM notebook. This boundary is intentional: ETL logic runs locally before export; the published notebook only reads pre-generated snapshots.
+Every function that writes files, reads secrets, or makes local outbound requests calls `require_local_runtime()` and raises `RuntimeError` when running inside a packaged HTML/WASM notebook. Browser-safe helpers such as `fetch_wasm_json()` and `fetch_wasm_feed()` use Pyodide's `pyfetch` with `cache="no-store"`. This boundary is intentional: ETL logic runs locally before export; the published notebook only reads pre-generated snapshots or public CORS-friendly endpoints.
 
 ## Vault-seed compatibility
 

@@ -17,6 +17,7 @@ def _():
         fetch_local_feed,
         fetch_wasm_feed,
         is_pyodide_runtime,
+        lab_altair_chart,
         lab_runtime_context,
         load_lab_manifest,
         read_lab_dataset,
@@ -31,7 +32,7 @@ def _():
         fetch_local_feed,
         fetch_wasm_feed,
         is_pyodide_runtime,
-        manifest,
+        lab_altair_chart,
     )
 
 
@@ -39,21 +40,21 @@ def _():
 def _(context, feeds, mo):
     mo.vstack([
         mo.md(f"""
-# Radar de feeds
+    # Radar de feeds
 
-Modo atual: **{"WASM · browser" if context["isPackaged"] else "local · Python"}**
+    Modo atual: **{"WASM · browser" if context["isPackaged"] else "local · Python"}**
 
-| Capacidade | WASM | Local | CI |
-|---|:---:|:---:|:---:|
-| Assinaturas do bundle | ✓ | ✓ | ✓ |
-| Itens ao vivo (feed público CORS-ok) | ✓ | — | — |
-| Todos os feeds ao vivo | — | ✓ | ✓ |
-| Análise de itens por grupo | — | ✓ | ✓ |
+    | Capacidade | WASM | Local | CI |
+    |---|:---:|:---:|:---:|
+    | Assinaturas do bundle | ✓ | ✓ | ✓ |
+    | Itens ao vivo (feed público CORS-ok) | ✓ | — | — |
+    | Todos os feeds ao vivo | — | ✓ | ✓ |
+    | Análise de itens por grupo | — | ✓ | ✓ |
 
-- feeds assinados: **{feeds["subscriptionCount"]}**
-- última coleta: `{feeds["collectedAt"]}`
-- fingerprint: `{feeds["sha256"][:16]}…`
-"""),
+    - feeds assinados: **{feeds["subscriptionCount"]}**
+    - última coleta: `{feeds["collectedAt"]}`
+    - fingerprint: `{feeds["sha256"][:16]}…`
+    """),
     ])
     return
 
@@ -69,10 +70,13 @@ def _(feeds, mo):
         url = sub.get("xmlUrl") or ""
         html_url = sub.get("htmlUrl") or ""
         parsed = urlparse(url if "://" in url else html_url)
+        categories = sub.get("categories") or []
+        group = sub.get("group") or (categories[0] if categories else "Sem grupo")
         rows.append({
             "título": sub.get("title"),
             "domínio": parsed.netloc or "local",
-            "grupo": sub.get("group") or "—",
+            "grupo": group,
+            "categorias": ", ".join(categories) if categories else "—",
             "feed": url,
         })
     feeds_df = pd.DataFrame(rows)
@@ -80,7 +84,7 @@ def _(feeds, mo):
         mo.md("## Assinaturas"),
         mo.ui.table(feeds_df),
     ])
-    return (feeds_df, pd)
+    return feeds_df, pd
 
 
 @app.cell
@@ -109,7 +113,7 @@ async def _(fetch_wasm_feed, is_pyodide_runtime, mo, pd):
                 mo.callout(mo.md(f"Não foi possível buscar o feed: {exc}"), kind="warn"),
             ])
     wasm_result
-    return (wasm_live,)
+    return
 
 
 @app.cell
@@ -158,11 +162,11 @@ def _(context, feeds, fetch_local_feed, mo, pd):
         local_result = mo.vstack(parts)
 
     local_result
-    return (local_items_df,)
+    return
 
 
 @app.cell
-def _(feeds_df, mo, pd):
+def _(feeds_df, lab_altair_chart, mo):
     import altair as alt
 
     if feeds_df.empty:
@@ -174,7 +178,7 @@ def _(feeds_df, mo, pd):
             .reset_index(name="feeds")
             .sort_values("feeds", ascending=False)
         )
-        chart = (
+        chart = lab_altair_chart(
             alt.Chart(group_df)
             .mark_bar()
             .encode(
@@ -190,7 +194,7 @@ def _(feeds_df, mo, pd):
             mo.ui.altair_chart(chart),
         ])
     coverage_result
-    return (alt,)
+    return
 
 
 @app.cell
@@ -211,15 +215,15 @@ def _(feeds, mo):
     mo.vstack([
         mo.md(f"""## Atualização automática (CI)
 
-Os dados em `feeds-assinados.json` são gerados por `pnpm run feeds:opml` e
-podem ser mantidos frescos pelo workflow `refresh-lab-data.yml`.
+    Os dados em `feeds-assinados.json` são gerados por `pnpm run feeds:opml` e
+    podem ser mantidos frescos pelo workflow `refresh-lab-data.yml`.
 
-- última coleta: **{freshness}**
-- fonte: `{feeds.get("source", "—")}`
+    - última coleta: **{freshness}**
+    - fonte: `{feeds.get("source", "—")}`
 
-Para ativar o refresh diário, copie `.github/workflows/refresh-lab-data.yml`
-do repositório do template para o seu vault.
-"""),
+    Para ativar o refresh diário, copie `.github/workflows/refresh-lab-data.yml`
+    do repositório do template para o seu vault.
+    """),
     ])
     return
 
@@ -240,7 +244,7 @@ def _(feeds_df, mo, pd):
         mo.md(
             "## Candidatas para inbox\n\n"
             "A tabela abaixo não cria notas automaticamente. "
-            "Ela mostra o formato de triagem: feed observado → decisão humana."
+            "Ela mostra o formato de triagem: feed observado -> decisão humana."
         ),
         mo.ui.table(candidates_df),
     ])

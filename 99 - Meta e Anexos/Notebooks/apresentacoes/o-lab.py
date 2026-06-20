@@ -1,10 +1,7 @@
 import marimo
 
 __generated_with = "0.23.9"
-app = marimo.App(
-    width="medium",
-    layout_file="layouts/o-lab.slides.json",
-)
+app = marimo.App(width="medium", layout_file="layouts/o-lab.slides.json")
 
 
 @app.cell
@@ -21,6 +18,7 @@ def _():
         sys.path.insert(0, str(_runtime_dir))
     import marimo as mo
     from _lab_notebook_runtime import lab_runtime_context, load_lab_manifest, read_lab_dataset
+
     return lab_runtime_context, load_lab_manifest, mo, read_lab_dataset
 
 
@@ -51,111 +49,104 @@ def _(mo, profile, tier):
 
 @app.cell
 def _(mo):
-    mo.md(
-        """
-        ## Por que Marimo em vez de Jupyter
+    mo.md("""
+    ## Por que Marimo em vez de Jupyter
 
-        | Aspecto | Jupyter `.ipynb` | Marimo `.py` |
-        | --- | --- | --- |
-        | Formato | JSON com estado embutido | Python puro versionável |
-        | Diff | ruidoso, células + outputs | legível como qualquer `.py` |
-        | Execução | ordem manual, estado oculto | grafo reativo, sem estado surpresa |
-        | Export | requer nbconvert externo | `marimo export html-wasm` nativo |
-        | Agentes | precisam parsear JSON | leem e editam Python diretamente |
+    | Aspecto | Jupyter `.ipynb` | Marimo `.py` |
+    | --- | --- | --- |
+    | Formato | JSON com estado embutido | Python puro versionável |
+    | Diff | ruidoso, células + outputs | legível como qualquer `.py` |
+    | Execução | ordem manual, estado oculto | grafo reativo, sem estado surpresa |
+    | Export | requer nbconvert externo | `marimo export html-wasm` nativo |
+    | Agentes | precisam parsear JSON | leem e editam Python diretamente |
 
-        O notebook é o arquivo. O arquivo é o notebook.
-        """
-    )
+    O notebook é o arquivo. O arquivo é o notebook.
+    """)
     return
 
 
 @app.cell
 def _(mo):
-    mo.md(
-        """
-        ## Três modos de execução
+    mo.md("""
+    ## Três modos de execução
 
-        | Modo | Onde Python roda | Acesso |
-        | --- | --- | --- |
-        | `dgk lab <nome>` | Computador local | Filesystem · Secrets · Subprocess · OCR |
-        | `marimo run` | Servidor Python | Mesmo acesso local + HTTP clients |
-        | HTML WebAssembly | Navegador (Pyodide) | Dados bundled · APIs públicas · Sem secrets |
+    | Modo | Onde Python roda | Acesso |
+    | --- | --- | --- |
+    | `dgk lab <nome>` | Computador local | Filesystem · Secrets · Subprocess · OCR |
+    | `marimo run` | Servidor Python | Mesmo acesso local + HTTP clients |
+    | HTML WebAssembly | Navegador (Pyodide) | Dados bundled · APIs públicas · Sem secrets |
 
-        O mesmo código fonte funciona nos três modos.
-        A detecção de tier é automática via `lab_runtime_context()`.
-        """
-    )
+    A intenção é manter o mesmo notebook legível nos três contextos, com
+    limites explícitos para o que só pode acontecer localmente.
+    """)
     return
 
 
 @app.cell
 def _(mo):
-    mo.md(
-        """
-        ## O runtime context
+    mo.md("""
+    ## O runtime context
 
-        ```python
-        from _lab_notebook_runtime import lab_runtime_context
+    ```python
+    from _lab_notebook_runtime import lab_runtime_context
 
-        ctx = lab_runtime_context()
-        # ctx["isLocal"]      → True em modo local ou servidor
-        # ctx["isPackaged"]   → True no HTML WebAssembly (Pyodide)
-        # ctx["capabilities"] → filesystem, secrets, subprocess, ...
-        ```
+    ctx = lab_runtime_context()
+    # ctx["isLocal"]      → True em modo local ou servidor
+    # ctx["isPackaged"]   → True no HTML WebAssembly (Pyodide)
+    # ctx["capabilities"] → filesystem, secrets, subprocess, ...
+    ```
 
-        Primitivas locais (write_local_json_snapshot, get_local_secret, ...)
-        levantam `RuntimeError` no WASM com mensagem clara.
-        Primitivas WASM (fetch_wasm_json, fetch_wasm_feed, ...)
-        usam `pyfetch` do Pyodide no lugar de `urllib`.
+    Primitivas locais (write_local_json_snapshot, get_local_secret, ...)
+    levantam `RuntimeError` no WASM com mensagem clara.
+    Primitivas WASM (fetch_wasm_json, fetch_wasm_feed, ...)
+    usam `pyfetch` do Pyodide no lugar de `urllib`.
 
-        Um teste de contrato valida que nenhum notebook referencia
-        uma chave que não existe no dict do runtime.
-        """
-    )
+    Testes de contrato mantêm esse vocabulário estável para os notebooks
+    publicados e para o pacote de runtime.
+    """)
     return
 
 
 @app.cell
 def _(mo):
-    mo.md(
-        """
-        ## O pipeline de dados
+    mo.md("""
+    ## O pipeline de dados
 
-        ```
-        Notas Markdown
-            ↓  generate_vault_data.mjs
-        vault-data.json          ← snapshot indexado de notas, tags, links
-            ↓  prepare_lab_datasets.mjs
-        datasets/*.json          ← feeds, qualidade, outbox, grafo, IA
-            ↓  lab.datasets.json (manifesto)
-        Notebooks Marimo         ← lêem via read_lab_dataset()
-            ↓  marimo export html-wasm
-        /lab/*.html              ← publicados em GitHub Pages
-        ```
+    O Lab só faz sentido se o dado chegar com origem clara.
 
-        Coleta e transformação rodam antes da publicação (ETL local ou CI).
-        O notebook é camada de leitura — não modifica notas diretamente.
-        """
-    )
+    ```
+    Notas Markdown
+        ↓  generate_vault_data.mjs
+    vault-data.json          ← snapshot indexado de notas, tags, links
+        ↓  prepare_lab_datasets.mjs
+    datasets/*.json          ← feeds, qualidade, outbox, grafo, IA
+        ↓  lab.datasets.json (manifesto)
+    Notebooks Marimo         ← lêem via read_lab_dataset()
+        ↓  marimo export html-wasm
+    /lab/*.html              ← publicados em GitHub Pages
+    ```
+
+    Coleta e transformação rodam antes da publicação (ETL local ou CI).
+    O notebook publicado é camada de leitura. Coleta, escrita e segredos ficam
+    antes do export, no ambiente local ou no CI.
+    """)
     return
 
 
 @app.cell
 def _(mo):
-    mo.md(
-        """
-        ## Criar um notebook
+    mo.md("""
+    ## Criar um notebook
 
-        1. Copie de `99 - Meta e Anexos/Notebooks/starters/`
-        2. Renomeie em `99 - Meta e Anexos/Notebooks/`
-        3. Abra com `dgk lab <nome>`
-        4. Carregue dados com `read_lab_json("vault-data.json")`
-        5. Valide com `pnpm run notebooks:check`
+    1. Copie de `99 - Meta e Anexos/Notebooks/starters/`
+    2. Renomeie em `99 - Meta e Anexos/Notebooks/`
+    3. Abra com `dgk lab <nome>`
+    4. Carregue dados com `read_lab_json("vault-data.json")`
+    5. Valide com `pnpm run notebooks:check`
 
-        Criar um notebook não o publica. Para publicar, adicione
-        uma entrada com `"publish": true` em `.site/lab.notebooks.json`.
-        """
-    )
+    Criar um notebook não o publica. Para publicar, adicione
+    uma entrada com `"publish": true` em `.site/lab.notebooks.json`.
+    """)
     return
 
 
@@ -168,7 +159,29 @@ def _(dataset_count, mo, note_count):
     - **{dataset_count}** dataset(s) declarados no manifesto
     - Notebooks publicados: análise de publicação, grafo, feeds, outbox, ETL e apresentações
 
-    Todos rodando no mesmo repositório que contém as notas.
+    O valor está na proximidade: dados, explicação e origem continuam no mesmo
+    repositório que contém as notas.
+    """)
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md("""
+    ## Para seguir
+
+    O fio da apresentação é este: o Lab não substitui o vault; ele lê dados
+    preparados a partir do vault e mostra perguntas que Markdown sozinho não
+    responde bem.
+
+    - O ETL prepara snapshots efêmeros e regeneráveis
+    - O notebook explica o dado e seus limites
+    - O HTML publicado mostra o resultado sem exigir servidor
+    - O modo local fica para rede, filesystem, OCR e segredos
+
+    Fim da apresentação. O próximo passo é abrir um notebook publicado, depois
+    rodar o mesmo notebook localmente com `dgk lab <nome>` e comparar as
+    capacidades disponíveis.
     """)
     return
 

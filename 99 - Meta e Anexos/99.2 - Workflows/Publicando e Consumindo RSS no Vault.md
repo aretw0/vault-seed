@@ -192,12 +192,12 @@ jardim digital:
 - o formato é aberto;
 - o leitor é escolhido pela pessoa;
 - a lista de assinaturas pode ser exportada;
-- o histórico pode virar snapshot versionado;
+- o histórico pode virar snapshot efêmero e regenerável;
 - agentes e notebooks conseguem auditar o que foi publicado.
 
 Quando uma API social exigir token, rate limit ou contrato instável, trate como
 uma fonte local de ETL: colete com segredo no computador, normalize, grave um
-snapshot e publique apenas o recorte que faz sentido.
+snapshot em `.dgk/` e publique apenas o recorte que faz sentido.
 
 ## Boas Práticas
 

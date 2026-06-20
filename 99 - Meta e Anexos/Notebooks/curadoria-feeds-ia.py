@@ -1,4 +1,4 @@
-﻿import marimo
+import marimo
 
 __generated_with = "0.23.9"
 app = marimo.App(width="medium")
@@ -25,31 +25,31 @@ def _():
     manifest = load_lab_manifest()
     feeds_data = read_lab_dataset("feeds-assinados", manifest)
     context = lab_runtime_context()
-    return context, feeds_data, fetch_local_feed, get_local_secret, is_pyodide_runtime, manifest
+    return context, feeds_data, fetch_local_feed, get_local_secret
 
 
 @app.cell
 def _(context, feeds_data, mo):
     mo.vstack([
         mo.md(f"""
-# Curadoria de feeds com IA
+    # Curadoria de feeds com IA
 
-Modo atual: **{"WASM · browser" if context["isPackaged"] else "local · Python"}**
+    Modo atual: **{"WASM · browser" if context["isPackaged"] else "local · Python"}**
 
-| Capacidade | WASM | Local | CI |
-|---|:---:|:---:|:---:|
-| Assinaturas do bundle | ✓ | ✓ | ✓ |
-| Coletar feeds ao vivo | — | ✓ | ✓ |
-| Classificar itens com Claude API | — | ✓ | ✓ |
-| Salvar curadoria no vault | — | ✓ | ✓ |
+    | Capacidade | WASM | Local | CI |
+    |---|:---:|:---:|:---:|
+    | Assinaturas do bundle | ✓ | ✓ | ✓ |
+    | Coletar feeds ao vivo | — | ✓ | ✓ |
+    | Classificar itens com Claude API | — | ✓ | ✓ |
+    | Salvar curadoria no vault | — | ✓ | ✓ |
 
-- feeds assinados: **{feeds_data.get("subscriptionCount", 0)}**
-- última coleta: `{feeds_data.get("collectedAt", "—")[:10]}`
+    - feeds assinados: **{feeds_data.get("subscriptionCount", 0)}**
+    - última coleta: `{feeds_data.get("collectedAt", "—")[:10]}`
 
-O notebook coleta itens recentes dos feeds assinados e usa a Claude API para classificar
-relevância por tópico de interesse. Nenhum item é descartado automaticamente — a IA
-sugere prioridade, a decisão final é humana.
-"""),
+    O notebook coleta itens recentes dos feeds assinados e usa a Claude API para classificar
+    relevância por tópico de interesse. Nenhum item é descartado automaticamente — a IA
+    sugere prioridade, a decisão final é humana.
+    """),
     ])
     return
 
@@ -248,14 +248,18 @@ def _(classify_run, collected_items, context, get_local_secret, mo, pd):
 
 @app.cell
 def _(mo):
-    mo.md(
-        "## Uso no CI\n\n"
-        "O workflow `refresh-lab-data.yml` executa a curadoria automaticamente quando "
-        "`ANTHROPIC_API_KEY` está configurado como secret do repositório:\n\n"
-        "```\nSettings → Secrets and variables → Actions → New repository secret\nName: ANTHROPIC_API_KEY\n```\n\n"
-        "O passo de curadoria usa `claude-haiku-4-5-20251001` para manter custo baixo. "
-        "O resultado é commitado em `.dgk/curadoria-feeds.json` com `[skip ci]`."
-    )
+    mo.md("""
+    ## Uso no CI
+
+    O workflow `refresh-lab-data.yml` executa a curadoria automaticamente quando `ANTHROPIC_API_KEY` está configurado como secret do repositório:
+
+    ```
+    Settings → Secrets and variables → Actions → New repository secret
+    Name: ANTHROPIC_API_KEY
+    ```
+
+    O passo de curadoria usa `claude-haiku-4-5-20251001` para manter custo baixo. O resultado é gravado em `.dgk/curadoria-feeds.json`, um snapshot local regenerável que não deve ser commitado.
+    """)
     return
 
 

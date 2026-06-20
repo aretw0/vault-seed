@@ -252,13 +252,15 @@ requireCondition(
   "Marimo exported notebooks must harden table, data-grid, and select colors for accessible dark/light themes.",
 );
 requireCondition(
-  /app = marimo\.App\(\r?\n    width="medium",\r?\n    layout_file="layouts\/visao-geral\.slides\.json",\r?\n\)/.test(presentationNotebook) &&
+  /app = marimo\.App\([\s\S]*?width="medium"[\s\S]*?layout_file="layouts\/visao-geral\.slides\.json"[\s\S]*?\)/.test(presentationNotebook) &&
     exists("99 - Meta e Anexos/Notebooks/apresentacoes/layouts/visao-geral.slides.json") &&
     !presentationNotebook.includes("mo.carousel") &&
     !presentationNotebook.includes("def slide(source):") &&
     notebooksExportScript.includes("cpSync(sourceLayoutsDir") &&
     marimoCss.includes("overflow-x: hidden") &&
     marimoCss.includes("-webkit-overflow-scrolling: touch") &&
+    marimoCss.includes(".mo-slide-content .output:has(table)") &&
+    marimoCss.includes(".mo-slide-content marimo-table") &&
     marimoCss.includes("data-vault-marimo-presentation"),
   "Marimo presentation notebook must use the native slides layout and export its layout file with the notebook source.",
 );
@@ -276,6 +278,8 @@ requireCondition(
 requireCondition(
   notebooksExportScript.includes("data-vault-marimo-navigation") &&
     notebooksExportScript.includes("data-vault-lab-footer") &&
+    notebooksExportScript.includes("function injectNotebookFooter(htmlPath)") &&
+    !notebooksExportScript.includes("  ${labKudosHtml()}") &&
     notebooksExportScript.includes('import { vaultKudos } from "../.site/lib/vault-config.mjs"') &&
     notebooksExportScript.includes("function labKudosHtml()") &&
     notebooksExportScript.includes("vault-lab-footer__heart") &&
@@ -284,6 +288,8 @@ requireCondition(
     notebooksExportScript.includes("data-vault-marimo-presentation-fullscreen") &&
     notebooksExportScript.includes("vaultMarimoFullscreenButton") &&
     notebooksExportScript.includes("Fechar tela cheia") &&
+    notebooksExportScript.includes("function isPresentationNotebook(notebook)") &&
+    notebooksExportScript.includes('notebook.type === "presentation"') &&
     !notebooksExportScript.includes("vault-marimo-fullscreen-toggle") &&
     !notebooksExportScript.includes("Abrir versão interativa") &&
     notebooksSlidesScript.includes("data-vault-marimo-navigation") &&

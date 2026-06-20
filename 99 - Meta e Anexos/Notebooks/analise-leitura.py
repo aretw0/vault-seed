@@ -1,4 +1,4 @@
-﻿import marimo
+import marimo
 
 __generated_with = "0.23.9"
 app = marimo.App(width="medium")
@@ -15,6 +15,8 @@ def _():
 def _():
     from _lab_notebook_runtime import (
         fetch_local_url_text,
+        lab_altair_chart,
+        lab_altair_status_color,
         lab_runtime_context,
         load_lab_manifest,
         read_lab_dataset,
@@ -25,34 +27,42 @@ def _():
     manifest = load_lab_manifest()
     leitura = read_lab_dataset("lista-leitura", manifest)
     context = lab_runtime_context()
-    return context, fetch_local_url_text, leitura, manifest, write_local_json_snapshot, write_local_markdown_note
+    return (
+        context,
+        fetch_local_url_text,
+        lab_altair_chart,
+        lab_altair_status_color,
+        leitura,
+        write_local_json_snapshot,
+        write_local_markdown_note,
+    )
 
 
 @app.cell
 def _(context, leitura, mo):
     mo.vstack([
         mo.md(f"""
-# Lista de leitura
+    # Lista de leitura
 
-Modo atual: **{"WASM · browser" if context["isPackaged"] else "local · Python"}**
+    Modo atual: **{"WASM · browser" if context["isPackaged"] else "local · Python"}**
 
-| Capacidade | WASM | Local | CI |
-|---|:---:|:---:|:---:|
-| Lista curada do bundle | ✓ | ✓ | ✓ |
-| Gráfico por tópico e status | ✓ | ✓ | ✓ |
-| Enriquecimento OpenGraph ao vivo | — | ✓ | — |
-| Salvar lista enriquecida no vault | — | ✓ | — |
-| Criar nota de leitura por URL | — | ✓ | — |
+    | Capacidade | WASM | Local | CI |
+    |---|:---:|:---:|:---:|
+    | Lista curada do bundle | ✓ | ✓ | ✓ |
+    | Gráfico por tópico e status | ✓ | ✓ | ✓ |
+    | Enriquecimento OpenGraph ao vivo | — | ✓ | — |
+    | Salvar lista enriquecida no vault | — | ✓ | — |
+    | Criar nota de leitura por URL | — | ✓ | — |
 
-- itens: **{leitura.get("itemCount", 0)}**
-- coletado em: `{leitura.get("collectedAt", "—")[:10]}`
-"""),
+    - itens: **{leitura.get("itemCount", 0)}**
+    - coletado em: `{leitura.get("collectedAt", "—")[:10]}`
+    """),
     ])
     return
 
 
 @app.cell
-def _(leitura, mo):
+def _(lab_altair_chart, lab_altair_status_color, leitura, mo):
     import altair as alt
     import pandas as pd
 
@@ -66,9 +76,8 @@ def _(leitura, mo):
 
         _status_colors = {"lido": "#22c55e", "para ler": "#3b82f6", "em andamento": "#f59e0b"}
         _domain = status_df["status"].tolist()
-        _range = [_status_colors.get(s, "#94a3b8") for s in _domain]
 
-        chart_topic = (
+        chart_topic = lab_altair_chart(
             alt.Chart(topic_df)
             .mark_bar()
             .encode(
@@ -79,14 +88,15 @@ def _(leitura, mo):
             )
             .properties(height=max(60, len(topic_df) * 28), title="Itens por tópico")
         )
-        chart_status = (
+        chart_status = lab_altair_chart(
             alt.Chart(status_df)
             .mark_arc(innerRadius=40)
             .encode(
                 theta=alt.Theta("count:Q"),
-                color=alt.Color(
+                color=lab_altair_status_color(
                     "status:N",
-                    scale=alt.Scale(domain=_domain, range=_range),
+                    domain=_domain,
+                    colors=_status_colors,
                 ),
                 tooltip=["status:N", "count:Q"],
             )
@@ -99,11 +109,11 @@ def _(leitura, mo):
     else:
         dist_result = mo.md("_Sem dados de resumo._")
     dist_result
-    return alt, items, pd
+    return items, pd
 
 
 @app.cell
-def _(items, mo, pd):
+def _(items, mo):
     _status_opts = sorted({i.get("status", "") for i in items if i.get("status")})
     _topic_opts = sorted({i.get("topic", "") for i in items if i.get("topic")})
 
@@ -139,8 +149,9 @@ def _(items, mo, pd, status_filter, topic_filter):
 
 
 @app.cell
-def _(context, fetch_local_url_text, items, mo):
+def _(context, mo):
     if not context["isLocal"]:
+        run_enrich = None
         enrich_result = mo.vstack([
             mo.md("## Enriquecimento OpenGraph (local)"),
             mo.callout(
@@ -163,20 +174,15 @@ def _(context, fetch_local_url_text, items, mo):
         ])
 
     enrich_result
-    return
+    return (run_enrich,)
 
 
 @app.cell
-def _(context, fetch_local_url_text, items, mo, pd):
+def _(context, fetch_local_url_text, items, mo, pd, run_enrich):
     if not context["isLocal"]:
         enriched_df_result = mo.md("")
         enriched_items = []
     else:
-        try:
-            run_enrich
-        except NameError:
-            run_enrich = None
-
         if run_enrich is not None and run_enrich.value:
             enriched_items = []
             errors = []
@@ -232,8 +238,9 @@ def _(context, enriched_items, mo, write_local_json_snapshot):
 
 
 @app.cell
-def _(context, items, mo, write_local_markdown_note):
+def _(context, items, mo):
     if not context["isLocal"]:
+        create_notes = None
         notes_result = mo.vstack([
             mo.md("## Criar notas de leitura (local)"),
             mo.callout(
@@ -257,19 +264,14 @@ def _(context, items, mo, write_local_markdown_note):
         ])
 
     notes_result
-    return
+    return (create_notes,)
 
 
 @app.cell
-def _(context, items, mo, write_local_markdown_note):
+def _(context, create_notes, items, mo, write_local_markdown_note):
     if not context["isLocal"]:
         created_result = mo.md("")
     else:
-        try:
-            create_notes
-        except NameError:
-            create_notes = None
-
         if create_notes is not None and create_notes.value:
             _para_ler = [i for i in items if i.get("status") == "para ler"]
             created = []

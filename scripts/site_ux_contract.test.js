@@ -115,7 +115,11 @@ test('Marimo shell spacing remains topbar-aware and smoke-tested', () => {
   assert.match(css, /padding-top: var\(--vault-lab-content-gap\) !important/);
   assert.match(css, /padding-top: calc\(var\(--vault-lab-content-gap\) \+ env\(safe-area-inset-top, 0px\)\) !important/);
   assert.match(css, /--vault-lab-content-gap: 5rem/);
-  assert.match(css, /\.vault-lab-footer[\s\S]*bottom: 0/);
+  assert.match(css, /\.vault-lab-footer[\s\S]*position: relative/);
+  assert.match(css, /\.vault-lab-footer[\s\S]*margin-left: calc\(var\(--vault-lab-sidebar-width\) \+ 1rem\)/);
+  assert.doesNotMatch(css, /\.vault-lab-footer[\s\S]*position: fixed/);
+  assert.match(exportNotebooks, /function injectNotebookFooter\(htmlPath\)/);
+  assert.match(exportNotebooks, /html\.replace\("<\/body>", `\$\{labKudosHtml\(\)\}\\n<\/body>`\)/);
   assert.match(exportNotebooks, /vault-seed-slides-lite\.html[\s\S]*\$\{themeSelectorHtml\}/);
   assert.match(exportNotebooks, /\.vault-lite-slides \{ width: 100%; max-width: 100%;/);
   assert.match(exportNotebooks, /attachSelectorToTopbar/);
@@ -136,6 +140,31 @@ test('Marimo shell spacing remains topbar-aware and smoke-tested', () => {
 
   assert.match(shellTest, /assert\.doesNotMatch\(exportNotebooks, \/vault-marimo-fullscreen-toggle\//);
   assert.match(shellTest, /assert\.match\(exportNotebooks, \/vault-seed-slides-lite\\\.html\//);
+});
+
+test('Marimo presentation slides keep prose left-aligned while centering tables', () => {
+  const css = read('.site/styles/marimo-vault.css');
+  const proseFontBlock = css.match(
+    /:root\[data-vault-marimo-presentation="slides"\] \.mo-slide-content \.markdown,[\s\S]*?font-size:[\s\S]*?\n\}/,
+  )?.[0] ?? '';
+
+  assert.match(css, /\.mo-slide-content \{[\s\S]*text-align: left !important/);
+  assert.match(css, /\.mo-slide-content \{[\s\S]*margin: auto !important/);
+  assert.match(css, /\.mo-slide-content \{[\s\S]*overflow: auto !important/);
+  assert.match(css, /--vault-marimo-presentation-width: 86rem/);
+  assert.match(css, /--vault-marimo-slide-padding-inline: clamp\(2rem, 5vw, 4\.5rem\)/);
+  assert.match(proseFontBlock, /font-size: 1\.05rem/);
+  assert.doesNotMatch(proseFontBlock, /vw/);
+  assert.doesNotMatch(css, /font-size:\s*clamp\([^)]*vw/);
+  assert.doesNotMatch(css, /section:first-child \.mo-slide-content/);
+  assert.match(css, /\.mo-slide-content\[data-vault-marimo-slide-cover="true"\] \{[\s\S]*margin: auto !important;[\s\S]*text-align: center !important/);
+  assert.match(css, /\.mo-slide-content\[data-vault-marimo-slide-cover="true"\] \.output,[\s\S]*text-align: center !important/);
+  assert.match(css, /\.mo-slide-content h2 \{[\s\S]*font-size: 2\.15rem/);
+  assert.match(css, /\.mo-slide-content\[data-vault-marimo-slide-cover="true"\] h1 \{[\s\S]*font-size: 3\.6rem/);
+  assert.match(css, /\.mo-slide-content \.output,[\s\S]*margin-inline: 0 !important;[\s\S]*text-align: left !important/);
+  assert.match(css, /\.mo-slide-content \.output:has\(table\),[\s\S]*margin-inline: 0 !important/);
+  assert.match(css, /\.mo-slide-content marimo-table,[\s\S]*margin-inline: auto !important/);
+  assert.match(read('scripts/export_notebooks.mjs'), /dataset\.vaultMarimoSlideCover = "true"/);
 });
 
 

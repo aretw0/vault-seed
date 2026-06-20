@@ -1,10 +1,7 @@
-﻿import marimo
+import marimo
 
 __generated_with = "0.23.9"
-app = marimo.App(
-    width="medium",
-    layout_file="layouts/publicacao.slides.json",
-)
+app = marimo.App(width="medium", layout_file="layouts/publicacao.slides.json")
 
 
 @app.cell
@@ -21,6 +18,7 @@ def _():
         sys.path.insert(0, str(_runtime_dir))
     import marimo as mo
     from _lab_notebook_runtime import lab_runtime_context, load_lab_manifest, read_lab_dataset
+
     return lab_runtime_context, load_lab_manifest, mo, read_lab_dataset
 
 
@@ -40,169 +38,178 @@ def _(mo, profile, tier):
     mo.md(f"""
     # Publicando com soberania
 
-    Do Markdown no vault ao site, ao canal e ao feed — sem intermediários
-    que controlem sua voz ou seus dados.
+    Do Markdown no vault ao site, ao feed e, quando fizer sentido, a canais
+    externos com revisão antes do envio.
 
     **{note_count} notas** · **{published} publicadas** · *{tier}*
     """)
-    return (note_count,)
-
-
-@app.cell
-def _(mo):
-    mo.md(
-        """
-        ## O site: Astro + Starlight sobre Markdown
-
-        O site é gerado diretamente das notas. Não há CMS, não há banco de dados,
-        não há painel de administração online.
-
-        ```
-        Notas Markdown  →  astro build  →  HTML/CSS/JS estático
-                                        →  GitHub Pages (ou qualquer host)
-        ```
-
-        - Permalinks estáveis baseados no caminho do arquivo
-        - Busca client-side sem servidor de busca externo
-        - Grafo de links em JSON-LD exportado junto com o site
-        - Dark mode, responsivo, acessível por padrão
-        """
-    )
     return
 
 
 @app.cell
 def _(mo):
-    mo.md(
-        """
-        ## Ciclo de vida das notas
+    mo.md("""
+    ## O site: Astro + Starlight sobre Markdown
 
-        O frontmatter `status:` é o semáforo de publicação:
+    O site é gerado diretamente das notas. Não há CMS, não há banco de dados,
+    não há painel de administração online.
 
-        | Status | Onde aparece | Quando usar |
-        | --- | --- | --- |
-        | `draft` | Só no vault local | esboço, em construção, privado |
-        | `published` | Site + vault local | pronto para o mundo |
-        | *(ausente)* | Só no vault local | nota de trabalho sem status explícito |
+    ```
+    Notas Markdown  →  astro build  →  HTML/CSS/JS estático
+                                    →  GitHub Pages (ou qualquer host)
+    ```
 
-        O CI valida que nenhuma nota `published` quebra lint ou links.
-        Promover de `draft` para `published` é um ato consciente no frontmatter.
-        """
-    )
+    - Permalinks estáveis baseados no caminho do arquivo
+    - Busca client-side sem servidor de busca externo
+    - Grafo de links em JSON-LD exportado junto com o site
+    - Dark mode, responsivo, acessível por padrão
+    """)
     return
 
 
 @app.cell
 def _(mo):
-    mo.md(
-        """
-        ## A Outbox: revisão humana antes de publicar
+    mo.md("""
+    ## Ciclo de vida das notas
 
-        A nota no vault é a fonte de verdade. A outbox lê frontmatter
-        para saber o que foi aprovado para cada canal.
+    O frontmatter `status:` é o semáforo de publicação:
 
-        ```yaml
-        # frontmatter da nota
-        channels:
-          - telegram
-        publicationStatus: review
-        ```
+    | Status | Onde aparece | Quando usar |
+    | --- | --- | --- |
+    | `draft` | Só no vault local | esboço, em construção, privado |
+    | `published` | Site + vault local | pronto para o mundo |
+    | *(ausente)* | Só no vault local | nota de trabalho sem status explícito |
 
-        ```bash
-        dgk etl             # atualiza .dgk/outbox-publicacao.json
-        dgk outbox telegram # publica notas com channel=telegram
-        ```
-
-        Cada publicação é rastreável no histórico Git da nota.
-        """
-    )
+    O CI valida que nenhuma nota `published` quebra lint ou links.
+    Promover de `draft` para `published` é um ato consciente no frontmatter.
+    """)
     return
 
 
 @app.cell
 def _(mo):
-    mo.md(
-        """
-        ## Canais disponíveis
+    mo.md("""
+    ## A Outbox: revisão humana antes de publicar
 
-        | Canal | dgk sow (credencial) | dgk outbox (publicar) |
-        | --- | --- | --- |
-        | Telegram | ✓ bot token + chat ID | ✓ disponível |
-        | Mastodon | ✓ access token | — em desenvolvimento |
-        | Bluesky | ✓ app password | — em desenvolvimento |
-        | Buttondown | ✓ API key | — em desenvolvimento |
-        | RSS | — | gerado pelo `astro build` |
+    Depois que a nota está pronta para o site, a mesma fonte pode alimentar
+    canais externos sem virar cópia solta.
 
-        `dgk sow <canal>` configura credenciais e as guarda no silo local.
-        `dgk outbox telegram` publica o que está aprovado na fila.
-        Os demais canais aceitam credenciais mas ainda não têm publicação automática.
-        Credenciais ficam em `~/.dgk/silo.json`, nunca no repositório.
-        """
-    )
+    A nota no vault é a fonte de verdade. A outbox lê frontmatter
+    para saber o que foi aprovado para cada canal.
+
+    ```yaml
+    # frontmatter da nota
+    channels:
+      - telegram
+    publicationStatus: review
+    ```
+
+    ```bash
+    dgk etl             # atualiza .dgk/outbox-publicacao.json
+    dgk outbox telegram # publica notas com channel=telegram
+    ```
+
+    Cada publicação é rastreável no histórico Git da nota.
+    """)
     return
 
 
 @app.cell
 def _(mo):
-    mo.md(
-        """
-        ## RSS como infraestrutura bidirecional
+    mo.md("""
+    ## Canais disponíveis
 
-        **Publicar**: o site gera um feed RSS a partir das notas `published`,
-        compatível com qualquer leitor. Leitores assinam sem depender de algoritmos.
+    | Canal | dgk sow (credencial) | dgk outbox (publicar) |
+    | --- | --- | --- |
+    | Telegram | ✓ bot token + chat ID | ✓ disponível |
+    | Mastodon | ✓ access token | — em desenvolvimento |
+    | Bluesky | ✓ app password | — em desenvolvimento |
+    | Buttondown | ✓ API key | — em desenvolvimento |
+    | RSS | — | gerado pelo `astro build` |
 
-        **Consumir**: `feeds-assinados.json` é a lista de fontes que você segue.
-        O ETL local coleta e normaliza os itens. O Lab analisa e classifica
-        com IA. A curation decide o que entra na outbox.
-
-        ```
-        Fontes externas → ETL → curadoria-feeds.json → Lab → outbox → publicação
-        ```
-
-        RSS como protocolo de soberania: sem plataforma no meio do caminho.
-        """
-    )
+    `dgk sow <canal>` configura credenciais e as guarda no silo local.
+    `dgk outbox telegram` publica o que está aprovado na fila.
+    Os demais canais aceitam credenciais mas ainda não têm publicação automática.
+    Credenciais ficam em `~/.dgk/silo.json`, nunca no repositório.
+    """)
     return
 
 
 @app.cell
 def _(mo):
-    mo.md(
-        """
-        ## CI como gatekeeper de qualidade
+    mo.md("""
+    ## RSS como infraestrutura bidirecional
 
-        O GitHub Actions executa antes de qualquer publicação:
+    **Publicar**: o site gera um feed RSS a partir das notas `published`,
+    compatível com qualquer leitor. Leitores assinam sem depender de algoritmos.
 
-        - Lint de Markdown (markdownlint, prettier)
-        - Auditoria de arquitetura da informação
-        - Validação de frontmatter e status
-        - Build do site com Astro
-        - Testes de contratos (notebooks, scripts, estrutura)
+    **Consumir**: `feeds-assinados.json` é a lista de fontes que você segue.
+    O ETL local coleta e normaliza os itens. O Lab analisa e classifica
+    com IA. A curadoria decide o que entra na outbox.
 
-        Só chega ao site o que passou em todos os gates.
-        O deploy para GitHub Pages é acionado automaticamente após o CI verde.
-        """
-    )
+    ```
+    Fontes externas → ETL → curadoria-feeds.json → Lab → outbox → publicação
+    ```
+
+    RSS entra como contrato simples: quem assina recebe atualizações sem
+    depender do ranking de uma plataforma.
+    """)
     return
 
 
 @app.cell
 def _(mo):
-    mo.md(
-        """
-        ## Governança: publicação é ato explícito
+    mo.md("""
+    ## CI como gatekeeper de qualidade
 
-        - Criar uma nota não a publica
-        - Criar um notebook não o publica
-        - Adicionar um canal não dispara envio automático
+    O GitHub Actions executa antes de qualquer publicação:
 
-        Cada publicação requer uma decisão no frontmatter.
-        O CI valida. O Git registra. A outbox executa.
+    - Lint de Markdown (markdownlint, prettier)
+    - Auditoria de arquitetura da informação
+    - Validação de frontmatter e status
+    - Build do site com Astro
+    - Testes de contratos (notebooks, scripts, estrutura)
 
-        **Você controla o que sai, quando sai e para onde vai.**
-        Nenhuma plataforma decide por você.
-        """
-    )
+    Só chega ao site o que passou nos gates configurados. O deploy pode ser
+    automatizado, mas continua dependente do processo que o repositório define.
+    """)
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md("""
+    ## Governança: publicação é ato explícito
+
+    - Criar uma nota não a publica
+    - Criar um notebook não o publica
+    - Adicionar um canal não dispara envio automático
+
+    Cada publicação requer uma decisão no frontmatter.
+    O CI valida. O Git registra. A outbox executa.
+
+    O ponto é manter a decisão visível no arquivo e revisável no histórico.
+    """)
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md("""
+    ## Para seguir
+
+    O fio da apresentação é este: publicar no vault é uma decisão registrada,
+    não um efeito colateral.
+
+    - `status: published` coloca a nota no site e no RSS
+    - `channels` prepara envio para canais externos
+    - A outbox separa revisar de publicar
+    - O CI impede que o site avance com quebra conhecida
+
+    Fim da apresentação. O próximo passo é escolher uma nota pequena, promover
+    para `published`, rodar o build e verificar o resultado antes de conectar
+    qualquer canal externo.
+    """)
     return
 
 

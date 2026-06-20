@@ -1,6 +1,6 @@
 """dgk-lab-runtime — Lab notebook runtime utilities for Marimo notebooks in Obsidian vaults."""
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __all__ = [
     "is_pyodide_runtime",
@@ -17,12 +17,16 @@ __all__ = [
     "write_local_dataframe_snapshot",
     "write_local_markdown_note",
     "get_local_secret",
+    "lab_altair_chart",
+    "lab_altair_status_color",
     "clean_lab_text",
     "fingerprint_data",
     "with_data_provenance",
     "read_local_text_file",
     "read_local_bytes_file",
     "parse_feed_xml",
+    "fetch_wasm_json",
+    "fetch_wasm_feed",
     "fetch_local_feed",
     "fetch_local_url_text",
     "scrape_local_page_text",
@@ -105,6 +109,13 @@ def dataset_candidate_paths(path_or_url: str):
     return candidates
 
 
+def _runtime_cache_busted_url(url: str) -> str:
+    import time as _time
+
+    separator = "&" if "?" in url else "?"
+    return f"{url}{separator}v={int(_time.time() * 1000)}"
+
+
 def _read_lab_json_runtime(candidates):
     import json as _json
 
@@ -113,7 +124,7 @@ def _read_lab_json_runtime(candidates):
     last_error = None
     for candidate in candidates:
         try:
-            return _json.loads(open_url(candidate).read())
+            return _json.loads(open_url(_runtime_cache_busted_url(candidate)).read())
         except Exception as exc:
             last_error = exc
             continue
@@ -234,7 +245,7 @@ def _local_write_result(relative_path: str, target: str):
 
 
 def write_local_json_snapshot(relative_path: str, payload, *, indent: int = 2):
-    """Escreve um snapshot JSON versionável no vault local.
+    """Escreve um snapshot JSON no vault local.
 
     Use para etapas de Extract que precisam de filesystem, binários, navegador,
     rede autenticada ou outros recursos indisponíveis no HTML/WASM publicado.
@@ -281,7 +292,7 @@ def write_local_markdown_note(relative_path: str, body: str, *, frontmatter=None
     """Escreve uma nota Markdown local para Obsidian, Bases e Dataview.
 
     Use quando uma análise do Lab deve virar artefato curável no vault. O HTML
-    publicado nunca escreve notas; ele consome snapshots/notas já versionados.
+    publicado nunca escreve notas; ele consome snapshots empacotados ou notas já versionadas.
     """
     import os as _os
 
@@ -326,6 +337,61 @@ def get_local_secret(name: str, default=None, *, required: bool = False):
     if required and not value:
         raise RuntimeError(f"Segredo local ausente: {name}")
     return value
+
+
+LAB_CHART_PALETTE = {
+    "primary": "#2d7a4d",
+    "primaryDark": "#1b5e3b",
+    "text": "#3d3935",
+    "muted": "#6b6560",
+    "border": "#b8b2a7",
+    "published": "#22c55e",
+    "ready": "#3b82f6",
+    "draft": "#f59e0b",
+    "fail": "#ef4444",
+    "warn": "#f59e0b",
+    "info": "#94a3b8",
+    "fallback": "#94a3b8",
+}
+
+
+def lab_altair_chart(chart):
+    """Aplica acabamento visual comum aos gráficos Altair do Lab."""
+    import altair as _alt
+
+    _alt.renderers.set_embed_options(renderer="svg")
+    return (
+        chart.configure_axis(
+            labelColor=LAB_CHART_PALETTE["text"],
+            titleColor=LAB_CHART_PALETTE["text"],
+            gridColor=LAB_CHART_PALETTE["border"],
+            domainColor=LAB_CHART_PALETTE["border"],
+            tickColor=LAB_CHART_PALETTE["border"],
+        )
+        .configure_legend(
+            labelColor=LAB_CHART_PALETTE["text"],
+            titleColor=LAB_CHART_PALETTE["text"],
+        )
+        .configure_title(color=LAB_CHART_PALETTE["primaryDark"])
+        .configure_view(stroke=LAB_CHART_PALETTE["border"])
+        .configure_mark(color=LAB_CHART_PALETTE["primary"])
+    )
+
+
+def lab_altair_status_color(field: str, *, domain=None, legend_title: str = None, colors=None):
+    """Retorna encoding de cor Altair sem cair na paleta padrão do Vega."""
+    import altair as _alt
+
+    palette = dict(LAB_CHART_PALETTE)
+    if colors:
+        palette.update(colors)
+    resolved_domain = list(domain or ["published", "ready", "draft", "sem status"])
+    resolved_range = [palette.get(value, palette["fallback"]) for value in resolved_domain]
+    return _alt.Color(
+        field,
+        scale=_alt.Scale(domain=resolved_domain, range=resolved_range),
+        legend=_alt.Legend(title=legend_title) if legend_title else None,
+    )
 
 
 def clean_lab_text(text, *, lower: bool = False) -> str:
@@ -403,7 +469,10 @@ def _xml_atom_link(element):
 
 def parse_feed_xml(xml_text: str, *, source_url: str = None, limit: int = 50):
     """Converte RSS ou Atom em registros pequenos e versionáveis."""
-    import defusedxml.ElementTree as _ET
+    try:
+        import defusedxml.ElementTree as _ET
+    except ModuleNotFoundError:
+        import xml.etree.ElementTree as _ET
 
     root = _ET.fromstring(xml_text)
     items = []
@@ -455,6 +524,25 @@ def parse_feed_xml(xml_text: str, *, source_url: str = None, limit: int = 50):
         "itemCount": len(items),
         "items": items,
     }
+
+
+async def fetch_wasm_json(url: str):
+    """Busca JSON no runtime Pyodide/WASM usando o fetch do navegador."""
+
+    from pyodide.http import pyfetch  # type: ignore
+
+    response = await pyfetch(url, cache="no-store")
+    return await response.json()
+
+
+async def fetch_wasm_feed(url: str, *, limit: int = 50):
+    """Busca RSS/Atom no runtime Pyodide/WASM usando o fetch do navegador."""
+
+    from pyodide.http import pyfetch  # type: ignore
+
+    response = await pyfetch(url, cache="no-store")
+    xml_text = await response.string()
+    return parse_feed_xml(xml_text, source_url=url, limit=limit)
 
 
 def fetch_local_feed(url: str, *, timeout: int = 20, user_agent: str = "vault-seed-lab/1.0", limit: int = 50):
