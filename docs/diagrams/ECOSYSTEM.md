@@ -36,7 +36,7 @@ graph TD
     end
 
     subgraph instances["Instâncias (distribuições personalizadas)"]
-        RC5["instância corporativa\n(ex: rcdc5)"]
+        CORP["instância corporativa\n(downstream privado)"]
         UVLT["vault do usuário\n(initialize.yml)"]
     end
 
@@ -44,7 +44,7 @@ graph TD
     VS --> SKILLS
     VS --> CHAN
     VS -->|initialize.yml| UVLT
-    VS -->|initialize.yml| RC5
+    VS -->|initialize.yml| CORP
     SKILLS --->|skills agnósticas| PI
     CHAN -.->|migra para| TRACT
     PI --> TRACT
