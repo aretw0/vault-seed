@@ -42,6 +42,12 @@ test('Astro header keeps theme controls discoverable without mobile duplication'
   const vaultConfig = JSON.parse(read('vault.config.json'));
   assert.match(footer, /\{vaultKudos\}/, 'Footer deve renderizar o kudos configurável');
   assert.match(vaultConfig.kudos, /Feito com ♥/, 'vault-seed deve enviar o kudos pessoal por padrão (initialize.yml o remove para o usuário)');
+  // O author/holder do footer vira link configurável (license.holderUrl), para que
+  // cada dono de vault aponte o rodapé ao próprio perfil em vez de herdar aretw0.
+  assert.match(footer, /activeHolderUrl/, 'Footer deve resolver o link configurável do holder/author');
+  assert.match(footer, /holder-link/, 'Footer deve renderizar o holder como link (.holder-link) quando há URL');
+  assert.match(vaultConfig.license.holderUrl ?? '', /^https:\/\/github\.com\/aretw0$/, 'vault-seed deve apontar o holder para o GitHub do mantenedor por padrão');
+  assert.match(read('.github/workflows/initialize.yml'), /cfg\.license\.holderUrl = 'https:\/\/github\.com\/' \+ owner/, 'initialize.yml deve derivar holder/holderUrl do owner do repositório para vaults gerados');
   assert.doesNotMatch(footer, /made with/);
   assert.match(header, /href={`\$\{base\}\/explorar\/`}>Explorar/);
   assert.match(header, /href={`\$\{base\}\/lab\/`}>Lab/);

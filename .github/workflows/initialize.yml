@@ -29,6 +29,12 @@ jobs:
             const fs = require('fs');
             const cfg = JSON.parse(fs.readFileSync('vault.config.json', 'utf8'));
             delete cfg.kudos;
+            const owner = (process.env.GITHUB_REPOSITORY || '/').split('/')[0];
+            if (owner) {
+              cfg.license = cfg.license || {};
+              cfg.license.holder = owner;
+              cfg.license.holderUrl = 'https://github.com/' + owner;
+            }
             fs.writeFileSync('vault.config.json', JSON.stringify(cfg, null, 2) + '\n');
           "
           git config user.name "github-actions[bot]"

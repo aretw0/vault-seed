@@ -9,8 +9,12 @@ const { entry } = Astro.props;
 // License resolution: per-note frontmatter overrides vault.config.json site default.
 const noteType   = (entry?.data?.license as string | undefined) ?? null;
 const noteAuthor = (entry?.data?.author  as string | undefined) ?? null;
+const noteAuthorUrl = (entry?.data?.authorUrl as string | undefined) ?? null;
 const activeType   = noteType   ?? vaultLicense.type;
 const activeHolder = noteAuthor ?? vaultLicense.holder;
+// Link the holder/author when a URL is known: a per-note author uses its own
+// frontmatter authorUrl; the vault-level holder uses license.holderUrl.
+const activeHolderUrl = noteAuthor ? noteAuthorUrl : vaultLicense.holderUrl;
 const activeLicense = resolveLicense(activeType);
 
 // Attributions declared in note frontmatter for images, icons, and other assets.
@@ -72,7 +76,9 @@ if (versions.starlight) versionParts.push(`Starlight ${versions.starlight}`);
 
 	{activeLicense && (
 		<div class="license-row" lang="pt-BR">
-			<span class="license-copy">© {year}{activeHolder ? <> · {activeHolder}</> : null}</span>
+			<span class="license-copy">© {year}{activeHolder ? <> · {activeHolderUrl
+				? <a class="holder-link" href={activeHolderUrl} target="_blank" rel="noopener noreferrer">{activeHolder}</a>
+				: activeHolder}</> : null}</span>
 			{activeLicense.url
 				? <a class="license-badge" href={activeLicense.url} target="_blank" rel="noopener noreferrer license">{activeLicense.label}</a>
 				: <span class="license-badge">{activeLicense.label}</span>
