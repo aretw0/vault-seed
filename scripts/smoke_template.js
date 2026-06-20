@@ -427,6 +427,36 @@ requireCondition(
   })(),
   "initialize.yml must keep pnpm-workspace.yaml and packages/astro-plugins, removing packages/cli and template-only ROADMAP.md.",
 );
+requireCondition(
+  (() => {
+    const match = initializeWorkflow.match(/files_to_remove:\s*"([^"]+)"/);
+    const removed = match ? match[1].split(/\s+/) : [];
+    // Every maintainer publish workflow must be stripped from generated vaults —
+    // they target vault-seed's own npm/PyPI packages and would only fail or confuse
+    // for users. (initialize.yml / deploy-site / ci stay.) Computed from disk so a
+    // newly added publish-*.yml cannot silently leak to user vaults.
+    const publishWorkflows = fs
+      .readdirSync(path.join(root, ".github/workflows"))
+      .filter((file) => /^publish-.*\.ya?ml$/.test(file))
+      .map((file) => `.github/workflows/${file}`);
+    return publishWorkflows.length > 0 && publishWorkflows.every((wf) => removed.includes(wf));
+  })(),
+  "initialize.yml must remove every .github/workflows/publish-*.yml — maintainer publish workflows must not ship to generated vaults.",
+);
+requireCondition(
+  (() => {
+    const match = initializeWorkflow.match(/files_to_remove:\s*"([^"]+)"/);
+    const removed = match ? match[1].split(/\s+/) : [];
+    // Version-contract tests guard maintainer publishing (npm tag / PyPI tag) and are
+    // meaningless in user vaults, where the user runs `node --test scripts/*.test.*`.
+    // They must be stripped alongside the package source they protect.
+    return [
+      "scripts/release_version_contract.test.mjs",
+      "scripts/lab_runtime_version_contract.test.mjs",
+    ].every((script) => removed.includes(script));
+  })(),
+  "initialize.yml must remove the release/lab-runtime version-contract tests — they are maintainer-only publishing guards.",
+);
 for (const [name, specifier] of Object.entries({
   ...(templatePkg.dependencies || {}),
   ...(templatePkg.devDependencies || {}),
