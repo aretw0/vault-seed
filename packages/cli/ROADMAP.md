@@ -3,7 +3,7 @@
 CLI do Digital Gardening Kit. Orquestra Lab, publicação, configuração de canais
 e o painel admin local.
 
-## v0.4.0 (em release)
+## v0.4.0 (lançada)
 
 | Item                                                                                          | Status     |
 | --------------------------------------------------------------------------------------------- | ---------- |
