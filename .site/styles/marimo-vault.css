@@ -1011,6 +1011,7 @@ iframe {
 :root[data-vault-marimo-presentation="slides"] .reveal .slides section,
 :root[data-vault-marimo-presentation="slides"] .reveal .slides section > div:has(> .mo-slide-content) {
   overflow: hidden !important;
+  text-align: left !important;
 }
 
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content {
@@ -1018,8 +1019,7 @@ iframe {
   width: min(var(--vault-marimo-presentation-width), calc(100vw - (2 * var(--vault-marimo-presentation-viewport-gutter)))) !important;
   min-height: 0 !important;
   max-height: 100%;
-  margin-block: 0 !important;
-  margin-inline: 0 !important;
+  margin: auto !important;
   overflow: auto !important;
   padding-block: var(--vault-marimo-slide-padding-block) !important;
   padding-inline: var(--vault-marimo-slide-padding-inline) !important;
@@ -1039,6 +1039,20 @@ iframe {
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .markdown:has(table),
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .prose:has(table) {
   margin-inline: 0 !important;
+}
+
+:root[data-vault-marimo-presentation="slides"] .reveal .slides section:first-child .mo-slide-content {
+  display: grid !important;
+  align-content: center !important;
+  justify-items: center !important;
+  text-align: center !important;
+}
+
+:root[data-vault-marimo-presentation="slides"] .reveal .slides section:first-child .mo-slide-content .output,
+:root[data-vault-marimo-presentation="slides"] .reveal .slides section:first-child .mo-slide-content .markdown,
+:root[data-vault-marimo-presentation="slides"] .reveal .slides section:first-child .mo-slide-content .prose {
+  margin-inline: auto !important;
+  text-align: center !important;
 }
 
 :root[data-vault-marimo-presentation="slides"] .mo-slide-content .markdown,
