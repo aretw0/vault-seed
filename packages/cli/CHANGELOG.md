@@ -1,5 +1,12 @@
 # @aretw0/dgk-cli
 
+## 0.2.1
+
+### Patch Changes
+
+- a37540f: Generalize internal downstream-instance references to vendor-neutral phrasing in
+  the architecture docs and the frontmatter utility comment.
+
 ## 0.2.0
 
 ### Minor Changes
