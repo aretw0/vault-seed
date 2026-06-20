@@ -50,7 +50,7 @@ ecossistema DGK — *powered by refarm* no longo prazo.
 
 ## Por package
 
-- [`packages/dgk-cli`](packages/dgk-cli/ROADMAP.md) — CLI, comandos, admin server
+- [`packages/cli`](packages/cli/ROADMAP.md) — CLI, comandos, admin server
 - [`packages/dgk-channels`](packages/dgk-channels/ROADMAP.md) — rate-limiter, contacts (bridge)
 - [`packages/dgk-skills`](packages/dgk-skills/ROADMAP.md) — skills Pi canônicas do DGK
 
@@ -66,6 +66,26 @@ ecossistema DGK — *powered by refarm* no longo prazo.
 
 `dgk-skills` é canônico ao DGK e fica neste repositório. Para agents-lab vai apenas
 o que for agnóstico do DGK e útil a qualquer projeto do ecossistema.
+
+### Convergência com o Open Knowledge Format (OKF)
+
+O [Open Knowledge Format](https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing)
+(OKF v0.1, Google Cloud) é um formato vendor-neutral para o conhecimento que agentes
+consomem: Markdown + YAML frontmatter, "just files" versionados em git, renderizáveis
+no GitHub, com grafo implícito via cross-links e o padrão "LLM-wiki" — uma biblioteca
+markdown que agentes leem e atualizam. É a mesma forma que o vault-seed já adota:
+sinal externo de que a aposta em markdown + frontmatter + grafo + skills converge com
+o que um fornecedor de nuvem grande está formalizando.
+
+Ação (verificar a convergência, não adotar às cegas):
+
+- Mapear o frontmatter do vault contra o schema OKF (`type` obrigatório, `title`,
+  `description`, `resource`, `tags`, `timestamp`) e registrar o delta.
+- Avaliar um export OKF (ex.: `dgk publish okf`) que emita um bundle a partir das
+  notas publicadas: índices `index.md`, histórico `log.md`, wiki links resolvidos.
+- Posicionar `@aretw0/dgk-skills` como uma implementação do padrão LLM-wiki do OKF.
+- Distinguir convergência real (interoperabilidade de formato) de acoplamento a um
+  catálogo específico — OKF é "format, not platform"; manter a portabilidade.
 
 ---
 
