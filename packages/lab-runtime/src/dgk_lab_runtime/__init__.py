@@ -245,7 +245,7 @@ def _local_write_result(relative_path: str, target: str):
 
 
 def write_local_json_snapshot(relative_path: str, payload, *, indent: int = 2):
-    """Escreve um snapshot JSON versionável no vault local.
+    """Escreve um snapshot JSON no vault local.
 
     Use para etapas de Extract que precisam de filesystem, binários, navegador,
     rede autenticada ou outros recursos indisponíveis no HTML/WASM publicado.
@@ -292,7 +292,7 @@ def write_local_markdown_note(relative_path: str, body: str, *, frontmatter=None
     """Escreve uma nota Markdown local para Obsidian, Bases e Dataview.
 
     Use quando uma análise do Lab deve virar artefato curável no vault. O HTML
-    publicado nunca escreve notas; ele consome snapshots/notas já versionados.
+    publicado nunca escreve notas; ele consome snapshots empacotados ou notas já versionadas.
     """
     import os as _os
 

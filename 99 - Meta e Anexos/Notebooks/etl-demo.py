@@ -223,7 +223,7 @@ def _(mo, pd):
             {
                 "primitiva": "write_local_json_snapshot",
                 "empacotado": "bloqueada",
-                "local": "grava extract versionável no vault",
+                "local": "grava extract regenerável em .dgk/",
                 "fronteira": "extract que toca filesystem fica local",
             },
             {
@@ -314,7 +314,7 @@ def _(mo, runtime_context):
             "## Extract local, carga publicada\n\n"
             f"Status da etapa local: **{status}**. A primitiva `write_local_json_snapshot` "
             "permite que um notebook rode coleta local quando estiver no computador da "
-            "pessoa e grave um snapshot JSON versionável. Depois, o site publicado lê o "
+            "pessoa e grave um snapshot JSON local. Depois, o site publicado lê o "
             "snapshot empacotado pelo manifesto, sem duplicar a interface do notebook."
         ),
         mo.hstack(
@@ -445,7 +445,7 @@ def _(mo, pd, runtime_context):
                 "capacidade": "web scraping",
                 "modo empacotado": "consome snapshot ou URL pública com CORS",
                 "modo local": "pode usar Playwright antes do export",
-                "soberania": "a coleta vira arquivo versionável",
+                "soberania": "a coleta vira snapshot auditável",
             },
             {
                 "capacidade": "arquivos e anexos",
@@ -674,9 +674,9 @@ def _(mo):
 
     1. **Extract** — `pnpm run notebooks:etl` lê as notas do vault e as fontes externas
     2. **Transform** — scripts em `scripts/` normalizam e enriquecem os dados
-    3. **Load** — os arquivos em `.dgk/` são commitados com `[skip ci]` para não disparar novamente o workflow de deploy
+    3. **Load** — os arquivos em `.dgk/` ficam locais ou são empacotados no artefato publicado durante o export
 
-    O notebook é a interface humana para o mesmo ciclo. O CI é a automação sem interface. Os datasets em `.dgk/` são o ponto de encontro entre os dois.
+    O notebook é a interface humana para o mesmo ciclo. O CI é a automação sem interface. Os datasets em `.dgk/` são regeneráveis e servem como entrada para os artefatos publicados.
     """)
     return
 

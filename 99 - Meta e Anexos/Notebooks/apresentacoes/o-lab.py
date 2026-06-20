@@ -171,7 +171,7 @@ def _(mo):
     O Lab não é outro produto dentro do vault. Ele é a camada de leitura para
     perguntas que Markdown sozinho não responde bem.
 
-    - O ETL prepara snapshots versionados
+    - O ETL prepara snapshots efêmeros e regeneráveis
     - O notebook explica o dado e seus limites
     - O HTML publicado mostra o resultado sem exigir servidor
     - O modo local fica para rede, filesystem, OCR e segredos

@@ -38,8 +38,8 @@ ctx = lab_runtime_context()
 # Read a dataset from the Lab manifest (local or Pyodide/WASM)
 data = read_lab_dataset("my-dataset")
 
-# Write a versioned JSON snapshot to the vault
-write_local_json_snapshot("40 - Recursos/data/snapshot.json", data)
+# Write a local JSON snapshot for the ETL/export boundary
+write_local_json_snapshot(".dgk/my-dataset.json", data)
 
 # Keep charts aligned with the Lab shell instead of Vega defaults
 chart = lab_altair_chart(chart.encode(color=lab_altair_status_color("status:N")))

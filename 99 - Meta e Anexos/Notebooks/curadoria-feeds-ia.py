@@ -258,7 +258,7 @@ def _(mo):
     Name: ANTHROPIC_API_KEY
     ```
 
-    O passo de curadoria usa `claude-haiku-4-5-20251001` para manter custo baixo. O resultado é commitado em `.dgk/curadoria-feeds.json` com `[skip ci]`.
+    O passo de curadoria usa `claude-haiku-4-5-20251001` para manter custo baixo. O resultado é gravado em `.dgk/curadoria-feeds.json`, um snapshot local regenerável que não deve ser commitado.
     """)
     return
 

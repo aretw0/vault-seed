@@ -48,8 +48,9 @@ Fluxo recomendado:
 
 1. Extrair dados de arquivos, páginas, OCR ou APIs em ambiente local/CI.
 2. Transformar e reduzir para um snapshot pequeno o suficiente para publicação.
-3. Salvar esse snapshot em caminho servido pelo site.
-4. Carregar o snapshot no notebook Marimo.
+3. Salvar esse snapshot em `.dgk/` ou outro estado local ignorado pelo Git.
+4. Empacotar o recorte publicável durante o export do site.
+5. Carregar o snapshot no notebook Marimo.
 
 Para arquivos empacotados junto de um notebook WebAssembly, a documentação do
 Marimo recomenda uma pasta `public/` ao lado do notebook e `mo.notebook_location()`
