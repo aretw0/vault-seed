@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -96,6 +96,10 @@ function runPackDryRun(relPath) {
 
 function runPythonBuildSmoke(pkg) {
   const outputDir = path.join(ROOT, ".sandbox", "python-packages", pkg.name);
+  // Start from a clean out-dir: uv build does not prune old artifacts, so a stale
+  // wheel from a previous version would shadow the freshly built one and make the
+  // smoke report (and import-probe) the wrong version.
+  rmSync(outputDir, { recursive: true, force: true });
   mkdirSync(outputDir, { recursive: true });
   const build = spawnSync(UV_BIN, ["build", pkg.relPath, "--out-dir", outputDir], {
     cwd: ROOT,
