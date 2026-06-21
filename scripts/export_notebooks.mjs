@@ -337,6 +337,37 @@ const themeSelectorHtml = String.raw`
 </script>
 `;
 
+const VEGA_SHADOW_THEME_MARKER = "data-vault-marimo-vega-shadow-theme";
+const vegaShadowThemeHtml = String.raw`
+<script data-vault-marimo-vega-shadow-theme>
+(() => {
+  // Marimo renders Altair/Vega charts inside the <marimo-vega> shadow DOM, which
+  // global stylesheets cannot pierce — so the chart text/axes kept their authored
+  // light-theme colors and vanished in dark mode. Inject the theme rules into each
+  // shadow root instead. CSS custom properties inherit across the shadow boundary,
+  // so var(--foreground)/var(--border) retrack the active light/dark palette.
+  const STYLE = [
+    '.vega-embed svg text, svg text { fill: var(--foreground) !important; }',
+    '.vega-embed svg g.role-axis line, .vega-embed svg g.role-axis path,',
+    '.vega-embed svg g.role-axis-grid line,',
+    '.vega-embed svg g.role-legend line, .vega-embed svg g.role-legend path { stroke: var(--border) !important; }',
+  ].join('\n');
+  function apply(shadowRoot) {
+    if (!shadowRoot || shadowRoot.querySelector('style[data-vault-vega-theme]')) return;
+    const style = document.createElement('style');
+    style.setAttribute('data-vault-vega-theme', '');
+    style.textContent = STYLE;
+    shadowRoot.appendChild(style);
+  }
+  function scan() {
+    document.querySelectorAll('marimo-vega').forEach((el) => apply(el.shadowRoot));
+  }
+  scan();
+  new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script>
+`;
+
 const presentationFullscreenHtml = String.raw`
 <script data-vault-marimo-presentation-fullscreen>
 (() => {
@@ -500,9 +531,24 @@ function injectThemeSelector(htmlPath) {
 	);
 }
 
+function injectVegaShadowTheme(htmlPath) {
+	const html = readFileSync(htmlPath, "utf8");
+	if (html.includes(VEGA_SHADOW_THEME_MARKER)) {
+		return;
+	}
+	if (!html.includes("</body>")) {
+		throw new Error(`HTML exportado sem </body>: ${htmlPath}`);
+	}
+	writeFileSync(
+		htmlPath,
+		html.replace("</body>", `${vegaShadowThemeHtml}\n</body>`),
+	);
+}
+
 function postprocessNotebookHtml(output, notebook) {
 	injectNotebookNavigation(output, notebook.output);
 	injectNotebookFooter(output);
+	injectVegaShadowTheme(output);
 	if (isPresentationNotebook(notebook)) {
 		injectPresentationFullscreen(output);
 		if (isOverviewPresentation(notebook)) {

@@ -718,6 +718,8 @@ iframe {
 
 :root[data-vault-marimo-shell="lab"] body {
   box-sizing: border-box;
+  height: 100dvh;
+  overflow: hidden;
   scroll-padding-top: var(--vault-lab-content-offset);
 }
 
@@ -732,9 +734,10 @@ iframe {
 }
 
 :root[data-vault-marimo-shell="lab"] .vault-lab-topbar {
-  position: sticky;
+  position: fixed;
   z-index: 10000;
   inset-block-start: 0;
+  inset-inline: 0;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -904,7 +907,7 @@ iframe {
   box-sizing: border-box;
   position: relative;
   width: calc(100% - var(--vault-lab-sidebar-width));
-  min-height: calc(100dvh - var(--vault-lab-topbar-height));
+  height: 100dvh;
   margin-left: var(--vault-lab-sidebar-width);
   padding-top: var(--vault-lab-content-gap) !important;
   padding-inline: clamp(1rem, 2.5vw, 2rem) !important;
@@ -933,8 +936,10 @@ iframe {
 }
 
 .vault-lab-footer {
-  position: relative;
-  z-index: 1;
+  position: fixed;
+  z-index: 9998;
+  inset-block-end: 1rem;
+  inset-inline-start: calc(var(--vault-lab-sidebar-width) + 1rem);
   border: 1px solid var(--border);
   border-radius: 999px;
   background: color-mix(in srgb, var(--card) 94%, transparent);
@@ -948,12 +953,10 @@ iframe {
   gap: 0.3rem;
   width: fit-content;
   max-width: calc(100vw - 1.5rem);
-  margin-block: 0 1rem;
-  margin-left: calc(var(--vault-lab-sidebar-width) + 1rem);
-  margin-right: 1rem;
+  margin: 0;
   padding: 0.45rem 0.7rem;
   white-space: nowrap;
-  transition: margin-left 160ms ease;
+  transition: inset-inline-start 160ms ease;
 }
 
 .vault-lab-footer__heart {
@@ -976,7 +979,7 @@ iframe {
 }
 
 :root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] .vault-lab-footer {
-  margin-left: 1rem;
+  inset-inline-start: 1rem;
 }
 
 :root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] .vault-lab-sidebar {
@@ -1192,8 +1195,7 @@ iframe {
 
   .vault-lab-footer,
   :root[data-vault-marimo-shell="lab"][data-vault-lab-sidebar="collapsed"] .vault-lab-footer {
-    margin-left: 1rem;
-    margin-right: 1rem;
+    inset-inline-start: 1rem;
   }
 
   :root[data-vault-marimo-shell="lab"] .vault-marimo-theme-selector {

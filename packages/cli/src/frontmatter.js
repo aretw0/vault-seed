@@ -2,7 +2,7 @@
  * Serialização de frontmatter YAML compatível com Obsidian.
  * Só usa aspas quando realmente necessário — sem ruído no histórico Git.
  *
- * Padrão portado do motor @rcdcp/engine (rcdc5/packages/engine).
+ * Padrão portado de um motor de frontmatter validado numa instância downstream privada.
  */
 
 export function yamlScalar(value) {

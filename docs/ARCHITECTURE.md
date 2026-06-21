@@ -76,7 +76,7 @@ graph TD
     end
 
     subgraph instances["Instâncias (distribuições personalizadas)"]
-        RC5["instância corporativa\n(ex: rcdc5)"]
+        CORP["instância corporativa\n(downstream privado)"]
         UVLT["vault do usuário\n(initialize.yml)"]
     end
 
@@ -84,7 +84,7 @@ graph TD
     VS --> SKILLS
     VS --> CHAN
     VS -->|initialize.yml| UVLT
-    VS -->|initialize.yml| RC5
+    VS -->|initialize.yml| CORP
     SKILLS --->|skills agnósticas| PI
     CHAN -.->|migra para| TRACT
     PI --> TRACT
@@ -125,7 +125,7 @@ espelhando o mesmo padrão que usamos internamente (incluindo `--provenance`).
 
 Hoje o ETL é um pipeline fixo de 4 scripts. A próxima evolução é tratar as
 **fontes de dados como configuração declarada**, seguindo o mesmo princípio que
-o rcdc5 aplica para scraping empresarial: uma fonte declarada gera um perfil de
+uma instância corporativa downstream aplica para scraping empresarial: uma fonte declarada gera um perfil de
 ingestão que o pipeline executa automaticamente.
 
 ### `lab.sources.json` — configuração declarada
@@ -167,8 +167,8 @@ Adicionar uma nova fonte = um novo objeto JSON + um novo arquivo de perfil Pytho
 
 O campo `target` pode usar roteamento semântico: se `target` for `"auto"`,
 o classificador IA (`curadoria-feeds-ia.py`) determina a pasta PARA com base
-no conteúdo. Isso espelha o sistema de taxonomia do rcdc5 (`rm-taxonomy`),
-portado de forma agnóstica ao DGK.
+no conteúdo. Isso espelha um sistema de taxonomia validado numa instância
+corporativa downstream, portado de forma agnóstica ao DGK.
 
 ### Cache bruto e staging
 
