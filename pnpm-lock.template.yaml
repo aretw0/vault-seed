@@ -17,7 +17,7 @@ importers:
         version: 0.1.0
       '@aretw0/dgk-cli':
         specifier: latest
-        version: 0.2.0
+        version: 0.2.1
       '@astrojs/starlight':
         specifier: ^0.39.2
         version: 0.39.2(astro@6.3.7(@types/node@24.12.4)(rollup@4.60.4))(typescript@5.9.3)
@@ -80,8 +80,8 @@ packages:
     resolution: {integrity: sha512-GFFcu8n2eYhPdQ8Ji81wxo+n0J6IvZdHIFg7vNWdplBSIaTSNx9Z0lG+19wOXuf+jzkATAfpRyeIzKuvdGGpNg==}
     engines: {node: '>=22'}
 
-  '@aretw0/dgk-cli@0.2.0':
-    resolution: {integrity: sha512-vd80NadgSL9Mhdg9nn9/Yk9gN/1Mmp23h0FKpxgzghLhoRIpsMP3P58fFoT1g6uCUogZG4O/GHV2xZsNoI4Fvg==}
+  '@aretw0/dgk-cli@0.2.1':
+    resolution: {integrity: sha512-p1aLioFJlQ+i/6uvKSBr4pJ8FgTXBSAhU+qRjH3LEJCin4cvPKLbLcs98u9H3ZR1NKFS4WdJCXW2Tp0VNH8G1Q==}
     engines: {node: '>=22'}
     hasBin: true
 
@@ -2215,7 +2215,7 @@ snapshots:
 
   '@aretw0/dgk-channels@0.1.0': {}
 
-  '@aretw0/dgk-cli@0.2.0': {}
+  '@aretw0/dgk-cli@0.2.1': {}
 
   '@astrojs/compiler@4.0.0': {}
 
