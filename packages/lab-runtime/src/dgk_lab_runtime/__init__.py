@@ -356,26 +356,17 @@ LAB_CHART_PALETTE = {
 
 
 def lab_altair_chart(chart):
-    """Aplica acabamento visual comum aos gráficos Altair do Lab."""
+    """Aplica acabamento visual comum aos gráficos Altair do Lab.
+
+    Não fixamos cores de texto/eixos/grade aqui: o Marimo já tematiza o gráfico
+    conforme o tema ativo (claro/escuro), então cores claras hard-coded sumiam no
+    fundo escuro. Mantemos só a cor de marca padrão (série única), legível nos dois
+    fundos, e o renderer SVG para o site poder ajustar o tema via CSS.
+    """
     import altair as _alt
 
     _alt.renderers.set_embed_options(renderer="svg")
-    return (
-        chart.configure_axis(
-            labelColor=LAB_CHART_PALETTE["text"],
-            titleColor=LAB_CHART_PALETTE["text"],
-            gridColor=LAB_CHART_PALETTE["border"],
-            domainColor=LAB_CHART_PALETTE["border"],
-            tickColor=LAB_CHART_PALETTE["border"],
-        )
-        .configure_legend(
-            labelColor=LAB_CHART_PALETTE["text"],
-            titleColor=LAB_CHART_PALETTE["text"],
-        )
-        .configure_title(color=LAB_CHART_PALETTE["primaryDark"])
-        .configure_view(stroke=LAB_CHART_PALETTE["border"])
-        .configure_mark(color=LAB_CHART_PALETTE["primary"])
-    )
+    return chart.configure_mark(color=LAB_CHART_PALETTE["primary"])
 
 
 def lab_altair_status_color(field: str, *, domain=None, legend_title: str = None, colors=None):
