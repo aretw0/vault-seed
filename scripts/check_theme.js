@@ -73,7 +73,12 @@ function escapeRegExp(value) {
 }
 
 function parseMarimoVariant(css, selector) {
-  return extractBlock(css, new RegExp(`${escapeRegExp(selector)}[^{}]*\\{([^}]+)\\}`));
+  const vars = {};
+  const blockPattern = new RegExp(`${escapeRegExp(selector)}[^{}]*\\{([^}]+)\\}`, 'g');
+  for (const match of css.matchAll(blockPattern)) {
+    Object.assign(vars, extractBlock(match[0], /[^{}]+\{([^}]+)\}/));
+  }
+  return vars;
 }
 
 // ── Check pairs ───────────────────────────────────────────────────────────────

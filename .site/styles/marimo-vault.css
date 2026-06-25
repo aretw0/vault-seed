@@ -1,8 +1,28 @@
-/* Marimo notebooks: aproxima a UI da paleta verde-jardim do vault. */
+/* Marimo notebooks: aproxima a UI da paleta verde-jardim do vault.
+ * Exported notebooks load @refarm.dev/ds verde-jardim first. The semantic
+ * token blocks below are fallbacks for raw Marimo sessions without DS attrs. */
 :root,
-:root[data-vault-marimo-theme="light"],
-.light,
-.light-theme {
+:root[data-vault-marimo-theme="light"] {
+  --radius: 0.5rem;
+  --slate-1: #f7f5f0;
+  --slate-2: #ede9e2;
+  --slate-3: #e0dbd2;
+  --slate-4: #b8b2a7;
+  --slate-11: #3d3935;
+  --slate-12: #12100e;
+  --grass-7: #2d7a4d;
+  --grass-9: #1b5e3b;
+  --grass-11: #0f3d26;
+  --vault-marimo-presentation-width: 86rem;
+  --vault-marimo-presentation-content-width: 80rem;
+  --vault-marimo-presentation-gutter: clamp(0.5rem, 1.5vw, 1.25rem);
+  --vault-marimo-presentation-viewport-gutter: clamp(0.75rem, 3vw, 4rem);
+}
+
+:root:not([data-refarm-theme]),
+:root[data-vault-marimo-theme="light"]:not([data-refarm-theme]),
+:root:not([data-refarm-theme]) .light,
+:root:not([data-refarm-theme]) .light-theme {
   --background: #f7f5f0;
   --foreground: #12100e;
   --card: #f7f5f0;
@@ -20,42 +40,9 @@
   --border: #b8b2a7;
   --input: #b8b2a7;
   --ring: #1b5e3b;
-  --radius: 0.5rem;
-  --slate-1: #f7f5f0;
-  --slate-2: #ede9e2;
-  --slate-3: #e0dbd2;
-  --slate-4: #b8b2a7;
-  --slate-11: #3d3935;
-  --slate-12: #12100e;
-  --grass-7: #2d7a4d;
-  --grass-9: #1b5e3b;
-  --grass-11: #0f3d26;
-  --vault-marimo-presentation-width: 86rem;
-  --vault-marimo-presentation-content-width: 80rem;
-  --vault-marimo-presentation-gutter: clamp(0.5rem, 1.5vw, 1.25rem);
-  --vault-marimo-presentation-viewport-gutter: clamp(0.75rem, 3vw, 4rem);
 }
 
-:root[data-vault-marimo-theme="dark"],
-.dark,
-.dark-theme {
-  --background: #111310;
-  --foreground: #edf0ec;
-  --card: #1a1f18;
-  --card-foreground: #edf0ec;
-  --popover: #1a1f18;
-  --popover-foreground: #edf0ec;
-  --primary: #95d5b2;
-  --primary-foreground: #111310;
-  --secondary: #282e26;
-  --secondary-foreground: #edf0ec;
-  --muted: #1a1f18;
-  --muted-foreground: #c0c8be;
-  --accent: #1a3327;
-  --accent-foreground: #c4edd8;
-  --border: #4a5048;
-  --input: #4a5048;
-  --ring: #95d5b2;
+:root[data-vault-marimo-theme="dark"] {
   --slate-1: #111310;
   --slate-2: #1a1f18;
   --slate-3: #282e26;
@@ -65,6 +52,28 @@
   --grass-7: #4f9d72;
   --grass-9: #95d5b2;
   --grass-11: #c4edd8;
+}
+
+:root[data-vault-marimo-theme="dark"]:not([data-refarm-theme]),
+:root:not([data-refarm-theme]) .dark,
+:root:not([data-refarm-theme]) .dark-theme {
+  --background: #111310;
+  --foreground: #edf0ec;
+  --card: #1a1f18;
+  --card-foreground: #edf0ec;
+  --popover: #22281f;
+  --popover-foreground: #edf0ec;
+  --primary: #95d5b2;
+  --primary-foreground: #111310;
+  --secondary: #74c69d;
+  --secondary-foreground: #111310;
+  --muted: #1a1f18;
+  --muted-foreground: #c0c8be;
+  --accent: #1a3327;
+  --accent-foreground: #c4edd8;
+  --border: #4a5048;
+  --input: #4a5048;
+  --ring: #95d5b2;
 }
 
 body {

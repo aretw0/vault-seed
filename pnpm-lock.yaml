@@ -30,6 +30,9 @@ importers:
       '@playwright/test':
         specifier: ^1.60.0
         version: 1.60.0
+      '@refarm.dev/ds':
+        specifier: file:vendor/refarm.dev-ds-0.1.0.tgz
+        version: file:vendor/refarm.dev-ds-0.1.0.tgz
       astro:
         specifier: ^6.4.4
         version: 6.4.4(@types/node@24.13.1)(rollup@4.61.1)
@@ -628,6 +631,10 @@ packages:
     resolution: {integrity: sha512-O71yZIbAh/PxDMNGns37GHBIfrVkEVyn+AXyIa5dOTfb4/xNvRWV+Vv/NMbNCtODB/pO7vLlF2OTmMVLhmr7Ag==}
     engines: {node: '>=18'}
     hasBin: true
+
+  '@refarm.dev/ds@file:vendor/refarm.dev-ds-0.1.0.tgz':
+    resolution: {integrity: sha512-1HOwt+Pg1Ey6cJVdg1YMEiiUH159cfYZVlz62My9j7ErHEmvbvDIYADGYbrERcqVpkaNrEqaoXLLnzu9qP+iJg==, tarball: file:vendor/refarm.dev-ds-0.1.0.tgz}
+    version: 0.1.0
 
   '@rollup/pluginutils@5.4.0':
     resolution: {integrity: sha512-MfPp06CjRLfXQ3wY0R8vJDYBy/MvVcc9OulEfR0B8Iv9ko+GCNaRZ+EpJYFl27LhKsZK0o420sYCRHCjfCgeUg==}
@@ -3128,6 +3135,8 @@ snapshots:
   '@playwright/test@1.60.0':
     dependencies:
       playwright: 1.60.0
+
+  '@refarm.dev/ds@file:vendor/refarm.dev-ds-0.1.0.tgz': {}
 
   '@rollup/pluginutils@5.4.0(rollup@4.61.1)':
     dependencies:

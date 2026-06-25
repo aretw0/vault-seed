@@ -44,10 +44,14 @@ const packageJson = JSON.parse(
 );
 const THEME_SELECTOR_MARKER = "data-vault-marimo-theme-selector";
 const NAVIGATION_MARKER = "data-vault-marimo-navigation";
-const MARIMO_VAULT_CSS = readFileSync(
-	join(ROOT, ".site", "styles", "marimo-vault.css"),
+const REFARM_DS_VERDE_JARDIM_CSS = readFileSync(
+	join(ROOT, "node_modules", "@refarm.dev", "ds", "src", "themes", "verde-jardim.css"),
 	"utf8",
 );
+const MARIMO_VAULT_CSS = [
+	REFARM_DS_VERDE_JARDIM_CSS,
+	readFileSync(join(ROOT, ".site", "styles", "marimo-vault.css"), "utf8"),
+].join("\n");
 const PRESENTATION_FULLSCREEN_MARKER =
 	"data-vault-marimo-presentation-fullscreen";
 const PRESENTATION_MOBILE_FALLBACK_MARKER =
@@ -269,6 +273,13 @@ const themeSelectorHtml = String.raw`
     root.dataset.vaultMarimoPalette = palette;
     root.dataset.vaultMarimoThemeChoice = selected;
     root.dataset.vaultMarimoTheme = resolved;
+    if (palette === "verde-jardim") {
+      root.dataset.refarmTheme = "verde-jardim";
+      root.dataset.mode = resolved;
+    } else {
+      delete root.dataset.refarmTheme;
+      delete root.dataset.mode;
+    }
     setClass(root, resolved);
     setClass(document.body, resolved);
     syncMarimoConfig(resolved);
@@ -452,13 +463,13 @@ const presentationMobileFallbackRedirectHtml = String.raw`
 
 function presentationLiteHtml() {
 	return String.raw`<!doctype html>
-<html lang="pt-BR" data-vault-marimo-theme="light" data-vault-marimo-palette="verde-jardim">
+<html lang="pt-BR" data-vault-marimo-theme="light" data-vault-marimo-palette="verde-jardim" data-refarm-theme="verde-jardim" data-mode="light">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Vault Seed — slides leves</title>
   <style>
-${readFileSync(join(ROOT, ".site", "styles", "marimo-vault.css"), "utf8")}
+${MARIMO_VAULT_CSS}
     body { margin: 0; }
     .vault-lite-slides { box-sizing: border-box; width: calc(100% - var(--vault-lab-sidebar-width)); max-width: min(64rem, calc(100vw - 2rem)); margin: 0 auto; margin-left: max(var(--vault-lab-sidebar-width), calc((100vw - 64rem) / 2)); padding: clamp(1.5rem, 5vw, 4rem) 1rem 5rem; }
     .vault-lite-slide { min-height: min(70vh, 38rem); display: grid; align-content: center; border: 1px solid var(--border); border-radius: 1rem; background: var(--card); padding: clamp(1.25rem, 5vw, 4rem); margin-block: 1rem; box-shadow: 0 .75rem 2rem color-mix(in srgb, var(--foreground) 8%, transparent); }

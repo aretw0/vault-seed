@@ -117,6 +117,10 @@ test("published Lab pages keep the vault shell contract", () => {
   assert.match(ensureSnapshots, /pnpm run notebooks:etl/);
   assert.match(ensureSnapshots, /command: "pnpm"/);
   assert.match(exportNotebooks, /MARIMO_VAULT_CSS/);
+  assert.match(exportNotebooks, /REFARM_DS_VERDE_JARDIM_CSS/);
+  assert.match(exportNotebooks, /@refarm\.dev", "ds", "src", "themes", "verde-jardim\.css"/);
+  assert.match(exportNotebooks, /root\.dataset\.refarmTheme = "verde-jardim"/);
+  assert.match(exportNotebooks, /root\.dataset\.mode = resolved/);
   assert.match(exportNotebooks, /data-vault-marimo-shell-css/);
   assert.match(exportNotebooks, /postprocessNotebookHtml\(output, notebook\)/);
   assert.match(exportNotebooks, /patchMarimoVegaRendererAssets/);
