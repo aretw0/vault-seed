@@ -5,6 +5,8 @@
 > spec do fornecedor (`refarm specs/features/2026-06-25-homestead-ssr-tier.md`). Gated: depende do
 > `@refarm.dev/homestead/ssr` + `@refarm.dev/ds` existirem (consumo dev via tarball — ver
 > `refarm docs/DEV_CROSS_REPO_CONSUMPTION.md`).
+> Cross-link fornecedor: `refarm specs/features/2026-06-25-homestead-ssr-tier.md` §3 aponta de volta
+> para este plano consumidor como prova de adoção.
 
 ## Contexto
 
@@ -50,6 +52,7 @@ decisão pequena — ajustar no momento da adoção.
 ## Fora de escopo
 
 - **4c** — o painel de config como `CredentialProvider` do `silo` (coleta) é item separado, gated
-  pela adoção do `@refarm.dev/silo` (item 8).
+  pela adoção do `@refarm.dev/silo` (item 8; fornecedor:
+  `refarm specs/features/2026-06-25-silo-collection-contract.md`).
 - **Studio-host bundled** do homestead — não usado; o admin é superfície servida, não monta plugin.
 - **Multi-tema** no admin — single-tema por ora.
