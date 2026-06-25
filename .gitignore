@@ -15,6 +15,9 @@ node_modules/
 __pycache__/
 __marimo__/
 
+# Tarballs locais usados em provas de consumo cross-repo com o refarm.
+/vendor/
+
 # Arquivos de Sistema e temporários
 *~
 .DS_Store
