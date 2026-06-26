@@ -7,6 +7,10 @@ import {
   siloStatus, loadSilo, saveTokens, removeService,
   SILO_PATH, SERVICES,
 } from '../silo.js';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+
 async function loadChannels() {
   try { return await import('@aretw0/dgk-channels/contacts'); } catch { return null; }
 }
@@ -146,49 +150,52 @@ const ADMIN_HTML = `<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>dgk admin</title>
+<link rel="stylesheet" href="/_ds/tokens.css">
+<link rel="stylesheet" href="/_ds/themes/verde-jardim.css">
+<link rel="stylesheet" href="/_ds/components.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:monospace;background:#1a1a2e;color:#e0e0e0;padding:1.5rem}
-h1{color:#00d4aa;font-size:1.2rem;letter-spacing:.05em;margin-bottom:1.5rem}
-h2{color:#7070a0;font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;margin:1.5rem 0 .7rem}
+body{font-family:var(--font-mono,monospace);background:var(--background);color:var(--foreground);padding:1.5rem}
+h1{color:var(--primary);font-size:1.2rem;letter-spacing:.05em;margin-bottom:1.5rem}
+h2{color:var(--muted-foreground);font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;margin:1.5rem 0 .7rem}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem}
-.card{background:#1e1e36;border:1px solid #2e2e4a;border-radius:6px;padding:.9rem;display:flex;flex-direction:column;gap:.5rem}
-.card.active{border-color:#00d4aa}
-.card-name{font-weight:bold;color:#b0b0d0}
-.key-row{font-size:.72rem;color:#606080;display:flex;align-items:center;gap:.4rem}
-.ok{color:#00d4aa}.miss{color:#d44}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-md,6px);padding:.9rem;display:flex;flex-direction:column;gap:.5rem}
+.card.active{border-color:var(--primary)}
+.card-name{font-weight:bold;color:var(--card-foreground)}
+.key-row{font-size:.72rem;color:var(--muted-foreground);display:flex;align-items:center;gap:.4rem}
+.ok{color:var(--success)}.miss{color:var(--error)}
 .card-actions{margin-top:auto;display:flex;gap:.4rem;padding-top:.5rem}
-.btn{cursor:pointer;font:inherit;border-radius:4px;border:1px solid;padding:.2em .7em;font-size:.75rem}
-.btn-cfg{background:#1a2a3a;border-color:#4080b0;color:#80b0e0}
-.btn-cfg:hover{background:#1e344a}
-.btn-rm{background:#2a1a1a;border-color:#904040;color:#e08080}
-.btn-rm:hover{background:#3a2020}
-.config-panel{background:#1c1c34;border:1px solid #00d4aa;border-radius:6px;padding:1.2rem;margin-top:1rem}
-.config-panel h3{color:#00d4aa;font-size:.9rem;margin-bottom:.3rem}
-.hint{font-size:.75rem;color:#505070;margin-bottom:1rem;line-height:1.5}
+.btn{cursor:pointer;font:inherit;border-radius:var(--radius-sm,4px);border:1px solid var(--border);padding:.2em .7em;font-size:.75rem;background:var(--muted);color:var(--foreground)}
+.btn-cfg{border-color:var(--primary);color:var(--primary)}
+.btn-cfg:hover{background:var(--accent)}
+.btn-rm{border-color:var(--error);color:var(--error)}
+.btn-rm:hover{background:color-mix(in srgb,var(--error) 14%,transparent)}
+.config-panel{background:var(--card);border:1px solid var(--primary);border-radius:var(--radius-md,6px);padding:1.2rem;margin-top:1rem}
+.config-panel h3{color:var(--primary);font-size:.9rem;margin-bottom:.3rem}
+.hint{font-size:.75rem;color:var(--muted-foreground);margin-bottom:1rem;line-height:1.5}
 .field{margin-bottom:.75rem}
-.field label{display:block;font-size:.75rem;color:#8080a0;margin-bottom:.3rem}
-.field input{width:100%;background:#141428;border:1px solid #2e2e4a;border-radius:4px;padding:.4em .6em;color:#e0e0e0;font:inherit;font-size:.85rem}
-.field input:focus{outline:none;border-color:#4060a0}
+.field label{display:block;font-size:.75rem;color:var(--muted-foreground);margin-bottom:.3rem}
+.field input{width:100%;background:var(--background);border:1px solid var(--input);border-radius:var(--radius-sm,4px);padding:.4em .6em;color:var(--foreground);font:inherit;font-size:.85rem}
+.field input:focus{outline:none;border-color:var(--ring)}
 .discover-wrap{margin:.5rem 0}
-.chat-list{margin-top:.5rem;max-height:180px;overflow-y:auto;border:1px solid #2e2e4a;border-radius:4px}
+.chat-list{margin-top:.5rem;max-height:180px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--radius-sm,4px)}
 .chat-item{padding:.4rem .7rem;font-size:.8rem;cursor:pointer;display:flex;gap:.7rem;align-items:baseline}
-.chat-item:hover{background:#20203a}
-.chat-item.sel{background:#1a3a2a;color:#00d4aa}
-.chat-idx{color:#505070;min-width:1.5rem}
+.chat-item:hover{background:var(--muted)}
+.chat-item.sel{background:var(--accent);color:var(--primary)}
+.chat-idx{color:var(--muted-foreground);min-width:1.5rem}
 .form-actions{display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap}
-.btn-save{background:#1a3a2a;border-color:#00d4aa;color:#00d4aa}
-.btn-save:hover{background:#1e4432}
-.btn-cancel{background:#1e1e2e;border-color:#3e3e5a;color:#808090}
+.btn-save{border-color:var(--primary);color:var(--primary)}
+.btn-save:hover{background:var(--accent)}
+.btn-cancel{border-color:var(--border);color:var(--muted-foreground)}
 table{width:100%;border-collapse:collapse;font-size:.78rem}
-th{text-align:left;padding:.45rem .5rem;color:#505070;border-bottom:1px solid #2a2a3e}
-td{padding:.4rem .5rem;border-bottom:1px solid #1e1e30;vertical-align:top}
-.dim{color:#484860;font-size:.72rem}
-.empty{color:#484860;font-style:italic;padding:.75rem 0}
-footer{margin-top:2rem;font-size:.7rem;color:#383858}
+th{text-align:left;padding:.45rem .5rem;color:var(--muted-foreground);border-bottom:1px solid var(--border)}
+td{padding:.4rem .5rem;border-bottom:1px solid var(--border);vertical-align:top}
+.dim{color:var(--muted-foreground);font-size:.72rem}
+.empty{color:var(--muted-foreground);font-style:italic;padding:.75rem 0}
+footer{margin-top:2rem;font-size:.7rem;color:var(--muted-foreground)}
 </style>
 </head>
-<body>
+<body data-refarm-theme="verde-jardim">
 <h1>⬡ dgk admin</h1>
 
 <h2>Canais</h2>
@@ -525,6 +532,23 @@ async function handleAsync(req, res, root, siloPath, fetchFn, spawnFn) {
     if (limit) args.push('--limit', String(limit));
     const result = await spawnFn('node', args, root);
     jsonResponse(res, result.ok ? { ok: true, output: result.output } : { ok: false, error: result.output }, result.ok ? 200 : 500);
+    return;
+  }
+
+  // Serve @refarm.dev/ds CSS (tokens, theme, components) for the admin shell.
+  if (url.pathname.startsWith('/_ds/') && method === 'GET') {
+    const sub = url.pathname.slice('/_ds/'.length);
+    if (sub.includes('..') || !/^[a-z0-9][a-z0-9/_-]*\.css$/i.test(sub)) {
+      jsonResponse(res, { error: 'bad asset' }, 400);
+      return;
+    }
+    try {
+      const file = require.resolve(`@refarm.dev/ds/${sub}`);
+      res.writeHead(200, { 'Content-Type': 'text/css; charset=utf-8' });
+      res.end(readFileSync(file, 'utf8'));
+    } catch {
+      jsonResponse(res, { error: 'asset not found' }, 404);
+    }
     return;
   }
 
