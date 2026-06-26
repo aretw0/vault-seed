@@ -143,7 +143,14 @@ test("published Lab pages keep the vault shell contract", () => {
   assert.doesNotMatch(marimoCss, /data-vault-marimo-presentation="slides"\] \.vault-marimo-navigation\s*\{\s*display: none/);
   assert.match(exportNotebooks, /LEGACY_OVERVIEW_PRESENTATION_OUTPUT = "vault-seed-slides\.html"/);
   assert.match(exportNotebooks, /copyLegacyOverviewPresentationAlias/);
-  assert.match(exportNotebooks, /vault-seed-slides-lite\.html/);
+  // Mobile presentations no longer use a hardcoded lite page; every presentation
+  // redirects mobile to its vertical sibling (real content, native scroll, no reveal).
+  assert.doesNotMatch(exportNotebooks, /vault-seed-slides-lite/);
+  assert.doesNotMatch(exportNotebooks, /presentationLiteHtml/);
+  assert.match(exportNotebooks, /verticalOutputFor/);
+  assert.match(exportNotebooks, /exportNotebookVariant\(source, verticalOutput, \{ stripLayout: true \}\)/);
+  assert.match(exportNotebooks, /injectPresentationMobileFallback\(output, verticalOutputFor\(notebook\.output\)\)/);
+  assert.match(exportNotebooks, /postprocessVerticalHtml/);
 
   assert.match(labIndex, /resolveNotebooksPath/);
   assert.match(labIndex, /vault-card-grid/);

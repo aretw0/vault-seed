@@ -133,8 +133,10 @@ test('Marimo shell spacing remains topbar-aware and smoke-tested', () => {
   assert.doesNotMatch(css, /\.vault-lab-footer \{[^}]*position: relative/);
   assert.match(exportNotebooks, /function injectNotebookFooter\(htmlPath\)/);
   assert.match(exportNotebooks, /html\.replace\("<\/body>", `\$\{labKudosHtml\(\)\}\\n<\/body>`\)/);
-  assert.match(exportNotebooks, /vault-seed-slides-lite\.html[\s\S]*\$\{themeSelectorHtml\}/);
-  assert.match(exportNotebooks, /\.vault-lite-slides \{ width: 100%; max-width: 100%;/);
+  // Mobile presentations redirect to a vertical sibling (no reveal, native scroll)
+  // instead of a hardcoded lite page; the vertical is a normal scrollable shell.
+  assert.match(exportNotebooks, /injectPresentationMobileFallback\(output, verticalOutputFor\(notebook\.output\)\)/);
+  assert.match(exportNotebooks, /function postprocessVerticalHtml/);
   assert.match(exportNotebooks, /attachSelectorToTopbar/);
   assert.match(exportNotebooks, /topbar\.appendChild\(selector\)/);
   assert.match(exportNotebooks, /data-vault-lab-notebook-search/);
@@ -152,7 +154,8 @@ test('Marimo shell spacing remains topbar-aware and smoke-tested', () => {
   assert.match(smoke, /notebook content starts under the Lab topbar/);
 
   assert.match(shellTest, /assert\.doesNotMatch\(exportNotebooks, \/vault-marimo-fullscreen-toggle\//);
-  assert.match(shellTest, /assert\.match\(exportNotebooks, \/vault-seed-slides-lite\\\.html\//);
+  assert.match(shellTest, /assert\.doesNotMatch\(exportNotebooks, \/vault-seed-slides-lite\//);
+  assert.match(shellTest, /assert\.match\(exportNotebooks, \/verticalOutputFor\//);
 });
 
 test('Marimo presentation slides keep prose left-aligned while centering tables', () => {

@@ -143,6 +143,21 @@ iframe {
   margin-inline: auto;
 }
 
+/* Chart containment. A chart whose intrinsic width exceeds its cell — e.g. long
+   y-axis category labels, which made "Distribuição de intenção" the worst
+   offender — must scroll inside its own box, never expand the page. This is the
+   variance-proof backstop: it covers every Lab chart, present and future,
+   regardless of label length; lab_altair_chart's width="container" handles the
+   common fit. The host lives in the light DOM, so this reaches it even though
+   the chart SVG itself renders in the marimo-vega shadow root. */
+marimo-vega,
+.vega-embed {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 :root[data-vault-marimo-theme="light"] {
   color-scheme: light;
 }

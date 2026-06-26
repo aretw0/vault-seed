@@ -21,6 +21,11 @@ import { writeVaultData } from "./generate_vault_data.mjs";
 import { buildLabDatasets } from "./prepare_lab_datasets.mjs";
 import { ensureLabDatasetSnapshots } from "./ensure_lab_snapshots.mjs";
 import { replaceImportAndInjectRuntimeHelpers } from "./notebook_export_runtime_helpers.mjs";
+import {
+	verticalOutputFor,
+	stripMarimoLayoutFile,
+	presentationMobileFallbackRedirectHtml,
+} from "./presentation_export_helpers.mjs";
 import { vaultKudos } from "../.site/lib/vault-config.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -450,52 +455,6 @@ const presentationFullscreenHtml = String.raw`
 </script>
 `;
 
-const presentationMobileFallbackRedirectHtml = String.raw`
-<script data-vault-marimo-presentation-mobile-fallback>
-(() => {
-  const isMobileViewport = window.matchMedia("(max-width: 64rem), (pointer: coarse)").matches;
-  if (isMobileViewport && !location.pathname.endsWith("vault-seed-slides-lite.html")) {
-    location.replace("./vault-seed-slides-lite.html");
-  }
-})();
-</script>
-`;
-
-function presentationLiteHtml() {
-	return String.raw`<!doctype html>
-<html lang="pt-BR" data-vault-marimo-theme="light" data-vault-marimo-palette="verde-jardim" data-refarm-theme="verde-jardim" data-mode="light">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Vault Seed — slides leves</title>
-  <style>
-${MARIMO_VAULT_CSS}
-    body { margin: 0; }
-    .vault-lite-slides { box-sizing: border-box; width: calc(100% - var(--vault-lab-sidebar-width)); max-width: min(64rem, calc(100vw - 2rem)); margin: 0 auto; margin-left: max(var(--vault-lab-sidebar-width), calc((100vw - 64rem) / 2)); padding: clamp(1.5rem, 5vw, 4rem) 1rem 5rem; }
-    .vault-lite-slide { min-height: min(70vh, 38rem); display: grid; align-content: center; border: 1px solid var(--border); border-radius: 1rem; background: var(--card); padding: clamp(1.25rem, 5vw, 4rem); margin-block: 1rem; box-shadow: 0 .75rem 2rem color-mix(in srgb, var(--foreground) 8%, transparent); }
-    .vault-lite-slide h1, .vault-lite-slide h2 { color: var(--primary); margin-block-start: 0; }
-    .vault-lite-slide table { width: 100%; border-collapse: collapse; }
-    .vault-lite-slide th, .vault-lite-slide td { border: 1px solid var(--border); padding: .5rem; text-align: left; }
-    @media (max-width: 44rem) { .vault-lite-slides { width: 100%; max-width: 100%; margin-inline: 0; margin-left: 0; padding-inline: 1rem; } }
-  </style>
-</head>
-<body>
-${labNavigationHtml("vault-seed-slides-lite.html")}
-  <main class="vault-lite-slides">
-
-    <section class="vault-lite-slide"><h1>vault-seed</h1><p>Um vault local-first com site, automação e notebooks no mesmo repositório.</p></section>
-    <section class="vault-lite-slide"><h2>A tese</h2><p>O vault não é só uma pasta de Markdown. Ele é um sistema versionado para pensar, publicar, automatizar e analisar o próprio conhecimento.</p></section>
-    <section class="vault-lite-slide"><h2>O que vem junto</h2><table><tr><th>Camada</th><th>Papel</th></tr><tr><td>Notas Markdown</td><td>conhecimento editável localmente</td></tr><tr><td>Astro/Starlight</td><td>site publicado a partir do vault</td></tr><tr><td>GitHub Actions</td><td>validação e publicação automática</td></tr><tr><td>Marimo</td><td>Lab interativo para leitura e análise</td></tr><tr><td>Agentes</td><td>edição assistida via arquivos, comandos e diff</td></tr></table></section>
-    <section class="vault-lite-slide"><h2>Local-first</h2><p>O trabalho diário acontece no computador: notas, notebooks, scripts e commits. O site publicado é um artefato empacotado dessa base local.</p></section>
-    <section class="vault-lite-slide"><h2>Lab</h2><ul><li>localmente: Python roda no computador;</li><li>publicado: HTML WebAssembly roda no navegador;</li><li>layouts nativos do Marimo permitem modos vertical, grid e slides.</li></ul></section>
-    <section class="vault-lite-slide"><h2>Governança</h2><p>Criar um notebook não publica esse notebook. A publicação passa pelo manifesto <code>.site/lab.notebooks.json</code>.</p></section>
-    <section class="vault-lite-slide"><h2>Próximo passo</h2><p>Distribuir um vault pronto para uso, publicar documentação viva, criar notebooks de análise e separar ETL local de visualização empacotada.</p></section>
-  </main>
-${themeSelectorHtml}
-</body>
-</html>
-`;
-}
 
 function injectNotebookNavigation(htmlPath, currentOutput) {
 	const html = readFileSync(htmlPath, "utf8");
@@ -562,14 +521,27 @@ function postprocessNotebookHtml(output, notebook) {
 	injectVegaShadowTheme(output);
 	if (isPresentationNotebook(notebook)) {
 		injectPresentationFullscreen(output);
+		// Every presentation (not just the overview) redirects mobile to its
+		// vertical sibling, so reveal.js never runs on mobile.
+		injectPresentationMobileFallback(output, verticalOutputFor(notebook.output));
 		if (isOverviewPresentation(notebook)) {
-			writePresentationLiteFallback();
-			injectPresentationMobileFallback(output);
 			copyLegacyOverviewPresentationAlias(output);
 		}
 	}
 	if (shouldInjectThemeSelector) {
 		injectThemeSelector(output);
+	}
+}
+
+// The vertical sibling is a plain scrollable notebook (no slide layout): it gets
+// the regular Lab chrome but NOT the fullscreen/slide treatment and NOT a mobile
+// redirect — it IS the mobile target.
+function postprocessVerticalHtml(verticalOutput, notebook) {
+	injectNotebookNavigation(verticalOutput, notebook.output);
+	injectNotebookFooter(verticalOutput);
+	injectVegaShadowTheme(verticalOutput);
+	if (shouldInjectThemeSelector) {
+		injectThemeSelector(verticalOutput);
 	}
 }
 
@@ -606,7 +578,7 @@ function injectPresentationFullscreen(htmlPath) {
 	);
 }
 
-function injectPresentationMobileFallback(htmlPath) {
+function injectPresentationMobileFallback(htmlPath, verticalOutput) {
 	const html = readFileSync(htmlPath, "utf8");
 	if (html.includes(PRESENTATION_MOBILE_FALLBACK_MARKER)) {
 		return;
@@ -616,15 +588,10 @@ function injectPresentationMobileFallback(htmlPath) {
 	}
 	writeFileSync(
 		htmlPath,
-		html.replace("<head>", `<head>\n${presentationMobileFallbackRedirectHtml}`),
-	);
-}
-
-function writePresentationLiteFallback() {
-	writeFileSync(
-		join(outDir, "vault-seed-slides-lite.html"),
-		presentationLiteHtml(),
-		"utf8",
+		html.replace(
+			"<head>",
+			`<head>\n${presentationMobileFallbackRedirectHtml(verticalOutput)}`,
+		),
 	);
 }
 
@@ -711,15 +678,18 @@ function isNotebookExportFresh(output, source) {
 	});
 }
 
-function prepareNotebookSourceForExport(source) {
+function prepareNotebookSourceForExport(source, { stripLayout = false } = {}) {
 	const sourceCode = readFileSync(source, "utf8");
 	const runtimeHelperSource = readFileSync(notebookRuntimeHelperPath, "utf8");
-	const transformedSource = replaceImportAndInjectRuntimeHelpers(sourceCode, {
+	let transformedSource = replaceImportAndInjectRuntimeHelpers(sourceCode, {
 		runtimeHelperSource,
 	});
+	if (stripLayout) {
+		transformedSource = stripMarimoLayoutFile(transformedSource);
+	}
 	const tmpDir = mkdtempSync(join(tmpdir(), "vault-seed-lab-notebook-"));
 	const sourceLayoutsDir = join(dirname(source), "layouts");
-	if (existsSync(sourceLayoutsDir)) {
+	if (!stripLayout && existsSync(sourceLayoutsDir)) {
 		cpSync(sourceLayoutsDir, join(tmpDir, "layouts"), { recursive: true });
 	}
 	const exportSource = join(tmpDir, basename(source));
@@ -731,66 +701,91 @@ function prepareNotebookSourceForExport(source) {
 	};
 }
 
-mkdirSync(outDir, { recursive: true });
-removeObsoleteDefaultNotebookExports();
-copyVaultDataForWasm();
-
-for (const notebook of manifest.filter((entry) => entry.publish)) {
-	const source = join(ROOT, notebook.source);
-	const output = join(outDir, notebook.output);
-	mkdirSync(dirname(output), { recursive: true });
-	const outputLabel = `${outputRoot.replace(ROOT, "").replaceAll("\\", "/").replace(/^\//, "")}/${notebooksPath}/${notebook.output}`;
-
-	if (isNotebookExportFresh(output, source)) {
-		console.log(`skip notebook: ${notebook.source} -> ${outputLabel} (sem mudanças)`);
-		postprocessNotebookHtml(output, notebook);
-		continue;
-	}
-
-	const prepared = prepareNotebookSourceForExport(source);
-	console.log(`export notebook: ${notebook.source} -> ${outputLabel}`);
-
-	try {
-		const result = spawnSync(
-			"uv",
-			[
-				"run",
-				"--no-project",
-				"--with-requirements",
-				"requirements.txt",
-				"marimo",
-				"export",
-				"html-wasm",
-				prepared.source,
-				"--output",
-				output,
-				"--force",
-			],
-			{
-				cwd: ROOT,
-				env: uvEnv(),
-				stdio: "inherit",
-			},
+function runMarimoExport(preparedSource, output) {
+	const result = spawnSync(
+		"uv",
+		[
+			"run",
+			"--no-project",
+			"--with-requirements",
+			"requirements.txt",
+			"marimo",
+			"export",
+			"html-wasm",
+			preparedSource,
+			"--output",
+			output,
+			"--force",
+		],
+		{
+			cwd: ROOT,
+			env: uvEnv(),
+			stdio: "inherit",
+		},
+	);
+	if (result.error) {
+		console.error(
+			`[notebooks:export] não foi possível iniciar o uv/Marimo: ${result.error.message}`,
 		);
-		if (result.error) {
-			console.error(
-				`[notebooks:export] não foi possível iniciar o uv/Marimo: ${result.error.message}`,
-			);
-			console.error(
-				"[notebooks:export] instale uv e rode novamente: https://docs.astral.sh/uv/getting-started/installation/",
-			);
-			process.exit(1);
-		}
-		if (result.status !== 0) {
-			process.exit(result.status ?? 1);
-		}
+		console.error(
+			"[notebooks:export] instale uv e rode novamente: https://docs.astral.sh/uv/getting-started/installation/",
+		);
+		process.exit(1);
+	}
+	if (result.status !== 0) {
+		process.exit(result.status ?? 1);
+	}
+}
+
+function exportNotebookVariant(source, output, { stripLayout = false } = {}) {
+	const prepared = prepareNotebookSourceForExport(source, { stripLayout });
+	try {
+		runMarimoExport(prepared.source, output);
 	} finally {
 		if (prepared.cleanup) {
 			prepared.cleanup();
 		}
 	}
+}
 
+mkdirSync(outDir, { recursive: true });
+removeObsoleteDefaultNotebookExports();
+copyVaultDataForWasm();
+
+function outputLabelFor(outputName) {
+	return `${outputRoot.replace(ROOT, "").replaceAll("\\", "/").replace(/^\//, "")}/${notebooksPath}/${outputName}`;
+}
+
+for (const notebook of manifest.filter((entry) => entry.publish)) {
+	const source = join(ROOT, notebook.source);
+	const output = join(outDir, notebook.output);
+	mkdirSync(dirname(output), { recursive: true });
+
+	if (isNotebookExportFresh(output, source)) {
+		console.log(
+			`skip notebook: ${notebook.source} -> ${outputLabelFor(notebook.output)} (sem mudanças)`,
+		);
+	} else {
+		console.log(`export notebook: ${notebook.source} -> ${outputLabelFor(notebook.output)}`);
+		exportNotebookVariant(source, output);
+	}
 	postprocessNotebookHtml(output, notebook);
+
+	// Presentations also export a vertical sibling: the same notebook without the
+	// slide layout, served to mobile (native scroll, no reveal.js, real content).
+	if (isPresentationNotebook(notebook)) {
+		const verticalName = verticalOutputFor(notebook.output);
+		const verticalOutput = join(outDir, verticalName);
+		if (isNotebookExportFresh(verticalOutput, source)) {
+			console.log(
+				`skip vertical: ${notebook.source} -> ${outputLabelFor(verticalName)} (sem mudanças)`,
+			);
+		} else {
+			console.log(`export vertical: ${notebook.source} -> ${outputLabelFor(verticalName)}`);
+			exportNotebookVariant(source, verticalOutput, { stripLayout: true });
+		}
+		postprocessVerticalHtml(verticalOutput, notebook);
+	}
 }
 
 patchMarimoVegaRendererAssets();

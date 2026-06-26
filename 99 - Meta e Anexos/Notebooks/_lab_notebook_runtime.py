@@ -281,7 +281,11 @@ except ImportError:
         import altair as _alt
 
         _alt.renderers.set_embed_options(renderer="svg")
-        return chart.configure_mark(color=LAB_CHART_PALETTE["primary"])
+        # width="container" makes the chart follow its cell width so it fits the
+        # mobile viewport; marimo-vault.css contains the host as the hard backstop.
+        return chart.properties(width="container").configure_mark(
+            color=LAB_CHART_PALETTE["primary"]
+        )
 
 
     def lab_altair_status_color(field: str, *, domain=None, legend_title: str = None, colors=None):
