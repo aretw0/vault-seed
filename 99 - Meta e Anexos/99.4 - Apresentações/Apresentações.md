@@ -61,8 +61,10 @@ Versão Marimo: `99 - Meta e Anexos/Notebooks/apresentacoes/agentes.py`
 
 As apresentações ficam disponíveis em `/lab/` na seção "Apresentações" da página do Lab. São exportadas como HTML WebAssembly — rodam no navegador, sem servidor.
 
-Para gerar os slides localmente:
+Para gerar as apresentações localmente (junto com os demais notebooks):
 
 ```bash
-pnpm run notebooks:export:slides
+pnpm run notebooks:export
 ```
+
+No mobile, cada apresentação redireciona para uma versão vertical rolável (`*-vertical.html`), já que o modo slides do Marimo não funciona bem em telas pequenas.

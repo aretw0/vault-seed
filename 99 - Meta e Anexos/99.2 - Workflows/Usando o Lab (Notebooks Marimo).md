@@ -159,13 +159,13 @@ O Marimo também exporta notebooks para outros formatos. Os caminhos mais úteis
 
 O vault inclui quatro notebooks de apresentação em `99 - Meta e Anexos/Notebooks/apresentacoes/`. Cada um declara `layout_file="layouts/<nome>.slides.json"` para criar a navegação de slides no HTML publicado. O arquivo de layout fica em `apresentacoes/layouts/` ao lado do notebook.
 
-Para exportá-lo como HTML WebAssembly de apresentação:
+Para exportá-las como HTML WebAssembly (junto com os demais notebooks do Lab):
 
 ```bash
-pnpm run notebooks:export:slides
+pnpm run notebooks:export
 ```
 
-Por padrão, os HTMLs são gerados em `dist/lab/` com o nome de cada apresentação (ex: `visao-geral-slides.html`). Esses arquivos são artefatos locais de build, não notas do vault.
+Por padrão, os HTMLs são gerados em `dist/lab/` com o nome de cada apresentação (ex: `visao-geral-slides.html`). Cada apresentação também gera um irmão `*-vertical.html`: o modo slides do Marimo não funciona bem em telas pequenas, então o mobile é redirecionado para uma leitura vertical rolável. Esses arquivos são artefatos locais de build, não notas do vault.
 
 Para gerar um PDF de apresentação quando o ambiente suportar Playwright/WebPDF, use o fluxo próprio de PDF em slides:
 

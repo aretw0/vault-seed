@@ -59,7 +59,6 @@ const gitignore = read(".gitignore");
 const notebooksDevScript = read("scripts/notebooks_dev.mjs");
 const notebooksCheckScript = read("scripts/notebooks_check.mjs");
 const notebooksExportScript = read("scripts/export_notebooks.mjs");
-const notebooksSlidesScript = read("scripts/export_notebook_slides.mjs");
 const presentationNotebook = read("99 - Meta e Anexos/Notebooks/apresentacoes/visao-geral.py");
 const etlNotebook = read("99 - Meta e Anexos/Notebooks/etl-demo.py");
 const labDatasetsManifest = readJson(".site/lab.datasets.json");
@@ -177,14 +176,12 @@ requireCondition(
     notebooksDevScript.includes("buildLabDatasets") &&
     notebooksCheckScript.includes("buildLabDatasets") &&
     notebooksExportScript.includes("buildLabDatasets") &&
-    notebooksSlidesScript.includes("buildLabDatasets") &&
     labDatasetsScript.includes('"assets", DATASET_ROOT') &&
     labDatasetsScript.includes("sha256"),
   "Lab ETL tooling must prepare deterministic local/runtime dataset manifests for dev, check, and export.",
 );
 requireCondition(
     templatePkg.scripts?.["notebooks:export:public"] === "node scripts/export_notebooks.mjs --public" &&
-    templatePkg.scripts?.["notebooks:export:slides"] === "node scripts/export_notebook_slides.mjs" &&
     templatePkg.scripts?.["site:dev:lab"] === "pnpm run notebooks:export:public && astro dev" &&
     templatePkg.scripts?.["site:dev:lab:host"] === "pnpm run notebooks:export:public && astro dev --host 0.0.0.0" &&
     templatePkg.scripts?.["site:responsive"] === "pnpm run site:build && pnpm run notebooks:export && node scripts/smoke_responsive.mjs" &&
@@ -292,10 +289,8 @@ requireCondition(
     notebooksExportScript.includes('notebook.type === "presentation"') &&
     !notebooksExportScript.includes("vault-marimo-fullscreen-toggle") &&
     !notebooksExportScript.includes("Abrir versão interativa") &&
-    notebooksSlidesScript.includes("data-vault-marimo-navigation") &&
-    notebooksSlidesScript.includes("data-vault-marimo-presentation-fullscreen") &&
-    notebooksSlidesScript.includes("vaultMarimoFullscreenButton") &&
-    notebooksSlidesScript.includes("Fechar tela cheia") &&
+    notebooksExportScript.includes("data-vault-marimo-navigation") &&
+    notebooksExportScript.includes("data-vault-marimo-presentation-mobile-fallback") &&
     !notebooksExportScript.includes("data-vault-marimo-presentation-exit"),
   "Marimo exported notebooks must include stable navigation and fullscreen labeling for presentations.",
 );

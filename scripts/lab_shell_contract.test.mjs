@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 
 function read(path) {
   return readFileSync(path, "utf8");
@@ -93,6 +93,33 @@ test("published Lab charts use the shared Altair theme helpers", () => {
   assert.match(grafo, /mark_text/);
   assert.match(grafo, /text=alt\.Text\("inbound:Q"\)/);
   assert.match(escrita, /lab_altair_status_color\(/);
+});
+
+test("the manifest is the single source for presentation slides", () => {
+  // The manifest-driven export_notebooks.mjs builds every presentation (slides +
+  // mobile vertical fallback). The old standalone scripts/export_notebook_slides.mjs
+  // hardcoded the same four presentations but without the mobile fallback — running
+  // it would reintroduce the mobile RangeError. It must stay retired.
+  const manifest = JSON.parse(read(".site/lab.notebooks.json"));
+  const outputs = manifest
+    .filter((entry) => entry.type === "presentation")
+    .map((entry) => entry.output)
+    .sort();
+  assert.deepEqual(
+    outputs,
+    [
+      "agentes-slides.html",
+      "o-lab-slides.html",
+      "publicacao-slides.html",
+      "visao-geral-slides.html",
+    ],
+    "all four presentations must be declared in the manifest so notebooks:export builds them",
+  );
+  assert.equal(
+    existsSync("scripts/export_notebook_slides.mjs"),
+    false,
+    "the legacy standalone slides exporter must be removed — notebooks:export is the single source",
+  );
 });
 
 test("published Lab pages keep the vault shell contract", () => {
