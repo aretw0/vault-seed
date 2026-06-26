@@ -30,8 +30,34 @@ patch; deixe o **lock** ser regenerado localmente.
 O **código consumidor não muda** na transição — o Lab (`.site/styles/marimo-vault.css`) e o admin
 (rota `/_ds` no `serve.js`) consomem o package igual, seja `file:` ou publicado.
 
+### Dep transitiva não-publicada (ao consumir `homestead-ssr`)
+
+Quando consumirmos um pacote que **depende de outro `@refarm.dev/*` ainda não publicado** (ex.:
+`homestead-ssr` depende de `ds`), fixar **direto e transitivo** no mesmo tarball local via
+`pnpm.overrides`, até ambos publicarem:
+
+```jsonc
+{
+  "dependencies": {
+    "@refarm.dev/ds": "file:vendor/refarm.dev-ds-0.1.0.tgz",
+    "@refarm.dev/homestead-ssr": "file:vendor/refarm.dev-homestead-ssr-0.1.0.tgz"
+  },
+  "pnpm": { "overrides": { "@refarm.dev/ds": "file:vendor/refarm.dev-ds-0.1.0.tgz" } }
+}
+```
+
 ## Estado atual
 
 - **`@refarm.dev/ds`** — consumido via `file:` (4a Lab tokens + 4b admin `/_ds`). Instala e serve. ✓
-- **`@refarm.dev/homestead`** — packado (tarball no `vendor/`), ainda **não consumido**: o 4b adotou
-  só os tokens do `ds`; o rebuild do admin via helpers `homestead/ssr` é incremento futuro.
+  - O refarm **enxugou a superfície publicável** (`fix(ds): trim published package surface`): tarball
+    sem tests/stories. Os subpaths que consumimos (`./tokens.css`, `./components.css`, `./themes/*`)
+    **seguem exportados** → no publish nosso código não muda. Nosso tarball local em `vendor/` é o
+    pré-trim; o trimado canônico vive em `refarm/.refarm/handoff/vault-seed/2026-06-26/`.
+- **`@refarm.dev/homestead-ssr`** (leaf) — **alvo correto** do rebuild do admin (incremento futuro).
+  Substitui o SDK full `@refarm.dev/homestead`: é só `dist/` (`shellHtml/cardHtml/buttonHtml`), sem
+  puxar o closure do SDK. Ainda **não consumido** — o 4b adotou só os tokens do `ds`. Tarball
+  candidato em `refarm/.refarm/handoff/vault-seed/2026-06-26/refarm.dev-homestead-ssr-0.1.0.tgz`.
+  (O full-homestead foi removido do nosso `vendor/` por ser o alvo errado.)
+
+> Handoff `2026-06-26` também trouxe `@refarm.dev/heartwood` (core cripto WASM) e `@refarm.dev/silo`
+> (segredos) — **fora da caminhada de UI/admin/lab**; assimilação futura, não-agora.
