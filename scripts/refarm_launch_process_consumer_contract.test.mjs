@@ -30,6 +30,11 @@ test("the consumed @refarm.dev/launch-process surface is exported", () => {
     "runLaunchProcess",
     "runLaunchProcessSync",
     "launchDetachedProcess",
+    "launchProcess",
+    "createLaunchProcessSpec",
+    "createLaunchProcessDisplay",
+    "splitLaunchCommand",
+    "quoteLaunchProcessArg",
   ]) {
     assert.match(dts, new RegExp(`export declare function ${name}\\b`), `missing ${name}`);
   }
