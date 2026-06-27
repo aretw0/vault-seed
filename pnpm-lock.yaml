@@ -91,10 +91,17 @@ importers:
       '@aretw0/dgk-runner':
         specifier: workspace:*
         version: link:../dgk-runner
+      '@refarm.dev/launch-process':
+        specifier: file:../../vendor/refarm.dev-launch-process-0.1.0.tgz
+        version: file:vendor/refarm.dev-launch-process-0.1.0.tgz
 
   packages/dgk-channels: {}
 
-  packages/dgk-runner: {}
+  packages/dgk-runner:
+    dependencies:
+      '@refarm.dev/launch-process':
+        specifier: file:../../vendor/refarm.dev-launch-process-0.1.0.tgz
+        version: file:vendor/refarm.dev-launch-process-0.1.0.tgz
 
   packages/dgk-skills: {}
 
@@ -634,6 +641,10 @@ packages:
 
   '@refarm.dev/ds@file:vendor/refarm.dev-ds-0.1.0.tgz':
     resolution: {integrity: sha512-WgBROcb3G9CWuaWH/iN2oFIfJ6/1jcAseKHqJBp0FbcoG2bYu2ntFaLhJ6yK1HeXWPxxRSBsac/DoqgRr/yRLA==, tarball: file:vendor/refarm.dev-ds-0.1.0.tgz}
+    version: 0.1.0
+
+  '@refarm.dev/launch-process@file:vendor/refarm.dev-launch-process-0.1.0.tgz':
+    resolution: {integrity: sha512-ebo3CbXOfR6VcyXB21MK1AWPmFRTV5mcb+pLSkQ6KWR6xlVcucwHP064l2ojPqyur8U8RGuLA7Rena/Al0SKIg==, tarball: file:vendor/refarm.dev-launch-process-0.1.0.tgz}
     version: 0.1.0
 
   '@rollup/pluginutils@5.4.0':
@@ -3137,6 +3148,8 @@ snapshots:
       playwright: 1.60.0
 
   '@refarm.dev/ds@file:vendor/refarm.dev-ds-0.1.0.tgz': {}
+
+  '@refarm.dev/launch-process@file:vendor/refarm.dev-launch-process-0.1.0.tgz': {}
 
   '@rollup/pluginutils@5.4.0(rollup@4.61.1)':
     dependencies:
