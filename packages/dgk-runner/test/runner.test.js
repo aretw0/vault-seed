@@ -29,3 +29,7 @@ test('run rejeita com mensagem contendo cmd e args', async () => {
 test('run rejeita quando o comando não existe', async () => {
   await assert.rejects(() => run('comando-que-nao-existe-dgk', []));
 });
+
+test('run rejeita quando o processo sai com código diferente de 0', async () => {
+  await assert.rejects(() => run('node', ['-e', 'process.exit(3)']));
+});
