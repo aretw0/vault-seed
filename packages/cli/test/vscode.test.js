@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { vscode } from '../src/commands/vscode.js';
+import { vscode, detectVSCode } from '../src/commands/vscode.js';
 
 function mockLauncher(found, opened = []) {
   return {
@@ -8,6 +8,11 @@ function mockLauncher(found, opened = []) {
     openVSCode: async () => { opened.push(true); },
   };
 }
+
+test('detectVSCode usa runLaunchProcessSync injetável e lê exitCode', () => {
+  assert.equal(detectVSCode(() => ({ exitCode: 0 })), true);
+  assert.equal(detectVSCode(() => ({ exitCode: 1 })), false);
+});
 
 test('vscode abre quando code CLI está disponível', async () => {
   const opened = [];

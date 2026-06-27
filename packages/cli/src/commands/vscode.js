@@ -1,4 +1,8 @@
-import { spawnSync, spawn } from 'node:child_process';
+import {
+  createLaunchProcessSpecFromRunner,
+  runLaunchProcessSync,
+  launchDetachedProcess,
+} from '@refarm.dev/launch-process';
 
 export const INSTALL_HINTS = {
   darwin:
@@ -9,23 +13,19 @@ export const INSTALL_HINTS = {
     'Instale o VS Code em https://code.visualstudio.com ou via snap: sudo snap install code --classic',
 };
 
-/** Returns true if the `code` CLI is reachable. Injectable for tests. */
-export function detectVSCode(spawnFn = spawnSync) {
-  try {
-    const result = spawnFn('code', ['--version'], { stdio: 'pipe', shell: false });
-    return result.status === 0;
-  } catch {
-    return false;
-  }
+/** Returns true if the `code` CLI is reachable. runSync injectable for tests. */
+export function detectVSCode(runSync = runLaunchProcessSync) {
+  const { exitCode } = runSync(
+    createLaunchProcessSpecFromRunner('code', ['--version']),
+    { capture: true },
+  );
+  return exitCode === 0;
 }
 
-/** Opens the current directory in VS Code. Injectable for tests. */
-export function openVSCode(cwd = process.cwd(), spawnFn = spawn) {
-  return new Promise((resolve, reject) => {
-    const proc = spawnFn('code', ['.'], { cwd, stdio: 'ignore', shell: false });
-    proc.on('close', resolve);
-    proc.on('error', reject);
-  });
+/** Opens the current directory in VS Code. launchFn injectable for tests. */
+export function openVSCode(cwd = process.cwd(), launchFn = launchDetachedProcess) {
+  launchFn(createLaunchProcessSpecFromRunner('code', ['.'], { cwd }));
+  return Promise.resolve();
 }
 
 export async function vscode(args, _runner, launcher) {
