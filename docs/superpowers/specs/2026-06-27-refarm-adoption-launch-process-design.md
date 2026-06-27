@@ -100,32 +100,52 @@ mudança de comportamento pro usuário**.
 `quoteLaunchProcessArg`; `runLaunchProcess` (com `capture`), `launchProcess`,
 `launchDetachedProcess`, `createLaunchProcessRunner`.
 
-### Componentes e fluxo
+### Estrutura real do runner (descoberta na exploração)
 
-- **`packages/cli/package.json`** — adicionar
-  `"@refarm.dev/launch-process": "file:../../vendor/refarm.dev-launch-process-0.1.0.tgz"`
-  em `dependencies`. Vendorizar o tarball do handoff.
-- **`packages/cli/src/utils.js`** — `run(cmd, args, opts)` reescrito como o
-  **runner único** backed por `runLaunchProcess`: monta `LaunchProcessSpec` via
-  `createLaunchProcessSpecFromRunner(cmd, args, { cwd, display, ...opts })` e
-  executa. Mantém a assinatura `(cmd, args, opts) => Promise<void>` (rejeita em
-  exit≠0) — consumidores existentes não mudam.
-- **`packages/cli/src/launcher.js`** — `openUri` monta spec e usa
-  `launchDetachedProcess` (abre Obsidian e desacopla). Preserva a seam de teste
-  (`platform`/`existsChecker`) e a de spawn injetável.
+O runner canônico **não é** o `utils.js`. É o pacote publicado
+**`@aretw0/dgk-runner`** (`packages/dgk-runner/src/index.js`): `run(cmd,args,opts)`
+via `spawn`, **injetado em ~12 comandos** via `runner.js` (`export { run } from
+'@aretw0/dgk-runner'`). O docstring dele já convida à troca: *"Replace this runner
+to swap the underlying engine — no command code changes when the engine changes."*
+O `packages/cli/src/utils.js` `run()` é um **duplicata morta** (idêntico, sem
+importadores) — remover.
+
+### Dependência
+
+Vendorizar o tarball do handoff e adicionar
+`"@refarm.dev/launch-process": "file:../../vendor/refarm.dev-launch-process-0.1.0.tgz"`
+em **dois** consumidores: `packages/dgk-runner/package.json` (o runner core) e
+`packages/cli/package.json` (launchers/serve/setup locais ao cli).
+
+### Componentes e fluxo (interno, sem mudança pro usuário)
+
+- **`@aretw0/dgk-runner` (`src/index.js`)** — `run()` reimplementado sobre
+  `@refarm.dev/launch-process` (`createLaunchProcessRunner`/`runLaunchProcess`):
+  monta `LaunchProcessSpec` e executa, mantendo a assinatura
+  `(cmd,args,opts) => Promise<void>` (rejeita em exit≠0). **Um ponto oca os ~12
+  comandos** (incl. as partes assíncronas do `setup.js`, que já passam pelo seam).
+- **`packages/cli/src/utils.js`** — remover o `run()` morto (confirmar zero
+  importadores no plano).
+- **`packages/cli/src/launcher.js`** — `openUri` monta spec + `launchDetachedProcess`
+  (abre Obsidian e desacopla). Preserva as seams de teste (`platform`/`existsChecker`).
 - **`packages/cli/src/vscode.js`** — `openVSCode` via `launchDetachedProcess`;
   `detectVSCode` (`code --version`) via `runLaunchProcess({ capture:true })`.
-  Preservar `spawnFn` injetável (os testes injetam).
+  Preservar `spawnFn` injetável.
 - **`packages/cli/src/obsidian.js`** — probe `<cmd> help` via
   `runLaunchProcess({ capture:true })`.
-- **`packages/cli/src/commands/serve.js`** — o `spawnFn('node', args, root)` do
-  admin monta spec + `runLaunchProcess({ capture:true })` (a resposta JSON do
-  admin usa o stdout). Manter o `spawnFn` injetável do `createAdminServer`.
+- **`packages/cli/src/commands/serve.js`** — `spawnFn('node', args, root)` do admin
+  monta spec + `runLaunchProcess({ capture:true })` (a resposta JSON usa o stdout).
+  Manter o `spawnFn` injetável do `createAdminServer`.
+- **`packages/cli/src/commands/setup.js`** — as 3 chamadas síncronas restantes
+  (`git config` não-fatal; probes `uv --version` e `git-filter-repo --version`) via
+  `runLaunchProcessSync`. **Atenção (mapear no plano):** os probes detectam ausência
+  por *throw* do `execFileSync` (ENOENT); `runLaunchProcessSync` retorna
+  `{exitCode}` — preservar a semântica de "ausente = não instalado".
+
+Resultado: nenhum `import 'node:child_process'` resta nos pacotes do cli/runner.
 
 ### Fora desta adoção (YAGNI)
 
-- **`setup.js`** (`execFileSync` síncrono de git/uv/git-filter-repo): semântica
-  síncrona/diferente; limpeza posterior, não agora.
 - Provenance via `artifact-contract-v1`: só se necessário depois.
 
 ### Verificação
@@ -139,8 +159,10 @@ mudança de comportamento pro usuário**.
 - `pnpm test` ≥344 verde.
 - Smoke manual: `dgk` abre Obsidian/VSCode; admin (`dgk serve`) executa scripts e
   retorna o stdout no JSON.
-- Publish-hold ativo: `@aretw0/dgk-cli` não entra em publish enquanto carregar o
-  `file:` (gate + verificação no `release_package_smoke`/fluxo de release).
+- Publish-hold ativo: `@aretw0/dgk-runner` **e** `@aretw0/dgk-cli` (ambos carregam
+  o `file:`) não entram em publish (gate + verificação no `release_package_smoke`/
+  fluxo de release). Como o dgk-cli depende do dgk-runner (`workspace:*`), segurar
+  o runner já cascateia.
 
 ## Riscos e itens deferidos
 
@@ -154,8 +176,9 @@ mudança de comportamento pro usuário**.
 
 ## Critérios de sucesso
 
-1. `dgk-cli` não importa mais `node:child_process` nos arquivos de comando; todo
-   launch vem do `@refarm.dev/launch-process` via runner único.
+1. Nenhum `node:child_process` cru nos pacotes `dgk-runner`/`dgk-cli`; todo launch
+   vem do `@refarm.dev/launch-process` (runner core + launchers/serve/setup). O
+   `utils.js` `run()` morto removido.
 2. Comportamento do usuário inalterado; suíte + smokes verdes.
 3. Contrato de consumidor do `launch-process` no `pnpm test`.
 4. Publish-hold do dgk-cli garantido.
