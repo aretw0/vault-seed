@@ -33,15 +33,45 @@ const pages = [
   { path: `/${notebooksPath}/etl.html`, label: "notebook-etl", type: "notebook" },
   { path: `/${notebooksPath}/feeds.html`, label: "notebook-feeds", type: "notebook" },
   { path: `/${notebooksPath}/outbox.html`, label: "notebook-outbox", type: "notebook" },
+  // Every presentation exports a `*-slides.html` deck (reveal.js, desktop) plus a
+  // `*-vertical.html` sibling; mobile viewports redirect to the vertical so reveal
+  // never runs on small screens. `vertical` is the URL the mobile redirect must
+  // reach — the legacy `vault-seed-slides.html` alias is a copy of the overview
+  // deck, so it redirects to the overview's vertical, not a vault-seed-vertical.
   {
-    path: `/${notebooksPath}/vault-seed-slides.html`,
-    label: "notebook-apresentacao",
+    path: `/${notebooksPath}/visao-geral-slides.html`,
+    label: "apresentacao-visao-geral",
     type: "notebook",
+    presentation: true,
+    vertical: "visao-geral-vertical.html",
   },
   {
-    path: `/${notebooksPath}/vault-seed-slides-lite.html`,
-    label: "notebook-apresentacao-lite",
-    type: "site",
+    path: `/${notebooksPath}/o-lab-slides.html`,
+    label: "apresentacao-o-lab",
+    type: "notebook",
+    presentation: true,
+    vertical: "o-lab-vertical.html",
+  },
+  {
+    path: `/${notebooksPath}/publicacao-slides.html`,
+    label: "apresentacao-publicacao",
+    type: "notebook",
+    presentation: true,
+    vertical: "publicacao-vertical.html",
+  },
+  {
+    path: `/${notebooksPath}/agentes-slides.html`,
+    label: "apresentacao-agentes",
+    type: "notebook",
+    presentation: true,
+    vertical: "agentes-vertical.html",
+  },
+  {
+    path: `/${notebooksPath}/vault-seed-slides.html`,
+    label: "apresentacao-alias-legado",
+    type: "notebook",
+    presentation: true,
+    vertical: "visao-geral-vertical.html",
   },
 ];
 
@@ -226,13 +256,15 @@ async function assertStaticGridAlignment(page, target, label) {
   }
 }
 
-async function assertVisibleContent(page, target, label) {
+async function assertVisibleContent(page, target, viewport, label) {
   if (target.type === "notebook") {
     const hasNotebookContent = await page.locator("marimo-wasm, marimo-island, marimo-code").count();
     if (!hasNotebookContent) {
       fail(`${label}: Marimo runtime marker is not present`);
     }
-    if (target.path.endsWith("vault-seed-slides.html")) {
+    // Desktop keeps the slide deck and its fullscreen enhancer; on mobile we have
+    // already redirected to the vertical sibling, which is a plain notebook.
+    if (target.presentation && !isMobileViewport(viewport)) {
       const hasFullscreenEnhancer = await page
         .locator("[data-vault-marimo-presentation-fullscreen]")
         .count();
@@ -601,11 +633,39 @@ async function assertThemeSelectorDoesNotCoverMarimoBadge(page, target, viewport
   }
 }
 
-function effectiveTargetForViewport(target, viewport) {
-  if (target.path.endsWith("vault-seed-slides.html") && viewport.width < 1024) {
-    return { ...target, type: "site" };
+function isMobileViewport(viewport) {
+  // Mirrors the export-time media query "(max-width: 64rem), (pointer: coarse)".
+  // Playwright viewports do not emulate a coarse pointer, so width is the trigger;
+  // 64rem === 1024px at the default root font-size.
+  return viewport.width <= 1024;
+}
+
+async function assertPresentationMobileFallback(page, target, viewport, label) {
+  if (!target.presentation) return;
+
+  if (isMobileViewport(viewport)) {
+    // Bugs #1/#2: on mobile the deck must redirect to its scrollable vertical
+    // sibling before reveal.js runs (reveal crashes on empty slideTriggers and
+    // offers no scroll on small screens). Proving the redirect proves both.
+    try {
+      await page.waitForURL((url) => url.pathname.endsWith(target.vertical), {
+        timeout: 15000,
+      });
+    } catch {
+      fail(
+        `${label}: mobile presentation did not redirect to its vertical sibling (${target.vertical}); current URL ${page.url()}`,
+      );
+    }
+    return;
   }
-  return target;
+
+  // Desktop must keep the slide deck untouched — no redirect to the vertical.
+  await page.waitForTimeout(500);
+  if (new URL(page.url()).pathname.endsWith(target.vertical)) {
+    fail(
+      `${label}: desktop presentation should keep the slide deck, but redirected to ${target.vertical}`,
+    );
+  }
 }
 
 async function run() {
@@ -643,7 +703,6 @@ async function run() {
       });
 
       for (const target of pages) {
-        const effectiveTarget = effectiveTargetForViewport(target, viewport);
         const label = `${viewport.name} ${target.label}`;
         const response = await page.goto(`${server.baseUrl}${target.path}`, {
           waitUntil: "domcontentloaded",
@@ -655,26 +714,25 @@ async function run() {
           continue;
         }
 
-        if (effectiveTarget.type === "notebook") {
+        // Presentations redirect mobile viewports to their vertical sibling. This
+        // must settle before waiting for the runtime, because on mobile the page
+        // we end up rendering is the vertical notebook, not the slide deck.
+        await assertPresentationMobileFallback(page, target, viewport, label);
+
+        if (target.type === "notebook") {
           await waitForNotebook(page);
         } else {
           await page.waitForLoadState("networkidle", { timeout: 15000 }).catch(() => {});
         }
 
-        await assertVisibleContent(page, effectiveTarget, label);
+        await assertVisibleContent(page, target, viewport, label);
         await assertNoHorizontalOverflow(page, label);
-        await assertStaticGridAlignment(page, effectiveTarget, label);
-        await assertMobileGraphTypography(page, effectiveTarget, viewport, label);
-        await assertPresentationSizing(
-          page,
-          effectiveTarget,
-          viewport,
-          label,
-          externalNetworkAvailable,
-        );
-        await assertLabShellLayout(page, effectiveTarget, viewport, label);
-        await assertThemeSelectorDoesNotCoverMarimoBadge(page, effectiveTarget, viewport, label);
-        await assertPublishedVegaUsesSvg(page, effectiveTarget, label, externalNetworkAvailable);
+        await assertStaticGridAlignment(page, target, label);
+        await assertMobileGraphTypography(page, target, viewport, label);
+        await assertPresentationSizing(page, target, viewport, label, externalNetworkAvailable);
+        await assertLabShellLayout(page, target, viewport, label);
+        await assertThemeSelectorDoesNotCoverMarimoBadge(page, target, viewport, label);
+        await assertPublishedVegaUsesSvg(page, target, label, externalNetworkAvailable);
       }
 
       await context.close();
@@ -696,6 +754,18 @@ async function run() {
     if (externalNetworkAvailable || !isExternalNetworkError(message)) {
       fail(`page error: ${message}`);
     }
+  }
+
+  // Regression guard for bug #1: reveal.js builds an empty slideTriggers list and
+  // then reads slideTriggers[length - 1]. Mobile must redirect before reveal runs,
+  // and desktop reveal must not crash — so this trace should never appear anywhere.
+  const slideTriggerCrash = pageErrors.find((message) =>
+    /slideTriggers|setTriggerRanges/i.test(message),
+  );
+  if (slideTriggerCrash) {
+    fail(
+      `reveal.js slide-trigger crash reached a viewport (mobile should redirect before reveal runs): ${slideTriggerCrash}`,
+    );
   }
 
   if (errors.length > 0) {
