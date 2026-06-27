@@ -1,4 +1,5 @@
 {
+  "dgk": { "releaseHold": "refarm-unpublished" },
   "name": "@aretw0/dgk-runner",
   "version": "0.1.0",
   "description": "Default command runner for dgk-cli — spawns child processes. Replace with @refarm.dev/dgk-runner when the refarm engine is available.",

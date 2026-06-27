@@ -1,4 +1,5 @@
 {
+  "dgk": { "releaseHold": "refarm-unpublished" },
   "name": "@aretw0/dgk-cli",
   "version": "0.2.1",
   "description": "Digital Gardening Kit — CLI para operação do vault",
