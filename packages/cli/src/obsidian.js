@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { spawn } from 'node:child_process';
+import { createLaunchProcessSpecFromRunner, runLaunchProcess } from '@refarm.dev/launch-process';
 
 // On Windows, Obsidian.exe IS the CLI binary — same executable handles both app launch
 // and IPC commands when registered. After registration the dir is added to user PATH,
@@ -10,12 +10,16 @@ const WIN32_FALLBACK =
     ? join(process.env.LOCALAPPDATA, 'Programs', 'Obsidian', 'Obsidian.exe')
     : null;
 
-async function trySpawn(cmd) {
-  return new Promise((resolve) => {
-    const proc = spawn(cmd, ['help'], { stdio: 'pipe' });
-    proc.on('close', (code) => resolve(code === 0));
-    proc.on('error', () => resolve(false));
-  });
+async function trySpawn(cmd, runProc) {
+  try {
+    const { exitCode } = await runProc(
+      createLaunchProcessSpecFromRunner(cmd, ['help']),
+      { capture: true },
+    );
+    return exitCode === 0;
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -23,9 +27,9 @@ async function trySpawn(cmd) {
  * Tries PATH first, then the known Windows install path as a fallback.
  * Obsidian must be running and the CLI must be registered.
  */
-export async function findObsidianCli() {
-  if (await trySpawn('obsidian')) return 'obsidian';
-  if (WIN32_FALLBACK && existsSync(WIN32_FALLBACK) && await trySpawn(WIN32_FALLBACK)) {
+export async function findObsidianCli(runProc = runLaunchProcess) {
+  if (await trySpawn('obsidian', runProc)) return 'obsidian';
+  if (WIN32_FALLBACK && existsSync(WIN32_FALLBACK) && await trySpawn(WIN32_FALLBACK, runProc)) {
     return WIN32_FALLBACK;
   }
   return null;
