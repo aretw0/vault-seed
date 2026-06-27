@@ -287,9 +287,10 @@ export function buildReleasePackageSmokeReport(options = {}) {
     ok: blockers.length === 0,
     rootVersion: rootPackage.version,
     packageCount: packageDirs.length,
-    releasePackages: RELEASE_PACKAGES.map((relPath) => {
+    releasePackages: RELEASE_PACKAGES.flatMap((relPath) => {
       const manifest = readJson(path.join(relPath, "package.json"));
-      return { relPath, name: manifest.name, version: manifest.version };
+      if (manifest.dgk?.releaseHold) return [];
+      return [{ relPath, name: manifest.name, version: manifest.version }];
     }),
     pythonReleasePackages: PYTHON_RELEASE_PACKAGES.map((pkg) => {
       return {

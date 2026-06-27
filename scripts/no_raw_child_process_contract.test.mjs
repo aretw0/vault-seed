@@ -18,6 +18,6 @@ const MIGRATED = [
 
 test("nenhum import cru de node:child_process nos arquivos migrados", () => {
   for (const p of MIGRATED) {
-    assert.doesNotMatch(read(p), /from ['"]node:child_process['"]/, `${p} ainda importa node:child_process`);
+    assert.doesNotMatch(read(p), /from ['"](node:)?child_process['"]/, `${p} ainda importa node:child_process`);
   }
 });
