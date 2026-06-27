@@ -1,6 +1,6 @@
-import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { createLaunchProcessSpecFromRunner, runLaunchProcessSync } from '@refarm.dev/launch-process';
 import { detectObsidian, INSTALL_HINTS } from '../launcher.js';
 
 const CHECK_SUBSTRATE = fileURLToPath(new URL('../../vendor/check-substrate.mjs', import.meta.url));
@@ -17,12 +17,18 @@ function checkNodeVersion() {
   return true;
 }
 
-function git(args) {
-  try {
-    execFileSync('git', args, { stdio: 'pipe' });
-  } catch {
-    // git config errors are non-fatal (e.g. not in a repo)
-  }
+function git(args, runSync = runLaunchProcessSync) {
+  // git config errors are non-fatal (e.g. not in a repo)
+  runSync(createLaunchProcessSpecFromRunner('git', args), { capture: true });
+}
+
+/** True if `cmd --version` is reachable. runLaunchProcessSync swallows ENOENT into exitCode. */
+export function hasTool(cmd, runSync = runLaunchProcessSync) {
+  const { exitCode } = runSync(
+    createLaunchProcessSpecFromRunner(cmd, ['--version']),
+    { capture: true },
+  );
+  return exitCode === 0;
 }
 
 function configureGit() {
@@ -44,25 +50,16 @@ function checkDeps(runner) {
 }
 
 async function installPythonTools(runner) {
-  let uvFound = false;
-  try {
-    execFileSync('uv', ['--version'], { stdio: 'pipe' });
-    uvFound = true;
-  } catch {
+  if (!hasTool('uv')) {
     console.log('  uv não encontrado — git-filter-repo não instalado.');
     console.log('  Instale uv: https://docs.astral.sh/uv/getting-started/installation/');
     return;
   }
-
-  if (!uvFound) return;
-
   // Check PATH first — may have been installed via pipx or manually
-  try {
-    execFileSync('git-filter-repo', ['--version'], { stdio: 'pipe' });
+  if (hasTool('git-filter-repo')) {
     console.log('✓ git-filter-repo já disponível no PATH');
     return;
-  } catch { /* not in PATH — install */ }
-
+  }
   try {
     await runner('uv', ['tool', 'install', 'git-filter-repo']);
     console.log('✓ git-filter-repo instalado via uv');
