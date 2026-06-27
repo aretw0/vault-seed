@@ -1,6 +1,6 @@
 import { createServer } from 'node:http';
-import { spawn } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { createLaunchProcessSpecFromRunner, runLaunchProcess } from '@refarm.dev/launch-process';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
 import {
@@ -75,17 +75,18 @@ async function verifyTelegramToken(token, fetchFn) {
   } catch { return null; }
 }
 
-// Spawns a script and captures stdout+stderr. Used by operation endpoints
+// Launches a script and captures stdout+stderr. Used by operation endpoints
 // so Pi can receive the output and relay it back via Telegram.
-export function defaultSpawn(cmd, args, cwd) {
-  return new Promise((resolve) => {
-    let output = '';
-    const child = spawn(cmd, args, { cwd, stdio: ['ignore', 'pipe', 'pipe'], shell: false });
-    child.stdout?.on('data', (d) => { output += d; });
-    child.stderr?.on('data', (d) => { output += d; });
-    child.on('close', (code) => resolve({ ok: code === 0, output: output.trim() }));
-    child.on('error', (err) => resolve({ ok: false, output: err.message }));
-  });
+export async function defaultSpawn(cmd, args, cwd) {
+  try {
+    const { exitCode, stdout, stderr } = await runLaunchProcess(
+      createLaunchProcessSpecFromRunner(cmd, args, { cwd }),
+      { capture: true },
+    );
+    return { ok: exitCode === 0, output: `${stdout}${stderr}`.trim() };
+  } catch (err) {
+    return { ok: false, output: err.message };
+  }
 }
 
 const ETL_SCRIPTS = [

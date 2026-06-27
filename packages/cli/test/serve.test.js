@@ -4,7 +4,7 @@ import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import http from 'node:http';
-import { createAdminServer, parsePort } from '../src/commands/serve.js';
+import { createAdminServer, parsePort, defaultSpawn } from '../src/commands/serve.js';
 
 /** Raw HTTP request allowing custom Host header (fetch() forbids this). */
 function rawRequest(address, { path = '/', method = 'GET', headers = {}, body } = {}) {
@@ -47,6 +47,19 @@ async function startServer(root, siloPath, opts = {}) {
   const address = `http://127.0.0.1:${port}`;
   return { address, close: () => new Promise((r) => server.close(r)) };
 }
+
+// --- defaultSpawn ---
+
+test('defaultSpawn captura stdout e marca ok em exit 0', async () => {
+  const r = await defaultSpawn('node', ['-e', "process.stdout.write('hi')"], process.cwd());
+  assert.equal(r.ok, true);
+  assert.equal(r.output, 'hi');
+});
+
+test('defaultSpawn marca ok=false em exit != 0', async () => {
+  const r = await defaultSpawn('node', ['-e', 'process.exit(2)'], process.cwd());
+  assert.equal(r.ok, false);
+});
 
 // --- parsePort ---
 
