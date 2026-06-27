@@ -9,22 +9,40 @@
 - O vault-seed depende de `@refarm.dev/*` via **tarball local**: `package.json` →
   `"@refarm.dev/<pkg>": "file:vendor/<pkg>.tgz"` (o `.tgz` vem do `pnpm pack` no refarm; `vendor/`
   é gitignorado).
-- No `pnpm-lock.yaml` isso vira uma **entrada `file:`** → **isenta** da política
-  `minimumReleaseAge` (é dep local, não de registry; não há release para age-checkar).
+- No `pnpm-lock.yaml` isso vira uma **entrada `file:`** com `version: 0.1.0`. **Atenção:** entrada
+  `file:` **não é** auto-isenta — o pnpm 11 ainda roda a auditoria de supply-chain do lockfile sobre
+  ela e tenta age-checar `@refarm.dev/ds@0.1.0` no registry (404 → não-publicado), **quebrando o
+  clean install**. Por isso o `pnpm-workspace.yaml` isenta o escopo inteiro:
+
+  ```yaml
+  minimumReleaseAgeExclude:
+    - "@refarm.dev/*"
+  ```
+
+  (`severity: warn` **não** rebaixa essa auditoria de lockfile num install completo — só o exclude
+  resolve.)
 
 ### Armadilha (já tropeçamos)
 
-**Não importar um `pnpm-lock` de outro checkout** para essas deps. O lock do cache do bibliotecário
-registrava `@refarm.dev/ds` como **entrada de registry**, e a política tentou verificá-la no npm
-(404 → não-publicado) e **quebrou o `pnpm install`**. Correção: restaurar o lock e deixar o pnpm
-resolver a dep `file:` **no próprio host** (vira entrada `file:`, isenta). Porte o **código** por
-patch; deixe o **lock** ser regenerado localmente.
+**O clean install (`rm -rf node_modules && pnpm install`) quebra sem o `minimumReleaseAgeExclude`**:
+a auditoria de lockfile do pnpm 11 verifica cada entrada — inclusive `file:` com versão — e bate no
+404 do `@refarm.dev/*` não-publicado. Installs **incrementais pulam** essa auditoria, então o
+problema fica **latente** até um clone limpo / CI. Correção durável: o exclude do escopo acima.
+
+Armadilha relacionada: **não importar um `pnpm-lock` de outro checkout** para essas deps — porte o
+**código** por patch e deixe o **lock** ser resolvido localmente.
+
+Outra (refresh de tarball `file:`): o pnpm cacheia o unpack no store global **pela path**
+(`store/v11/file+vendor+<pkg>.tgz`), não pela integrity. Trocar o `.tgz` mantendo o nome **não**
+re-extrai (`pnpm install` diz "Already up to date"). Para refrescar: atualizar a `integrity` no lock
+(sha512 do novo `.tgz`) **e** apagar a entrada do store; ou `rm -rf node_modules` + install.
 
 ## No publish (quando `@refarm.dev/<pkg>` sair no npm)
 
 1. trocar `package.json`: `"file:vendor/<pkg>.tgz"` → `"@refarm.dev/<pkg>": "^<versão>"`;
-2. `pnpm install` → o lock vira **entrada de registry** → a `minimumReleaseAge` passa a
-   **age-checkar a release real** (correto, sem buraco na política);
+2. `pnpm install` → o lock vira **entrada de registry**. O escopo `@refarm.dev/*` **permanece** no
+   `minimumReleaseAgeExclude` (é o scope curado do próprio mantenedor — a proteção de age-check
+   contra publish malicioso de terceiros não se aplica), então a transição não altera a política;
 3. remover o `.tgz` de `vendor/`.
 
 O **código consumidor não muda** na transição — o Lab (`.site/styles/marimo-vault.css`) e o admin
@@ -50,9 +68,10 @@ Quando consumirmos um pacote que **depende de outro `@refarm.dev/*` ainda não p
 
 - **`@refarm.dev/ds`** — consumido via `file:` (4a Lab tokens + 4b admin `/_ds`). Instala e serve. ✓
   - O refarm **enxugou a superfície publicável** (`fix(ds): trim published package surface`): tarball
-    sem tests/stories. Os subpaths que consumimos (`./tokens.css`, `./components.css`, `./themes/*`)
-    **seguem exportados** → no publish nosso código não muda. Nosso tarball local em `vendor/` é o
-    pré-trim; o trimado canônico vive em `refarm/.refarm/handoff/vault-seed/2026-06-26/`.
+    sem tests/stories/fontes TS. Os subpaths que consumimos (`./tokens.css`, `./components.css`,
+    `./themes/*`) **seguem exportados** e o `verde-jardim.css` é byte-idêntico → nosso código não
+    muda. Nosso `vendor/` **já está no trimado** (handoff `2026-06-26`); integrity atualizada no
+    lock. Verificado por `refarm_ds_consumer_contract.test.mjs` + `site:responsive`.
 - **`@refarm.dev/homestead-ssr`** (leaf) — **alvo correto** do rebuild do admin (incremento futuro).
   Substitui o SDK full `@refarm.dev/homestead`: é só `dist/` (`shellHtml/cardHtml/buttonHtml`), sem
   puxar o closure do SDK. Ainda **não consumido** — o 4b adotou só os tokens do `ds`. Tarball

@@ -633,7 +633,7 @@ packages:
     hasBin: true
 
   '@refarm.dev/ds@file:vendor/refarm.dev-ds-0.1.0.tgz':
-    resolution: {integrity: sha512-1HOwt+Pg1Ey6cJVdg1YMEiiUH159cfYZVlz62My9j7ErHEmvbvDIYADGYbrERcqVpkaNrEqaoXLLnzu9qP+iJg==, tarball: file:vendor/refarm.dev-ds-0.1.0.tgz}
+    resolution: {integrity: sha512-WgBROcb3G9CWuaWH/iN2oFIfJ6/1jcAseKHqJBp0FbcoG2bYu2ntFaLhJ6yK1HeXWPxxRSBsac/DoqgRr/yRLA==, tarball: file:vendor/refarm.dev-ds-0.1.0.tgz}
     version: 0.1.0
 
   '@rollup/pluginutils@5.4.0':

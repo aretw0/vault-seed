@@ -8,6 +8,12 @@ allowBuilds:
 # packages (e.g. Astro ecosystem updates) don't block template users' CI.
 # The template maintainer curates all packages; pnpm v11 defaults are too
 # strict for a curated template repo where new dependencies are expected.
+#
+# `@refarm.dev/*` is excluded outright: these are curated local tarballs
+# (file:vendor/*.tgz) consumed before refarm publishes to npm, so the registry
+# release-age check cannot resolve them (404) and would block a clean install.
 policies:
   minimumReleaseAge:
     severity: warn
+minimumReleaseAgeExclude:
+  - "@refarm.dev/*"
