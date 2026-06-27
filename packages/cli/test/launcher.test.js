@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { join } from 'node:path';
-import { detectObsidian, vaultNameFromCwd, INSTALL_HINTS } from '../src/launcher.js';
+import { detectObsidian, vaultNameFromCwd, INSTALL_HINTS, launchVault } from '../src/launcher.js';
 
 // existsChecker that returns true only for a specific set of paths
 function checkerFor(...existingPaths) {
@@ -90,4 +90,13 @@ test('INSTALL_HINTS cobre as três plataformas principais', () => {
   assert.ok(INSTALL_HINTS.darwin.includes('obsidian'), 'hint macOS deve mencionar obsidian');
   assert.ok(INSTALL_HINTS.win32.includes('Obsidian'), 'hint Windows deve mencionar Obsidian');
   assert.ok(INSTALL_HINTS.linux.includes('snap') || INSTALL_HINTS.linux.includes('flatpak'));
+});
+
+test('launchVault monta o spec obsidian:// e desacopla via launchFn injetável', async () => {
+  const calls = [];
+  const fakeLaunch = (spec) => { calls.push(spec); return { unref() {} }; };
+  await launchVault('meu vault', 'linux', fakeLaunch);
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].command, 'xdg-open');
+  assert.deepEqual(calls[0].args, ['obsidian://open?vault=meu%20vault']);
 });

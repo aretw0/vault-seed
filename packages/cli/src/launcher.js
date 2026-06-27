@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import { join, basename } from 'node:path';
-import { spawn } from 'node:child_process';
+import { createLaunchProcessSpecFromRunner, launchDetachedProcess } from '@refarm.dev/launch-process';
 
 const { LOCALAPPDATA, USERPROFILE, HOME } = process.env;
 
@@ -47,25 +47,23 @@ export function detectObsidian(platform = process.platform, existsChecker = exis
   return found ? { path: found, platform } : null;
 }
 
-function openUri(uri, platform = process.platform) {
-  return new Promise((resolve, reject) => {
-    const [cmd, args] =
-      platform === 'darwin'
-        ? ['open', [uri]]
-        : platform === 'win32'
-          ? ['cmd', ['/c', 'start', '', uri]]
-          : ['xdg-open', [uri]];
-    const proc = spawn(cmd, args, { stdio: 'ignore', shell: false });
-    proc.on('close', resolve);
-    proc.on('error', reject);
-  });
+function openUri(uri, platform = process.platform, launchFn = launchDetachedProcess) {
+  const [cmd, args] =
+    platform === 'darwin'
+      ? ['open', [uri]]
+      : platform === 'win32'
+        ? ['cmd', ['/c', 'start', '', uri]]
+        : ['xdg-open', [uri]];
+  launchFn(createLaunchProcessSpecFromRunner(cmd, args));
+  return Promise.resolve();
 }
 
 /** Opens a vault by name via the obsidian:// URI scheme. */
-export function launchVault(vaultName, platform = process.platform) {
+export function launchVault(vaultName, platform = process.platform, launchFn = launchDetachedProcess) {
   return openUri(
     `obsidian://open?vault=${encodeURIComponent(vaultName)}`,
     platform,
+    launchFn,
   );
 }
 
