@@ -19,3 +19,8 @@ pacotes `@refarm.dev/*`. Itens essenciais relayados pro refarm.
 
 - `launch-process@0.1.0` — cobriu runner async, detached, capture e sync
   (`runLaunchProcessSync`) sem lacuna na adoção do dgk. ✓
+- `channel-policy-v1@0.1.0` — cobriu o envelope de entrega do outbox (deliveries
+  item×canal, idempotencyKey, contentHash, review gate) e os receipts do telegram
+  sem reimplementação residual; validador não-estrito permitiu o superset.
+  Consumo com **degradação graciosa** (import dinâmico opcional): scripts
+  distribuídos não quebram no repo do usuário sem o pacote. ✓
