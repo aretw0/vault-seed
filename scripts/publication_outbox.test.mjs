@@ -4,6 +4,7 @@ import { mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { buildPublicationOutbox } from "./prepare_publication_outbox.mjs";
+import { validateChannelDeliveryEnvelope } from "@refarm.dev/channel-policy-v1";
 
 test("buildPublicationOutbox extracts only explicit publication candidates", () => {
   const cwd = mkdtempSync(join(tmpdir(), "vault-outbox-"));
@@ -70,4 +71,20 @@ test("buildPublicationOutbox extracts only explicit publication candidates", () 
   assert.equal(data.items[0].url, null);
   // tags extracted from frontmatter (absent here → empty array).
   assert.deepEqual(data.items[0].tags, []);
+
+  // Envelope superset (channel-policy-v1): mantém os campos atuais e é válido.
+  assert.equal(data.schema, "refarm.channel-delivery-envelope.v1");
+  assert.equal(data.producer, "vault-seed:dgk-outbox");
+  assert.equal(validateChannelDeliveryEnvelope(data).ok, true);
+
+  // Uma delivery por item×canal (o item declara mastodon + rss).
+  assert.equal(data.deliveries.length, 2);
+  const mastodon = data.deliveries.find((d) => d.channelId === "mastodon");
+  const rss = data.deliveries.find((d) => d.channelId === "rss");
+  assert.equal(mastodon.id, `${data.items[0].id}::mastodon`);
+  assert.equal(mastodon.contentHash.value, data.items[0].sha256);
+  assert.ok(mastodon.idempotencyKey.length > 0);
+  // mastodon = risco "médio" → review obrigatória; rss = "baixo" → não obrigatória.
+  assert.deepEqual(mastodon.review, { required: true, state: "pending" });
+  assert.deepEqual(rss.review, { required: false, state: "not-required" });
 });
