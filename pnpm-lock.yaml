@@ -640,7 +640,7 @@ packages:
     hasBin: true
 
   '@refarm.dev/ds@file:vendor/refarm.dev-ds-0.1.0.tgz':
-    resolution: {integrity: sha512-WgBROcb3G9CWuaWH/iN2oFIfJ6/1jcAseKHqJBp0FbcoG2bYu2ntFaLhJ6yK1HeXWPxxRSBsac/DoqgRr/yRLA==, tarball: file:vendor/refarm.dev-ds-0.1.0.tgz}
+    resolution: {integrity: sha512-XEFbrl9tNcf+qk566phcRGbDyz5o6z+R3d09ZFKjveZeF2IoLc4JSKlRZPzcjZdek85xYOQtMjJivvcxOGpyeA==, tarball: file:vendor/refarm.dev-ds-0.1.0.tgz}
     version: 0.1.0
 
   '@refarm.dev/launch-process@file:vendor/refarm.dev-launch-process-0.1.0.tgz':

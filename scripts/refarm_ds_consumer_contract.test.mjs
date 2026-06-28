@@ -34,7 +34,11 @@ test("Lab consumes the Refarm DS verde-jardim tarball for exported notebooks", (
   const exportNotebooks = read("scripts/export_notebooks.mjs");
   const marimoCss = read(".site/styles/marimo-vault.css");
 
-  assert.match(dsCss, /\[data-refarm-theme="verde-jardim"\]\[data-mode="light"\]/);
+  // ds went product-neutral: `data-ds-theme` is the canonical attribute, with
+  // `data-refarm-theme` preserved as a :where() alias — so our `refarmTheme`
+  // export still themes the exported notebooks without any consumer change.
+  assert.match(dsCss, /data-ds-theme="verde-jardim"/);
+  assert.match(dsCss, /\[data-refarm-theme="verde-jardim"\]\)\[data-mode="light"\]/);
   assert.match(exportNotebooks, /REFARM_DS_VERDE_JARDIM_CSS/);
   assert.match(exportNotebooks, /root\.dataset\.refarmTheme = "verde-jardim"/);
   assert.match(exportNotebooks, /root\.dataset\.mode = resolved/);
@@ -50,9 +54,12 @@ test("Lab fallback verde-jardim values stay aligned with the DS light and dark m
   const dsCss = read("node_modules/@refarm.dev/ds/src/themes/verde-jardim.css");
   const marimoCss = read(".site/styles/marimo-vault.css");
 
+  // Selectors carry the :where() product-neutral wrapper now; anchor on the
+  // alias + mode. dsDark = the base block (first match), dsLight = the
+  // [data-mode="light"] override block.
   const dsLight = blockVars(
     dsCss,
-    '[data-refarm-theme="verde-jardim"][data-mode="light"]',
+    '[data-refarm-theme="verde-jardim"])[data-mode="light"]',
   );
   const dsDark = blockVars(dsCss, '[data-refarm-theme="verde-jardim"]');
   const labLight = blockVars(

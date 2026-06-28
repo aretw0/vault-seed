@@ -67,11 +67,20 @@ Quando consumirmos um pacote que **depende de outro `@refarm.dev/*` ainda não p
 ## Estado atual
 
 - **`@refarm.dev/ds`** — consumido via `file:` (4a Lab tokens + 4b admin `/_ds`). Instala e serve. ✓
-  - O refarm **enxugou a superfície publicável** (`fix(ds): trim published package surface`): tarball
-    sem tests/stories/fontes TS. Os subpaths que consumimos (`./tokens.css`, `./components.css`,
-    `./themes/*`) **seguem exportados** e o `verde-jardim.css` é byte-idêntico → nosso código não
-    muda. Nosso `vendor/` **já está no trimado** (handoff `2026-06-26`); integrity atualizada no
-    lock. Verificado por `refarm_ds_consumer_contract.test.mjs` + `site:responsive`.
+  - Superfície enxuta (sem tests/stories/fontes TS); subpaths consumidos (`./tokens.css`,
+    `./components.css`, `./themes/*`) seguem exportados (exports ganharam `./contract` +
+    `./theme-conformance`, aditivo).
+  - **Re-sync 2026-06-28 (product-neutral css):** o `verde-jardim.css` trocou os seletores de
+    `[data-refarm-theme=…]`/`@layer refarm.theme` para `:where([data-ds-theme=…], [data-refarm-theme=…])`/
+    `@layer ds.theme` — `data-ds-theme` é o atributo canônico agora, com **`data-refarm-theme`
+    preservado como alias `:where()`**. Os **valores dos 17 tokens são idênticos**, então o runtime
+    do tema **não muda** (nosso export segue setando `refarmTheme`, coberto pelo alias) e o fallback
+    do `marimo-vault.css` continua alinhado. Só o `refarm_ds_consumer_contract.test.mjs` foi
+    atualizado pros novos seletores (mantendo a checagem dos 17 valores). Re-vendorizado do handoff
+    `2026-06-28`; integrity do lock atualizada; suíte 356/356.
+  - **Adoção futura opcional:** migrar nosso export/`marimo-vault.css` para o atributo neutro
+    `data-ds-theme` (e os guards `:not([data-ds-theme])`) quando/ se o refarm aposentar o alias
+    `data-refarm-theme`. Hoje desnecessário — o alias cobre.
 - **`@refarm.dev/homestead-ssr`** (leaf) — **alvo correto** do rebuild do admin (incremento futuro).
   Substitui o SDK full `@refarm.dev/homestead`: é só `dist/` (`shellHtml/cardHtml/buttonHtml`), sem
   puxar o closure do SDK. Ainda **não consumido** — o 4b adotou só os tokens do `ds`. Tarball
