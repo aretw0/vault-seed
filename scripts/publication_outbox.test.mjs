@@ -88,3 +88,25 @@ test("buildPublicationOutbox extracts only explicit publication candidates", () 
   assert.deepEqual(mastodon.review, { required: true, state: "pending" });
   assert.deepEqual(rss.review, { required: false, state: "not-required" });
 });
+
+test("buildPublicationOutbox degrades to the legacy outbox when channel-policy is absent", () => {
+  const cwd = mkdtempSync(join(tmpdir(), "vault-outbox-legacy-"));
+  mkdirSync(join(cwd, "00 - Entrada"), { recursive: true });
+  writeFileSync(
+    join(cwd, "00 - Entrada", "Post.md"),
+    "---\ntitle: Post\noutbox: true\nchannels:\n  - rss\n---\n# Post\n\nCorpo.\n",
+    "utf8",
+  );
+  const { data } = buildPublicationOutbox({
+    cwd,
+    outputPath: join(cwd, ".dgk", "outbox-publicacao.json"),
+    now: "2026-05-26T00:00:00.000Z",
+    channelPolicy: null,
+  });
+  // Legado: campos atuais presentes, campos do envelope ausentes.
+  assert.equal(data.kind, "publication-outbox");
+  assert.equal(data.itemCount, 1);
+  assert.deepEqual(data.items[0].channels, ["rss"]);
+  assert.equal(data.schema, undefined);
+  assert.equal(data.deliveries, undefined);
+});

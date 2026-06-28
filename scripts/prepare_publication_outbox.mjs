@@ -5,11 +5,15 @@ import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { globSync } from "glob";
 import matter from "gray-matter";
-import {
-  CHANNEL_DELIVERY_ENVELOPE_SCHEMA,
-  buildChannelIdempotencyKey,
-  validateChannelDeliveryEnvelope,
-} from "@refarm.dev/channel-policy-v1";
+
+async function loadChannelPolicy() {
+  try {
+    return await import("@refarm.dev/channel-policy-v1");
+  } catch {
+    return null;
+  }
+}
+const loadedChannelPolicy = await loadChannelPolicy();
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const DEFAULT_OUTPUT = join(ROOT, ".dgk", "outbox-publicacao.json");
@@ -150,7 +154,7 @@ function resolveSiteUrl(cwd) {
   return null;
 }
 
-export function buildPublicationOutbox({ cwd = ROOT, outputPath = DEFAULT_OUTPUT, now } = {}) {
+export function buildPublicationOutbox({ cwd = ROOT, outputPath = DEFAULT_OUTPUT, now, channelPolicy = loadedChannelPolicy } = {}) {
   const files = globSync(OUTBOX_PATTERNS, { cwd, nodir: true });
   const generatedAt = now || new Date(0).toISOString();
   const siteUrl = resolveSiteUrl(cwd);
@@ -189,28 +193,7 @@ export function buildPublicationOutbox({ cwd = ROOT, outputPath = DEFAULT_OUTPUT
     .filter(Boolean)
     .sort((a, b) => a.path.localeCompare(b.path, "pt"));
 
-  const deliveries = items.flatMap((item) =>
-    item.channels.map((channelId) => {
-      const destinationId = `${channelId}:default`;
-      const contentHash = { algorithm: "sha256", value: item.sha256 };
-      return {
-        id: `${item.id}::${channelId}`,
-        channelId,
-        providerId: channelId,
-        destination: { id: destinationId, channelId, providerId: channelId, address: destinationId },
-        idempotencyKey: buildChannelIdempotencyKey({ channelId, destinationId, contentHash }),
-        contentHash,
-        createdAt: generatedAt,
-        review: reviewGateForRisk(riskForChannel(channelId)),
-        labels: [`item:${item.id}`],
-      };
-    }),
-  );
-
-  const payloadWithoutHash = {
-    schema: CHANNEL_DELIVERY_ENVELOPE_SCHEMA,
-    createdAt: generatedAt,
-    producer: "vault-seed:dgk-outbox",
+  const basePayload = {
     schemaVersion: 1,
     kind: "publication-outbox",
     source: "markdown-frontmatter:outbox|publicationStatus|channels",
@@ -224,20 +207,50 @@ export function buildPublicationOutbox({ cwd = ROOT, outputPath = DEFAULT_OUTPUT
       noSecrets: true,
     },
     channels: CHANNELS,
-    deliveries,
     itemCount: items.length,
     items,
   };
+
+  let payloadWithoutHash = basePayload;
+  if (channelPolicy) {
+    const deliveries = items.flatMap((item) =>
+      item.channels.map((channelId) => {
+        const destinationId = `${channelId}:default`;
+        const contentHash = { algorithm: "sha256", value: item.sha256 };
+        return {
+          id: `${item.id}::${channelId}`,
+          channelId,
+          providerId: channelId,
+          destination: { id: destinationId, channelId, providerId: channelId, address: destinationId },
+          idempotencyKey: channelPolicy.buildChannelIdempotencyKey({ channelId, destinationId, contentHash }),
+          contentHash,
+          createdAt: generatedAt,
+          review: reviewGateForRisk(riskForChannel(channelId)),
+          labels: [`item:${item.id}`],
+        };
+      }),
+    );
+    payloadWithoutHash = {
+      schema: channelPolicy.CHANNEL_DELIVERY_ENVELOPE_SCHEMA,
+      createdAt: generatedAt,
+      producer: "vault-seed:dgk-outbox",
+      ...basePayload,
+      deliveries,
+    };
+  }
+
   const payload = {
     ...payloadWithoutHash,
     sha256: sha256(JSON.stringify(payloadWithoutHash, null, 2)),
   };
 
-  const envelopeCheck = validateChannelDeliveryEnvelope(payload);
-  if (!envelopeCheck.ok) {
-    throw new Error(
-      `publication outbox is not a valid channel-delivery envelope: ${JSON.stringify(envelopeCheck.issues)}`,
-    );
+  if (channelPolicy) {
+    const envelopeCheck = channelPolicy.validateChannelDeliveryEnvelope(payload);
+    if (!envelopeCheck.ok) {
+      throw new Error(
+        `publication outbox is not a valid channel-delivery envelope: ${JSON.stringify(envelopeCheck.issues)}`,
+      );
+    }
   }
 
   mkdirSync(dirname(outputPath), { recursive: true });
