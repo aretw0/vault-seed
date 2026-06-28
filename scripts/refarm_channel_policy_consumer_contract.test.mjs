@@ -9,9 +9,8 @@ const readJson = (p) => JSON.parse(readFileSync(join(ROOT, p), "utf8"));
 
 test("the root pins @refarm.dev/channel-policy-v1 via the local tarball", () => {
   const pkg = readJson("package.json");
-  const deps = { ...pkg.dependencies, ...pkg.devDependencies };
   assert.equal(
-    deps["@refarm.dev/channel-policy-v1"],
+    pkg.dependencies?.["@refarm.dev/channel-policy-v1"],
     "file:vendor/refarm.dev-channel-policy-v1-0.1.0.tgz",
   );
 });
