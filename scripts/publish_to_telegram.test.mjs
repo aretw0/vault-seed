@@ -13,8 +13,36 @@ function tempDir() {
   return dir;
 }
 
+function delivery(note, channelId) {
+  const destinationId = `${channelId}:default`;
+  return {
+    id: `${note.id}::${channelId}`,
+    channelId,
+    providerId: channelId,
+    destination: { id: destinationId, channelId, providerId: channelId, address: destinationId },
+    idempotencyKey: `channel-delivery:${channelId}:${destinationId}:sha256:${note.sha256}`,
+    contentHash: { algorithm: "sha256", value: note.sha256 },
+    createdAt: "2026-05-26T00:00:00.000Z",
+    review: { required: false, state: "not-required" },
+    labels: [`item:${note.id}`],
+  };
+}
+
 function makeOutbox(items) {
-  return JSON.stringify({ schemaVersion: 1, items });
+  const withIds = items.map((it, i) => ({
+    id: it.id ?? `item-${i}`,
+    sha256: it.sha256 ?? `hash-${i}`,
+    ...it,
+  }));
+  const deliveries = withIds.flatMap((it) => (it.channels ?? []).map((ch) => delivery(it, ch)));
+  return JSON.stringify({
+    schema: "refarm.channel-delivery-envelope.v1",
+    createdAt: "2026-05-26T00:00:00.000Z",
+    producer: "vault-seed:dgk-outbox",
+    schemaVersion: 1,
+    deliveries,
+    items: withIds,
+  });
 }
 
 function mockPost(responses) {
@@ -141,5 +169,21 @@ describe("publishToTelegram — outbox", () => {
     });
     assert.equal(r.sent, 2);
     assert.equal(r.skipped, 1);
+  });
+
+  test("fallback legado: outbox sem deliveries ainda envia por items+channels", async () => {
+    const outboxPath = join(dir, "outbox.json");
+    const statePath = join(dir, "state.json");
+    // Outbox legado (produtor sem channel-policy): items, sem deliveries.
+    writeFileSync(outboxPath, JSON.stringify({
+      schemaVersion: 1,
+      items: [{ id: "leg", title: "Legado", path: "leg.md", channels: ["telegram"] }],
+    }));
+    const r = await publishToTelegram({
+      env: ENV, outboxPath, statePath,
+      httpPost: mockPost([{ ok: true, result: { message_id: 7 } }]),
+    });
+    assert.equal(r.sent, 1);
+    assert.equal(r.skipped, 0);
   });
 });

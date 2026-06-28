@@ -116,35 +116,53 @@ export async function publishToTelegram({
   }
 
   const outbox = JSON.parse(readFileSync(outboxPath, "utf8"));
-  const notes = (outbox.notes || outbox.items || []).filter((n) => {
-    const channels = n.channels || n.outboxChannels || [];
-    return channels.includes("telegram");
-  });
+  const items = outbox.items || outbox.notes || [];
+  const itemById = new Map(items.map((it) => [it.id, it]));
+  const tgDeliveries = (outbox.deliveries || []).filter((d) => d.channelId === "telegram");
 
-  if (!notes.length) {
-    console.log("publish_to_telegram: nenhuma nota com channel=telegram no outbox.");
+  // Caminho do contrato (envelope com deliveries) ou fallback legado (outbox sem
+  // deliveries — usuário do template sem @refarm.dev/channel-policy-v1).
+  const units = tgDeliveries.length
+    ? tgDeliveries.map((d) => ({
+        key: d.idempotencyKey,
+        note: itemById.get(d.id.split("::")[0]) ?? {},
+        receiptId: d.id,
+      }))
+    : items
+        .filter((n) => (n.channels || n.outboxChannels || []).includes("telegram"))
+        .map((n) => ({
+          key: sha(n.path || n.title || ""),
+          note: n,
+          receiptId: n.path || n.title || "",
+        }));
+
+  if (!units.length) {
+    console.log("publish_to_telegram: nada para enviar (sem deliveries telegram nem itens legados).");
     return { sent: 0, skipped: 0 };
   }
 
   const state = existsSync(statePath)
-    ? (() => { try { return JSON.parse(readFileSync(statePath, "utf8")); } catch { return { sent: {} }; } })()
-    : { sent: {} };
+    ? (() => { try { return JSON.parse(readFileSync(statePath, "utf8")); } catch { return { sent: {}, receipts: [] }; } })()
+    : { sent: {}, receipts: [] };
+  if (!state.sent) state.sent = {};
+  if (!state.receipts) state.receipts = [];
 
-  const pending = force
-    ? notes
-    : notes.filter((n) => !state.sent[sha(n.path || n.title || "")]);
+  const pending = force ? units : units.filter((u) => !state.sent[u.key]);
   const batch = pending.slice(0, limit);
 
-  if (force && notes.length) console.log("publish_to_telegram: modo --force, ignorando estado de envio anterior.");
-  console.log(`publish_to_telegram: ${batch.length} nota(s) para enviar (${pending.length - batch.length} restantes).`);
+  if (force && units.length) console.log("publish_to_telegram: modo --force, ignorando estado de envio anterior.");
+  console.log(`publish_to_telegram: ${batch.length} envio(s) (${pending.length - batch.length} restantes).`);
 
   let sentCount = 0;
-  for (const note of batch) {
-    const key = sha(note.path || note.title || "");
+  for (const unit of batch) {
+    const note = unit.note;
+    const key = unit.key;
     const text = formatMessage(note);
+    const observedAt = () => new Date().toISOString();
 
     if (dryRun) {
       console.log(`\n[dry-run] → chat ${chatId}\n${text}\n`);
+      state.receipts.push({ itemId: unit.receiptId, status: "dry-run", observedAt: observedAt() });
     } else {
       await throttle("telegram", { statePath: rateLimiterStatePath });
       try {
@@ -152,21 +170,29 @@ export async function publishToTelegram({
         const retryAfter = handleRateLimitResponse(result, "telegram");
         if (retryAfter) {
           console.warn(`  [429] aguardando ${retryAfter / 1000}s antes de retentar...`);
+          state.receipts.push({ itemId: unit.receiptId, status: "rate-limited", observedAt: observedAt(), retryAfterSeconds: Math.round(retryAfter / 1000) });
           await new Promise((r) => setTimeout(r, retryAfter));
           const retry = await sendMessage(token, chatId, text, httpPost);
-          if (!retry.ok) { console.error(`  erro após retry: ${retry.description}`); continue; }
+          if (!retry.ok) {
+            console.error(`  erro após retry: ${retry.description}`);
+            state.receipts.push({ itemId: unit.receiptId, status: "failed", observedAt: observedAt(), error: String(retry.description ?? "retry failed") });
+            continue;
+          }
         } else if (!result.ok) {
           console.error(`  erro: ${result.description}`);
+          state.receipts.push({ itemId: unit.receiptId, status: "failed", observedAt: observedAt(), error: String(result.description ?? "send failed") });
           continue;
         }
-        console.log(`  ✓ enviado: ${note.title || note.path}`);
+        console.log(`  ✓ enviado: ${note.title || unit.receiptId}`);
+        state.receipts.push({ itemId: unit.receiptId, status: "sent", observedAt: observedAt(), ...(result.result?.message_id ? { providerMessageId: String(result.result.message_id) } : {}) });
       } catch (err) {
-        console.error(`  erro ao enviar ${note.path}: ${err.message}`);
+        console.error(`  erro ao enviar ${unit.receiptId}: ${err.message}`);
+        state.receipts.push({ itemId: unit.receiptId, status: "failed", observedAt: observedAt(), error: err.message });
         continue;
       }
     }
 
-    state.sent[key] = { path: note.path, sentAt: new Date().toISOString() };
+    state.sent[key] = { itemId: unit.receiptId, sentAt: observedAt() };
     sentCount++;
   }
 
