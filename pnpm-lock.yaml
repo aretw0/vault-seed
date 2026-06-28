@@ -644,7 +644,7 @@ packages:
     version: 0.1.0
 
   '@refarm.dev/launch-process@file:vendor/refarm.dev-launch-process-0.1.0.tgz':
-    resolution: {integrity: sha512-ebo3CbXOfR6VcyXB21MK1AWPmFRTV5mcb+pLSkQ6KWR6xlVcucwHP064l2ojPqyur8U8RGuLA7Rena/Al0SKIg==, tarball: file:vendor/refarm.dev-launch-process-0.1.0.tgz}
+    resolution: {integrity: sha512-uuQZt6wgnDT6iNwofJZ9+tfWp72SwsRvSk0L3AxB2BHtEg+dFZEBdcXv3Qd+PLlSLD+em5eE7DM7q6DACke7PQ==, tarball: file:vendor/refarm.dev-launch-process-0.1.0.tgz}
     version: 0.1.0
 
   '@rollup/pluginutils@5.4.0':
