@@ -11,6 +11,9 @@ importers:
       '@aretw0/dgk-astro-plugins':
         specifier: workspace:^
         version: link:packages/astro-plugins
+      '@refarm.dev/channel-policy-v1':
+        specifier: file:vendor/refarm.dev-channel-policy-v1-0.1.0.tgz
+        version: file:vendor/refarm.dev-channel-policy-v1-0.1.0.tgz
     devDependencies:
       '@aretw0/dgk-channels':
         specifier: workspace:*
@@ -638,6 +641,10 @@ packages:
     resolution: {integrity: sha512-O71yZIbAh/PxDMNGns37GHBIfrVkEVyn+AXyIa5dOTfb4/xNvRWV+Vv/NMbNCtODB/pO7vLlF2OTmMVLhmr7Ag==}
     engines: {node: '>=18'}
     hasBin: true
+
+  '@refarm.dev/channel-policy-v1@file:vendor/refarm.dev-channel-policy-v1-0.1.0.tgz':
+    resolution: {integrity: sha512-DQ1fsTPBYZAf6ewBcmuwF7WVweM0O5qU76g0KLodzOIdKswgveJYUBJy/TJHCxyJrtkTDHwIaRFmvYDP6y08RQ==, tarball: file:vendor/refarm.dev-channel-policy-v1-0.1.0.tgz}
+    version: 0.1.0
 
   '@refarm.dev/ds@file:vendor/refarm.dev-ds-0.1.0.tgz':
     resolution: {integrity: sha512-XEFbrl9tNcf+qk566phcRGbDyz5o6z+R3d09ZFKjveZeF2IoLc4JSKlRZPzcjZdek85xYOQtMjJivvcxOGpyeA==, tarball: file:vendor/refarm.dev-ds-0.1.0.tgz}
@@ -3146,6 +3153,8 @@ snapshots:
   '@playwright/test@1.60.0':
     dependencies:
       playwright: 1.60.0
+
+  '@refarm.dev/channel-policy-v1@file:vendor/refarm.dev-channel-policy-v1-0.1.0.tgz': {}
 
   '@refarm.dev/ds@file:vendor/refarm.dev-ds-0.1.0.tgz': {}
 
