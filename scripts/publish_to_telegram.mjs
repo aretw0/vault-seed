@@ -35,6 +35,11 @@ function sha(str) {
   return createHash("sha256").update(str).digest("hex").slice(0, 12);
 }
 
+function itemIdForDelivery(delivery) {
+  const label = (delivery.labels || []).find((l) => l.startsWith("item:"));
+  return label ? label.slice("item:".length) : String(delivery.id).split("::")[0];
+}
+
 function formatMessage(note) {
   const title = note.title || note.path?.split("/").pop()?.replace(/\.md$/, "") || "Nota";
   // description: author-crafted hook (og:description equivalent) — preferred.
@@ -123,11 +128,11 @@ export async function publishToTelegram({
   // Caminho do contrato (envelope com deliveries) ou fallback legado (outbox sem
   // deliveries — usuário do template sem @refarm.dev/channel-policy-v1).
   const units = tgDeliveries.length
-    ? tgDeliveries.map((d) => ({
-        key: d.idempotencyKey,
-        note: itemById.get(d.id.split("::")[0]) ?? {},
-        receiptId: d.id,
-      }))
+    ? tgDeliveries.map((d) => {
+        const note = itemById.get(itemIdForDelivery(d));
+        if (!note) console.warn(`publish_to_telegram: delivery ${d.id} sem item correspondente; mensagem pode ficar vazia.`);
+        return { key: d.idempotencyKey, note: note ?? {}, receiptId: d.id };
+      })
     : items
         .filter((n) => (n.channels || n.outboxChannels || []).includes("telegram"))
         .map((n) => ({

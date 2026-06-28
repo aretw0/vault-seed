@@ -1,6 +1,6 @@
 import { test, describe, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { publishToTelegram } from "./publish_to_telegram.mjs";
@@ -103,6 +103,11 @@ describe("publishToTelegram — outbox", () => {
     });
     assert.equal(r.sent, 1);
     assert.equal(r.skipped, 0);
+    const saved = JSON.parse(readFileSync(statePath, "utf8"));
+    // Contract path: state is keyed by the delivery idempotencyKey, not sha(path).
+    assert.ok(Object.keys(saved.sent).includes("channel-delivery:telegram:telegram:default:sha256:hash-0"));
+    // Receipt recorded in the channel-policy shape.
+    assert.ok(saved.receipts.some((r) => r.itemId === "item-0::telegram" && r.status === "sent"));
   });
 
   test("não reenvia nota já registrada no state", async () => {
@@ -185,5 +190,8 @@ describe("publishToTelegram — outbox", () => {
     });
     assert.equal(r.sent, 1);
     assert.equal(r.skipped, 0);
+    const savedLegacy = JSON.parse(readFileSync(statePath, "utf8"));
+    // Legacy path: receipt itemId is the note path, status sent.
+    assert.ok(savedLegacy.receipts.some((r) => r.itemId === "leg.md" && r.status === "sent"));
   });
 });
