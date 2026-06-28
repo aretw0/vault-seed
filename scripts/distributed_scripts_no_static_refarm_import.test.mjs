@@ -8,7 +8,10 @@ const ROOT = fileURLToPath(new URL("..", import.meta.url));
 
 // Scripts referenced by package.template.json ship to template users, who do not
 // have unpublished @refarm.dev/* packages. They must load such packages via
-// optional dynamic import(), never a static `import ... from "@refarm.dev/..."`.
+// optional dynamic import(), never a static import/export … from "@refarm.dev/…".
+// The regex `/\bfrom\s+["']@refarm\.dev\//` catches both single-line and multi-line
+// static `import { … } from "@refarm.dev/…"` and `export … from "@refarm.dev/…"`.
+// Dynamic `import("@refarm.dev/…")` has no `from` keyword and is intentionally immune.
 test("template-distributed scripts must not statically import @refarm.dev/*", () => {
   const template = JSON.parse(readFileSync(join(ROOT, "package.template.json"), "utf8"));
   const commands = Object.values(template.scripts || {}).join("\n");
@@ -22,7 +25,7 @@ test("template-distributed scripts must not statically import @refarm.dev/*", ()
     const abs = join(ROOT, rel);
     if (!existsSync(abs)) continue;
     const src = readFileSync(abs, "utf8");
-    if (/^\s*import\b[^\n]*\bfrom\s+["']@refarm\.dev\//m.test(src)) {
+    if (/\bfrom\s+["']@refarm\.dev\//.test(src)) {
       offenders.push(rel);
     }
   }
