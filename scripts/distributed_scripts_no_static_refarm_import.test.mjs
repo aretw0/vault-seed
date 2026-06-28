@@ -1,32 +1,29 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
+const SCRIPTS_DIR = join(ROOT, "scripts");
 
-// Scripts referenced by package.template.json ship to template users, who do not
-// have unpublished @refarm.dev/* packages. They must load such packages via
-// optional dynamic import(), never a static import/export … from "@refarm.dev/…".
-// The regex `/\bfrom\s+["']@refarm\.dev\//` catches both single-line and multi-line
-// static `import { … } from "@refarm.dev/…"` and `export … from "@refarm.dev/…"`.
-// Dynamic `import("@refarm.dev/…")` has no `from` keyword and is intentionally immune.
+// Every script under scripts/ ships to template users (directly via
+// package.template.json commands, or spawned by the dgk CLI). They must not
+// statically import unpublished @refarm.dev/* packages — only optional dynamic
+// import(). Test files (*.test.*) are dev-only and excluded. The detection
+// matches `from "@refarm.dev/..."` across single- and multi-line static
+// import/export-from; dynamic import("@refarm.dev/...") has no `from`, so it is allowed.
 test("template-distributed scripts must not statically import @refarm.dev/*", () => {
-  const template = JSON.parse(readFileSync(join(ROOT, "package.template.json"), "utf8"));
-  const commands = Object.values(template.scripts || {}).join("\n");
-  const scriptPaths = [
-    ...new Set([...commands.matchAll(/scripts\/[\w.\-/]+\.(?:mjs|cjs|js)/g)].map((m) => m[0])),
-  ];
-  assert.ok(scriptPaths.length > 0, "expected package.template.json to reference scripts/");
+  const scriptFiles = readdirSync(SCRIPTS_DIR).filter(
+    (name) => /\.(mjs|cjs|js)$/.test(name) && !/\.test\./.test(name),
+  );
+  assert.ok(scriptFiles.length > 0, "expected scripts/ to contain distributable scripts");
 
   const offenders = [];
-  for (const rel of scriptPaths) {
-    const abs = join(ROOT, rel);
-    if (!existsSync(abs)) continue;
-    const src = readFileSync(abs, "utf8");
+  for (const name of scriptFiles) {
+    const src = readFileSync(join(SCRIPTS_DIR, name), "utf8");
     if (/\bfrom\s+["']@refarm\.dev\//.test(src)) {
-      offenders.push(rel);
+      offenders.push(`scripts/${name}`);
     }
   }
   assert.deepEqual(
