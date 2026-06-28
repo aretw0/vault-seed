@@ -47,6 +47,38 @@ publicadas). Logo, `@refarm.dev/channel-policy-v1` entra como `file:` no
 4. **Receipts no estado do telegram.** O sender grava `ChannelDeliveryReceipt` na
    forma do contrato; idempotência passa a usar `delivery.idempotencyKey`.
 
+## Distribuição — degradação graciosa (revisão 2026-06-28)
+
+`scripts/prepare_publication_outbox.mjs` e `scripts/publish_to_telegram.mjs` são
+**distribuídos pelo template** (`package.template.json` → `outbox:prepare` roda o
+produtor; o sender roda via `dgk`). Um repo de usuário gerado do template **não
+tem** `@refarm.dev/channel-policy-v1` (não-publicado). Então o consumo precisa
+**degradar graciosamente** — nunca quebrar o repo do usuário:
+
+1. **Produtor: import OPCIONAL.** Carregar `@refarm.dev/channel-policy-v1` via
+   `import()` dinâmico em `try/catch` (top-level await no `.mjs`), guardado num
+   módulo-level `loadedChannelPolicy` (o módulo ou `null`). `buildPublicationOutbox`
+   recebe `channelPolicy` **injetável** (default = `loadedChannelPolicy`):
+   - `channelPolicy` presente → emite o envelope superset (`schema`/`createdAt`/
+     `producer`/`deliveries`) + valida.
+   - `channelPolicy` ausente (`null`) → emite o **outbox legado** (campos atuais,
+     sem os campos do envelope). Comportamento idêntico ao de hoje.
+2. **Sender: dois caminhos (sem import de channel-policy).** O sender só lê JSON;
+   `delivery.idempotencyKey` é string. Se `outbox.deliveries` presente/não-vazio →
+   caminho do contrato (idempotência por `delivery.idempotencyKey` + receipts).
+   Se ausente (outbox legado de usuário sem channel-policy) → **fallback legado**
+   (filtra `items` por canal, chave `sha`, `{sent}`) — preserva publicação.
+3. **Guarda de distribuição.** Teste que falha se um script da raiz referenciado
+   pelo `package.template.json` tiver `import … from "@refarm.dev/…"` **estático**
+   (só `import()` dinâmico é permitido em código distribuído).
+4. **Sem mudança no `package.template.json` agora.** Quando o refarm publicar,
+   adiciona-se `@refarm.dev/channel-policy-v1` (versão npm) ao template e todos os
+   usuários passam a emitir o envelope — sem alterar os scripts.
+
+**Onde fica:** o **contrato/envelope** é exercido aqui (dev, com o tarball
+vendorizado) e por quem tiver o pacote; o **comportamento legado** é o que todo
+usuário do template tem garantido até o refarm publicar.
+
 ## Componentes
 
 ### Produtor — `scripts/prepare_publication_outbox.mjs`
