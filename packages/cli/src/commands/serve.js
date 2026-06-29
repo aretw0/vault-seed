@@ -9,6 +9,8 @@ import {
   SILO_PATH, SERVICES,
 } from '../silo.js';
 import { createRequire } from 'node:module';
+import { shellHtml } from '@refarm.dev/homestead-ssr';
+import { channelsHtml, outboxHtml, rateLimitsHtml } from './admin_views.mjs';
 
 const require = createRequire(import.meta.url);
 const ADMIN_VIEWS_PATH = fileURLToPath(new URL('./admin_views.mjs', import.meta.url));
@@ -144,240 +146,136 @@ async function fetchTelegramChats(token, fetchFn) {
   } catch { return []; }
 }
 
-// Admin dashboard HTML — no external resources, fully local-first.
-// Tokens never appear in initial HTML; only masked previews from /api/status.
-// esc() sanitizes all vault-sourced data rendered via innerHTML.
-const ADMIN_HTML = `<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>dgk admin</title>
-<link rel="stylesheet" href="/_ds/tokens.css">
-<link rel="stylesheet" href="/_ds/themes/verde-jardim.css">
-<link rel="stylesheet" href="/_ds/components.css">
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font-mono,monospace);background:var(--background);color:var(--foreground);padding:1.5rem}
-h1{color:var(--primary);font-size:1.2rem;letter-spacing:.05em;margin-bottom:1.5rem}
-h2{color:var(--muted-foreground);font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;margin:1.5rem 0 .7rem}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem}
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-md,6px);padding:.9rem;display:flex;flex-direction:column;gap:.5rem}
-.card.active{border-color:var(--primary)}
-.card-name{font-weight:bold;color:var(--card-foreground)}
-.key-row{font-size:.72rem;color:var(--muted-foreground);display:flex;align-items:center;gap:.4rem}
-.ok{color:var(--success)}.miss{color:var(--error)}
-.card-actions{margin-top:auto;display:flex;gap:.4rem;padding-top:.5rem}
-.btn{cursor:pointer;font:inherit;border-radius:var(--radius-sm,4px);border:1px solid var(--border);padding:.2em .7em;font-size:.75rem;background:var(--muted);color:var(--foreground)}
-.btn-cfg{border-color:var(--primary);color:var(--primary)}
-.btn-cfg:hover{background:var(--accent)}
-.btn-rm{border-color:var(--error);color:var(--error)}
-.btn-rm:hover{background:color-mix(in srgb,var(--error) 14%,transparent)}
-.config-panel{background:var(--card);border:1px solid var(--primary);border-radius:var(--radius-md,6px);padding:1.2rem;margin-top:1rem}
-.config-panel h3{color:var(--primary);font-size:.9rem;margin-bottom:.3rem}
-.hint{font-size:.75rem;color:var(--muted-foreground);margin-bottom:1rem;line-height:1.5}
-.field{margin-bottom:.75rem}
-.field label{display:block;font-size:.75rem;color:var(--muted-foreground);margin-bottom:.3rem}
-.field input{width:100%;background:var(--background);border:1px solid var(--input);border-radius:var(--radius-sm,4px);padding:.4em .6em;color:var(--foreground);font:inherit;font-size:.85rem}
-.field input:focus{outline:none;border-color:var(--ring)}
-.discover-wrap{margin:.5rem 0}
-.chat-list{margin-top:.5rem;max-height:180px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--radius-sm,4px)}
-.chat-item{padding:.4rem .7rem;font-size:.8rem;cursor:pointer;display:flex;gap:.7rem;align-items:baseline}
-.chat-item:hover{background:var(--muted)}
-.chat-item.sel{background:var(--accent);color:var(--primary)}
-.chat-idx{color:var(--muted-foreground);min-width:1.5rem}
-.form-actions{display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap}
-.btn-save{border-color:var(--primary);color:var(--primary)}
-.btn-save:hover{background:var(--accent)}
-.btn-cancel{border-color:var(--border);color:var(--muted-foreground)}
-table{width:100%;border-collapse:collapse;font-size:.78rem}
-th{text-align:left;padding:.45rem .5rem;color:var(--muted-foreground);border-bottom:1px solid var(--border)}
-td{padding:.4rem .5rem;border-bottom:1px solid var(--border);vertical-align:top}
-.dim{color:var(--muted-foreground);font-size:.72rem}
-.empty{color:var(--muted-foreground);font-style:italic;padding:.75rem 0}
-footer{margin-top:2rem;font-size:.7rem;color:var(--muted-foreground)}
-</style>
-</head>
-<body data-refarm-theme="verde-jardim">
-<h1>⬡ dgk admin</h1>
+// Admin dashboard HTML — server-rendered via homestead-ssr shellHtml + isomorphic
+// admin_views. Tokens never appear in initial HTML; only masked previews from /api/status.
+function adminClientScript() {
+  return `<script type="module">
+import { channelsHtml, outboxHtml, rateLimitsHtml } from "/_hs/admin_views.js";
+import { fieldHtml, buttonHtml, escapeHtml } from "@refarm.dev/homestead-ssr/render";
 
-<h2>Canais</h2>
-<div class="grid" id="channels"></div>
-<div id="config-wrap"></div>
+let svcDefs = {};
+let activeSvc = null;
 
-<h2>Outbox de publicação</h2>
-<div id="outbox"></div>
-
-<h2>Rate limits</h2>
-<div id="ratelimits"></div>
-
-<footer id="ts"></footer>
-
-<script>
-function esc(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');}
-
-let svcDefs={};
-let activeSvc=null;
-
-async function init(){
-  const s=await fetch('/api/services').then(r=>r.json());
-  svcDefs=s.services??{};
+async function init() {
+  const s = await fetch('/api/services').then(r => r.json());
+  svcDefs = s.services ?? {};
   await load();
 }
 
-async function load(){
-  const [st,ob,rl]=await Promise.all([
-    fetch('/api/status').then(r=>r.json()),
-    fetch('/api/outbox').then(r=>r.json()),
-    fetch('/api/rate-limits').then(r=>r.json()),
+async function load() {
+  const [st, ob, rl] = await Promise.all([
+    fetch('/api/status').then(r => r.json()),
+    fetch('/api/outbox').then(r => r.json()),
+    fetch('/api/rate-limits').then(r => r.json()),
   ]);
-
-  const chs=document.getElementById('channels');
-  chs.innerHTML=st.channels.map(ch=>{
-    const hasAny=ch.keys.some(k=>k.configured);
-    return \`<div class="card\${activeSvc===ch.id?' active':''}" data-svc="\${esc(ch.id)}">
-      <div class="card-name">\${esc(ch.label)}</div>
-      \${ch.keys.map(k=>\`<div class="key-row">
-        <span class="\${k.configured?'ok':'miss'}">\${k.configured?'✓':'✗'}</span>
-        <span>\${esc(k.key)}\${k.preview?\` <span class="dim">\${esc(k.preview)}</span>\`:''}</span>
-      </div>\`).join('')}
-      <div class="card-actions">
-        <button class="btn btn-cfg">Configurar</button>
-        \${hasAny?\`<button class="btn btn-rm">Remover</button>\`:''}
-      </div>
-    </div>\`;
-  }).join('');
-
-  // Re-attach event delegation after innerHTML rewrite
-  chs.onclick=e=>{
-    const btn=e.target.closest('button');
-    if(!btn)return;
-    const id=btn.closest('[data-svc]')?.dataset.svc;
-    if(!id)return;
-    if(btn.classList.contains('btn-cfg'))openConfig(id);
-    if(btn.classList.contains('btn-rm'))doRemove(id);
+  const chv = document.getElementById('channels-view');
+  chv.innerHTML = channelsHtml(st.channels, activeSvc);
+  chv.onclick = e => {
+    const btn = e.target.closest('[data-act]');
+    if (!btn) return;
+    const id = btn.closest('[data-svc]')?.dataset.svc;
+    if (!id) return;
+    if (btn.dataset.act === 'cfg') openConfig(id);
+    if (btn.dataset.act === 'rm') doRemove(id);
   };
-
-  const items=ob.items??[];
-  document.getElementById('outbox').innerHTML=items.length?\`<table>
-    <tr><th>Nota</th><th>Status</th><th>Canais</th><th class="dim">Data</th></tr>
-    \${items.map(it=>\`<tr>
-      <td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">\${esc(it.title??it.path)}</td>
-      <td>\${esc(it.publicationStatus??it.status)}</td>
-      <td>\${(it.channels??[]).map(esc).join(', ')}</td>
-      <td class="dim">\${esc((it.collectedAt??'').slice(0,10))}</td>
-    </tr>\`).join('')}
-  </table>\`:'<p class="empty">Outbox vazio — rode: dgk etl</p>';
-
-  const lims=rl.limits??{};
-  const ps=Object.keys(lims);
-  document.getElementById('ratelimits').innerHTML=ps.length?\`<table>
-    <tr><th>Plataforma</th><th>Último envio</th><th>Enviados (janela)</th></tr>
-    \${ps.map(p=>{const d=lims[p];const last=d.lastSentAt?new Date(d.lastSentAt).toLocaleTimeString('pt-BR'):'—';
-      return \`<tr><td>\${esc(p)}</td><td>\${esc(last)}</td><td>\${esc(d.sentInWindow??0)}</td></tr>\`;
-    }).join('')}
-  </table>\`:'<p class="empty">Sem histórico de rate limits ainda.</p>';
-
-  document.getElementById('ts').textContent='Atualizado: '+new Date().toLocaleTimeString('pt-BR');
+  document.getElementById('outbox-view').innerHTML = outboxHtml(ob.items);
+  document.getElementById('ratelimits-view').innerHTML = rateLimitsHtml(rl.limits);
+  document.getElementById('ts').textContent = 'Atualizado: ' + new Date().toLocaleTimeString('pt-BR');
 }
 
-function openConfig(id){
-  activeSvc=id;
-  const svc=svcDefs[id];
-  if(!svc)return;
-  const isTelegram=(id==='telegram');
-  document.getElementById('config-wrap').innerHTML=\`
-    <div class="config-panel">
-      <h3>Configurar \${esc(svc.label)}</h3>
-      <p class="hint">\${esc(svc.hint)}</p>
-      <form id="cfg-form">
-        \${svc.prompts.map(p=>\`<div class="field">
-          <label>\${esc(p.label)}\${p.secret?' <span class="dim">(deixe em branco para manter)</span>':''}</label>
-          <input type="\${p.secret?'password':'text'}" name="\${esc(p.key)}" autocomplete="off" spellcheck="false">
-        </div>\`).join('')}
-        \${isTelegram?\`<div class="discover-wrap">
-          <button type="button" class="btn btn-cfg" id="disc-btn" onclick="discoverChats()">Descobrir chats Telegram</button>
-          <div class="chat-list" id="chat-list" hidden></div>
-        </div>\`:''}
-        <div class="form-actions">
-          <button type="submit" class="btn btn-save">Salvar</button>
-          <button type="button" class="btn btn-cancel" onclick="closeConfig()">Cancelar</button>
-        </div>
-      </form>
-    </div>\`;
-
-  document.getElementById('cfg-form').onsubmit=saveConfig;
-  document.getElementById('config-wrap').scrollIntoView({behavior:'smooth',block:'nearest'});
-  // highlight active card
-  document.querySelectorAll('.card').forEach(c=>c.classList.toggle('active',c.dataset.svc===id));
+function openConfig(id) {
+  activeSvc = id;
+  const svc = svcDefs[id];
+  if (!svc) return;
+  const isTelegram = (id === 'telegram');
+  const fields = svc.prompts.map(p => fieldHtml({ label: p.label + (p.secret ? ' (deixe em branco para manter)' : ''), name: p.key, type: p.secret ? 'password' : 'text' })).join('');
+  const discover = isTelegram ? '<div class="discover-wrap">' + buttonHtml({ label: 'Descobrir chats Telegram', attrs: { type: 'button', id: 'disc-btn' } }) + '<div class="chat-list" id="chat-list" hidden></div></div>' : '';
+  document.getElementById('config-wrap').innerHTML =
+    '<div class="config-panel"><h3>Configurar ' + escapeHtml(svc.label) + '</h3><p class="hint">' + escapeHtml(svc.hint) + '</p>' +
+    '<form id="cfg-form">' + fields + discover +
+    '<div class="form-actions">' + buttonHtml({ label: 'Salvar', attrs: { type: 'submit' } }) + buttonHtml({ label: 'Cancelar', variant: 'ghost', attrs: { type: 'button', id: 'cfg-cancel' } }) + '</div></form></div>';
+  document.getElementById('cfg-form').onsubmit = saveConfig;
+  document.getElementById('cfg-cancel').onclick = closeConfig;
+  const dbtn = document.getElementById('disc-btn');
+  if (dbtn) dbtn.onclick = discoverChats;
 }
 
-function closeConfig(){
-  activeSvc=null;
-  document.getElementById('config-wrap').innerHTML='';
-  document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
-}
+function closeConfig() { activeSvc = null; document.getElementById('config-wrap').innerHTML = ''; }
 
-async function saveConfig(e){
+async function saveConfig(e) {
   e.preventDefault();
-  const tokens={};
-  for(const[k,v]of new FormData(e.target).entries()){
-    if(v.trim())tokens[k]=v.trim();
-  }
-  const res=await fetch('/api/sow',{method:'POST',headers:{'Content-Type':'application/json','X-Dgk-Admin':'1'},body:JSON.stringify({service:activeSvc,tokens})});
-  if(res.ok){closeConfig();await load();}
-  else{const d=await res.json();alert('Erro: '+(d.error??'Falha ao salvar'));}
+  const tokens = {};
+  for (const [k, v] of new FormData(e.target).entries()) { if (v.trim()) tokens[k] = v.trim(); }
+  const res = await fetch('/api/sow', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' }, body: JSON.stringify({ service: activeSvc, tokens }) });
+  if (res.ok) { closeConfig(); await load(); } else { const d = await res.json(); alert('Erro: ' + (d.error ?? 'Falha ao salvar')); }
 }
 
-async function doRemove(id){
-  const label=svcDefs[id]?.label??id;
-  if(!confirm('Remover configuração de '+label+'?'))return;
-  const res=await fetch('/api/sow/'+id,{method:'DELETE',headers:{'X-Dgk-Admin':'1'}});
-  if(res.ok){if(activeSvc===id)closeConfig();await load();}
-  else{const d=await res.json();alert('Erro: '+(d.error??'Falha ao remover'));}
+async function doRemove(id) {
+  const label = svcDefs[id]?.label ?? id;
+  if (!confirm('Remover configuração de ' + label + '?')) return;
+  const res = await fetch('/api/sow/' + id, { method: 'DELETE', headers: { 'X-Dgk-Admin': '1' } });
+  if (res.ok) { if (activeSvc === id) closeConfig(); await load(); } else { const d = await res.json(); alert('Erro: ' + (d.error ?? 'Falha ao remover')); }
 }
 
-async function discoverChats(){
-  const tokenInput=document.querySelector('#cfg-form input[name="TELEGRAM_BOT_TOKEN"]');
-  const token=tokenInput?.value?.trim();
-  if(!token){alert('Informe o Bot Token primeiro.');return;}
-  const btn=document.getElementById('disc-btn');
-  btn.textContent='Descobrindo...';btn.disabled=true;
-  const listEl=document.getElementById('chat-list');
-  listEl.removeAttribute('hidden');listEl.innerHTML='<div class="empty" style="padding:.5rem">Aguardando...</div>';
-  try{
-    const res=await fetch('/api/sow/telegram/chats',{method:'POST',headers:{'Content-Type':'application/json','X-Dgk-Admin':'1'},body:JSON.stringify({token})});
-    const data=await res.json();
-    const chats=data.chats??[];
-    if(!chats.length){
-      listEl.innerHTML='<p class="empty" style="padding:.5rem">Nenhum chat encontrado. Envie uma mensagem ao bot e tente novamente.</p>';
-    }else{
-      listEl.innerHTML=chats.map((c,i)=>\`<div class="chat-item" data-cid="\${esc(c.id)}">
-        <span class="chat-idx">\${i+1}</span>
-        <span>\${esc(c.name)}\${c.handle?\` <span class="dim">\${esc(c.handle)}</span>\`:''}</span>
-        <span class="dim">\${esc(c.type)} [\${esc(c.id)}]</span>
-      </div>\`).join('');
-      listEl.onclick=e=>{
-        const item=e.target.closest('.chat-item');
-        if(!item)return;
-        const cid=item.dataset.cid;
-        const inp=document.querySelector('#cfg-form input[name="TELEGRAM_CHAT_ID"]');
-        if(inp)inp.value=cid;
-        listEl.querySelectorAll('.chat-item').forEach(el=>el.classList.toggle('sel',el===item));
-      };
+async function discoverChats() {
+  const token = document.querySelector('#cfg-form input[name="TELEGRAM_BOT_TOKEN"]')?.value?.trim();
+  if (!token) { alert('Informe o Bot Token primeiro.'); return; }
+  const btn = document.getElementById('disc-btn');
+  btn.textContent = 'Descobrindo...'; btn.disabled = true;
+  const listEl = document.getElementById('chat-list');
+  listEl.removeAttribute('hidden'); listEl.innerHTML = '<div class="ds-empty" style="padding:.5rem">Aguardando...</div>';
+  try {
+    const data = await fetch('/api/sow/telegram/chats', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' }, body: JSON.stringify({ token }) }).then(r => r.json());
+    const chats = data.chats ?? [];
+    if (!chats.length) { listEl.innerHTML = '<p class="ds-empty" style="padding:.5rem">Nenhum chat encontrado. Envie uma mensagem ao bot e tente novamente.</p>'; }
+    else {
+      listEl.innerHTML = chats.map((c, i) => '<div class="chat-item" data-cid="' + escapeHtml(c.id) + '"><span class="chat-idx">' + (i + 1) + '</span><span>' + escapeHtml(c.name) + (c.handle ? ' <span class="ds-dim">' + escapeHtml(c.handle) + '</span>' : '') + '</span><span class="ds-dim">' + escapeHtml(c.type) + ' [' + escapeHtml(c.id) + ']</span></div>').join('');
+      listEl.onclick = e => { const item = e.target.closest('.chat-item'); if (!item) return; const inp = document.querySelector('#cfg-form input[name="TELEGRAM_CHAT_ID"]'); if (inp) inp.value = item.dataset.cid; listEl.querySelectorAll('.chat-item').forEach(el => el.classList.toggle('sel', el === item)); };
     }
-  }catch(err){
-    listEl.innerHTML=\`<p class="empty" style="padding:.5rem">Erro: \${esc(err.message)}</p>\`;
-  }finally{
-    btn.textContent='Descobrir chats Telegram';btn.disabled=false;
-  }
+  } catch (err) { listEl.innerHTML = '<p class="ds-empty" style="padding:.5rem">Erro: ' + escapeHtml(err.message) + '</p>'; }
+  finally { btn.textContent = 'Descobrir chats Telegram'; btn.disabled = false; }
 }
 
 init().catch(console.error);
-setInterval(load,30_000);
-</script>
-</body>
-</html>`;
+setInterval(load, 30000);
+<\/script>`;
+}
+
+function renderAdminHtml(root, siloPath) {
+  const channels = siloStatus(siloPath);
+  const items = readOutbox(root);
+  const limits = readRateLimits();
+
+  const residualCss = `
+    <style>
+      .ds-key-row{font-size:.72rem;color:var(--muted-foreground);display:flex;gap:.4rem}
+      .ds-dim{color:var(--muted-foreground)}
+      .config-panel{background:var(--card);border:1px solid var(--primary);border-radius:6px;padding:1.2rem;margin-top:1rem}
+      .config-panel h3{color:var(--primary);font-size:.9rem;margin-bottom:.3rem}
+      .hint{font-size:.75rem;color:var(--muted-foreground);margin-bottom:1rem}
+      .chat-list{margin-top:.5rem;max-height:180px;overflow-y:auto;border:1px solid var(--border);border-radius:4px}
+      .chat-item{padding:.4rem .7rem;font-size:.8rem;cursor:pointer;display:flex;gap:.7rem}
+      .chat-item:hover{background:var(--muted)} .chat-item.sel{background:var(--accent);color:var(--primary)}
+      .chat-idx{color:var(--muted-foreground);min-width:1.5rem}
+      .form-actions{display:flex;gap:.5rem;margin-top:1rem}
+    </style>`;
+
+  const importMap = `<script type="importmap">
+{"imports":{"@refarm.dev/homestead-ssr/render":"/_hs/render.js"}}
+<\/script>`;
+
+  const bodyHtml = `${importMap}
+${residualCss}
+<h1>⬡ dgk admin</h1>
+<div id="channels-view">${channelsHtml(channels, null)}</div>
+<div id="config-wrap"></div>
+<div id="outbox-view">${outboxHtml(items)}</div>
+<div id="ratelimits-view">${rateLimitsHtml(limits)}</div>
+<footer id="ts" class="ds-footer"></footer>
+${adminClientScript()}`;
+
+  return shellHtml({ title: 'dgk admin', theme: 'verde-jardim', assetBase: '/_ds', bodyHtml });
+}
 
 async function handleAsync(req, res, root, siloPath, fetchFn, spawnFn) {
   const url = new URL(req.url, 'http://localhost');
@@ -404,7 +302,7 @@ async function handleAsync(req, res, root, siloPath, fetchFn, spawnFn) {
 
   if (url.pathname === '/' && method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    res.end(ADMIN_HTML);
+    res.end(renderAdminHtml(root, siloPath));
     return;
   }
 

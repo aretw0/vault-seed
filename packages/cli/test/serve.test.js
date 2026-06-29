@@ -659,6 +659,26 @@ describe('GET /api/inbox', () => {
   });
 });
 
+test("GET / is server-rendered with the ds shell and the outbox table", async () => {
+  const tmp2 = tempDir();
+  const siloPath2 = tempSilo(tmp2);
+  mkdirSync(join(tmp2, ".dgk"), { recursive: true });
+  writeFileSync(join(tmp2, ".dgk", "outbox-publicacao.json"), JSON.stringify({ items: [{ title: "Nota A", path: "a.md", publicationStatus: "draft", channels: ["rss"], collectedAt: "2026-05-26T00:00:00Z" }] }));
+  const server = await startServer(tmp2, siloPath2, {});
+  try {
+    const html = await fetch(`${server.address}/`).then((r) => r.text());
+    assert.match(html, /data-ds-theme="verde-jardim"/);     // ds shell
+    assert.match(html, /\/_ds\/themes\/verde-jardim\.css/);  // ds css linked by shellHtml
+    assert.match(html, /type="importmap"/);                   // import map present
+    assert.match(html, /ds-table/);                           // outbox rendered server-side
+    assert.match(html, /Nota A/);                             // the item, in the initial HTML
+    assert.doesNotMatch(html, /<div id="outbox"><\/div>/);   // not an empty client placeholder
+  } finally {
+    await server.close();
+    rmSync(tmp2, { recursive: true });
+  }
+});
+
 describe('GET /_hs/render.js and /_hs/admin_views.js', () => {
   let tmp, siloPath;
   beforeEach(() => {
