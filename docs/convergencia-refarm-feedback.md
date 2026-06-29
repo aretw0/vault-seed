@@ -13,7 +13,7 @@ pacotes `@refarm.dev/*`. Itens essenciais relayados pro refarm.
 
 | Pacote | O que falta | Por que é essencial | Workaround | Status |
 | --- | --- | --- | --- | --- |
-| — | — | — | — | — |
+| `@refarm.dev/homestead-ssr` | `fieldHtml` não aceita `attrs` (o `buttonHtml` aceita — inconsistência) | inputs não recebem `autocomplete`/`spellcheck`/`inputmode`/`autocomplete="off"` etc.; campos de token do admin perdem `autocomplete=off`/`spellcheck=false` | montar o `<input>` à mão sem `fieldHtml`, ou pós-processar | `aberto` (relayar — paralelo ao `buttonHtml.attrs`) |
 
 ## Avaliação de cobertura
 
@@ -24,3 +24,7 @@ pacotes `@refarm.dev/*`. Itens essenciais relayados pro refarm.
   sem reimplementação residual; validador não-estrito permitiu o superset.
   Consumo com **degradação graciosa** (import dinâmico opcional): scripts
   distribuídos não quebram no repo do usuário sem o pacote. ✓
+- `homestead-ssr@0.1.0` — admin do `dgk serve` server-rendered via `shellHtml` +
+  render helpers (cards/tabelas `ds`), com módulo de views **isomórfico** reusado no
+  cliente (import map → `/_hs/render.js`) sem duplicação. Sinal isomórfico/naming
+  relayado ao refarm (`a1afa932`). Lacuna encontrada: `fieldHtml` sem `attrs` (acima). ✓

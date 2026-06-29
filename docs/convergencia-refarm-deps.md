@@ -54,10 +54,12 @@ Quando consumirmos um pacote que **depende de outro `@refarm.dev/*` ainda não p
 `homestead-ssr` declara `@refarm.dev/ds@0.1.0`), fixa-se o **direto** no `package.json` do
 consumidor e o **transitivo** via `overrides`, até ambos publicarem.
 
-Direto — no `package.json` do consumidor (ex.: `packages/cli/package.json`):
+Direto — no `package.json` do consumidor, como `file:` pro tarball em `vendor/`:
 ```jsonc
-{ "dependencies": { "@refarm.dev/homestead-ssr": "file:../../vendor/refarm.dev-homestead-ssr-0.1.0.tgz" } }
+{ "dependencies": { "@refarm.dev/homestead-ssr": "file:vendor/refarm.dev-homestead-ssr-0.1.0.tgz" } }
 ```
+(o `file:` é relativo ao `package.json` que o declara; num pacote aninhado como
+`packages/cli`, ajuste a profundidade do caminho até o `vendor/` da raiz.)
 
 Transitivo — **no `pnpm-workspace.yaml`** (raiz), chave top-level `overrides:`. **Atenção:** o
 pnpm 11 **não lê** mais `pnpm.overrides` do `package.json` (o install avisa
