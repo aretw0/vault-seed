@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@refarm.dev/ds': file:vendor/refarm.dev-ds-0.1.0.tgz
+
 importers:
 
   .:
@@ -94,6 +97,9 @@ importers:
       '@aretw0/dgk-runner':
         specifier: workspace:*
         version: link:../dgk-runner
+      '@refarm.dev/homestead-ssr':
+        specifier: file:../../vendor/refarm.dev-homestead-ssr-0.1.0.tgz
+        version: file:vendor/refarm.dev-homestead-ssr-0.1.0.tgz
       '@refarm.dev/launch-process':
         specifier: file:../../vendor/refarm.dev-launch-process-0.1.0.tgz
         version: file:vendor/refarm.dev-launch-process-0.1.0.tgz
@@ -648,6 +654,10 @@ packages:
 
   '@refarm.dev/ds@file:vendor/refarm.dev-ds-0.1.0.tgz':
     resolution: {integrity: sha512-XEFbrl9tNcf+qk566phcRGbDyz5o6z+R3d09ZFKjveZeF2IoLc4JSKlRZPzcjZdek85xYOQtMjJivvcxOGpyeA==, tarball: file:vendor/refarm.dev-ds-0.1.0.tgz}
+    version: 0.1.0
+
+  '@refarm.dev/homestead-ssr@file:vendor/refarm.dev-homestead-ssr-0.1.0.tgz':
+    resolution: {integrity: sha512-5ehJjN3OqmkfwILD/WpoGWG2iRXdoYR+ABESgQppuGO4jAygjyQAtv3UjI1yDwz6gWB365rfLjSRF78U/czEAg==, tarball: file:vendor/refarm.dev-homestead-ssr-0.1.0.tgz}
     version: 0.1.0
 
   '@refarm.dev/launch-process@file:vendor/refarm.dev-launch-process-0.1.0.tgz':
@@ -3157,6 +3167,10 @@ snapshots:
   '@refarm.dev/channel-policy-v1@file:vendor/refarm.dev-channel-policy-v1-0.1.0.tgz': {}
 
   '@refarm.dev/ds@file:vendor/refarm.dev-ds-0.1.0.tgz': {}
+
+  '@refarm.dev/homestead-ssr@file:vendor/refarm.dev-homestead-ssr-0.1.0.tgz':
+    dependencies:
+      '@refarm.dev/ds': file:vendor/refarm.dev-ds-0.1.0.tgz
 
   '@refarm.dev/launch-process@file:vendor/refarm.dev-launch-process-0.1.0.tgz': {}
 

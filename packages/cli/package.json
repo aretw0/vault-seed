@@ -29,6 +29,7 @@
   "dependencies": {
     "@aretw0/dgk-channels": "workspace:*",
     "@aretw0/dgk-runner": "workspace:*",
+    "@refarm.dev/homestead-ssr": "file:../../vendor/refarm.dev-homestead-ssr-0.1.0.tgz",
     "@refarm.dev/launch-process": "file:../../vendor/refarm.dev-launch-process-0.1.0.tgz"
   },
   "license": "GPL-3.0-only",
