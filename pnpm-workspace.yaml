@@ -17,7 +17,3 @@ policies:
     severity: warn
 minimumReleaseAgeExclude:
   - "@refarm.dev/*"
-# Redirect the transitive @refarm.dev/ds peer declared by homestead-ssr
-# to our local vendor tarball (the published 0.1.0 does not yet exist on npm).
-overrides:
-  "@refarm.dev/ds": "file:vendor/refarm.dev-ds-0.1.0.tgz"

@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@refarm.dev/ds': file:vendor/refarm.dev-ds-0.1.0.tgz
-
 importers:
 
   .:
@@ -97,20 +94,20 @@ importers:
       '@aretw0/dgk-runner':
         specifier: workspace:*
         version: link:../dgk-runner
-      '@refarm.dev/homestead-ssr':
-        specifier: file:../../vendor/refarm.dev-homestead-ssr-0.1.0.tgz
-        version: file:vendor/refarm.dev-homestead-ssr-0.1.0.tgz
-      '@refarm.dev/launch-process':
-        specifier: file:../../vendor/refarm.dev-launch-process-0.1.0.tgz
-        version: file:vendor/refarm.dev-launch-process-0.1.0.tgz
+      '@refarm.dev/ds':
+        specifier: file:../../vendor/refarm.dev-ds-0.1.0.tgz
+        version: file:vendor/refarm.dev-ds-0.1.0.tgz
+      '@refarm.dev/process-handoff':
+        specifier: file:../../vendor/refarm.dev-process-handoff-0.1.0.tgz
+        version: file:vendor/refarm.dev-process-handoff-0.1.0.tgz
 
   packages/dgk-channels: {}
 
   packages/dgk-runner:
     dependencies:
-      '@refarm.dev/launch-process':
-        specifier: file:../../vendor/refarm.dev-launch-process-0.1.0.tgz
-        version: file:vendor/refarm.dev-launch-process-0.1.0.tgz
+      '@refarm.dev/process-handoff':
+        specifier: file:../../vendor/refarm.dev-process-handoff-0.1.0.tgz
+        version: file:vendor/refarm.dev-process-handoff-0.1.0.tgz
 
   packages/dgk-skills: {}
 
@@ -653,15 +650,11 @@ packages:
     version: 0.1.0
 
   '@refarm.dev/ds@file:vendor/refarm.dev-ds-0.1.0.tgz':
-    resolution: {integrity: sha512-XEFbrl9tNcf+qk566phcRGbDyz5o6z+R3d09ZFKjveZeF2IoLc4JSKlRZPzcjZdek85xYOQtMjJivvcxOGpyeA==, tarball: file:vendor/refarm.dev-ds-0.1.0.tgz}
+    resolution: {integrity: sha512-YpVPD0Tr76fOH7qFcfdMthxW3EcsEOd6ON5FIPtWPnPqNONg3gw6xtntSUojiA92W6hB1EegZlA5w141YS6ZFA==, tarball: file:vendor/refarm.dev-ds-0.1.0.tgz}
     version: 0.1.0
 
-  '@refarm.dev/homestead-ssr@file:vendor/refarm.dev-homestead-ssr-0.1.0.tgz':
-    resolution: {integrity: sha512-5ehJjN3OqmkfwILD/WpoGWG2iRXdoYR+ABESgQppuGO4jAygjyQAtv3UjI1yDwz6gWB365rfLjSRF78U/czEAg==, tarball: file:vendor/refarm.dev-homestead-ssr-0.1.0.tgz}
-    version: 0.1.0
-
-  '@refarm.dev/launch-process@file:vendor/refarm.dev-launch-process-0.1.0.tgz':
-    resolution: {integrity: sha512-uuQZt6wgnDT6iNwofJZ9+tfWp72SwsRvSk0L3AxB2BHtEg+dFZEBdcXv3Qd+PLlSLD+em5eE7DM7q6DACke7PQ==, tarball: file:vendor/refarm.dev-launch-process-0.1.0.tgz}
+  '@refarm.dev/process-handoff@file:vendor/refarm.dev-process-handoff-0.1.0.tgz':
+    resolution: {integrity: sha512-PbBXLDRE7a72Ri6xa7TzJSajzCBl9J9y0zQ17aDZX70MYgfroKDhJz2INS2ZzVwoqyp6BxVn+SfewbddZ2/b5w==, tarball: file:vendor/refarm.dev-process-handoff-0.1.0.tgz}
     version: 0.1.0
 
   '@rollup/pluginutils@5.4.0':
@@ -3168,11 +3161,7 @@ snapshots:
 
   '@refarm.dev/ds@file:vendor/refarm.dev-ds-0.1.0.tgz': {}
 
-  '@refarm.dev/homestead-ssr@file:vendor/refarm.dev-homestead-ssr-0.1.0.tgz':
-    dependencies:
-      '@refarm.dev/ds': file:vendor/refarm.dev-ds-0.1.0.tgz
-
-  '@refarm.dev/launch-process@file:vendor/refarm.dev-launch-process-0.1.0.tgz': {}
+  '@refarm.dev/process-handoff@file:vendor/refarm.dev-process-handoff-0.1.0.tgz': {}
 
   '@rollup/pluginutils@5.4.0(rollup@4.61.1)':
     dependencies:

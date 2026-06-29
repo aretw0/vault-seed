@@ -88,11 +88,19 @@ overrides:
   - **Adoção futura opcional:** migrar nosso export/`marimo-vault.css` para o atributo neutro
     `data-ds-theme` (e os guards `:not([data-ds-theme])`) quando/ se o refarm aposentar o alias
     `data-refarm-theme`. Hoje desnecessário — o alias cobre.
-- **`@refarm.dev/homestead-ssr`** (leaf) — **alvo correto** do rebuild do admin (incremento futuro).
-  Substitui o SDK full `@refarm.dev/homestead`: é só `dist/` (`shellHtml/cardHtml/buttonHtml`), sem
-  puxar o closure do SDK. Ainda **não consumido** — o 4b adotou só os tokens do `ds`. Tarball
-  candidato em `refarm/.refarm/handoff/vault-seed/2026-06-26/refarm.dev-homestead-ssr-0.1.0.tgz`.
-  (O full-homestead foi removido do nosso `vendor/` por ser o alvo errado.)
+  - **Re-sync 2026-06-29 (handoff `2026-06-29`):** o `ds` passou a exportar **`./html`** (emissores
+    HTML build-free + `documentHtml`) — o admin do `dgk serve` consome `@refarm.dev/ds/html` direto;
+    o `cli` ganhou `@refarm.dev/ds` como dep própria. Override transitivo **removido** (não há mais
+    transitivo a redirecionar — ds é dep direta). Re-vendorizado do `2026-06-29`; integrity do lock
+    atualizada.
+- **`@refarm.dev/ds/html`** (ADR-072) — **substitui o removido `@refarm.dev/homestead-ssr`**. Os
+  emissores HTML build-free são DS-owned (coesão com o CSS que estiliza as classes `ds-*`); o shell
+  de página foi renomeado `shellHtml`→**`documentHtml`** (sinal nosso aceito, refarm `12760dc7`).
+  Consumido no admin (`serve.js` + `admin_views.mjs` isomórfico via import map → `/_hs/render.js`).
+- **`@refarm.dev/process-handoff`** (ADR-072) — **substitui o removido `@refarm.dev/launch-process`**
+  (renomeou pacote **e** funções: `createLaunchProcessRunner`→`createProcessHandoffRunner`,
+  `runLaunchProcess`→`runProcessHandoff`, `launchDetachedProcess`→`startDetachedProcessHandoff`, …).
+  Re-apontado em `dgk-runner` + cli (launcher/obsidian/vscode/serve/setup). Não colapsa no cli.
 
 > Handoff `2026-06-26` também trouxe `@refarm.dev/heartwood` (core cripto WASM) e `@refarm.dev/silo`
 > (segredos) — **fora da caminhada de UI/admin/lab**; assimilação futura, não-agora.

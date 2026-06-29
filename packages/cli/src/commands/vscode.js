@@ -1,8 +1,8 @@
 import {
-  createLaunchProcessSpecFromRunner,
-  runLaunchProcessSync,
-  launchDetachedProcess,
-} from '@refarm.dev/launch-process';
+  createProcessHandoffSpecFromRunner,
+  runProcessHandoffSync,
+  startDetachedProcessHandoff,
+} from '@refarm.dev/process-handoff';
 
 export const INSTALL_HINTS = {
   darwin:
@@ -14,17 +14,17 @@ export const INSTALL_HINTS = {
 };
 
 /** Returns true if the `code` CLI is reachable. runSync injectable for tests. */
-export function detectVSCode(runSync = runLaunchProcessSync) {
+export function detectVSCode(runSync = runProcessHandoffSync) {
   const { exitCode } = runSync(
-    createLaunchProcessSpecFromRunner('code', ['--version']),
+    createProcessHandoffSpecFromRunner('code', ['--version']),
     { capture: true },
   );
   return exitCode === 0;
 }
 
 /** Opens the current directory in VS Code. launchFn injectable for tests. */
-export function openVSCode(cwd = process.cwd(), launchFn = launchDetachedProcess) {
-  launchFn(createLaunchProcessSpecFromRunner('code', ['.'], { cwd }));
+export function openVSCode(cwd = process.cwd(), launchFn = startDetachedProcessHandoff) {
+  launchFn(createProcessHandoffSpecFromRunner('code', ['.'], { cwd }));
   return Promise.resolve();
 }
 

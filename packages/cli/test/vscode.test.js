@@ -9,7 +9,7 @@ function mockLauncher(found, opened = []) {
   };
 }
 
-test('detectVSCode usa runLaunchProcessSync injetável e lê exitCode', () => {
+test('detectVSCode usa runProcessHandoffSync injetável e lê exitCode', () => {
   assert.equal(detectVSCode(() => ({ exitCode: 0 })), true);
   assert.equal(detectVSCode(() => ({ exitCode: 1 })), false);
 });

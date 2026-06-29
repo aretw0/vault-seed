@@ -668,7 +668,7 @@ test("GET / is server-rendered with the ds shell and the outbox table", async ()
   try {
     const html = await fetch(`${server.address}/`).then((r) => r.text());
     assert.match(html, /data-ds-theme="verde-jardim"/);     // ds shell
-    assert.match(html, /\/_ds\/themes\/verde-jardim\.css/);  // ds css linked by shellHtml
+    assert.match(html, /\/_ds\/themes\/verde-jardim\.css/);  // ds css linked by documentHtml
     assert.match(html, /type="importmap"/);                   // import map present
     assert.match(html, /ds-table/);                           // outbox rendered server-side
     assert.match(html, /Nota A/);                             // the item, in the initial HTML
@@ -700,7 +700,7 @@ describe('GET /_hs/render.js and /_hs/admin_views.js', () => {
       assert.equal(r2.status, 200);
       const body = await r2.text();
       assert.match(body, /export function channelsHtml/);
-      assert.match(body, /@refarm\.dev\/homestead-ssr\/render/); // bare specifier (import map resolves in browser)
+      assert.match(body, /@refarm\.dev\/ds\/html/); // bare specifier (import map resolves in browser)
     } finally {
       await server.close();
     }

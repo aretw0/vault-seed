@@ -1,6 +1,6 @@
 import { createServer } from 'node:http';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { createLaunchProcessSpecFromRunner, runLaunchProcess } from '@refarm.dev/launch-process';
+import { createProcessHandoffSpecFromRunner, runProcessHandoff } from '@refarm.dev/process-handoff';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
 import { fileURLToPath } from 'node:url';
@@ -9,7 +9,7 @@ import {
   SILO_PATH, SERVICES,
 } from '../silo.js';
 import { createRequire } from 'node:module';
-import { shellHtml } from '@refarm.dev/homestead-ssr';
+import { documentHtml } from '@refarm.dev/ds/html';
 import { channelsHtml, outboxHtml, rateLimitsHtml } from './admin_views.mjs';
 
 const require = createRequire(import.meta.url);
@@ -83,8 +83,8 @@ async function verifyTelegramToken(token, fetchFn) {
 // so Pi can receive the output and relay it back via Telegram.
 export async function defaultSpawn(cmd, args, cwd) {
   try {
-    const { exitCode, stdout, stderr } = await runLaunchProcess(
-      createLaunchProcessSpecFromRunner(cmd, args, { cwd }),
+    const { exitCode, stdout, stderr } = await runProcessHandoff(
+      createProcessHandoffSpecFromRunner(cmd, args, { cwd }),
       { capture: true },
     );
     return { ok: exitCode === 0, output: `${stdout}${stderr}`.trim() };
@@ -146,12 +146,12 @@ async function fetchTelegramChats(token, fetchFn) {
   } catch { return []; }
 }
 
-// Admin dashboard HTML — server-rendered via homestead-ssr shellHtml + isomorphic
+// Admin dashboard HTML — server-rendered via ds/html documentHtml + isomorphic
 // admin_views. Tokens never appear in initial HTML; only masked previews from /api/status.
 function adminClientScript() {
   return `<script type="module">
 import { channelsHtml, outboxHtml, rateLimitsHtml } from "/_hs/admin_views.js";
-import { fieldHtml, buttonHtml, escapeHtml } from "@refarm.dev/homestead-ssr/render";
+import { fieldHtml, buttonHtml, escapeHtml } from "@refarm.dev/ds/html";
 
 let svcDefs = {};
 let activeSvc = null;
@@ -261,7 +261,7 @@ function renderAdminHtml(root, siloPath) {
     </style>`;
 
   const importMap = `<script type="importmap">
-{"imports":{"@refarm.dev/homestead-ssr/render":"/_hs/render.js"}}
+{"imports":{"@refarm.dev/ds/html":"/_hs/render.js"}}
 <\/script>`;
 
   const bodyHtml = `${importMap}
@@ -274,7 +274,7 @@ ${residualCss}
 <footer id="ts" class="ds-footer"></footer>
 ${adminClientScript()}`;
 
-  return shellHtml({ title: 'dgk admin', theme: 'verde-jardim', assetBase: '/_ds', bodyHtml });
+  return documentHtml({ title: 'dgk admin', theme: 'verde-jardim', assetBase: '/_ds', bodyHtml });
 }
 
 async function handleAsync(req, res, root, siloPath, fetchFn, spawnFn) {
@@ -437,11 +437,11 @@ async function handleAsync(req, res, root, siloPath, fetchFn, spawnFn) {
   }
 
   // Serve the isomorphic admin render modules to the browser. The admin uses an
-  // import map so admin_views.js's `@refarm.dev/homestead-ssr/render` import
+  // import map so admin_views.js's `@refarm.dev/ds/html` import
   // resolves to /_hs/render.js client-side.
   if (url.pathname === '/_hs/render.js' && method === 'GET') {
     try {
-      const file = fileURLToPath(import.meta.resolve('@refarm.dev/homestead-ssr/render'));
+      const file = fileURLToPath(import.meta.resolve('@refarm.dev/ds/html'));
       res.writeHead(200, { 'Content-Type': 'text/javascript; charset=utf-8' });
       res.end(readFileSync(file, 'utf8'));
     } catch {

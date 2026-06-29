@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { createLaunchProcessSpecFromRunner, runLaunchProcessSync } from '@refarm.dev/launch-process';
+import { createProcessHandoffSpecFromRunner, runProcessHandoffSync } from '@refarm.dev/process-handoff';
 import { detectObsidian, INSTALL_HINTS } from '../launcher.js';
 
 const CHECK_SUBSTRATE = fileURLToPath(new URL('../../vendor/check-substrate.mjs', import.meta.url));
@@ -17,15 +17,15 @@ function checkNodeVersion() {
   return true;
 }
 
-function git(args, runSync = runLaunchProcessSync) {
+function git(args, runSync = runProcessHandoffSync) {
   // git config errors are non-fatal (e.g. not in a repo)
-  runSync(createLaunchProcessSpecFromRunner('git', args), { capture: true });
+  runSync(createProcessHandoffSpecFromRunner('git', args), { capture: true });
 }
 
-/** True if `cmd --version` is reachable. runLaunchProcessSync swallows ENOENT into exitCode. */
-export function hasTool(cmd, runSync = runLaunchProcessSync) {
+/** True if `cmd --version` is reachable. runProcessHandoffSync swallows ENOENT into exitCode. */
+export function hasTool(cmd, runSync = runProcessHandoffSync) {
   const { exitCode } = runSync(
-    createLaunchProcessSpecFromRunner(cmd, ['--version']),
+    createProcessHandoffSpecFromRunner(cmd, ['--version']),
     { capture: true },
   );
   return exitCode === 0;

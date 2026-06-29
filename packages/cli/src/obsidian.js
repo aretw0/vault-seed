@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { createLaunchProcessSpecFromRunner, runLaunchProcess } from '@refarm.dev/launch-process';
+import { createProcessHandoffSpecFromRunner, runProcessHandoff } from '@refarm.dev/process-handoff';
 
 // On Windows, Obsidian.exe IS the CLI binary — same executable handles both app launch
 // and IPC commands when registered. After registration the dir is added to user PATH,
@@ -13,7 +13,7 @@ const WIN32_FALLBACK =
 async function trySpawn(cmd, runProc) {
   try {
     const { exitCode } = await runProc(
-      createLaunchProcessSpecFromRunner(cmd, ['help']),
+      createProcessHandoffSpecFromRunner(cmd, ['help']),
       { capture: true },
     );
     return exitCode === 0;
@@ -27,7 +27,7 @@ async function trySpawn(cmd, runProc) {
  * Tries PATH first, then the known Windows install path as a fallback.
  * Obsidian must be running and the CLI must be registered.
  */
-export async function findObsidianCli(runProc = runLaunchProcess) {
+export async function findObsidianCli(runProc = runProcessHandoff) {
   if (await trySpawn('obsidian', runProc)) return 'obsidian';
   if (WIN32_FALLBACK && existsSync(WIN32_FALLBACK) && await trySpawn(WIN32_FALLBACK, runProc)) {
     return WIN32_FALLBACK;

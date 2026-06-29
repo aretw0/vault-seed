@@ -1,5 +1,5 @@
 // Isomorphic admin view builders (server SSR + browser updates) over the
-// @refarm.dev/homestead-ssr render helpers. Pure: no Node imports, so serve.js
+// @refarm.dev/ds/html render helpers. Pure: no Node imports, so serve.js
 // can serve this file to the browser (import map maps the bare specifier).
 import {
   sectionHtml,
@@ -8,7 +8,7 @@ import {
   tableHtml,
   buttonHtml,
   escapeHtml,
-} from "@refarm.dev/homestead-ssr/render";
+} from "@refarm.dev/ds/html";
 
 export function channelsHtml(channels, activeSvc = null) {
   const cards = (channels ?? []).map((ch) => {

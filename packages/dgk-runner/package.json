@@ -23,7 +23,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@refarm.dev/launch-process": "file:../../vendor/refarm.dev-launch-process-0.1.0.tgz"
+    "@refarm.dev/process-handoff": "file:../../vendor/refarm.dev-process-handoff-0.1.0.tgz"
   },
   "engines": {
     "node": ">=22"
