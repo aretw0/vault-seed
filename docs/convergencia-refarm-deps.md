@@ -51,18 +51,23 @@ O **código consumidor não muda** na transição — o Lab (`.site/styles/marim
 ### Dep transitiva não-publicada (ao consumir `homestead-ssr`)
 
 Quando consumirmos um pacote que **depende de outro `@refarm.dev/*` ainda não publicado** (ex.:
-`homestead-ssr` depende de `ds`), fixar **direto e transitivo** no mesmo tarball local via
-`pnpm.overrides`, até ambos publicarem:
+`homestead-ssr` declara `@refarm.dev/ds@0.1.0`), fixa-se o **direto** no `package.json` do
+consumidor e o **transitivo** via `overrides`, até ambos publicarem.
 
+Direto — no `package.json` do consumidor (ex.: `packages/cli/package.json`):
 ```jsonc
-{
-  "dependencies": {
-    "@refarm.dev/ds": "file:vendor/refarm.dev-ds-0.1.0.tgz",
-    "@refarm.dev/homestead-ssr": "file:vendor/refarm.dev-homestead-ssr-0.1.0.tgz"
-  },
-  "pnpm": { "overrides": { "@refarm.dev/ds": "file:vendor/refarm.dev-ds-0.1.0.tgz" } }
-}
+{ "dependencies": { "@refarm.dev/homestead-ssr": "file:../../vendor/refarm.dev-homestead-ssr-0.1.0.tgz" } }
 ```
+
+Transitivo — **no `pnpm-workspace.yaml`** (raiz), chave top-level `overrides:`. **Atenção:** o
+pnpm 11 **não lê** mais `pnpm.overrides` do `package.json` (o install avisa
+`The "pnpm" field in package.json is no longer read by pnpm`); o override **tem** que ir no
+`pnpm-workspace.yaml`:
+```yaml
+overrides:
+  "@refarm.dev/ds": "file:vendor/refarm.dev-ds-0.1.0.tgz"
+```
+(o `file:` do override é relativo à raiz do workspace.)
 
 ## Estado atual
 
