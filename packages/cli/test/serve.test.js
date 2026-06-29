@@ -659,6 +659,34 @@ describe('GET /api/inbox', () => {
   });
 });
 
+describe('GET /_hs/render.js and /_hs/admin_views.js', () => {
+  let tmp, siloPath;
+  beforeEach(() => {
+    tmp = tempDir();
+    siloPath = tempSilo(tmp);
+  });
+  afterEach(() => rmSync(tmp, { recursive: true }));
+
+  test("serve /_hs/render.js and /_hs/admin_views.js as importable modules", async () => {
+    const server = await startServer(tmp, siloPath, {});
+    try {
+      const base = server.address;
+      const r1 = await fetch(`${base}/_hs/render.js`);
+      assert.equal(r1.status, 200);
+      assert.match(r1.headers.get("content-type") || "", /javascript/);
+      assert.match(await r1.text(), /export function cardHtml/);
+
+      const r2 = await fetch(`${base}/_hs/admin_views.js`);
+      assert.equal(r2.status, 200);
+      const body = await r2.text();
+      assert.match(body, /export function channelsHtml/);
+      assert.match(body, /@refarm\.dev\/homestead-ssr\/render/); // bare specifier (import map resolves in browser)
+    } finally {
+      await server.close();
+    }
+  });
+});
+
 describe('POST /api/inbox/fetch', () => {
   let tmp, siloPath, server;
   beforeEach(async () => {

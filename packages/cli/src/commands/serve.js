@@ -3,6 +3,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { createLaunchProcessSpecFromRunner, runLaunchProcess } from '@refarm.dev/launch-process';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
+import { fileURLToPath } from 'node:url';
 import {
   siloStatus, loadSilo, saveTokens, removeService,
   SILO_PATH, SERVICES,
@@ -10,6 +11,7 @@ import {
 import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
+const ADMIN_VIEWS_PATH = fileURLToPath(new URL('./admin_views.mjs', import.meta.url));
 
 async function loadChannels() {
   try { return await import('@aretw0/dgk-channels/contacts'); } catch { return null; }
@@ -533,6 +535,25 @@ async function handleAsync(req, res, root, siloPath, fetchFn, spawnFn) {
     if (limit) args.push('--limit', String(limit));
     const result = await spawnFn('node', args, root);
     jsonResponse(res, result.ok ? { ok: true, output: result.output } : { ok: false, error: result.output }, result.ok ? 200 : 500);
+    return;
+  }
+
+  // Serve the isomorphic admin render modules to the browser. The admin uses an
+  // import map so admin_views.js's `@refarm.dev/homestead-ssr/render` import
+  // resolves to /_hs/render.js client-side.
+  if (url.pathname === '/_hs/render.js' && method === 'GET') {
+    try {
+      const file = fileURLToPath(import.meta.resolve('@refarm.dev/homestead-ssr/render'));
+      res.writeHead(200, { 'Content-Type': 'text/javascript; charset=utf-8' });
+      res.end(readFileSync(file, 'utf8'));
+    } catch {
+      jsonResponse(res, { error: 'render module not found' }, 404);
+    }
+    return;
+  }
+  if (url.pathname === '/_hs/admin_views.js' && method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'text/javascript; charset=utf-8' });
+    res.end(readFileSync(ADMIN_VIEWS_PATH, 'utf8'));
     return;
   }
 
