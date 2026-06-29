@@ -2,7 +2,7 @@
 
 # Dependências opcionais para coleta local antes da publicação do Lab.
 # Elas não devem ser exigidas pelo HTML/WASM publicado.
-playwright==1.60.0
+playwright==1.61.0
 pillow==12.2.0
 pytesseract==0.3.13
 pyarrow==24.0.0
