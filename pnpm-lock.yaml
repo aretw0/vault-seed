@@ -14,6 +14,12 @@ importers:
       '@refarm.dev/channel-policy-v1':
         specifier: file:vendor/refarm.dev-channel-policy-v1-0.1.0.tgz
         version: file:vendor/refarm.dev-channel-policy-v1-0.1.0.tgz
+      '@refarm.dev/enrichment-contract-v1':
+        specifier: file:vendor/refarm.dev-enrichment-contract-v1-0.1.0.tgz
+        version: file:vendor/refarm.dev-enrichment-contract-v1-0.1.0.tgz
+      '@refarm.dev/records-contract-v1':
+        specifier: file:vendor/refarm.dev-records-contract-v1-0.1.0.tgz
+        version: file:vendor/refarm.dev-records-contract-v1-0.1.0.tgz
     devDependencies:
       '@aretw0/dgk-channels':
         specifier: workspace:*
@@ -653,8 +659,16 @@ packages:
     resolution: {integrity: sha512-YpVPD0Tr76fOH7qFcfdMthxW3EcsEOd6ON5FIPtWPnPqNONg3gw6xtntSUojiA92W6hB1EegZlA5w141YS6ZFA==, tarball: file:vendor/refarm.dev-ds-0.1.0.tgz}
     version: 0.1.0
 
+  '@refarm.dev/enrichment-contract-v1@file:vendor/refarm.dev-enrichment-contract-v1-0.1.0.tgz':
+    resolution: {integrity: sha512-Vgl61bqbg79TZAlB3mEarwpr7381GCbqSB5ux/OkhTwv61qWcC+bOfJbzr6tIRLb/FKWD54J64SuszaqFOcZUQ==, tarball: file:vendor/refarm.dev-enrichment-contract-v1-0.1.0.tgz}
+    version: 0.1.0
+
   '@refarm.dev/process-handoff@file:vendor/refarm.dev-process-handoff-0.1.0.tgz':
     resolution: {integrity: sha512-PbBXLDRE7a72Ri6xa7TzJSajzCBl9J9y0zQ17aDZX70MYgfroKDhJz2INS2ZzVwoqyp6BxVn+SfewbddZ2/b5w==, tarball: file:vendor/refarm.dev-process-handoff-0.1.0.tgz}
+    version: 0.1.0
+
+  '@refarm.dev/records-contract-v1@file:vendor/refarm.dev-records-contract-v1-0.1.0.tgz':
+    resolution: {integrity: sha512-VeT3Nkggr5PTDZtGDtivqaAdrbvSCbZrWMqk+1UZgYNqk4ND1Z+qbJq3gYE79H10ls9ccn3xHr/v+C14lpybuA==, tarball: file:vendor/refarm.dev-records-contract-v1-0.1.0.tgz}
     version: 0.1.0
 
   '@rollup/pluginutils@5.4.0':
@@ -3161,7 +3175,11 @@ snapshots:
 
   '@refarm.dev/ds@file:vendor/refarm.dev-ds-0.1.0.tgz': {}
 
+  '@refarm.dev/enrichment-contract-v1@file:vendor/refarm.dev-enrichment-contract-v1-0.1.0.tgz': {}
+
   '@refarm.dev/process-handoff@file:vendor/refarm.dev-process-handoff-0.1.0.tgz': {}
+
+  '@refarm.dev/records-contract-v1@file:vendor/refarm.dev-records-contract-v1-0.1.0.tgz': {}
 
   '@rollup/pluginutils@5.4.0(rollup@4.61.1)':
     dependencies:
