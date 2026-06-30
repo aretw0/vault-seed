@@ -64,3 +64,14 @@ well-documented, and automated template-as-code projects. Your expertise covers:
 4. Stay focused on the stated plan, open issue, or task list.
 5. Verify changes with appropriate local commands such as `git status`, lint
    scripts, or targeted file checks.
+
+## Ongoing convergence program
+
+vault-seed consumes refarm as an SDK (the "ocamento" program): it stays a thin product layer over
+`@refarm.dev/*` primitives instead of reimplementing them. To resume in-flight convergence work
+**without relying on out-of-repo context**, start at
+[`docs/convergencia-refarm-status.md`](docs/convergencia-refarm-status.md) — the single entry point
+for consumed blocks, incoming refarm contracts, pending work, and the next concrete action. The
+assimilation pipeline and guardian guards are the doctrine in
+[`docs/convergencia-refarm-logistica.md`](docs/convergencia-refarm-logistica.md). These are
+template-development docs (stripped by `initialize.yml` for end users).
