@@ -45,8 +45,13 @@ Assimilação (vendorização + contract-test):
 - [ ] `credentials:v1` (depois do heartwood-signing)
 
 Adoção / produto (design já escrito em `docs/superpowers/specs/`):
-- [ ] **records ETL profiles** — `2026-06-30-records-etl-profiles-design.md`
-- [ ] **records view** (genérica, requisitos = um `@type`; não one-off) — `2026-06-30-records-view-design.md`
+- [x] **records ETL profile runner** — `scripts/records_etl.mjs` (source snapshot → `records:v1` →
+  `enrichment:v1`, degradação graciosa) + teste
+- [x] **records view — camada de dados** — `scripts/generate_records_data.mjs` (notas PARA →
+  `records:v1`: folder→`@type`, frontmatter→fields, links→relations; convergência) + teste
+- [ ] **records view — página astro** (`.site/pages/records/*`) — lê o manifest; não-testável sem
+  build, e a IA/colunas são decisão de produto
+- [ ] **records ETL real** — profile com fonte/transform reais (decisão de produto: quais notas/vocab)
 - [x] **reference vault** (prova de composição = acceptance gate) — `validations/records-reference/`
   (gap ledger vazio: `source-web`→`records:v1`→`enrichment:v1` compõem ponta a ponta)
 - [ ] (candidato) **guard de não-reimplementação** — ver `-logistica`
