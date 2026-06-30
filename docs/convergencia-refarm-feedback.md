@@ -55,6 +55,17 @@ tipo. Nosso silo é consumidor de `channel`/`publishing`; o silo do refarm injet
 `contacts.location` (topologia de canais), e o roteamento canal→outbox. O seam certo é o
 `CredentialProvider` do silo — nossos serviços viram providers quando o gap #3 fechar.
 
+**Sinal aterrissado no refarm (porta-voz, 2026-06-29, commit `798b1b45`):** o refarm já tinha a
+spec da ponte 8a (`vault-seed-silo-bridge`) e o collection-contract. Não dupliquei — entreguei a
+**evidência de consumidor** que a 8a pediu + o que faltava: **ADR-076** (storage sem o closure de
+instalação do heartwood + hardening `0600`/`0700`), seção *Consumer Findings* na spec 8a
+(evidência de bulk-ops → `listSecrets`/`removeSecret`; collect multi-campo; env-hydrate), e a
+**revisão do `ROADMAP.md` do silo**: superfície de consumo dobrada num **v0.1.1 pré-lançamento**
+com **contrato de API congelado**, pra OPAQUE (v0.2.0) e Sentinel (v0.3.0) evoluírem o interno sem
+churn nos consumidores. Achado verificado no `dist`: heartwood é lazy em runtime (✓) mas hard
+`dependency`; e o silo não tem **nenhum** `chmod`/`mode 0600` (nosso `silo.js` à mão é mais
+protegido). Adoção (item 8a) segue adiada até o v0.1.1 aterrissar.
+
 ## Avaliação de cobertura
 
 - `launch-process@0.1.0` — cobriu runner async, detached, capture e sync
