@@ -64,7 +64,26 @@ instalação do heartwood + hardening `0600`/`0700`), seção *Consumer Findings
 com **contrato de API congelado**, pra OPAQUE (v0.2.0) e Sentinel (v0.3.0) evoluírem o interno sem
 churn nos consumidores. Achado verificado no `dist`: heartwood é lazy em runtime (✓) mas hard
 `dependency`; e o silo não tem **nenhum** `chmod`/`mode 0600` (nosso `silo.js` à mão é mais
-protegido). Adoção (item 8a) segue adiada até o v0.1.1 aterrissar.
+protegido). Adoção (item 8a) segue adiada.
+
+**O refarm respondeu (handoff `2026-06-30`):** implementou tudo — `48d0da33` (closure split:
+heartwood→`optionalDependencies`, `index.js` sem import estático de key-manager; `listSecrets`/
+`removeSecret`; modos `0600`/`0700`) + `a38ef85f` (**ADR-077 Protection Envelope**: segredo vira
+envelope versionado `{value, protection:{scheme:"local-plaintext-v1", encrypted:false,
+upgradeTarget:"opaque-envelope-v1"}}` + `describeProtection()`). Dobrou tudo no **first-public
+`0.1.0`** (não 0.1.1) com **API congelada**; OPAQUE/Sentinel viram "Post-0.1, internal, surface
+frozen". Verificado no `dist`: closure split real (heartwood nunca resolve em storage-only, testado
+por contagem de import).
+
+**2ª rodada porta-voz (commit `921f22c1`, via container):** achei defeito de forward-compat
+silencioso — `readSecretEnvelope` devolvia `entry.value` pra qualquer envelope, ignorando
+`scheme`/`encrypted` → um cliente 0.1.0 leria um envelope OPAQUE futuro como **ciphertext-como-
+plaintext**, sem erro. Fix (escolha do usuário: **híbrido**): `loadSecret` lança
+`UnreadableSecretError` (`code:"SILO_SECRET_UNREADABLE"`) em envelope ilegível (encrypted/scheme
+desconhecido); `listSecrets` omite e mantém os legíveis; legacy/`local-plaintext-v1` seguem; maior
+`schemaVersion` com entry legível é tolerado. Torna o `scheme` **executável** no 0.1.0 (forward-safe
+por construção). Validado por sonda node mínima (8/8) contra o `src` — suíte vitest/tsc completa fica
+pra quando o container liberar (Codex ativo no `cranky_bassi`).
 
 ## Avaliação de cobertura
 
