@@ -21,15 +21,12 @@ handoff. **Toda a mecânica e os guards estão na doutrina:**
 | `@refarm.dev/silo` | credenciais (`silo.js`) — em chegada, forward-safe | `convergencia-refarm-feedback.md` |
 | `@refarm.dev/enrichment-contract-v1` | enriquecimento de records (ETL) | **vendorizado + contract-test ✓**; adoção (usar no ETL) pendente |
 | `@refarm.dev/records-contract-v1` | modelo de records (view + ETL) | **vendorizado + contract-test ✓**; adoção (emitir/ler) pendente |
+| `@refarm.dev/source-web` (+ transitivo `source-contract-v1` via override) | aquisição/snapshot de fonte web (fixture sanitizada) → ETL | **vendorizado + contract-test ✓**; adoção (usar no ETL/reference vault) pendente |
 
-## Blocos a chegar do refarm (specs prontos lá; pacotes em implementação)
-
-Specs escritos no refarm (capabilities genéricas). Quando o pacote + handoff existirem, assimilar
-pela doutrina.
+## Blocos a chegar do refarm
 
 | Capability | Pra quê no vault-seed | Status no refarm |
 |---|---|---|
-| `source-web` (+ transitivo `source-contract-v1`) | aquisição/snapshot de fonte web autenticada → ETL | **implementado** (v0.1.0); falta vendorizar com o transitivo |
 | `credentials:v1` | VC / carteira de dados (jornada soberana) | spec pronto; **pré-req: assinatura real (heartwood) primeiro**; pacote ainda não criado |
 
 ## Trabalho pendente no vault-seed (quando os blocos pousarem)
@@ -40,7 +37,7 @@ atrás de seam de produto (degradação graciosa)**.
 Assimilação (vendorização + contract-test):
 - [x] `enrichment:v1` — `scripts/refarm_enrichment_consumer_contract.test.mjs`
 - [x] `records:v1` — `scripts/refarm_records_consumer_contract.test.mjs`
-- [ ] `source-web` (+ vendorizar `source-contract-v1` junto)
+- [x] `source-web` (+ `source-contract-v1` via override) — `scripts/refarm_source_web_consumer_contract.test.mjs`
 - [ ] `credentials:v1` (depois do heartwood-signing)
 
 Adoção / produto (design já escrito em `docs/superpowers/specs/`):
@@ -52,12 +49,11 @@ Adoção / produto (design já escrito em `docs/superpowers/specs/`):
 
 ## Próxima ação concreta
 
-`enrichment:v1` e `records:v1` já assimilados (vendorizados + contract-test). Próximo: **vendorizar
-`source-web` junto com seu transitivo `source-contract-v1`** (empacotar ambos do refarm, `overrides:`
-no `pnpm-workspace.yaml` se necessário) + contract-test. Em paralelo, **adotar** os dois já
-consumidos construindo o primeiro consumidor — a **reference vault** (prova de composição) ou os
-**ETL profiles** — que é onde os blocos passam a ser usados de fato. `credentials:v1` depois do
-heartwood-signing.
+Os 3 blocos de T3 (`enrichment:v1`, `records:v1`, `source-web`) estão **assimilados** (vendorizados +
+contract-test). O próximo é **adoção**: construir o primeiro consumidor real — a **reference vault**
+(prova de composição, `2026-06-30-records-composition-proof-design.md`), que usa `source-web` (fixture)
+→ `records:v1` → `enrichment:v1` e valida os seams ponta a ponta. Depois os **ETL profiles** e a
+**records view**. `credentials:v1` (T2) entra após o heartwood-signing no refarm.
 
 ## Mapa de docs de convergência
 

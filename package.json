@@ -95,6 +95,7 @@
     "@aretw0/dgk-astro-plugins": "workspace:^",
     "@refarm.dev/channel-policy-v1": "file:vendor/refarm.dev-channel-policy-v1-0.1.0.tgz",
     "@refarm.dev/enrichment-contract-v1": "file:vendor/refarm.dev-enrichment-contract-v1-0.1.0.tgz",
-    "@refarm.dev/records-contract-v1": "file:vendor/refarm.dev-records-contract-v1-0.1.0.tgz"
+    "@refarm.dev/records-contract-v1": "file:vendor/refarm.dev-records-contract-v1-0.1.0.tgz",
+    "@refarm.dev/source-web": "file:vendor/refarm.dev-source-web-0.1.0.tgz"
   }
 }

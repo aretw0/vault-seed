@@ -17,3 +17,8 @@ policies:
     severity: warn
 minimumReleaseAgeExclude:
   - "@refarm.dev/*"
+# Transitive unpublished dep: @refarm.dev/source-web depends on
+# @refarm.dev/source-contract-v1 (workspace:* upstream). Until both publish,
+# redirect the transitive to the local tarball. file: is relative to this root.
+overrides:
+  "@refarm.dev/source-contract-v1": "file:vendor/refarm.dev-source-contract-v1-0.1.0.tgz"

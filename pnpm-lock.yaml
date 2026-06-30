@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@refarm.dev/source-contract-v1': file:vendor/refarm.dev-source-contract-v1-0.1.0.tgz
+
 importers:
 
   .:
@@ -20,6 +23,9 @@ importers:
       '@refarm.dev/records-contract-v1':
         specifier: file:vendor/refarm.dev-records-contract-v1-0.1.0.tgz
         version: file:vendor/refarm.dev-records-contract-v1-0.1.0.tgz
+      '@refarm.dev/source-web':
+        specifier: file:vendor/refarm.dev-source-web-0.1.0.tgz
+        version: file:vendor/refarm.dev-source-web-0.1.0.tgz
     devDependencies:
       '@aretw0/dgk-channels':
         specifier: workspace:*
@@ -669,6 +675,14 @@ packages:
 
   '@refarm.dev/records-contract-v1@file:vendor/refarm.dev-records-contract-v1-0.1.0.tgz':
     resolution: {integrity: sha512-VeT3Nkggr5PTDZtGDtivqaAdrbvSCbZrWMqk+1UZgYNqk4ND1Z+qbJq3gYE79H10ls9ccn3xHr/v+C14lpybuA==, tarball: file:vendor/refarm.dev-records-contract-v1-0.1.0.tgz}
+    version: 0.1.0
+
+  '@refarm.dev/source-contract-v1@file:vendor/refarm.dev-source-contract-v1-0.1.0.tgz':
+    resolution: {integrity: sha512-w7P/+dq5VRZE9Nqnz+TLG/XkNDOu29k02wFAYLcoI9LNoWT5iFPggxlHb9wfMEBjj2H2zu0j1oksa55SLtyA+g==, tarball: file:vendor/refarm.dev-source-contract-v1-0.1.0.tgz}
+    version: 0.1.0
+
+  '@refarm.dev/source-web@file:vendor/refarm.dev-source-web-0.1.0.tgz':
+    resolution: {integrity: sha512-9AB0Rv7fWCWu8th7oztbFa5yk1RnWu2IwpJALx2+3y2KX3WrOMu38z/pTzy7iPGasshKCNbcSP2AxSxdIsdeWQ==, tarball: file:vendor/refarm.dev-source-web-0.1.0.tgz}
     version: 0.1.0
 
   '@rollup/pluginutils@5.4.0':
@@ -3180,6 +3194,12 @@ snapshots:
   '@refarm.dev/process-handoff@file:vendor/refarm.dev-process-handoff-0.1.0.tgz': {}
 
   '@refarm.dev/records-contract-v1@file:vendor/refarm.dev-records-contract-v1-0.1.0.tgz': {}
+
+  '@refarm.dev/source-contract-v1@file:vendor/refarm.dev-source-contract-v1-0.1.0.tgz': {}
+
+  '@refarm.dev/source-web@file:vendor/refarm.dev-source-web-0.1.0.tgz':
+    dependencies:
+      '@refarm.dev/source-contract-v1': file:vendor/refarm.dev-source-contract-v1-0.1.0.tgz
 
   '@rollup/pluginutils@5.4.0(rollup@4.61.1)':
     dependencies:
