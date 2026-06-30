@@ -25,9 +25,13 @@ handoff. **Toda a mecânica e os guards estão na doutrina:**
 
 ## Blocos a chegar do refarm
 
-| Capability | Pra quê no vault-seed | Status no refarm |
-|---|---|---|
-| `credentials:v1` | VC / carteira de dados (jornada soberana) | spec pronto; **pré-req: assinatura real (heartwood) primeiro**; pacote ainda não criado |
+(vazio — os blocos de T3 estão assimilados; o de T2 abaixo é capability refarm/POC.)
+
+### T2 (jornada soberana) — refarm pronto, consumo vault-seed condicional
+`credentials:v1` (VC/wallet) **implementado no refarm**: `@refarm.dev/identity-heartwood` (assinatura
+Ed25519 real) + `@refarm.dev/credentials-contract-v1`, na ordem signing-primeiro. É capability
+**refarm/POC** — o vault-seed só vendoriza se a UX do headspace precisar emitir/apresentar VC direto;
+senão fica do lado refarm/POC. O T2 do vault-seed é majoritariamente UX/telas (produto).
 
 ## Trabalho pendente no vault-seed (quando os blocos pousarem)
 
