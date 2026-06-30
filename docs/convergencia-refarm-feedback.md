@@ -15,6 +15,46 @@ pacotes `@refarm.dev/*`. Itens essenciais relayados pro refarm.
 | --- | --- | --- | --- | --- |
 | `@refarm.dev/homestead-ssr` | `fieldHtml` não aceita `attrs` (o `buttonHtml` aceita — inconsistência) | inputs não recebem `autocomplete`/`spellcheck`/`inputmode`/`autocomplete="off"` etc.; campos de token do admin perdem `autocomplete=off`/`spellcheck=false` | montar o `<input>` à mão sem `fieldHtml`, ou pós-processar | `aberto` (relayar — paralelo ao `buttonHtml.attrs`) |
 
+## Requirements de consumo — `@refarm.dev/silo` (maturação, porta-voz)
+
+> 2026-06-29. Não é defeito nem lacuna pontual: é o **requisito de consumidor** que o
+> vault-seed (primeiro consumidor do namespace `channel`/`publishing`) leva ao refarm pra
+> o `silo` amadurecer. **Adoção adiada** — o silo está conceitualmente certo mas embrionário
+> na superfície de consumo. Reimplementação atual: `packages/cli/src/silo.js` (sync, JSON
+> `0600` em `~/.dgk/silo.json`).
+
+**Convergência que valida a fronteira:** o reserved set de namespaces do silo
+(`model | runtime | channel | publishing`, em `collect.d.ts`) é **exatamente** a disciplina
+que escrevemos à mão — `SILO_SCOPE = 'publishing-channels'` + *"Model/AI credentials come from
+refarm sow… Never add model keys here."* O que codamos como convenção, o silo já modela como
+tipo. Nosso silo é consumidor de `channel`/`publishing`; o silo do refarm injeta `model`/`runtime`.
+
+**Eixo do pedido — leve por padrão, seguro por destino:**
+
+- **Leve já:** o storage de tokens/secrets (`SiloCore.saveSecret`/`loadSecret`) **não pode
+  arrastar o closure do `KeyManager`/heartwood (WASM)**. Um consumidor só-`channel` não usa
+  Ed25519/sign — mesmo princípio do ADR-072 (domínio mais leve correto). Split: subpath de
+  storage sem WASM.
+- **Seguro como destino:** **afirmamos demanda** pelo roadmap de segurança do silo —
+  **v0.2.0 OPAQUE Protection** (cripto-em-repouso de tokens/identity) e **v0.3.0 Sentinel
+  Isolation** (WASM isolado + TPM/HSM). Não é feature nova: é puxar a prioridade. A segurança
+  que nós e nossos usuários merecemos é o que o ecossistema já planeja — queremos consumi-la.
+
+**Gaps que travam o ocamento (ranqueados):**
+
+| # | Gap | Por que bloqueia o consumidor | Tipo |
+| --- | --- | --- | --- |
+| 1 | Storage (`saveSecret`/`loadSecret`) arrasta `KeyManager`/heartwood (WASM) | consumidor só-`channel` carrega WASM que não usa; viola domínio-leve (ADR-072) | packaging |
+| 2 | Sem enumeração/remoção de secrets namespaced (`listSecrets(ns)`, `removeSecret(ns,id)`) | `loadSecret(ns,id)` é um-a-um; sem listar/remover não dá pra reconstruir `siloStatus` (lista todos) nem `removeService` (apaga conjunto) | API |
+| 3 | `CredentialProvider.collect(ctx) → Promise<string>` devolve **uma** string | serviços reais são conjuntos multi-campo (telegram = `BOT_TOKEN` secreto + `CHAT_ID` não-secreto); collect-set ou coleta fica no consumidor | modelo |
+| 4 | Sem helper "injeta tokens resolvidos em `process.env` (non-overriding)" | é nosso `injectSiloEnv` (hot path: etl/inbox/lab/outbox); existe `resolve()→Map`/`toGitHubEnv()`, falta o hydrate local | ergonomia |
+| 5 | Cripto-em-repouso é roadmap (v0.2.0 OPAQUE), não 0.1.0 | "adotar agora pela segurança" é fraco hoje; valor near-term = convergência de namespace + storage unificado. Pedimos puxar v0.2.0+ | expectativa |
+| 6 | Migração `~/.dgk/silo.json` + paridade de file-modes/Windows | `storagePath` deixa fixar `~/.dgk` (✓), falta documentar migração + os modos `0600`/no-op Windows que cuidamos à mão | docs |
+
+**Fica conosco (produto, não vai pro silo):** catálogo `SERVICES` (telegram label/hint/prompts),
+`contacts.location` (topologia de canais), e o roteamento canal→outbox. O seam certo é o
+`CredentialProvider` do silo — nossos serviços viram providers quando o gap #3 fechar.
+
 ## Avaliação de cobertura
 
 - `launch-process@0.1.0` — cobriu runner async, detached, capture e sync
