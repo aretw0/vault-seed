@@ -43,17 +43,17 @@ Assimilação (vendorização + contract-test):
 Adoção / produto (design já escrito em `docs/superpowers/specs/`):
 - [ ] **records ETL profiles** — `2026-06-30-records-etl-profiles-design.md`
 - [ ] **records view** (genérica, requisitos = um `@type`; não one-off) — `2026-06-30-records-view-design.md`
-- [ ] **reference vault** (prova de composição = acceptance gate; **depende dos 4 blocos acima**) —
-  `2026-06-30-records-composition-proof-design.md`
+- [x] **reference vault** (prova de composição = acceptance gate) — `validations/records-reference/`
+  (gap ledger vazio: `source-web`→`records:v1`→`enrichment:v1` compõem ponta a ponta)
 - [ ] (candidato) **guard de não-reimplementação** — ver `-logistica`
 
 ## Próxima ação concreta
 
-Os 3 blocos de T3 (`enrichment:v1`, `records:v1`, `source-web`) estão **assimilados** (vendorizados +
-contract-test). O próximo é **adoção**: construir o primeiro consumidor real — a **reference vault**
-(prova de composição, `2026-06-30-records-composition-proof-design.md`), que usa `source-web` (fixture)
-→ `records:v1` → `enrichment:v1` e valida os seams ponta a ponta. Depois os **ETL profiles** e a
-**records view**. `credentials:v1` (T2) entra após o heartwood-signing no refarm.
+Os 3 blocos de T3 estão **assimilados** e a **reference vault** (acceptance gate) **passou com gap
+ledger vazio** — os seams compõem ponta a ponta. O próximo é construir as superfícies de produto
+sobre essa base provada: **records ETL profiles** (real, sobre os scripts existentes) e a **records
+view** (genérica, no `.site`). A POC então é a reference vault com as 3 fixtures trocadas por adapters
+reais. `credentials:v1` (T2) entra após o heartwood-signing no refarm.
 
 ## Mapa de docs de convergência
 
