@@ -27,11 +27,10 @@ handoff. **Toda a mecânica e os guards estão na doutrina:**
 
 (vazio — os blocos de T3 estão assimilados; o de T2 abaixo é capability refarm/POC.)
 
-### T2 (jornada soberana) — refarm pronto, consumo vault-seed condicional
-`credentials:v1` (VC/wallet) **implementado no refarm**: `@refarm.dev/identity-heartwood` (assinatura
-Ed25519 real) + `@refarm.dev/credentials-contract-v1`, na ordem signing-primeiro. É capability
-**refarm/POC** — o vault-seed só vendoriza se a UX do headspace precisar emitir/apresentar VC direto;
-senão fica do lado refarm/POC. O T2 do vault-seed é majoritariamente UX/telas (produto).
+### T2 (jornada soberana) — credentials:v1 assimilado, UX pendente
+`credentials:v1` (VC/wallet W3C) **assimilado** (2026-07-01): vendorizado + conformance passando com
+assinatura heartwood real (Ed25519). Fundação pronta atrás de seam. Falta o **produto**: a UX do
+headspace pra emitir/apresentar/verificar VC (telas). Isso é vault-seed-local quando priorizado.
 
 ## Trabalho pendente no vault-seed (quando os blocos pousarem)
 
@@ -42,7 +41,9 @@ Assimilação (vendorização + contract-test):
 - [x] `enrichment:v1` — `scripts/refarm_enrichment_consumer_contract.test.mjs`
 - [x] `records:v1` — `scripts/refarm_records_consumer_contract.test.mjs`
 - [x] `source-web` (+ `source-contract-v1` via override) — `scripts/refarm_source_web_consumer_contract.test.mjs`
-- [ ] `credentials:v1` (depois do heartwood-signing)
+- [x] `credentials:v1` — `scripts/refarm_credentials_consumer_contract.test.mjs` (vendor
+  credentials-contract + identity-heartwood + storage-memory; overrides identity/storage/heartwood;
+  **round-trip: provider assinado por heartwood passa o conformance do contrato, 8 checks**)
 
 Adoção / produto (design já escrito em `docs/superpowers/specs/`):
 - [x] **records ETL profile runner** — `scripts/records_etl.mjs` (source snapshot → `records:v1` →
