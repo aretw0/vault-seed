@@ -8,22 +8,42 @@
 // records:v1 is loaded via OPTIONAL dynamic import: without @refarm.dev/* a generated
 // vault still gets the structural records (just unvalidated, unstamped) instead of breaking.
 
-const folderToType = (folder) => {
-  const f = String(folder || "").toLowerCase();
-  if (f.includes("project")) return "Project";
-  if (f.includes("area")) return "Area";
-  if (f.includes("resource")) return "Resource";
-  if (f.includes("archive")) return "Archive";
-  return "Note";
-};
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 
-/** A single PARA note -> a structural records:v1 record (no schemaVersion/contentHash yet). */
-export function noteToRecord(note) {
+const CONFIG_PATH = join(dirname(fileURLToPath(import.meta.url)), "..", "vault.config.json");
+
+/**
+ * Read the records config (folder -> @type mapping) from the canonical vault.config.json.
+ * The mapping is intentional, explicit config — not a hardcoded opinion in code.
+ */
+export function loadRecordsConfig(path = CONFIG_PATH) {
+  try {
+    return JSON.parse(readFileSync(path, "utf8")).records ?? {};
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * A single PARA note -> a structural records:v1 record. `@type` is config-driven
+ * (`config.typeByFolder`, falling back to `config.defaultType`); the raw PARA folder is
+ * preserved in `fields.folder` so surfaces that group/color by folder converge without loss.
+ */
+export function noteToRecord(note, config = {}) {
+  const typeByFolder = config.typeByFolder ?? {};
+  const type = typeByFolder[note.folder] ?? config.defaultType ?? "Note";
   return {
     id: note.id,
-    "@type": folderToType(note.folder),
+    "@type": type,
     "@context": "https://schema.dgk.vault/v1",
-    fields: { title: note.title ?? note.id, status: note.status ?? null, tags: note.tags ?? [] },
+    fields: {
+      title: note.title ?? note.id,
+      status: note.status ?? null,
+      tags: note.tags ?? [],
+      folder: note.folder ?? null,
+    },
     sections: [],
     relations: (note.links ?? []).map((target) => ({ type: "links", target })),
     sourceRefs: [`vault:${note.id}`],
@@ -45,7 +65,8 @@ async function loadRecordsContract() {
  * @param {{ recordsMod?: object | null }} [deps]  injectable for tests
  */
 export async function buildRecordsFromNotes(notes, deps = {}) {
-  const records = notes.map(noteToRecord);
+  const config = deps.recordsConfig ?? loadRecordsConfig();
+  const records = notes.map((note) => noteToRecord(note, config));
   const recordsMod = "recordsMod" in deps ? deps.recordsMod : await loadRecordsContract();
 
   if (!recordsMod) {
@@ -73,7 +94,7 @@ export function recordsToGraph(records) {
   const nodes = records.map((r) => ({
     id: r.id,
     title: r.fields?.title ?? r.id,
-    folder: r["@type"] ?? "Note",
+    folder: r.fields?.folder ?? r["@type"] ?? "Note",
     tags: r.fields?.tags ?? [],
     degree: 0,
   }));

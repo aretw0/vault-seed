@@ -4,5 +4,16 @@
     "holder": "aretw0",
     "holderUrl": "https://github.com/aretw0"
   },
-  "kudos": "Feito com ♥"
+  "kudos": "Feito com ♥",
+  "records": {
+    "typeByFolder": {
+      "00 - Entrada": "Inbox",
+      "10 - Diário": "Journal",
+      "20 - Projetos": "Project",
+      "30 - Áreas": "Area",
+      "40 - Recursos": "Resource",
+      "50 - Arquivo": "Archive"
+    },
+    "defaultType": "Note"
+  }
 }
