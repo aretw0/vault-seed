@@ -25,7 +25,8 @@
       "20 - Projetos": "Project",
       "30 - Áreas": "Area",
       "40 - Recursos": "Resource",
-      "50 - Arquivo": "Archive"
+      "50 - Arquivo": "Archive",
+      "fontes": "Source"
     },
     "defaultType": "Note",
     "serialization": {

@@ -6,10 +6,38 @@
 //
 // records:v1 is loaded via generate_records_data (optional dynamic import): without @refarm.dev/* the
 // manifest still carries the structural records (unvalidated) instead of breaking.
+import { readFileSync, existsSync } from "node:fs";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { buildVaultData, slugify } from "./generate_vault_data.mjs";
 import { buildRecordsFromNotes } from "./generate_records_data.mjs";
+import { parseOpmlFeeds } from "./prepare_feed_sources.mjs";
+
+/**
+ * The vault's feed subscriptions (fontes/feeds.opml) as `records:v1` — @type Source (config maps the
+ * `fontes` folder to Source), carrying the source:v1 vocabulary (`sourceKind`/`sourceLocation`). This
+ * demonstrates that records:v1 models any knowledge entity, not just notes — the same manifest, one
+ * shape, cohesive across the ecosystem. Empty when there are no feeds (graceful).
+ */
+export function loadFeedRecords(cwd) {
+  const opmlPath = join(cwd, "fontes", "feeds.opml");
+  if (!existsSync(opmlPath)) return [];
+  const { subscriptions } = parseOpmlFeeds(readFileSync(opmlPath, "utf8"));
+  return subscriptions.map((sub) => ({
+    id: `fontes/${slugify(sub.title)}`,
+    title: sub.title,
+    folder: "fontes", // config.typeByFolder maps "fontes" -> "Source"
+    status: null,
+    tags: Array.isArray(sub.category) ? sub.category : [],
+    links: [],
+    fields: {
+      sourceKind: "feed",
+      sourceLocation: sub.xmlUrl,
+      ...(sub.htmlUrl ? { homepage: sub.htmlUrl } : {}),
+    },
+  }));
+}
 
 /**
  * Resolve each note's raw wikilink targets (title/path text) to record ids, so relations pass
@@ -48,7 +76,8 @@ export function resolveLinks(notes) {
  */
 export async function buildRecordsManifest({ cwd = process.cwd() } = {}) {
   const { generated, notes } = buildVaultData({ cwd });
-  const out = await buildRecordsFromNotes(resolveLinks(notes));
+  const entities = [...resolveLinks(notes), ...loadFeedRecords(cwd)];
+  const out = await buildRecordsFromNotes(entities);
   return { generated, ...out };
 }
 

@@ -53,6 +53,9 @@ export function noteToRecord(note, config = {}) {
   for (const key of fieldKeys) fields[key] = note[key] ?? null;
   if (fields.title == null) fields.title = note.title ?? note.id;
   if (ser.preserveFolderAs) fields[ser.preserveFolderAs] = note.folder ?? null;
+  // Explicit extra fields (e.g. a Source record's source:v1 sourceKind/sourceLocation) merge in — this
+  // is how non-note entities carry their own vocabulary without polluting the shared frontmatter keys.
+  if (note.fields && typeof note.fields === "object") Object.assign(fields, note.fields);
 
   return {
     id: note.id,
