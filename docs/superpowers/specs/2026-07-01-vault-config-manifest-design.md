@@ -80,16 +80,19 @@ One section at a time, each behind the loader, each with a test, none breaking t
 1. **`status`** — ✅ landed (increments 1 + 1b, commits `65c94c0`/`18795a5`). `config.status.publicState`
    + a `vaultStatus` loader export; all seven render + tooling/smoke gates routed off the hardcoded
    `'published'`; drift guard covers the whole git-tracked tree.
-2. **`folders` roles** — ✅ role landed (increment 2, `adf6b8f`). `config.folders.excludeFromPublic` +
-   `vaultFolders`; `PUBLISHED_VAULT_FOLDERS` derives its exclusion from config. Remaining for a later
-   structural step: fold the folders **list** (`.site/vault-folders.json`) in via `$ref`.
-3. **`vocab`** — pending. Consolidate `information-architecture.json`, likely via `$ref`.
+2. **`folders`** — ✅ fully landed. Role (increment 2, `adf6b8f`): `config.folders.excludeFromPublic`
+   drives `PUBLISHED_VAULT_FOLDERS`. List (increment 2b, `3a1085e`): `config.folders.list` `$ref`s
+   `.site/vault-folders.json`, exposed as `vaultFolders.all`; `VAULT_FOLDERS` derives from it (one source).
+3. **`vocab`** — ✅ landed (increment 3, `ebee228`). `config.vocab` `$ref`s
+   `.site/information-architecture.json`, exposed as `vaultVocab`. This increment added the **`$ref`
+   resolver** in the loader — the reusable reference mechanism (folders' list uses it too).
 
-Each step keeps its existing tests green and adds a config-driven assertion.
+All three planned sections are migrated; each keeps its tests green and adds a config-driven assertion.
 
-Loader note (surfaced by increment 1b): CJS/scripts reach the loader via `.site/lib/vault-config.mjs`
-(a mild reverse coupling; `smoke_template` reads the config JSON directly). A neutral loader location is
-a future refactor, tracked with the `$ref`/list-consolidation work.
+Remaining (future): a neutral loader location — CJS/scripts reach the loader via `.site/lib/vault-config.mjs`
+(a mild reverse coupling; the loader reads from `process.cwd()`, which is the repo root in every current
+context but is a robustness edge). A JSON-pointer `$ref` (`#/folders`) would also let a section reference a
+sub-path of a file. Both are polish, not blockers.
 
 ## refarm relationship (confirmed with fact)
 
