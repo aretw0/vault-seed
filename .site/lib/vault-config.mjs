@@ -14,8 +14,11 @@
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const ROOT = process.cwd();
+// Repo root resolved relative to this module (this file lives at .site/lib/), not process.cwd(), so the
+// manifest + its $ref targets resolve identically no matter where a build or script is invoked from.
+const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 
 // ---------------------------------------------------------------------------
 // vault.config.json
