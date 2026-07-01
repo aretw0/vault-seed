@@ -6,6 +6,10 @@
   },
   "kudos": "Feito com ♥",
   "records": {
+    "context": {
+      "base": "https://refarm.dev/contexts/records/v1",
+      "vocab": null
+    },
     "typeByFolder": {
       "00 - Entrada": "Inbox",
       "10 - Diário": "Journal",
@@ -14,6 +18,14 @@
       "40 - Recursos": "Resource",
       "50 - Arquivo": "Archive"
     },
-    "defaultType": "Note"
+    "defaultType": "Note",
+    "serialization": {
+      "format": "yaml-ld",
+      "fieldsFromFrontmatter": ["title", "status", "tags"],
+      "preserveFolderAs": "folder"
+    },
+    "surface": {
+      "graph": { "labelField": "folder", "degree": "incoming" }
+    }
   }
 }

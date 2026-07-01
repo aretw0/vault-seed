@@ -38,19 +38,27 @@ export function loadRecordsConfig(path = CONFIG_PATH) {
 export const RECORDS_BASE_CONTEXT = "https://refarm.dev/contexts/records/v1";
 
 export function noteToRecord(note, config = {}) {
-  const typeByFolder = config.typeByFolder ?? {};
-  const type = typeByFolder[note.folder] ?? config.defaultType ?? "Note";
-  const context = config.vocab ? [RECORDS_BASE_CONTEXT, config.vocab] : RECORDS_BASE_CONTEXT;
+  const type = (config.typeByFolder ?? {})[note.folder] ?? config.defaultType ?? "Note";
+
+  // @context: refarm base (from the contract), optionally extended by a vault-owned vocab.
+  const ctx = config.context ?? {};
+  const base = ctx.base ?? RECORDS_BASE_CONTEXT;
+  const context = ctx.vocab ? [base, ctx.vocab] : base;
+
+  // fields: which frontmatter keys become record fields is config (YAML-LD serialization),
+  // not a hardcoded opinion. The raw PARA folder is preserved under a configured key.
+  const ser = config.serialization ?? {};
+  const fieldKeys = ser.fieldsFromFrontmatter ?? ["title", "status", "tags"];
+  const fields = {};
+  for (const key of fieldKeys) fields[key] = note[key] ?? null;
+  if (fields.title == null) fields.title = note.title ?? note.id;
+  if (ser.preserveFolderAs) fields[ser.preserveFolderAs] = note.folder ?? null;
+
   return {
     id: note.id,
     "@type": ["KnowledgeRecord", type],
     "@context": context,
-    fields: {
-      title: note.title ?? note.id,
-      status: note.status ?? null,
-      tags: note.tags ?? [],
-      folder: note.folder ?? null,
-    },
+    fields,
     sections: [],
     relations: (note.links ?? []).map((target) => ({ type: "links", target })),
     sourceRefs: [`vault:${note.id}`],
@@ -95,13 +103,21 @@ export async function buildRecordsFromNotes(notes, deps = {}) {
  * Derive the `.site` graph shape ({ nodes, links }) from records:v1 records — the same
  * structure `VaultGraphView` already consumes. This is the convergence bridge for the graph:
  * records are nodes, `relations` are edges, so the graph reads one model. Pure/testable.
+ * Generic (records → graph); surface-specific choices are options, driven by config
+ * (`records.surface.graph`), never hardcoded here:
+ *   - `labelField`: which record field labels a node (e.g. "folder"); falls back to the specific @type.
+ *   - `degree`: "incoming" (edges pointing at a node) or "both" (outgoing + incoming).
  * @param {object[]} records  records:v1 records (from buildRecordsFromNotes / a manifest)
+ * @param {{ labelField?: string, degree?: "incoming"|"both" }} [options]
  */
-export function recordsToGraph(records) {
+export function recordsToGraph(records, options = {}) {
+  const labelField = options.labelField ?? "folder";
+  const degreeMode = options.degree ?? "incoming";
+  const specificType = (r) => (Array.isArray(r["@type"]) ? r["@type"][r["@type"].length - 1] : r["@type"]);
   const nodes = records.map((r) => ({
     id: r.id,
     title: r.fields?.title ?? r.id,
-    folder: r.fields?.folder ?? r["@type"] ?? "Note",
+    folder: r.fields?.[labelField] ?? specificType(r) ?? "Note",
     tags: r.fields?.tags ?? [],
     degree: 0,
   }));
@@ -109,7 +125,10 @@ export function recordsToGraph(records) {
     (r.relations ?? []).map((rel) => ({ source: r.id, target: rel.target })),
   );
   const degree = new Map();
-  for (const link of links) degree.set(link.target, (degree.get(link.target) ?? 0) + 1);
+  for (const link of links) {
+    degree.set(link.target, (degree.get(link.target) ?? 0) + 1);
+    if (degreeMode === "both") degree.set(link.source, (degree.get(link.source) ?? 0) + 1);
+  }
   for (const node of nodes) node.degree = degree.get(node.id) ?? 0;
   return { nodes, links };
 }
