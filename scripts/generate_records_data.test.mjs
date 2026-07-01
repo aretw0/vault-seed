@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import * as recordsMod from "@refarm.dev/records-contract-v1";
 import {
   noteToRecord, buildRecordsFromNotes, recordsToGraph, loadRecordsConfig, RECORDS_BASE_CONTEXT,
+  buildRecordsGraph, folderLabel,
 } from "./generate_records_data.mjs";
 
 // The full records config — the canonical IaC of vault-seed's product opinions.
@@ -77,4 +78,19 @@ test("recordsToGraph is generic; surface options (labelField, degree) come from 
   const g2 = recordsToGraph(records, { labelField: "nope", degree: "incoming" });
   assert.deepEqual(g2.nodes.map((n) => n.folder), ["Project", "Area"]); // falls back to specific @type
   assert.equal(g2.nodes.find((n) => n.id === "20-projetos/launch").degree, 0); // outgoing not counted
+});
+
+test("folderLabel strips the PARA number prefix", () => {
+  assert.equal(folderLabel("20 - Projetos"), "Projetos");
+  assert.equal(folderLabel("Áreas"), "Áreas");
+});
+
+test("buildRecordsGraph produces the .site graph from records (display folder, config surface)", () => {
+  const graph = buildRecordsGraph(NOTES, CONFIG);
+  // display-labelled folders (matches vault-explore's node.folder = area = folderLabel(folder))
+  assert.deepEqual(graph.nodes.map((n) => n.folder), ["Projetos", "Áreas"]);
+  assert.deepEqual(graph.links, [{ source: "20-projetos/launch", target: "30-areas/ops" }]);
+  // degree = both (out + in), from config.surface.graph — matches current behavior
+  assert.equal(graph.nodes.find((n) => n.id === "20-projetos/launch").degree, 1);
+  assert.equal(graph.nodes.find((n) => n.id === "30-areas/ops").degree, 1);
 });

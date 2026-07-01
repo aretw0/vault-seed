@@ -132,3 +132,24 @@ export function recordsToGraph(records, options = {}) {
   for (const node of nodes) node.degree = degree.get(node.id) ?? 0;
   return { nodes, links };
 }
+
+/** Strip the PARA number prefix for display ("20 - Projetos" -> "Projetos"). Product convention. */
+export function folderLabel(folder) {
+  return String(folder ?? "").replace(/^\d+\s*-\s*/, "") || String(folder ?? "");
+}
+
+/**
+ * Build the `.site` graph from notes **via records:v1** — the convergence wiring, as a pure,
+ * testable function so it can replace the ad-hoc graph builder without a manual visual check.
+ * notes → records → recordsToGraph (config surface) → display-labelled folder.
+ * @param {object[]} notes  ({ id, title, folder, tags, links })
+ * @param {object} [config]  records config (typeByFolder, serialization, surface)
+ */
+export function buildRecordsGraph(notes, config = {}) {
+  const records = notes.map((note) => noteToRecord(note, config));
+  const graph = recordsToGraph(records, config.surface?.graph ?? {});
+  return {
+    nodes: graph.nodes.map((node) => ({ ...node, folder: folderLabel(node.folder) })),
+    links: graph.links,
+  };
+}
