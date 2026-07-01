@@ -66,15 +66,15 @@ test("buildRecordsFromNotes builds + validates a records:v1 manifest from notes"
 test("recordsToGraph is generic; surface options (labelField, degree) come from config", () => {
   const records = NOTES.map((n) => noteToRecord(n, CONFIG));
 
-  // default surface config: label by raw folder, degree = incoming
+  // config surface (labelField: folder, degree: both) — matches the current .site graph behavior
   const g1 = recordsToGraph(records, CONFIG.surface.graph);
-  assert.deepEqual(g1.nodes.map((n) => n.folder), ["20 - Projetos", "30 - Áreas"]);
+  assert.deepEqual(g1.nodes.map((n) => n.folder), ["20 - Projetos", "30 - Áreas"]); // raw folder
   assert.deepEqual(g1.links, [{ source: "20-projetos/launch", target: "30-areas/ops" }]);
-  assert.equal(g1.nodes.find((n) => n.id === "30-areas/ops").degree, 1); // one incoming
-  assert.equal(g1.nodes.find((n) => n.id === "20-projetos/launch").degree, 0); // incoming-only
+  assert.equal(g1.nodes.find((n) => n.id === "20-projetos/launch").degree, 1); // one outgoing (both)
+  assert.equal(g1.nodes.find((n) => n.id === "30-areas/ops").degree, 1); // one incoming (both)
 
-  // alternative surface config: label by specific @type, degree = both (outgoing + incoming)
-  const g2 = recordsToGraph(records, { labelField: "nope", degree: "both" });
+  // alternative surface config: label by specific @type, degree = incoming-only
+  const g2 = recordsToGraph(records, { labelField: "nope", degree: "incoming" });
   assert.deepEqual(g2.nodes.map((n) => n.folder), ["Project", "Area"]); // falls back to specific @type
-  assert.equal(g2.nodes.find((n) => n.id === "20-projetos/launch").degree, 1); // one outgoing counted
+  assert.equal(g2.nodes.find((n) => n.id === "20-projetos/launch").degree, 0); // outgoing not counted
 });

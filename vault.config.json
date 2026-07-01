@@ -25,7 +25,7 @@
       "preserveFolderAs": "folder"
     },
     "surface": {
-      "graph": { "labelField": "folder", "degree": "incoming" }
+      "graph": { "labelField": "folder", "degree": "both" }
     }
   }
 }
