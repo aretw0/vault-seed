@@ -77,13 +77,19 @@ declared opinion, not a hardcoded string.
 
 One section at a time, each behind the loader, each with a test, none breaking the build:
 
-1. **`status` first** — the clearest gap. Route the `!== 'published'` reads through
-   `config.status.publicState`. Add the drift guard for status strings.
-2. **`folders`** — fold `vault-folders.json` in via `$ref`, add roles, replace the `'90 - Modelos'`
-   literal with a role.
-3. **`vocab`** — consolidate `information-architecture.json`, likely via `$ref`.
+1. **`status`** — ✅ landed (increments 1 + 1b, commits `65c94c0`/`18795a5`). `config.status.publicState`
+   + a `vaultStatus` loader export; all seven render + tooling/smoke gates routed off the hardcoded
+   `'published'`; drift guard covers the whole git-tracked tree.
+2. **`folders` roles** — ✅ role landed (increment 2, `adf6b8f`). `config.folders.excludeFromPublic` +
+   `vaultFolders`; `PUBLISHED_VAULT_FOLDERS` derives its exclusion from config. Remaining for a later
+   structural step: fold the folders **list** (`.site/vault-folders.json`) in via `$ref`.
+3. **`vocab`** — pending. Consolidate `information-architecture.json`, likely via `$ref`.
 
 Each step keeps its existing tests green and adds a config-driven assertion.
+
+Loader note (surfaced by increment 1b): CJS/scripts reach the loader via `.site/lib/vault-config.mjs`
+(a mild reverse coupling; `smoke_template` reads the config JSON directly). A neutral loader location is
+a future refactor, tracked with the `$ref`/list-consolidation work.
 
 ## refarm relationship (confirmed with fact)
 
