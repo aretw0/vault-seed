@@ -20,13 +20,32 @@ const ROOT = process.cwd();
 // ---------------------------------------------------------------------------
 // vault.config.json
 // ---------------------------------------------------------------------------
+// `$ref` resolution: a section may be `{ "$ref": "relative/path.json" }`, resolved to that file's
+// contents (relative to the repo root). This keeps the manifest one logical document while bulky
+// sections (vocab, folder lists) live in focused, editable files. See the manifest design.
+function resolveRefs(value) {
+  if (Array.isArray(value)) return value.map(resolveRefs);
+  if (value && typeof value === 'object') {
+    if (typeof value.$ref === 'string') {
+      try { return JSON.parse(readFileSync(join(ROOT, value.$ref), 'utf8')); } catch { return {}; }
+    }
+    const out = {};
+    for (const [k, v] of Object.entries(value)) out[k] = resolveRefs(v);
+    return out;
+  }
+  return value;
+}
+
 function readVaultConfig() {
   const p = join(ROOT, 'vault.config.json');
   if (!existsSync(p)) return {};
-  try { return JSON.parse(readFileSync(p, 'utf8')); } catch { return {}; }
+  try { return resolveRefs(JSON.parse(readFileSync(p, 'utf8'))); } catch { return {}; }
 }
 
 const _cfg = readVaultConfig();
+
+// Controlled vocabulary (categories/audiences/intents), referenced from a focused file via `$ref`.
+export const vaultVocab = _cfg.vocab ?? {};
 
 // Note-status lifecycle (canonical, subvertible): the states the vault recognizes and which one is
 // public. Surfaces gate visibility on `vaultStatus.publicState` — never a hardcoded 'published'.

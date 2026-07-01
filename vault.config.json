@@ -12,6 +12,7 @@
   "folders": {
     "excludeFromPublic": ["90 - Modelos"]
   },
+  "vocab": { "$ref": ".site/information-architecture.json" },
   "records": {
     "context": {
       "base": "https://refarm.dev/contexts/records/v1",
