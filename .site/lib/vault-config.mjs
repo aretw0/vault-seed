@@ -35,6 +35,12 @@ export const vaultStatus = {
   publicState: _cfg.status?.publicState ?? 'published',
 };
 
+// Folder roles (canonical, subvertible): which PARA folders are excluded from the public site (e.g. the
+// templates folder). Surfaces derive PUBLISHED_VAULT_FOLDERS from this — never a hardcoded folder name.
+export const vaultFolders = {
+  excludeFromPublic: Array.isArray(_cfg.folders?.excludeFromPublic) ? _cfg.folders.excludeFromPublic : [],
+};
+
 export const vaultLicense = {
   type:      _cfg.license?.type      ?? null,
   holder:    _cfg.license?.holder    ?? null,

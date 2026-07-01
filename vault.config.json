@@ -9,6 +9,9 @@
     "states": ["draft", "published"],
     "publicState": "published"
   },
+  "folders": {
+    "excludeFromPublic": ["90 - Modelos"]
+  },
   "records": {
     "context": {
       "base": "https://refarm.dev/contexts/records/v1",
