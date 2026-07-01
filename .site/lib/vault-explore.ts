@@ -12,6 +12,7 @@ import {
 } from './information-architecture.mjs';
 import { buildInformationArchitectureReport } from './information-architecture-audit.mjs';
 import { VAULT_FOLDERS } from './vault-folders.mjs';
+import { buildRecordsGraph, loadRecordsConfig } from '../../scripts/generate_records_data.mjs';
 
 const WIKILINK_RE = /\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|[^\]]+)?\]\]/g;
 
@@ -160,6 +161,27 @@ function makeSlug(file: string): string {
   return slugify(file.replace(/\\/g, '/').replace(/\.md$/, ''));
 }
 
+// The Explore graph is derived from records:v1 through the config-driven single source
+// (`buildRecordsGraph` over `vault.config.json`), the same projection the records surfaces use —
+// notes become records, wikilinks become relations (edges), the PARA folder labels the node.
+// This adapter maps Explore notes onto that projection so the graph has one tested origin.
+export function buildExploreGraph(
+  notes: Array<{ slug: string; title: string; folder: string; tags: string[]; outgoing: string[] }>,
+  config: ReturnType<typeof loadRecordsConfig> = loadRecordsConfig(),
+): {
+  nodes: Array<{ id: string; title: string; folder: string; tags: string[]; degree: number }>;
+  links: Array<{ source: string; target: string }>;
+} {
+  const recordNotes = notes.map((note) => ({
+    id: note.slug,
+    title: note.title,
+    folder: note.folder,
+    tags: note.tags,
+    links: note.outgoing,
+  }));
+  return buildRecordsGraph(recordNotes, config);
+}
+
 export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData {
   const ia = loadInformationArchitecture(cwd);
   const files = globSync(VAULT_FOLDERS.map((folder) => `${folder}/**/*.md`), { cwd });
@@ -234,10 +256,6 @@ export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData
     for (const target of note.outgoing) links.push({ source: note.slug, target });
   }
 
-  const degree = new Map<string, number>();
-  for (const note of rawNotes) degree.set(note.slug, note.outgoing.length);
-  for (const link of links) degree.set(link.target, (degree.get(link.target) ?? 0) + 1);
-
   const folders = new Map<string, number>();
   const categories = new Map<string, number>();
   const audiences = new Map<string, number>();
@@ -254,13 +272,7 @@ export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData
   const notes = rawNotes
     .map(({ aliases: _aliases, rawTargets: _rawTargets, ...note }) => note)
     .sort((a, b) => a.title.localeCompare(b.title, 'pt'));
-  const graphNodes = notes.map((note) => ({
-    id: note.slug,
-    title: note.title,
-    folder: note.area,
-    tags: note.tags,
-    degree: degree.get(note.slug) ?? 0,
-  }));
+  const graphNodes = buildExploreGraph(notes).nodes;
   const hubCandidates = graphNodes.filter((node) => node.degree >= 4);
   const orphanCandidates = graphNodes.filter((node) => node.degree === 0);
   const hubInsights = hubCandidates
