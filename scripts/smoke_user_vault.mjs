@@ -32,6 +32,7 @@ import { join, dirname, relative } from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
+import { vaultStatus } from '../.site/lib/vault-config.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 
@@ -242,7 +243,7 @@ try {
       continue;
     }
     const status = extractStatus(readFileSync(fullPath, 'utf8'));
-    if (status !== 'published') {
+    if (status !== vaultStatus.publicState) {
       errors.push(`[E] ${notePath}: expected status: published, got: ${status ?? '(absent)'}`);
     }
   }
@@ -286,7 +287,7 @@ try {
     const relPath = relative(tmpDir, mdPath).replace(/\\/g, '/');
     if (!draftSet.has(relPath)) continue;
     const status = extractStatus(readFileSync(mdPath, 'utf8'));
-    if (status === 'published') {
+    if (status === vaultStatus.publicState) {
       errors.push(`[G] ${relPath}: onboarding note must not be published in user vault`);
     }
   }

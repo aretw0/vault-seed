@@ -56,6 +56,7 @@ function sectionType(section) {
 
 async function main() {
   const { deriveNoteIntents, loadInformationArchitecture } = await import('../.site/lib/information-architecture.mjs');
+  const { vaultStatus } = await import('../.site/lib/vault-config.mjs');
 
   // ── collect published vault entries ─────────────────────────────────────────
 
@@ -69,7 +70,7 @@ async function main() {
     const normalizedFile = file.replace(/\\/g, '/');
     const raw = fs.readFileSync(path.join(root, file), 'utf-8');
     const { data } = matter(raw);
-    if (data.status !== 'published') continue;
+    if (data.status !== vaultStatus.publicState) continue;
 
     const slug = slugify(normalizedFile.replace(/\.md$/, ''));
     const title = (typeof data.title === 'string' ? data.title : null) ?? path.basename(file, '.md');

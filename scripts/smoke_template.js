@@ -4,6 +4,8 @@ const { execFileSync } = require("node:child_process");
 
 const root = process.cwd();
 const errors = [];
+// Public-state from the canonical manifest (increment 1b) — never a hardcoded 'published'.
+const PUBLIC_STATE = readJson("vault.config.json").status?.publicState ?? "published";
 
 function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(root, relativePath), "utf8").replace(/^\uFEFF/, ""));
@@ -626,7 +628,7 @@ for (const notePath of NOTE_STATUS_CONTRACT.published) {
   const content = read(notePath);
   const status = extractStatus(content);
   requireCondition(
-    status === "published",
+    status === PUBLIC_STATE,
     `${notePath} must have status: published (stays published for users). Got: ${status ?? "(absent)"}`,
   );
 }
@@ -654,7 +656,7 @@ for (const notePath of NOTE_STATUS_CONTRACT.draftForUsers) {
     try { content = read(normalized); } catch { continue; }
     const status = extractStatus(content);
     requireCondition(
-      status !== "published",
+      status !== PUBLIC_STATE,
       `[NOTE_CATCH_ALL] ${normalized} is in draftForUsers but has status: published — ` +
       `onboarding/setup notes must not appear on vault-seed's site or arrive published for users.`,
     );

@@ -10,14 +10,9 @@ import { join } from "node:path";
 const ROOT = process.cwd();
 // The loader holds the sole default; the `.site` render layer is migrated (increment 1).
 const ALLOWED = new Set([".site/lib/vault-config.mjs"]);
-// Known pre-existing gates in tooling/smoke scripts, migrated in increment 1b once the config loader is
-// reachable from `scripts/` without a reverse `.site` coupling. This baseline blocks NEW drift meanwhile;
-// shrink it as each lands, never grow it.
-const KNOWN_PENDING = new Set([
-  "scripts/audit_sidebar.js",
-  "scripts/smoke_template.js",
-  "scripts/smoke_user_vault.mjs",
-]);
+// Increment 1b cleared the baseline: audit_sidebar + the smoke scripts now read status.publicState too
+// (via vaultStatus / a direct config read). Nothing pending — the guard covers the whole tracked tree.
+const KNOWN_PENDING = new Set([]);
 // A note-status field compared to the literal public-state string — the visibility-gate anti-pattern.
 const HARDCODED_STATUS_GATE = /\bstatus\b[^\n;]{0,24}[!=]==?\s*['"]published['"]/;
 
