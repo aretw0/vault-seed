@@ -42,7 +42,7 @@
     "site:test": "node --test scripts/mermaid_render_contract.test.js scripts/mermaid_toggle.test.js",
     "site:audit:sidebar": "node scripts/audit_sidebar.js",
     "audit:ia": "node scripts/audit_information_architecture.mjs",
-    "notebooks:data": "node scripts/generate_vault_data.mjs && node scripts/generate_records_manifest.mjs",
+    "notebooks:data": "node scripts/generate_vault_data.mjs",
     "records:manifest": "node scripts/generate_records_manifest.mjs",
     "notebooks:etl:demo": "node scripts/lab_etl_demo.mjs",
     "feeds:opml": "node scripts/prepare_feed_sources.mjs",
