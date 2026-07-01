@@ -11,7 +11,7 @@ const CONFIG = {
   typeByFolder: { "20 - Projetos": "Project", "30 - Áreas": "Area" },
   defaultType: "Note",
   serialization: { format: "yaml-ld", fieldsFromFrontmatter: ["title", "status", "tags"], preserveFolderAs: "folder" },
-  surface: { graph: { labelField: "folder", degree: "incoming" } },
+  surface: { graph: { labelField: "folder", degree: "both" } },
 };
 const NOTES = [
   { id: "20-projetos/launch", title: "Launch", folder: "20 - Projetos", status: "active", tags: ["p"], links: ["30-areas/ops"] },
