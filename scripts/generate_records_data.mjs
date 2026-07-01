@@ -62,3 +62,26 @@ export async function buildRecordsFromNotes(notes, deps = {}) {
   const validation = createReferenceRecordsProvider().validate(manifest);
   return { degraded: false, records: stamped, manifest, validation };
 }
+
+/**
+ * Derive the `.site` graph shape ({ nodes, links }) from records:v1 records — the same
+ * structure `VaultGraphView` already consumes. This is the convergence bridge for the graph:
+ * records are nodes, `relations` are edges, so the graph reads one model. Pure/testable.
+ * @param {object[]} records  records:v1 records (from buildRecordsFromNotes / a manifest)
+ */
+export function recordsToGraph(records) {
+  const nodes = records.map((r) => ({
+    id: r.id,
+    title: r.fields?.title ?? r.id,
+    folder: r["@type"] ?? "Note",
+    tags: r.fields?.tags ?? [],
+    degree: 0,
+  }));
+  const links = records.flatMap((r) =>
+    (r.relations ?? []).map((rel) => ({ source: r.id, target: rel.target })),
+  );
+  const degree = new Map();
+  for (const link of links) degree.set(link.target, (degree.get(link.target) ?? 0) + 1);
+  for (const node of nodes) node.degree = degree.get(node.id) ?? 0;
+  return { nodes, links };
+}
