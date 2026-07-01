@@ -98,3 +98,14 @@ pra quando o container liberar (Codex ativo no `cranky_bassi`).
   render helpers (cards/tabelas `ds`), com módulo de views **isomórfico** reusado no
   cliente (import map → `/_hs/render.js`) sem duplicação. Sinal isomórfico/naming
   relayado ao refarm (`a1afa932`). Lacuna encontrada: `fieldHtml` sem `attrs` (acima). ✓
+
+## Candidatos sinalizados ao refarm (proof-gated)
+
+- **codec YAML-LD ↔ `records:v1`** — refarm spec `2026-06-30-records-yaml-ld-codec-candidate.md`
+  (`7b2c1f90`). `records:v1` é JSON-LD; um vault de frontmatter (Obsidian) autora records como
+  **YAML-LD**. O codec (parse/serialize, preserve-unknown, forward-safe) é **genérico** e serve
+  qualquer consumidor YAML-native; as **convenções** (quais keys→fields) e o **vocabulário** ficam
+  downstream (nossa config `records.serialization` no `vault.config.json`). Gate: 2º consumidor. Até
+  lá o vault-seed mantém o normalizador local (`scripts/generate_records_data.mjs`) como stand-in,
+  não reimplementação divergente. Decisão de serialização: **modelo JSON-LD (refarm) + serialização
+  YAML-LD (nossa, por Obsidian)** — camadas, não ou/ou.
