@@ -88,6 +88,7 @@ Do lado refarm (pós-codemod): publicar T3 npm · ADR-078 fase 2 · os 3 candida
 - **`-status.md`** (este) — estado + próximos passos (START HERE)
 - **`-logistica.md`** — doutrina: pipeline de assimilação + guards + transição publish
 - **`-deps.md`** — mecânica `file:`→npm + armadilhas pnpm 11 + re-sync
+- **`-release.md`** — runbook de graduação: `file:`→npm + remoção de overrides + release do vault-seed (quando o refarm publicar)
 - **`-feedback.md`** — ledger porta-voz (defeitos/lacunas relayados ao refarm)
 - **`-ds-lab.md`, `-homestead-admin.md`** — por-bloco
 - **`docs/superpowers/specs/2026-06-30-records-*`** — designs de produto do vault-seed
