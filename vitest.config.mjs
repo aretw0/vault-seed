@@ -13,7 +13,11 @@ export default defineConfig({
       ".site/**/*.test.{js,mjs,ts}",
     ],
     exclude: ["**/node_modules/**", "**/dist/**", "packages/cli/vendor/**"],
+    // Serial (maxWorkers: 1): several contract/smoke tests read many repo files, and under concurrency
+    // (either pool, on Windows) a read intermittently failed — a transient FS contention, not a test
+    // bug (each file passes in isolation). Running one file at a time is effectively that isolation, so
+    // the suite is deterministic. The cost is wall-clock; the win is a trustworthy gate.
     pool: "forks",
-    maxWorkers: 4,
+    maxWorkers: 1,
   },
 });
