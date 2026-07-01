@@ -1,6 +1,5 @@
-import assert from "node:assert/strict";
+import { test, expect } from "vitest";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 
@@ -28,12 +27,8 @@ test("all package.json files declare a stable semver version (no pre-release suf
   for (const absPath of packageJsonPaths()) {
     const pkg = JSON.parse(readFileSync(absPath, "utf8"));
     if (!pkg.version) continue; // private monorepo roots without version are fine
-    assert.match(
-      pkg.version,
-      STABLE_SEMVER,
-      `${pkg.name ?? absPath} version "${pkg.version}" is not a stable x.y.z semver. ` +
+    expect(pkg.version, `${pkg.name ?? absPath} version "${pkg.version}" is not a stable x.y.z semver. ` +
         "Pre-release suffixes (-dev.0, -alpha.1, etc.) must not be committed — " +
-        "set the version to the last stable release and let changesets compute the next one."
-    );
+        "set the version to the last stable release and let changesets compute the next one.").toMatch(STABLE_SEMVER);
   }
 });

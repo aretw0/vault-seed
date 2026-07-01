@@ -1,5 +1,4 @@
-import test from "node:test";
-import assert from "node:assert/strict";
+import { test, expect } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
 
 function read(path) {
@@ -11,48 +10,48 @@ test("Astro and Marimo share theme storage keys", () => {
   const exportNotebooks = read("scripts/export_notebooks.mjs");
 
   for (const key of ["vault-seed:palette", "vault-seed:mode"]) {
-    assert.match(header, new RegExp(key));
-    assert.match(exportNotebooks, new RegExp(key));
+    expect(header).toMatch(new RegExp(key));
+    expect(exportNotebooks).toMatch(new RegExp(key));
   }
 
-  assert.match(exportNotebooks, /legacyThemeStorageKey = "vault-seed:marimo-theme"/);
-  assert.match(exportNotebooks, /legacyPaletteStorageKey = "vault-seed:marimo-palette"/);
+  expect(exportNotebooks).toMatch(/legacyThemeStorageKey = "vault-seed:marimo-theme"/);
+  expect(exportNotebooks).toMatch(/legacyPaletteStorageKey = "vault-seed:marimo-palette"/);
 });
 
 test("Lab slide documentation matches the native Marimo layout contract", () => {
   const slideNotebook = read("99 - Meta e Anexos/Notebooks/apresentacoes/visao-geral.py");
   const labGuide = read("99 - Meta e Anexos/99.2 - Workflows/Usando o Lab (Notebooks Marimo).md");
 
-  assert.match(slideNotebook, /layout_file="layouts\/visao-geral\.slides\.json"/);
-  assert.match(labGuide, /layout_file/);
-  assert.match(labGuide, /apresentacoes\/layouts\/.*\.slides\.json/);
-  assert.doesNotMatch(labGuide, /mo\.carousel/);
-  assert.doesNotMatch(labGuide, /Slides não entram automaticamente/);
+  expect(slideNotebook).toMatch(/layout_file="layouts\/visao-geral\.slides\.json"/);
+  expect(labGuide).toMatch(/layout_file/);
+  expect(labGuide).toMatch(/apresentacoes\/layouts\/.*\.slides\.json/);
+  expect(labGuide).not.toMatch(/mo\.carousel/);
+  expect(labGuide).not.toMatch(/Slides não entram automaticamente/);
 });
 
 test("Lab ETL demo uses shared local/published runtime primitives", () => {
   const runtime = read("99 - Meta e Anexos/Notebooks/_lab_notebook_runtime.py");
   const etlDemo = read("99 - Meta e Anexos/Notebooks/etl-demo.py");
 
-  assert.match(runtime, /def read_lab_dataset/);
-  assert.match(runtime, /def lab_altair_chart/);
-  assert.match(runtime, /def lab_altair_status_color/);
-  assert.match(runtime, /def write_local_json_snapshot/);
-  assert.match(runtime, /def write_local_dataframe_snapshot/);
-  assert.match(runtime, /def write_local_markdown_note/);
-  assert.match(runtime, /lab_generated/);
-  assert.match(runtime, /def get_local_secret/);
-  assert.match(runtime, /def fetch_local_url_text/);
-  assert.match(runtime, /async def scrape_local_page_text/);
-  assert.match(runtime, /def extract_local_image_text/);
-  assert.match(runtime, /def local_vault_path/);
-  assert.match(etlDemo, /read_lab_dataset\("perfil-do-vault", manifest\)/);
-  assert.match(etlDemo, /read_lab_dataset\("curadoria-ia", manifest\)/);
-  assert.match(etlDemo, /write_local_json_snapshot/);
-  assert.match(etlDemo, /write_local_dataframe_snapshot/);
-  assert.match(etlDemo, /Primitivas locais vs publicadas/);
-  assert.match(etlDemo, /Extract local, carga publicada/);
-  assert.match(etlDemo, /avisos editoriais não bloqueantes/);
+  expect(runtime).toMatch(/def read_lab_dataset/);
+  expect(runtime).toMatch(/def lab_altair_chart/);
+  expect(runtime).toMatch(/def lab_altair_status_color/);
+  expect(runtime).toMatch(/def write_local_json_snapshot/);
+  expect(runtime).toMatch(/def write_local_dataframe_snapshot/);
+  expect(runtime).toMatch(/def write_local_markdown_note/);
+  expect(runtime).toMatch(/lab_generated/);
+  expect(runtime).toMatch(/def get_local_secret/);
+  expect(runtime).toMatch(/def fetch_local_url_text/);
+  expect(runtime).toMatch(/async def scrape_local_page_text/);
+  expect(runtime).toMatch(/def extract_local_image_text/);
+  expect(runtime).toMatch(/def local_vault_path/);
+  expect(etlDemo).toMatch(/read_lab_dataset\("perfil-do-vault", manifest\)/);
+  expect(etlDemo).toMatch(/read_lab_dataset\("curadoria-ia", manifest\)/);
+  expect(etlDemo).toMatch(/write_local_json_snapshot/);
+  expect(etlDemo).toMatch(/write_local_dataframe_snapshot/);
+  expect(etlDemo).toMatch(/Primitivas locais vs publicadas/);
+  expect(etlDemo).toMatch(/Extract local, carga publicada/);
+  expect(etlDemo).toMatch(/avisos editoriais não bloqueantes/);
 });
 
 test("published Lab charts use the shared Altair theme helpers", () => {
@@ -64,35 +63,35 @@ test("published Lab charts use the shared Altair theme helpers", () => {
   const grafo = read("99 - Meta e Anexos/Notebooks/analise-grafo.py");
   const escrita = read("99 - Meta e Anexos/Notebooks/analise-escrita.py");
 
-  assert.match(runtime, /LAB_CHART_PALETTE/);
-  assert.match(runtime, /set_embed_options\(renderer="svg"\)/);
-  assert.match(runtime, /except ModuleNotFoundError:[\s\S]*xml\.etree\.ElementTree/);
-  assert.match(runtime, /def _runtime_cache_busted_url/);
-  assert.match(runtime, /open_url\(_runtime_cache_busted_url\(candidate\)\)/);
-  assert.match(runtime, /pyfetch\(url, cache="no-store"\)/);
-  assert.match(packageRuntime, /set_embed_options\(renderer="svg"\)/);
-  assert.match(packageRuntime, /except ModuleNotFoundError:[\s\S]*xml\.etree\.ElementTree/);
-  assert.match(packageRuntime, /"fetch_wasm_json"/);
-  assert.match(packageRuntime, /"fetch_wasm_feed"/);
-  assert.match(packageRuntime, /async def fetch_wasm_json\(/);
-  assert.match(packageRuntime, /async def fetch_wasm_feed\(/);
-  assert.match(packageRuntime, /pyfetch\(url, cache="no-store"\)/);
-  assert.match(packageRuntime, /def _runtime_cache_busted_url/);
-  assert.match(packageRuntime, /open_url\(_runtime_cache_busted_url\(candidate\)\)/);
-  assert.match(exportHelpers, /"lab_altair_chart"/);
-  assert.match(exportHelpers, /"lab_altair_status_color"/);
-  assert.match(labEtl, /function resolveNoteLink/);
-  assert.match(labEtl, /slugify\(note\.title\)/);
-  assert.match(labEtl, /inboundCount\.set\(resolved/);
+  expect(runtime).toMatch(/LAB_CHART_PALETTE/);
+  expect(runtime).toMatch(/set_embed_options\(renderer="svg"\)/);
+  expect(runtime).toMatch(/except ModuleNotFoundError:[\s\S]*xml\.etree\.ElementTree/);
+  expect(runtime).toMatch(/def _runtime_cache_busted_url/);
+  expect(runtime).toMatch(/open_url\(_runtime_cache_busted_url\(candidate\)\)/);
+  expect(runtime).toMatch(/pyfetch\(url, cache="no-store"\)/);
+  expect(packageRuntime).toMatch(/set_embed_options\(renderer="svg"\)/);
+  expect(packageRuntime).toMatch(/except ModuleNotFoundError:[\s\S]*xml\.etree\.ElementTree/);
+  expect(packageRuntime).toMatch(/"fetch_wasm_json"/);
+  expect(packageRuntime).toMatch(/"fetch_wasm_feed"/);
+  expect(packageRuntime).toMatch(/async def fetch_wasm_json\(/);
+  expect(packageRuntime).toMatch(/async def fetch_wasm_feed\(/);
+  expect(packageRuntime).toMatch(/pyfetch\(url, cache="no-store"\)/);
+  expect(packageRuntime).toMatch(/def _runtime_cache_busted_url/);
+  expect(packageRuntime).toMatch(/open_url\(_runtime_cache_busted_url\(candidate\)\)/);
+  expect(exportHelpers).toMatch(/"lab_altair_chart"/);
+  expect(exportHelpers).toMatch(/"lab_altair_status_color"/);
+  expect(labEtl).toMatch(/function resolveNoteLink/);
+  expect(labEtl).toMatch(/slugify\(note\.title\)/);
+  expect(labEtl).toMatch(/inboundCount\.set\(resolved/);
 
   for (const notebook of [publicacao, grafo, escrita]) {
-    assert.match(notebook, /lab_altair_chart/);
+    expect(notebook).toMatch(/lab_altair_chart/);
   }
 
-  assert.match(publicacao, /lab_altair_status_color\(/);
-  assert.match(grafo, /mark_text/);
-  assert.match(grafo, /text=alt\.Text\("inbound:Q"\)/);
-  assert.match(escrita, /lab_altair_status_color\(/);
+  expect(publicacao).toMatch(/lab_altair_status_color\(/);
+  expect(grafo).toMatch(/mark_text/);
+  expect(grafo).toMatch(/text=alt\.Text\("inbound:Q"\)/);
+  expect(escrita).toMatch(/lab_altair_status_color\(/);
 });
 
 test("the manifest is the single source for presentation slides", () => {
@@ -105,21 +104,13 @@ test("the manifest is the single source for presentation slides", () => {
     .filter((entry) => entry.type === "presentation")
     .map((entry) => entry.output)
     .sort();
-  assert.deepEqual(
-    outputs,
-    [
+  expect(outputs, "all four presentations must be declared in the manifest so notebooks:export builds them").toEqual([
       "agentes-slides.html",
       "o-lab-slides.html",
       "publicacao-slides.html",
       "visao-geral-slides.html",
-    ],
-    "all four presentations must be declared in the manifest so notebooks:export builds them",
-  );
-  assert.equal(
-    existsSync("scripts/export_notebook_slides.mjs"),
-    false,
-    "the legacy standalone slides exporter must be removed — notebooks:export is the single source",
-  );
+    ]);
+  expect(existsSync("scripts/export_notebook_slides.mjs"), "the legacy standalone slides exporter must be removed — notebooks:export is the single source").toBe(false);
 });
 
 test("published Lab pages keep the vault shell contract", () => {
@@ -131,72 +122,72 @@ test("published Lab pages keep the vault shell contract", () => {
   const siteSmoke = read("scripts/smoke_site.js");
   const notebooksCheck = read("scripts/notebooks_check.mjs");
 
-  assert.match(responsiveSmoke, /resolveNotebooksPath\(\)/);
-  assert.match(responsiveSmoke, /`\/\$\{notebooksPath\}\/etl\.html`/);
-  assert.match(notebooksCheck, /resolveNotebooksPath\(\)/);
-  assert.match(notebooksCheck, /`public\/\$\{NOTEBOOKS_PATH\}\/vault-data\.json`/);
-  assert.match(siteSmoke, /requirePublishedNotebooks && notebooksPath !== "lab"/);
-  assert.match(siteSmoke, /defaultMarimoNotebookPaths\.has\(relPath\)/);
+  expect(responsiveSmoke).toMatch(/resolveNotebooksPath\(\)/);
+  expect(responsiveSmoke).toMatch(/`\/\$\{notebooksPath\}\/etl\.html`/);
+  expect(notebooksCheck).toMatch(/resolveNotebooksPath\(\)/);
+  expect(notebooksCheck).toMatch(/`public\/\$\{NOTEBOOKS_PATH\}\/vault-data\.json`/);
+  expect(siteSmoke).toMatch(/requirePublishedNotebooks && notebooksPath !== "lab"/);
+  expect(siteSmoke).toMatch(/defaultMarimoNotebookPaths\.has\(relPath\)/);
 
-  assert.match(exportNotebooks, /data-vault-marimo-navigation/);
-  assert.match(exportNotebooks, /ensureLabDatasetSnapshots/);
-  assert.match(ensureSnapshots, /missingLabDatasetSources/);
-  assert.match(ensureSnapshots, /pnpm run notebooks:etl/);
-  assert.match(ensureSnapshots, /command: "pnpm"/);
-  assert.match(exportNotebooks, /MARIMO_VAULT_CSS/);
-  assert.match(exportNotebooks, /REFARM_DS_VERDE_JARDIM_CSS/);
-  assert.match(exportNotebooks, /@refarm\.dev", "ds", "src", "themes", "verde-jardim\.css"/);
-  assert.match(exportNotebooks, /root\.dataset\.refarmTheme = "verde-jardim"/);
-  assert.match(exportNotebooks, /root\.dataset\.mode = resolved/);
-  assert.match(exportNotebooks, /data-vault-marimo-shell-css/);
-  assert.match(exportNotebooks, /postprocessNotebookHtml\(output, notebook\)/);
-  assert.match(exportNotebooks, /patchMarimoVegaRendererAssets/);
-  assert.match(exportNotebooks, /renderer:r\?\.renderer\?\?"canvas"/);
-  assert.match(exportNotebooks, /vault-lab-topbar/);
-  assert.match(exportNotebooks, /vault-lab-sidebar/);
-  assert.match(exportNotebooks, /data-vault-lab-footer/);
-  assert.match(exportNotebooks, /import \{ vaultKudos \} from "\.\.\/\.site\/lib\/vault-config\.mjs"/);
-  assert.match(exportNotebooks, /function labKudosHtml\(\)/);
-  assert.match(exportNotebooks, /vault-lab-footer__heart/);
-  assert.doesNotMatch(exportNotebooks, /por <a href="https:\/\/github\.com\/aretw0">aretw0<\/a>/);
-  assert.match(exportNotebooks, /vault-seed:lab-sidebar-collapsed/);
-  assert.match(exportNotebooks, /matchMedia\("\(max-width: 44rem\)"\)/);
-  assert.match(exportNotebooks, /return sidebarMedia\.matches/);
-  assert.match(exportNotebooks, /notebooksPath === "lab" \? "\.\/" : "\.\.\/lab\/"/);
-  assert.match(exportNotebooks, /data-vault-marimo-theme-selector/);
-  assert.match(exportNotebooks, /data-vault-marimo-presentation-mobile-fallback/);
-  assert.doesNotMatch(exportNotebooks, /isFirefox/);
-  assert.doesNotMatch(exportNotebooks, /vault-marimo-fullscreen-toggle/);
-  assert.doesNotMatch(marimoCss, /data-vault-marimo-presentation="slides"\] \.vault-marimo-navigation\s*\{\s*display: none/);
-  assert.match(exportNotebooks, /LEGACY_OVERVIEW_PRESENTATION_OUTPUT = "vault-seed-slides\.html"/);
-  assert.match(exportNotebooks, /copyLegacyOverviewPresentationAlias/);
+  expect(exportNotebooks).toMatch(/data-vault-marimo-navigation/);
+  expect(exportNotebooks).toMatch(/ensureLabDatasetSnapshots/);
+  expect(ensureSnapshots).toMatch(/missingLabDatasetSources/);
+  expect(ensureSnapshots).toMatch(/pnpm run notebooks:etl/);
+  expect(ensureSnapshots).toMatch(/command: "pnpm"/);
+  expect(exportNotebooks).toMatch(/MARIMO_VAULT_CSS/);
+  expect(exportNotebooks).toMatch(/REFARM_DS_VERDE_JARDIM_CSS/);
+  expect(exportNotebooks).toMatch(/@refarm\.dev", "ds", "src", "themes", "verde-jardim\.css"/);
+  expect(exportNotebooks).toMatch(/root\.dataset\.refarmTheme = "verde-jardim"/);
+  expect(exportNotebooks).toMatch(/root\.dataset\.mode = resolved/);
+  expect(exportNotebooks).toMatch(/data-vault-marimo-shell-css/);
+  expect(exportNotebooks).toMatch(/postprocessNotebookHtml\(output, notebook\)/);
+  expect(exportNotebooks).toMatch(/patchMarimoVegaRendererAssets/);
+  expect(exportNotebooks).toMatch(/renderer:r\?\.renderer\?\?"canvas"/);
+  expect(exportNotebooks).toMatch(/vault-lab-topbar/);
+  expect(exportNotebooks).toMatch(/vault-lab-sidebar/);
+  expect(exportNotebooks).toMatch(/data-vault-lab-footer/);
+  expect(exportNotebooks).toMatch(/import \{ vaultKudos \} from "\.\.\/\.site\/lib\/vault-config\.mjs"/);
+  expect(exportNotebooks).toMatch(/function labKudosHtml\(\)/);
+  expect(exportNotebooks).toMatch(/vault-lab-footer__heart/);
+  expect(exportNotebooks).not.toMatch(/por <a href="https:\/\/github\.com\/aretw0">aretw0<\/a>/);
+  expect(exportNotebooks).toMatch(/vault-seed:lab-sidebar-collapsed/);
+  expect(exportNotebooks).toMatch(/matchMedia\("\(max-width: 44rem\)"\)/);
+  expect(exportNotebooks).toMatch(/return sidebarMedia\.matches/);
+  expect(exportNotebooks).toMatch(/notebooksPath === "lab" \? "\.\/" : "\.\.\/lab\/"/);
+  expect(exportNotebooks).toMatch(/data-vault-marimo-theme-selector/);
+  expect(exportNotebooks).toMatch(/data-vault-marimo-presentation-mobile-fallback/);
+  expect(exportNotebooks).not.toMatch(/isFirefox/);
+  expect(exportNotebooks).not.toMatch(/vault-marimo-fullscreen-toggle/);
+  expect(marimoCss).not.toMatch(/data-vault-marimo-presentation="slides"\] \.vault-marimo-navigation\s*\{\s*display: none/);
+  expect(exportNotebooks).toMatch(/LEGACY_OVERVIEW_PRESENTATION_OUTPUT = "vault-seed-slides\.html"/);
+  expect(exportNotebooks).toMatch(/copyLegacyOverviewPresentationAlias/);
   // Mobile presentations no longer use a hardcoded lite page; every presentation
   // redirects mobile to its vertical sibling (real content, native scroll, no reveal).
-  assert.doesNotMatch(exportNotebooks, /vault-seed-slides-lite/);
-  assert.doesNotMatch(exportNotebooks, /presentationLiteHtml/);
-  assert.match(exportNotebooks, /verticalOutputFor/);
-  assert.match(exportNotebooks, /exportNotebookVariant\(source, verticalOutput, \{ stripLayout: true \}\)/);
-  assert.match(exportNotebooks, /injectPresentationMobileFallback\(output, verticalOutputFor\(notebook\.output\)\)/);
-  assert.match(exportNotebooks, /postprocessVerticalHtml/);
+  expect(exportNotebooks).not.toMatch(/vault-seed-slides-lite/);
+  expect(exportNotebooks).not.toMatch(/presentationLiteHtml/);
+  expect(exportNotebooks).toMatch(/verticalOutputFor/);
+  expect(exportNotebooks).toMatch(/exportNotebookVariant\(source, verticalOutput, \{ stripLayout: true \}\)/);
+  expect(exportNotebooks).toMatch(/injectPresentationMobileFallback\(output, verticalOutputFor\(notebook\.output\)\)/);
+  expect(exportNotebooks).toMatch(/postprocessVerticalHtml/);
 
-  assert.match(labIndex, /resolveNotebooksPath/);
-  assert.match(labIndex, /vault-card-grid/);
-  assert.match(labIndex, /vault-card/);
-  assert.match(labIndex, /vault-button/);
-  assert.match(labIndex, /vault-status/);
+  expect(labIndex).toMatch(/resolveNotebooksPath/);
+  expect(labIndex).toMatch(/vault-card-grid/);
+  expect(labIndex).toMatch(/vault-card/);
+  expect(labIndex).toMatch(/vault-button/);
+  expect(labIndex).toMatch(/vault-status/);
 
-  assert.match(marimoCss, /#vg-tooltip-element/);
-  assert.match(marimoCss, /\.vega-embed svg text/);
-  assert.match(marimoCss, /marimo-table[\s\S]*width: fit-content/);
-  assert.match(marimoCss, /data-vault-marimo-presentation="slides"[\s\S]*\.mo-slide-content \.markdown table[\s\S]*display: table/);
-  assert.match(responsiveSmoke, /assertPublishedVegaUsesSvg/);
-  assert.match(responsiveSmoke, /\.chart-wrapper canvas/);
-  assert.match(responsiveSmoke, /\.chart-wrapper svg/);
-  assert.match(marimoCss, /var\(--popover-foreground\)/);
-  assert.match(marimoCss, /\.vault-lab-footer[\s\S]*width: fit-content/);
-  assert.match(marimoCss, /\.vault-lab-footer[\s\S]*white-space: nowrap/);
+  expect(marimoCss).toMatch(/#vg-tooltip-element/);
+  expect(marimoCss).toMatch(/\.vega-embed svg text/);
+  expect(marimoCss).toMatch(/marimo-table[\s\S]*width: fit-content/);
+  expect(marimoCss).toMatch(/data-vault-marimo-presentation="slides"[\s\S]*\.mo-slide-content \.markdown table[\s\S]*display: table/);
+  expect(responsiveSmoke).toMatch(/assertPublishedVegaUsesSvg/);
+  expect(responsiveSmoke).toMatch(/\.chart-wrapper canvas/);
+  expect(responsiveSmoke).toMatch(/\.chart-wrapper svg/);
+  expect(marimoCss).toMatch(/var\(--popover-foreground\)/);
+  expect(marimoCss).toMatch(/\.vault-lab-footer[\s\S]*width: fit-content/);
+  expect(marimoCss).toMatch(/\.vault-lab-footer[\s\S]*white-space: nowrap/);
 
   for (const palette of ["oceano", "terracota"]) {
-    assert.match(marimoCss, new RegExp(`data-vault-marimo-palette="${palette}"`));
+    expect(marimoCss).toMatch(new RegExp(`data-vault-marimo-palette="${palette}"`));
   }
 });

@@ -1,5 +1,4 @@
-import { test, describe } from 'node:test';
-import assert from 'node:assert/strict';
+import { describe, test, expect } from "vitest";
 import { verifyTelegram, discoverTelegramChats, chatLabel, promptSecret, maskSecret, verifyMastodon, normalizeMastodonInstance, verifyBluesky, verifyButtondown } from '../src/commands/sow.js';
 
 function mockFetch(body, ok = true) {
@@ -13,19 +12,19 @@ function mockFetch(body, ok = true) {
 
 describe('maskSecret', () => {
   test('mascara tudo quando valor ≤ tail', () => {
-    assert.equal(maskSecret('ab'), '**');
-    assert.equal(maskSecret('abcd'), '****');
+    expect(maskSecret('ab')).toBe('**');
+    expect(maskSecret('abcd')).toBe('****');
   });
 
   test('expõe últimos 4 chars e mascara o restante', () => {
-    assert.equal(maskSecret('ABCDEFGHIJ'), '******GHIJ');
+    expect(maskSecret('ABCDEFGHIJ')).toBe('******GHIJ');
   });
 
   test('comprimento de estrelas é proporcional ao token', () => {
     const result = maskSecret('A'.repeat(20));
-    assert.equal(result.length, 20);
-    assert.ok(result.startsWith('****************'));
-    assert.ok(result.endsWith('AAAA'));
+    expect(result.length).toBe(20);
+    expect(result.startsWith('****************')).toBeTruthy();
+    expect(result.endsWith('AAAA')).toBeTruthy();
   });
 });
 
@@ -42,37 +41,37 @@ describe('promptSecret', () => {
   test('retorna o valor completo não mascarado', async () => {
     const written = [];
     const result = await promptSecret('Token: ', (s) => written.push(s), mockRlFactory('meu-token-secreto-1234'));
-    assert.equal(result, 'meu-token-secreto-1234');
+    expect(result).toBe('meu-token-secreto-1234');
   });
 
   test('exibe * proporcionais + últimos 4 chars para tokens longos', async () => {
     const written = [];
     await promptSecret('Token: ', (s) => written.push(s), mockRlFactory('ABCDEFGHIJKLMNOPQRSTUVWX'));
     const feedback = written.find((s) => s.includes('*'));
-    assert.ok(feedback, 'deve exibir feedback mascarado');
-    assert.ok(feedback.includes('UVWX'), 'deve expor os últimos 4 chars');
-    assert.ok(!feedback.includes('ABCDEFGHIJKLMNOPQRST'), 'não deve expor chars do meio');
+    expect(feedback, 'deve exibir feedback mascarado').toBeTruthy();
+    expect(feedback.includes('UVWX'), 'deve expor os últimos 4 chars').toBeTruthy();
+    expect(!feedback.includes('ABCDEFGHIJKLMNOPQRST'), 'não deve expor chars do meio').toBeTruthy();
   });
 
   test('não expõe chars além do tail para tokens longos', async () => {
     const written = [];
     await promptSecret('Token: ', (s) => written.push(s), mockRlFactory('secreto-completo-1234'));
     const allWritten = written.join('');
-    assert.ok(!allWritten.includes('secreto-completo'), 'não deve expor o meio do token');
+    expect(!allWritten.includes('secreto-completo'), 'não deve expor o meio do token').toBeTruthy();
   });
 
   test('exibe apenas * sem tail para tokens curtos (≤ 4 chars)', async () => {
     const written = [];
     await promptSecret('Token: ', (s) => written.push(s), mockRlFactory('ab'));
     const feedback = written.find((s) => s.includes('*'));
-    assert.ok(feedback, 'deve exibir estrelas');
-    assert.ok(!feedback.includes('ab'), 'não deve expor token curto');
+    expect(feedback, 'deve exibir estrelas').toBeTruthy();
+    expect(!feedback.includes('ab'), 'não deve expor token curto').toBeTruthy();
   });
 
   test('escreve a pergunta antes de aguardar input', async () => {
     const written = [];
     await promptSecret('Bot Token: ', (s) => written.push(s), mockRlFactory('tok'));
-    assert.equal(written[0], 'Bot Token: ', 'a pergunta deve ser a primeira coisa escrita');
+    expect(written[0], 'a pergunta deve ser a primeira coisa escrita').toBe('Bot Token: ');
   });
 });
 
@@ -81,28 +80,28 @@ describe('promptSecret', () => {
 describe('chatLabel', () => {
   test('canal com username', () => {
     const label = chatLabel({ id: -100123, type: 'channel', title: 'Meu Canal', username: 'meucanal' });
-    assert.ok(label.includes('Meu Canal'), 'deve incluir o título');
-    assert.ok(label.includes('@meucanal'), 'deve incluir o username');
-    assert.ok(label.includes('canal'), 'deve indicar o tipo');
-    assert.ok(label.includes('-100123'), 'deve incluir o id');
+    expect(label.includes('Meu Canal'), 'deve incluir o título').toBeTruthy();
+    expect(label.includes('@meucanal'), 'deve incluir o username').toBeTruthy();
+    expect(label.includes('canal'), 'deve indicar o tipo').toBeTruthy();
+    expect(label.includes('-100123'), 'deve incluir o id').toBeTruthy();
   });
 
   test('grupo sem username', () => {
     const label = chatLabel({ id: -999, type: 'group', title: 'Dev Team' });
-    assert.ok(label.includes('Dev Team'));
-    assert.ok(label.includes('grupo'));
-    assert.ok(!label.includes('@'), 'não deve ter @ sem username');
+    expect(label.includes('Dev Team')).toBeTruthy();
+    expect(label.includes('grupo')).toBeTruthy();
+    expect(!label.includes('@'), 'não deve ter @ sem username').toBeTruthy();
   });
 
   test('privado com first_name', () => {
     const label = chatLabel({ id: 42, type: 'private', first_name: 'João', username: 'joaodev' });
-    assert.ok(label.includes('João'));
-    assert.ok(label.includes('privado'));
+    expect(label.includes('João')).toBeTruthy();
+    expect(label.includes('privado')).toBeTruthy();
   });
 
   test('supergrupo mapeia para "supergrupo"', () => {
     const label = chatLabel({ id: -200, type: 'supergroup', title: 'Super Grupo' });
-    assert.ok(label.includes('supergrupo'));
+    expect(label.includes('supergrupo')).toBeTruthy();
   });
 });
 
@@ -112,25 +111,25 @@ describe('verifyTelegram', () => {
   test('retorna @username (nome) quando token válido', async () => {
     const fakeFetch = mockFetch({ ok: true, result: { username: 'meubot', first_name: 'Meu Bot' } });
     const result = await verifyTelegram('tok123', fakeFetch);
-    assert.equal(result, '@meubot (Meu Bot)');
+    expect(result).toBe('@meubot (Meu Bot)');
   });
 
   test('retorna null quando API retorna ok=false', async () => {
     const fakeFetch = mockFetch({ ok: false, description: 'Unauthorized' });
     const result = await verifyTelegram('tok-invalido', fakeFetch);
-    assert.equal(result, null);
+    expect(result).toBe(null);
   });
 
   test('retorna null quando fetch falha com exceção', async () => {
     const fakeFetch = async () => { throw new Error('network error'); };
     const result = await verifyTelegram('tok', fakeFetch);
-    assert.equal(result, null);
+    expect(result).toBe(null);
   });
 
   test('retorna null quando resposta HTTP não está ok', async () => {
     const fakeFetch = mockFetch({ ok: false }, false);
     const result = await verifyTelegram('tok', fakeFetch);
-    assert.equal(result, null);
+    expect(result).toBe(null);
   });
 });
 
@@ -147,9 +146,9 @@ describe('discoverTelegramChats', () => {
       ],
     });
     const chats = await discoverTelegramChats('tok', fakeFetch);
-    assert.equal(chats.length, 2, 'deve deduplicar por id');
-    assert.ok(chats.some((c) => c.id === 111));
-    assert.ok(chats.some((c) => c.id === 222));
+    expect(chats.length, 'deve deduplicar por id').toBe(2);
+    expect(chats.some((c) => c.id === 111)).toBeTruthy();
+    expect(chats.some((c) => c.id === 222)).toBeTruthy();
   });
 
   test('extrai chats de channel_post', async () => {
@@ -160,8 +159,8 @@ describe('discoverTelegramChats', () => {
       ],
     });
     const chats = await discoverTelegramChats('tok', fakeFetch);
-    assert.equal(chats.length, 1);
-    assert.equal(chats[0].id, -100999);
+    expect(chats.length).toBe(1);
+    expect(chats[0].id).toBe(-100999);
   });
 
   test('extrai chats de my_chat_member', async () => {
@@ -172,26 +171,26 @@ describe('discoverTelegramChats', () => {
       ],
     });
     const chats = await discoverTelegramChats('tok', fakeFetch);
-    assert.equal(chats.length, 1);
-    assert.equal(chats[0].title, 'Super Grupo');
+    expect(chats.length).toBe(1);
+    expect(chats[0].title).toBe('Super Grupo');
   });
 
   test('retorna [] quando API retorna ok=false', async () => {
     const fakeFetch = mockFetch({ ok: false });
     const chats = await discoverTelegramChats('tok', fakeFetch);
-    assert.deepEqual(chats, []);
+    expect(chats).toEqual([]);
   });
 
   test('retorna [] quando não há updates', async () => {
     const fakeFetch = mockFetch({ ok: true, result: [] });
     const chats = await discoverTelegramChats('tok', fakeFetch);
-    assert.deepEqual(chats, []);
+    expect(chats).toEqual([]);
   });
 
   test('retorna [] quando fetch lança exceção', async () => {
     const fakeFetch = async () => { throw new Error('network'); };
     const chats = await discoverTelegramChats('tok', fakeFetch);
-    assert.deepEqual(chats, []);
+    expect(chats).toEqual([]);
   });
 
   test('ignora updates sem chat (ex: inline_query)', async () => {
@@ -203,8 +202,8 @@ describe('discoverTelegramChats', () => {
       ],
     });
     const chats = await discoverTelegramChats('tok', fakeFetch);
-    assert.equal(chats.length, 1);
-    assert.equal(chats[0].id, 77);
+    expect(chats.length).toBe(1);
+    expect(chats[0].id).toBe(77);
   });
 });
 
@@ -212,25 +211,25 @@ describe('discoverTelegramChats', () => {
 
 describe('normalizeMastodonInstance', () => {
   test('mantém instância sem protocolo', () => {
-    assert.equal(normalizeMastodonInstance('mastodon.social'), 'mastodon.social');
+    expect(normalizeMastodonInstance('mastodon.social')).toBe('mastodon.social');
   });
   test('remove prefixo https://', () => {
-    assert.equal(normalizeMastodonInstance('https://mastodon.social'), 'mastodon.social');
+    expect(normalizeMastodonInstance('https://mastodon.social')).toBe('mastodon.social');
   });
   test('remove prefixo http://', () => {
-    assert.equal(normalizeMastodonInstance('http://fosstodon.org'), 'fosstodon.org');
+    expect(normalizeMastodonInstance('http://fosstodon.org')).toBe('fosstodon.org');
   });
   test('remove barra final', () => {
-    assert.equal(normalizeMastodonInstance('mastodon.social/'), 'mastodon.social');
+    expect(normalizeMastodonInstance('mastodon.social/')).toBe('mastodon.social');
   });
   test('remove protocolo e barra juntos', () => {
-    assert.equal(normalizeMastodonInstance('https://mastodon.social/'), 'mastodon.social');
+    expect(normalizeMastodonInstance('https://mastodon.social/')).toBe('mastodon.social');
   });
   test('retorna string vazia para input vazio (Enter sem digitar)', () => {
-    assert.equal(normalizeMastodonInstance(''), '');
+    expect(normalizeMastodonInstance('')).toBe('');
   });
   test('retorna string vazia para protocolo sem host', () => {
-    assert.equal(normalizeMastodonInstance('https://'), '');
+    expect(normalizeMastodonInstance('https://')).toBe('');
   });
 });
 
@@ -240,25 +239,25 @@ describe('verifyMastodon', () => {
   test('retorna @user@instance quando credenciais são válidas', async () => {
     const fetch = mockFetch({ acct: 'jardineiro' });
     const result = await verifyMastodon('mastodon.social', 'token-valido', fetch);
-    assert.equal(result, '@jardineiro@mastodon.social');
+    expect(result).toBe('@jardineiro@mastodon.social');
   });
 
   test('retorna null quando resposta não é ok', async () => {
     const fetch = mockFetch({}, false);
     const result = await verifyMastodon('mastodon.social', 'token-invalido', fetch);
-    assert.equal(result, null);
+    expect(result).toBe(null);
   });
 
   test('retorna null quando acct está ausente na resposta', async () => {
     const fetch = mockFetch({ id: '123' });
     const result = await verifyMastodon('mastodon.social', 'token', fetch);
-    assert.equal(result, null);
+    expect(result).toBe(null);
   });
 
   test('retorna null em caso de erro de rede', async () => {
     const fetch = async () => { throw new Error('Network error'); };
     const result = await verifyMastodon('mastodon.social', 'token', fetch);
-    assert.equal(result, null);
+    expect(result).toBe(null);
   });
 });
 
@@ -268,25 +267,25 @@ describe('verifyBluesky', () => {
   test('retorna @handle quando credenciais são válidas', async () => {
     const fetch = mockFetch({ handle: 'jardineiro.bsky.social', accessJwt: 'jwt' });
     const result = await verifyBluesky('jardineiro.bsky.social', 'app-password', fetch);
-    assert.equal(result, '@jardineiro.bsky.social');
+    expect(result).toBe('@jardineiro.bsky.social');
   });
 
   test('retorna null quando resposta não é ok', async () => {
     const fetch = mockFetch({}, false);
     const result = await verifyBluesky('jardineiro.bsky.social', 'senha-errada', fetch);
-    assert.equal(result, null);
+    expect(result).toBe(null);
   });
 
   test('retorna null quando handle está ausente na resposta', async () => {
     const fetch = mockFetch({ did: 'did:plc:123' });
     const result = await verifyBluesky('handle', 'pass', fetch);
-    assert.equal(result, null);
+    expect(result).toBe(null);
   });
 
   test('retorna null em caso de erro de rede', async () => {
     const fetch = async () => { throw new Error('Network error'); };
     const result = await verifyBluesky('handle', 'pass', fetch);
-    assert.equal(result, null);
+    expect(result).toBe(null);
   });
 
   test('usa método POST e Content-Type corretos', async () => {
@@ -296,11 +295,11 @@ describe('verifyBluesky', () => {
       return { ok: true, json: async () => ({ handle: 'test.bsky.social' }) };
     };
     await verifyBluesky('test.bsky.social', 'pass', fetch);
-    assert.equal(capturedInit.method, 'POST');
-    assert.equal(capturedInit.headers['Content-Type'], 'application/json');
+    expect(capturedInit.method).toBe('POST');
+    expect(capturedInit.headers['Content-Type']).toBe('application/json');
     const body = JSON.parse(capturedInit.body);
-    assert.equal(body.identifier, 'test.bsky.social');
-    assert.equal(body.password, 'pass');
+    expect(body.identifier).toBe('test.bsky.social');
+    expect(body.password).toBe('pass');
   });
 });
 
@@ -310,19 +309,19 @@ describe('verifyButtondown', () => {
   test('retorna string de confirmação quando API key é válida', async () => {
     const fetch = mockFetch({ results: [] });
     const result = await verifyButtondown('api-key-valida', fetch);
-    assert.equal(result, '(conta verificada)');
+    expect(result).toBe('(conta verificada)');
   });
 
   test('retorna null quando resposta não é ok (401)', async () => {
     const fetch = mockFetch({}, false);
     const result = await verifyButtondown('api-key-invalida', fetch);
-    assert.equal(result, null);
+    expect(result).toBe(null);
   });
 
   test('retorna null em caso de erro de rede', async () => {
     const fetch = async () => { throw new Error('Network error'); };
     const result = await verifyButtondown('key', fetch);
-    assert.equal(result, null);
+    expect(result).toBe(null);
   });
 
   test('usa header Authorization: Token correto', async () => {
@@ -332,6 +331,6 @@ describe('verifyButtondown', () => {
       return { ok: true, json: async () => ({}) };
     };
     await verifyButtondown('minha-key-123', fetch);
-    assert.equal(capturedHeaders.Authorization, 'Token minha-key-123');
+    expect(capturedHeaders.Authorization).toBe('Token minha-key-123');
   });
 });

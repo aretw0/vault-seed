@@ -1,11 +1,10 @@
-import { test } from 'node:test';
-import assert from 'node:assert/strict';
+import { test, expect } from "vitest";
 import { hasTool } from '../src/commands/setup.js';
 
 test('hasTool true quando runSync retorna exitCode 0', () => {
-  assert.equal(hasTool('uv', () => ({ exitCode: 0 })), true);
+  expect(hasTool('uv', () => ({ exitCode: 0 }))).toBe(true);
 });
 
 test('hasTool false quando runSync retorna exitCode != 0 (ausente)', () => {
-  assert.equal(hasTool('uv', () => ({ exitCode: 1 })), false);
+  expect(hasTool('uv', () => ({ exitCode: 1 }))).toBe(false);
 });

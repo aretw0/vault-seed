@@ -1,7 +1,6 @@
-import assert from "node:assert/strict";
+import { test, expect } from "vitest";
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 
@@ -82,12 +81,9 @@ test("root package.json version must not be behind the latest release tag", () =
   if (!latest) return; // no tags yet — fresh repo, nothing to check
 
   const latestVersion = latest.replace("v", "");
-  assert.ok(
-    semverGte(root.version, latestVersion),
-    `root package.json version ${root.version} is behind the latest release tag ${latest}. ` +
+  expect(semverGte(root.version, latestVersion), `root package.json version ${root.version} is behind the latest release tag ${latest}. ` +
       "This happens when a merge conflict is resolved with --ours and the version bump from " +
-      "main is discarded. Fix: update package.json to at least " + latestVersion + "."
-  );
+      "main is discarded. Fix: update package.json to at least " + latestVersion + ".").toBeTruthy();
 });
 
 test("no workspace package.json has a pre-release version suffix", () => {
@@ -99,12 +95,9 @@ test("no workspace package.json has a pre-release version suffix", () => {
     if (!existsSync(pkgPath)) continue;
     const pkg = JSON.parse(readFileSync(pkgPath, "utf8"));
     if (!pkg.version) continue;
-    assert.ok(
-      !/-./.test(pkg.version),
-      `${pkg.name}@${pkg.version} has a pre-release suffix in packages/${entry.name}/package.json. ` +
+    expect(!/-./.test(pkg.version), `${pkg.name}@${pkg.version} has a pre-release suffix in packages/${entry.name}/package.json. ` +
         "Commit only stable versions — set the version to the last stable release " +
-        "and let changesets compute the next one."
-    );
+        "and let changesets compute the next one.").toBeTruthy();
   }
 });
 
@@ -125,9 +118,6 @@ test("no pending changeset would produce a version that already exists as a git 
   const nextVersion = semverBump(root.version, highestBump);
   const nextTag = `v${nextVersion}`;
 
-  assert.ok(
-    !tags.includes(nextTag),
-    `a pending changeset would bump ${root.name} to ${nextVersion}, but tag ${nextTag} already exists. ` +
-      "The changeset is stale — it was already applied in a previous release and should be deleted."
-  );
+  expect(!tags.includes(nextTag), `a pending changeset would bump ${root.name} to ${nextVersion}, but tag ${nextTag} already exists. ` +
+      "The changeset is stale — it was already applied in a previous release and should be deleted.").toBeTruthy();
 });

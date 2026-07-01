@@ -1,5 +1,4 @@
-import { test } from 'node:test';
-import assert from 'node:assert/strict';
+import { test, expect } from "vitest";
 import { join } from 'node:path';
 import { detectObsidian, vaultNameFromCwd, INSTALL_HINTS, launchVault } from '../src/launcher.js';
 
@@ -12,20 +11,20 @@ function checkerFor(...existingPaths) {
 const neverExists = () => false;
 
 test('detectObsidian retorna null em plataforma sem paths configurados', () => {
-  assert.equal(detectObsidian('freebsd', neverExists), null);
+  expect(detectObsidian('freebsd', neverExists)).toBe(null);
 });
 
 test('detectObsidian retorna null quando nenhum path existe', () => {
-  assert.equal(detectObsidian('darwin', neverExists), null);
-  assert.equal(detectObsidian('win32', neverExists), null);
-  assert.equal(detectObsidian('linux', neverExists), null);
+  expect(detectObsidian('darwin', neverExists)).toBe(null);
+  expect(detectObsidian('win32', neverExists)).toBe(null);
+  expect(detectObsidian('linux', neverExists)).toBe(null);
 });
 
 test('detectObsidian encontra Obsidian no path padrão macOS', () => {
   const result = detectObsidian('darwin', checkerFor('/Applications/Obsidian.app'));
-  assert.ok(result !== null);
-  assert.equal(result.platform, 'darwin');
-  assert.equal(result.path, '/Applications/Obsidian.app');
+  expect(result !== null).toBeTruthy();
+  expect(result.platform).toBe('darwin');
+  expect(result.path).toBe('/Applications/Obsidian.app');
 });
 
 test('detectObsidian encontra Obsidian via LOCALAPPDATA no Windows', () => {
@@ -34,8 +33,8 @@ test('detectObsidian encontra Obsidian via LOCALAPPDATA no Windows', () => {
   // join imported at top of file
   const expected = join(LOCALAPPDATA, 'Obsidian', 'Obsidian.exe');
   const result = detectObsidian('win32', checkerFor(expected));
-  assert.ok(result !== null, 'deve encontrar via LOCALAPPDATA');
-  assert.equal(result.platform, 'win32');
+  expect(result !== null, 'deve encontrar via LOCALAPPDATA').toBeTruthy();
+  expect(result.platform).toBe('win32');
 });
 
 test('detectObsidian encontra Obsidian via Scoop no Windows', () => {
@@ -44,14 +43,14 @@ test('detectObsidian encontra Obsidian via Scoop no Windows', () => {
   // join imported at top of file
   const scoopPath = join(USERPROFILE, 'scoop', 'apps', 'obsidian', 'current', 'Obsidian.exe');
   const result = detectObsidian('win32', checkerFor(scoopPath));
-  assert.ok(result !== null, 'deve encontrar via Scoop');
-  assert.equal(result.path.toLowerCase(), scoopPath.toLowerCase());
+  expect(result !== null, 'deve encontrar via Scoop').toBeTruthy();
+  expect(result.path.toLowerCase()).toBe(scoopPath.toLowerCase());
 });
 
 test('detectObsidian encontra Obsidian via snap no Linux', () => {
   const result = detectObsidian('linux', checkerFor('/snap/bin/obsidian'));
-  assert.ok(result !== null);
-  assert.equal(result.path, '/snap/bin/obsidian');
+  expect(result !== null).toBeTruthy();
+  expect(result.path).toBe('/snap/bin/obsidian');
 });
 
 test('detectObsidian encontra Obsidian AppImage no Linux', () => {
@@ -59,44 +58,44 @@ test('detectObsidian encontra Obsidian AppImage no Linux', () => {
   if (!HOME) return;
   const appImagePath = `${HOME}/Applications/Obsidian.AppImage`;
   const result = detectObsidian('linux', checkerFor(appImagePath));
-  assert.ok(result !== null, 'deve encontrar AppImage');
-  assert.equal(result.path, appImagePath);
+  expect(result !== null, 'deve encontrar AppImage').toBeTruthy();
+  expect(result.path).toBe(appImagePath);
 });
 
 test('detectObsidian retorna objeto com platform correto quando instalado (ambiente real)', () => {
   // Smoke test against real filesystem — null is valid in CI
   const result = detectObsidian(process.platform);
   if (result !== null) {
-    assert.equal(result.platform, process.platform);
-    assert.ok(typeof result.path === 'string');
+    expect(result.platform).toBe(process.platform);
+    expect(typeof result.path === 'string').toBeTruthy();
   }
 });
 
 test('vaultNameFromCwd extrai nome da pasta de um caminho absoluto', () => {
-  assert.equal(vaultNameFromCwd('/home/user/vault-seed'), 'vault-seed');
-  assert.equal(vaultNameFromCwd('/projects/meu-vault'), 'meu-vault');
-  assert.equal(vaultNameFromCwd('C:\\Users\\user\\vault-seed'), 'vault-seed');
+  expect(vaultNameFromCwd('/home/user/vault-seed')).toBe('vault-seed');
+  expect(vaultNameFromCwd('/projects/meu-vault')).toBe('meu-vault');
+  expect(vaultNameFromCwd('C:\\Users\\user\\vault-seed')).toBe('vault-seed');
 });
 
 test('vaultNameFromCwd usa process.cwd quando não especificado', () => {
   const name = vaultNameFromCwd();
-  assert.ok(typeof name === 'string' && name.length > 0, 'deve retornar string não vazia');
+  expect(typeof name === 'string' && name.length > 0, 'deve retornar string não vazia').toBeTruthy();
 });
 
 test('INSTALL_HINTS cobre as três plataformas principais', () => {
-  assert.ok(INSTALL_HINTS.darwin, 'deve ter hint para macOS');
-  assert.ok(INSTALL_HINTS.win32, 'deve ter hint para Windows');
-  assert.ok(INSTALL_HINTS.linux, 'deve ter hint para Linux');
-  assert.ok(INSTALL_HINTS.darwin.includes('obsidian'), 'hint macOS deve mencionar obsidian');
-  assert.ok(INSTALL_HINTS.win32.includes('Obsidian'), 'hint Windows deve mencionar Obsidian');
-  assert.ok(INSTALL_HINTS.linux.includes('snap') || INSTALL_HINTS.linux.includes('flatpak'));
+  expect(INSTALL_HINTS.darwin, 'deve ter hint para macOS').toBeTruthy();
+  expect(INSTALL_HINTS.win32, 'deve ter hint para Windows').toBeTruthy();
+  expect(INSTALL_HINTS.linux, 'deve ter hint para Linux').toBeTruthy();
+  expect(INSTALL_HINTS.darwin.includes('obsidian'), 'hint macOS deve mencionar obsidian').toBeTruthy();
+  expect(INSTALL_HINTS.win32.includes('Obsidian'), 'hint Windows deve mencionar Obsidian').toBeTruthy();
+  expect(INSTALL_HINTS.linux.includes('snap') || INSTALL_HINTS.linux.includes('flatpak')).toBeTruthy();
 });
 
 test('launchVault monta o spec obsidian:// e desacopla via launchFn injetável', async () => {
   const calls = [];
   const fakeLaunch = (spec) => { calls.push(spec); return { unref() {} }; };
   await launchVault('meu vault', 'linux', fakeLaunch);
-  assert.equal(calls.length, 1);
-  assert.equal(calls[0].command, 'xdg-open');
-  assert.deepEqual(calls[0].args, ['obsidian://open?vault=meu%20vault']);
+  expect(calls.length).toBe(1);
+  expect(calls[0].command).toBe('xdg-open');
+  expect(calls[0].args).toEqual(['obsidian://open?vault=meu%20vault']);
 });

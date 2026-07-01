@@ -1,5 +1,4 @@
-import { test } from 'node:test';
-import assert from 'node:assert/strict';
+import { test, expect } from "vitest";
 import { etl } from '../src/commands/etl.js';
 
 function captureRun() {
@@ -11,20 +10,20 @@ function captureRun() {
 test('etl chama os 4 scripts do pipeline via node em sequência', async () => {
   const { calls, runner } = captureRun();
   await etl([], runner);
-  assert.equal(calls.length, 4, 'deve chamar 4 scripts');
-  assert.ok(calls.every((c) => c.cmd === 'node'), 'todos devem usar node');
+  expect(calls.length, 'deve chamar 4 scripts').toBe(4);
+  expect(calls.every((c) => c.cmd === 'node'), 'todos devem usar node').toBeTruthy();
   const scripts = calls.map((c) => c.args[0]);
-  assert.ok(scripts.includes('scripts/lab_etl_demo.mjs'));
-  assert.ok(scripts.includes('scripts/prepare_feed_sources.mjs'));
-  assert.ok(scripts.includes('scripts/prepare_publication_outbox.mjs'));
-  assert.ok(scripts.includes('scripts/prepare_lab_datasets.mjs'));
+  expect(scripts.includes('scripts/lab_etl_demo.mjs')).toBeTruthy();
+  expect(scripts.includes('scripts/prepare_feed_sources.mjs')).toBeTruthy();
+  expect(scripts.includes('scripts/prepare_publication_outbox.mjs')).toBeTruthy();
+  expect(scripts.includes('scripts/prepare_lab_datasets.mjs')).toBeTruthy();
 });
 
 test('etl respeita a ordem dos scripts', async () => {
   const { calls, runner } = captureRun();
   await etl([], runner);
-  assert.ok(calls[0].args[0].includes('lab_etl_demo'), 'etl_demo deve ser primeiro');
-  assert.ok(calls[3].args[0].includes('prepare_lab_datasets'), 'datasets deve ser último');
+  expect(calls[0].args[0].includes('lab_etl_demo'), 'etl_demo deve ser primeiro').toBeTruthy();
+  expect(calls[3].args[0].includes('prepare_lab_datasets'), 'datasets deve ser último').toBeTruthy();
 });
 
 test('etl com --help imprime ajuda sem chamar scripts', async () => {
@@ -37,6 +36,6 @@ test('etl com --help imprime ajuda sem chamar scripts', async () => {
   } finally {
     console.log = origLog;
   }
-  assert.equal(calls.length, 0, 'não deve chamar scripts');
-  assert.ok(output.includes('dgk etl'), 'deve imprimir ajuda');
+  expect(calls.length, 'não deve chamar scripts').toBe(0);
+  expect(output.includes('dgk etl'), 'deve imprimir ajuda').toBeTruthy();
 });

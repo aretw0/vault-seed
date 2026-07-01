@@ -1,8 +1,7 @@
-const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const os = require("node:os");
-const path = require("node:path");
-const test = require("node:test");
+import { test, expect } from "vitest";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 
 const {
   parseWikiTarget,
@@ -22,9 +21,9 @@ function makeVault(files) {
 }
 
 test("parseWikiTarget removes aliases and headings", () => {
-  assert.equal(parseWikiTarget("Nota Principal|apelido"), "Nota Principal");
-  assert.equal(parseWikiTarget("Nota Principal#Secao"), "Nota Principal");
-  assert.equal(parseWikiTarget("https://example.com"), null);
+  expect(parseWikiTarget("Nota Principal|apelido")).toBe("Nota Principal");
+  expect(parseWikiTarget("Nota Principal#Secao")).toBe("Nota Principal");
+  expect(parseWikiTarget("https://example.com")).toBe(null);
 });
 
 test("validateOnboarding reports missing required files", () => {
@@ -35,11 +34,9 @@ test("validateOnboarding reports missing required files", () => {
 
   const result = validateOnboarding(root);
 
-  assert.ok(
-    result.errors.some((error) =>
+  expect(result.errors.some((error) =>
       error.includes("Missing required onboarding file: AGENTS.md"),
-    ),
-  );
+    )).toBeTruthy();
 });
 
 test("validateOnboarding catches unresolved wikilinks in entrypoints", () => {
@@ -67,7 +64,7 @@ test("validateOnboarding catches unresolved wikilinks in entrypoints", () => {
 
   const result = validateOnboarding(makeVault(requiredFiles));
 
-  assert.deepEqual(result.errors, [
+  expect(result.errors).toEqual([
     "README.md: unresolved wikilink [[Nota Inexistente]]",
   ]);
 });

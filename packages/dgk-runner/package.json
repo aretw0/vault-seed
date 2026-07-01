@@ -6,7 +6,7 @@
   "type": "module",
   "exports": "./src/index.js",
   "scripts": {
-    "test": "node --test test/*.test.js"
+    "test": "vitest run"
   },
   "keywords": [
     "dgk",

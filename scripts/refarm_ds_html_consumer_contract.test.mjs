@@ -1,5 +1,4 @@
-import test from "node:test";
-import assert from "node:assert/strict";
+import { test, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -13,10 +12,7 @@ const readJson = (p) => JSON.parse(readFileSync(join(ROOT, p), "utf8"));
 // renamed shellHtml -> documentHtml.
 test("dgk-cli pins @refarm.dev/ds via the local tarball", () => {
   const pkg = readJson("packages/cli/package.json");
-  assert.equal(
-    pkg.dependencies?.["@refarm.dev/ds"],
-    "file:../../vendor/refarm.dev-ds-0.1.0.tgz",
-  );
+  expect(pkg.dependencies?.["@refarm.dev/ds"]).toBe("file:../../vendor/refarm.dev-ds-0.1.0.tgz");
 });
 
 test("the consumed @refarm.dev/ds/html surface is exported", () => {
@@ -34,6 +30,6 @@ test("the consumed @refarm.dev/ds/html surface is exported", () => {
     "fieldHtml",
     "escapeHtml",
   ]) {
-    assert.match(dts, new RegExp(`export declare function ${name}\\b`), `missing ${name}`);
+    expect(dts, `missing ${name}`).toMatch(new RegExp(`export declare function ${name}\\b`));
   }
 });

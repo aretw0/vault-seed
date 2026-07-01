@@ -1,5 +1,4 @@
-import test from "node:test";
-import assert from "node:assert/strict";
+import { test, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -9,10 +8,7 @@ const readJson = (p) => JSON.parse(readFileSync(join(ROOT, p), "utf8"));
 
 test("the root pins @refarm.dev/channel-policy-v1 via the local tarball", () => {
   const pkg = readJson("package.json");
-  assert.equal(
-    pkg.dependencies?.["@refarm.dev/channel-policy-v1"],
-    "file:vendor/refarm.dev-channel-policy-v1-0.1.0.tgz",
-  );
+  expect(pkg.dependencies?.["@refarm.dev/channel-policy-v1"]).toBe("file:vendor/refarm.dev-channel-policy-v1-0.1.0.tgz");
 });
 
 test("the consumed @refarm.dev/channel-policy-v1 surface is exported", () => {
@@ -26,6 +22,6 @@ test("the consumed @refarm.dev/channel-policy-v1 surface is exported", () => {
     "validateChannelDeliveryEnvelope",
     "isChannelDeliveryEnvelope",
   ]) {
-    assert.match(dts, new RegExp(`export declare (const|function) ${name}\\b`), `missing ${name}`);
+    expect(dts, `missing ${name}`).toMatch(new RegExp(`export declare (const|function) ${name}\\b`));
   }
 });

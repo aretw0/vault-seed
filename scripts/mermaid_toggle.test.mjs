@@ -13,11 +13,10 @@
 //
 // Run after `pnpm run site:build`.
 
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
-const vm = require('node:vm');
-const fs = require('node:fs');
-const path = require('node:path');
+import { describe, test, expect } from "vitest";
+import vm from "node:vm";
+import fs from "node:fs";
+import path from "node:path";
 
 const root = process.cwd();
 const distDir = path.join(root, 'dist');
@@ -147,20 +146,14 @@ function buildBlock(source) {
 
 describe('mermaid toggle script', () => {
   test('dist/ and exemplos page exist', () => {
-    assert.ok(fs.existsSync(exemplosHtml), 'run pnpm run site:build first');
+    expect(fs.existsSync(exemplosHtml), 'run pnpm run site:build first').toBeTruthy();
   });
 
   test('script uses let mode (not var mode) for per-diagram isolation', () => {
     const script = loadToggleFactory();
-    assert.ok(script, 'script not found in built HTML');
-    assert.ok(
-      script.includes("let mode = 'rendered'"),
-      "script must use 'let mode' — 'var mode' is hoisted to renderMermaid() scope and shared across all diagrams",
-    );
-    assert.ok(
-      !script.includes("var mode"),
-      "script must not use 'var mode'",
-    );
+    expect(script, 'script not found in built HTML').toBeTruthy();
+    expect(script.includes("let mode = 'rendered'"), "script must use 'let mode' — 'var mode' is hoisted to renderMermaid() scope and shared across all diagrams").toBeTruthy();
+    expect(!script.includes("var mode"), "script must not use 'var mode'").toBeTruthy();
   });
 
   test('toolbar has three buttons: toggle, copy, expand', async () => {
@@ -168,9 +161,9 @@ describe('mermaid toggle script', () => {
     if (!result) return;
     const { block } = result;
     const toolbar = block._children.find(c => c.className.includes('mermaid-toolbar'));
-    assert.ok(toolbar._children.find(c => c.className.includes('mermaid-toggle')), 'toggleBtn must exist');
-    assert.ok(toolbar._children.find(c => c.className.includes('mermaid-copy')), 'copyBtn must exist');
-    assert.ok(toolbar._children.find(c => c.className.includes('mermaid-expand')), 'expandBtn must exist');
+    expect(toolbar._children.find(c => c.className.includes('mermaid-toggle')), 'toggleBtn must exist').toBeTruthy();
+    expect(toolbar._children.find(c => c.className.includes('mermaid-copy')), 'copyBtn must exist').toBeTruthy();
+    expect(toolbar._children.find(c => c.className.includes('mermaid-expand')), 'expandBtn must exist').toBeTruthy();
   });
 
   test('toggle: initial state — rendered visible, code hidden', async () => {
@@ -181,10 +174,10 @@ describe('mermaid toggle script', () => {
     const rendered = block._children.find(c => c.className.includes('mermaid-rendered'));
     const code = block._children.find(c => c.className.includes('mermaid-code'));
 
-    assert.ok(rendered, 'rendered view must exist');
-    assert.ok(code, 'code view must exist');
-    assert.equal(rendered.hidden, false, 'rendered view must be visible initially');
-    assert.equal(code.hidden, true, 'code view must be hidden initially');
+    expect(rendered, 'rendered view must exist').toBeTruthy();
+    expect(code, 'code view must exist').toBeTruthy();
+    expect(rendered.hidden, 'rendered view must be visible initially').toBe(false);
+    expect(code.hidden, 'code view must be hidden initially').toBe(true);
   });
 
   test('toggle: first click switches to code mode', async () => {
@@ -200,10 +193,10 @@ describe('mermaid toggle script', () => {
 
     toggleBtn.click();
 
-    assert.equal(rendered.hidden, true, 'rendered view must be hidden after first click');
-    assert.equal(code.hidden, false, 'code view must be visible after first click');
-    assert.equal(toggleBtn.textContent, 'Ver diagrama');
-    assert.equal(copyBtn.textContent, 'Copiar fonte');
+    expect(rendered.hidden, 'rendered view must be hidden after first click').toBe(true);
+    expect(code.hidden, 'code view must be visible after first click').toBe(false);
+    expect(toggleBtn.textContent).toBe('Ver diagrama');
+    expect(copyBtn.textContent).toBe('Copiar fonte');
   });
 
   test('toggle: second click returns to rendered mode', async () => {
@@ -220,10 +213,10 @@ describe('mermaid toggle script', () => {
     toggleBtn.click(); // → code mode
     toggleBtn.click(); // → back to rendered mode
 
-    assert.equal(rendered.hidden, false, 'rendered view must be visible after second click');
-    assert.equal(code.hidden, true, 'code view must be hidden after second click');
-    assert.equal(toggleBtn.textContent, 'Ver código');
-    assert.equal(copyBtn.textContent, 'Copiar PNG');
+    expect(rendered.hidden, 'rendered view must be visible after second click').toBe(false);
+    expect(code.hidden, 'code view must be hidden after second click').toBe(true);
+    expect(toggleBtn.textContent).toBe('Ver código');
+    expect(copyBtn.textContent).toBe('Copiar PNG');
   });
 
   test('toggle: two diagram blocks have independent state', async () => {
@@ -242,9 +235,9 @@ describe('mermaid toggle script', () => {
 
     toggle1.click(); // diagram 1 → code mode
 
-    assert.equal(rendered1.hidden, true, 'diagram 1 rendered must be hidden');
-    assert.equal(rendered2.hidden, false, 'diagram 2 rendered must stay visible (independent state)');
-    assert.equal(toggle1.textContent, 'Ver diagrama');
-    assert.equal(toggle2.textContent, 'Ver código', 'diagram 2 toggle label must be unchanged');
+    expect(rendered1.hidden, 'diagram 1 rendered must be hidden').toBe(true);
+    expect(rendered2.hidden, 'diagram 2 rendered must stay visible (independent state)').toBe(false);
+    expect(toggle1.textContent).toBe('Ver diagrama');
+    expect(toggle2.textContent, 'diagram 2 toggle label must be unchanged').toBe('Ver código');
   });
 });

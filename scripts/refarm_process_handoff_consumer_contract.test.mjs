@@ -1,5 +1,4 @@
-import test from "node:test";
-import assert from "node:assert/strict";
+import { test, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -9,14 +8,8 @@ const readJson = (p) => JSON.parse(readFileSync(join(ROOT, p), "utf8"));
 const SPEC = "file:../../vendor/refarm.dev-process-handoff-0.1.0.tgz";
 
 test("dgk-runner and dgk-cli pin @refarm.dev/process-handoff via the local tarball", () => {
-  assert.equal(
-    readJson("packages/dgk-runner/package.json").dependencies?.["@refarm.dev/process-handoff"],
-    SPEC,
-  );
-  assert.equal(
-    readJson("packages/cli/package.json").dependencies?.["@refarm.dev/process-handoff"],
-    SPEC,
-  );
+  expect(readJson("packages/dgk-runner/package.json").dependencies?.["@refarm.dev/process-handoff"]).toBe(SPEC);
+  expect(readJson("packages/cli/package.json").dependencies?.["@refarm.dev/process-handoff"]).toBe(SPEC);
 });
 
 test("the consumed @refarm.dev/process-handoff surface is exported", () => {
@@ -36,6 +29,6 @@ test("the consumed @refarm.dev/process-handoff surface is exported", () => {
     "splitProcessHandoffCommand",
     "quoteProcessHandoffArg",
   ]) {
-    assert.match(dts, new RegExp(`export declare function ${name}\\b`), `missing ${name}`);
+    expect(dts, `missing ${name}`).toMatch(new RegExp(`export declare function ${name}\\b`));
   }
 });

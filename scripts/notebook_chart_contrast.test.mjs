@@ -1,5 +1,4 @@
-import test from "node:test";
-import assert from "node:assert/strict";
+import { test, expect } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -50,7 +49,7 @@ function readDefaultBackground(css, themeValue) {
     const bg = body.match(/--background:\s*(#[0-9a-fA-F]{3,6})\b/);
     if (bg) return bg[1];
   }
-  assert.fail(`marimo-vault.css must set --background for the ${themeValue} default theme`);
+  expect.fail(`marimo-vault.css must set --background for the ${themeValue} default theme`);
 }
 
 function listNotebookSources() {
@@ -107,20 +106,16 @@ test("notebook chart marks stay legible on both light and dark backgrounds", () 
     }
   }
 
-  assert.equal(
-    failures.length,
-    0,
-    `Chart mark colors must clear ${MIN_GRAPHIC_CONTRAST}:1 on both backgrounds (use #2d7a4d or a status color):\n${JSON.stringify(
+  expect(failures.length, `Chart mark colors must clear ${MIN_GRAPHIC_CONTRAST}:1 on both backgrounds (use #2d7a4d or a status color):\n${JSON.stringify(
       failures,
       null,
       2,
-    )}`,
-  );
+    )}`).toBe(0);
 });
 
 test("contrast guard catches the known dark-mode regression", () => {
   // #1b5e3b on #111310 was the failing case; #2d7a4d is the dual-safe fix.
-  assert.ok(contrastRatio("#1b5e3b", "#111310") < MIN_GRAPHIC_CONTRAST);
-  assert.ok(contrastRatio("#2d7a4d", "#111310") >= MIN_GRAPHIC_CONTRAST);
-  assert.ok(contrastRatio("#2d7a4d", "#f7f5f0") >= MIN_GRAPHIC_CONTRAST);
+  expect(contrastRatio("#1b5e3b", "#111310") < MIN_GRAPHIC_CONTRAST).toBeTruthy();
+  expect(contrastRatio("#2d7a4d", "#111310") >= MIN_GRAPHIC_CONTRAST).toBeTruthy();
+  expect(contrastRatio("#2d7a4d", "#f7f5f0") >= MIN_GRAPHIC_CONTRAST).toBeTruthy();
 });

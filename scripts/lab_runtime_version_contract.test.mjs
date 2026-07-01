@@ -1,6 +1,5 @@
-import assert from "node:assert/strict";
+import { test, expect } from "vitest";
 import { readFileSync } from "node:fs";
-import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 
@@ -14,14 +13,14 @@ const STABLE_SEMVER = /^\d+\.\d+\.\d+$/;
 function pyprojectVersion() {
   const content = readFileSync(PYPROJECT, "utf8");
   const match = content.match(/^version = "([^"]+)"/m);
-  assert.ok(match, `Could not find a version in ${PYPROJECT}`);
+  expect(match, `Could not find a version in ${PYPROJECT}`).toBeTruthy();
   return match[1];
 }
 
 function initVersion() {
   const content = readFileSync(INIT, "utf8");
   const match = content.match(/^__version__ = "([^"]+)"/m);
-  assert.ok(match, `Could not find __version__ in ${INIT}`);
+  expect(match, `Could not find __version__ in ${INIT}`).toBeTruthy();
   return match[1];
 }
 
@@ -31,20 +30,12 @@ function initVersion() {
 test("dgk-lab-runtime version matches between pyproject.toml and __init__.py", () => {
   const pyproject = pyprojectVersion();
   const init = initVersion();
-  assert.equal(
-    init,
-    pyproject,
-    `Version drift: pyproject.toml is ${pyproject} but __init__.py is ${init}. ` +
+  expect(init, `Version drift: pyproject.toml is ${pyproject} but __init__.py is ${init}. ` +
       "Bump both packages/lab-runtime/pyproject.toml and " +
-      "packages/lab-runtime/src/dgk_lab_runtime/__init__.py to the same value.",
-  );
+      "packages/lab-runtime/src/dgk_lab_runtime/__init__.py to the same value.").toBe(pyproject);
 });
 
 test("dgk-lab-runtime declares a stable semver version (no pre-release suffix)", () => {
-  assert.match(
-    pyprojectVersion(),
-    STABLE_SEMVER,
-    "dgk-lab-runtime version must be a stable x.y.z semver — set it to the last " +
-      "stable release before tagging dgk-lab-runtime@X.Y.Z.",
-  );
+  expect(pyprojectVersion(), "dgk-lab-runtime version must be a stable x.y.z semver — set it to the last " +
+      "stable release before tagging dgk-lab-runtime@X.Y.Z.").toMatch(STABLE_SEMVER);
 });

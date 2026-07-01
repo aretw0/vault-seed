@@ -1,5 +1,4 @@
-import test from "node:test";
-import assert from "node:assert/strict";
+import { test, expect } from "vitest";
 import * as recordsMod from "@refarm.dev/records-contract-v1";
 import {
   noteToRecord, buildRecordsFromNotes, recordsToGraph, loadRecordsConfig, RECORDS_BASE_CONTEXT,
@@ -21,47 +20,47 @@ const NOTES = [
 
 test("noteToRecord: config-driven @type, refarm base @context, raw folder preserved", () => {
   const r = noteToRecord(NOTES[0], CONFIG);
-  assert.deepEqual(r["@type"], ["KnowledgeRecord", "Project"]);
-  assert.equal(r["@context"], RECORDS_BASE_CONTEXT);
-  assert.equal(r.fields.folder, "20 - Projetos");
-  assert.deepEqual(r.relations, [{ type: "links", target: "30-areas/ops" }]);
+  expect(r["@type"]).toEqual(["KnowledgeRecord", "Project"]);
+  expect(r["@context"]).toBe(RECORDS_BASE_CONTEXT);
+  expect(r.fields.folder).toBe("20 - Projetos");
+  expect(r.relations).toEqual([{ type: "links", target: "30-areas/ops" }]);
 });
 
 test("serialization.fieldsFromFrontmatter drives which fields are projected (not hardcoded)", () => {
   const cfg = { ...CONFIG, serialization: { fieldsFromFrontmatter: ["status"], preserveFolderAs: "folder" } };
   const r = noteToRecord(NOTES[0], cfg);
-  assert.equal(r.fields.status, "active");
-  assert.equal(r.fields.tags, undefined); // not requested → not projected
-  assert.ok(r.fields.title); // title always ensured for surfaces
+  expect(r.fields.status).toBe("active");
+  expect(r.fields.tags).toBe(undefined); // not requested → not projected
+  expect(r.fields.title).toBeTruthy(); // title always ensured for surfaces
 });
 
 test("context.vocab (opt-in, vault-owned domain) extends @context as [base, vocab]", () => {
   const cfg = { ...CONFIG, context: { base: RECORDS_BASE_CONTEXT, vocab: "https://arthursilva.dev/vault/v1" } };
-  assert.deepEqual(noteToRecord(NOTES[0], cfg)["@context"], [RECORDS_BASE_CONTEXT, "https://arthursilva.dev/vault/v1"]);
+  expect(noteToRecord(NOTES[0], cfg)["@context"]).toEqual([RECORDS_BASE_CONTEXT, "https://arthursilva.dev/vault/v1"]);
 });
 
 test("noteToRecord falls back to config.defaultType for an unmapped folder", () => {
-  assert.deepEqual(noteToRecord({ id: "x", folder: "99 - Meta" }, CONFIG)["@type"], ["KnowledgeRecord", "Note"]);
+  expect(noteToRecord({ id: "x", folder: "99 - Meta" }, CONFIG)["@type"]).toEqual(["KnowledgeRecord", "Note"]);
 });
 
 test("the canonical vault.config.json carries the records IaC (types + serialization + surface)", () => {
   const cfg = loadRecordsConfig();
-  assert.equal(cfg.typeByFolder?.["20 - Projetos"], "Project");
-  assert.equal(cfg.serialization?.format, "yaml-ld");
-  assert.equal(cfg.surface?.graph?.labelField, "folder");
+  expect(cfg.typeByFolder?.["20 - Projetos"]).toBe("Project");
+  expect(cfg.serialization?.format).toBe("yaml-ld");
+  expect(cfg.surface?.graph?.labelField).toBe("folder");
 });
 
 test("buildRecordsFromNotes degrades gracefully without records:v1", async () => {
   const out = await buildRecordsFromNotes(NOTES, { recordsMod: null, recordsConfig: CONFIG });
-  assert.equal(out.degraded, true);
-  assert.equal(out.records.length, 2);
+  expect(out.degraded).toBe(true);
+  expect(out.records.length).toBe(2);
 });
 
 test("buildRecordsFromNotes builds + validates a records:v1 manifest from notes", async () => {
   const out = await buildRecordsFromNotes(NOTES, { recordsMod, recordsConfig: CONFIG });
-  assert.equal(out.degraded, false);
-  assert.equal(out.validation.ok, true, JSON.stringify(out.validation));
-  assert.ok(out.manifest.records[0].contentHash);
+  expect(out.degraded).toBe(false);
+  expect(out.validation.ok, JSON.stringify(out.validation)).toBe(true);
+  expect(out.manifest.records[0].contentHash).toBeTruthy();
 });
 
 test("recordsToGraph is generic; surface options (labelField, degree) come from config", () => {
@@ -69,28 +68,28 @@ test("recordsToGraph is generic; surface options (labelField, degree) come from 
 
   // config surface (labelField: folder, degree: both) — matches the current .site graph behavior
   const g1 = recordsToGraph(records, CONFIG.surface.graph);
-  assert.deepEqual(g1.nodes.map((n) => n.folder), ["20 - Projetos", "30 - Áreas"]); // raw folder
-  assert.deepEqual(g1.links, [{ source: "20-projetos/launch", target: "30-areas/ops" }]);
-  assert.equal(g1.nodes.find((n) => n.id === "20-projetos/launch").degree, 1); // one outgoing (both)
-  assert.equal(g1.nodes.find((n) => n.id === "30-areas/ops").degree, 1); // one incoming (both)
+  expect(g1.nodes.map((n) => n.folder)).toEqual(["20 - Projetos", "30 - Áreas"]); // raw folder
+  expect(g1.links).toEqual([{ source: "20-projetos/launch", target: "30-areas/ops" }]);
+  expect(g1.nodes.find((n) => n.id === "20-projetos/launch").degree).toBe(1); // one outgoing (both)
+  expect(g1.nodes.find((n) => n.id === "30-areas/ops").degree).toBe(1); // one incoming (both)
 
   // alternative surface config: label by specific @type, degree = incoming-only
   const g2 = recordsToGraph(records, { labelField: "nope", degree: "incoming" });
-  assert.deepEqual(g2.nodes.map((n) => n.folder), ["Project", "Area"]); // falls back to specific @type
-  assert.equal(g2.nodes.find((n) => n.id === "20-projetos/launch").degree, 0); // outgoing not counted
+  expect(g2.nodes.map((n) => n.folder)).toEqual(["Project", "Area"]); // falls back to specific @type
+  expect(g2.nodes.find((n) => n.id === "20-projetos/launch").degree).toBe(0); // outgoing not counted
 });
 
 test("folderLabel strips the PARA number prefix", () => {
-  assert.equal(folderLabel("20 - Projetos"), "Projetos");
-  assert.equal(folderLabel("Áreas"), "Áreas");
+  expect(folderLabel("20 - Projetos")).toBe("Projetos");
+  expect(folderLabel("Áreas")).toBe("Áreas");
 });
 
 test("buildRecordsGraph produces the .site graph from records (display folder, config surface)", () => {
   const graph = buildRecordsGraph(NOTES, CONFIG);
   // display-labelled folders (matches vault-explore's node.folder = area = folderLabel(folder))
-  assert.deepEqual(graph.nodes.map((n) => n.folder), ["Projetos", "Áreas"]);
-  assert.deepEqual(graph.links, [{ source: "20-projetos/launch", target: "30-areas/ops" }]);
+  expect(graph.nodes.map((n) => n.folder)).toEqual(["Projetos", "Áreas"]);
+  expect(graph.links).toEqual([{ source: "20-projetos/launch", target: "30-areas/ops" }]);
   // degree = both (out + in), from config.surface.graph — matches current behavior
-  assert.equal(graph.nodes.find((n) => n.id === "20-projetos/launch").degree, 1);
-  assert.equal(graph.nodes.find((n) => n.id === "30-areas/ops").degree, 1);
+  expect(graph.nodes.find((n) => n.id === "20-projetos/launch").degree).toBe(1);
+  expect(graph.nodes.find((n) => n.id === "30-areas/ops").degree).toBe(1);
 });

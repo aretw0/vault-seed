@@ -1,7 +1,6 @@
-const path = require('node:path');
-const fs = require('node:fs');
-const test = require('node:test');
-const assert = require('node:assert/strict');
+import { test, expect } from "vitest";
+import path from "node:path";
+import fs from "node:fs";
 
 const REPO_ROOT = process.cwd();
 
@@ -150,15 +149,11 @@ test('docs avoid host filesystem absolute paths outside the repository', () => {
     }
   }
 
-  assert.equal(
-    leaks.length,
-    0,
-    `Found host paths in docs that should be remote references or template placeholders:\n${JSON.stringify(
+  expect(leaks.length, `Found host paths in docs that should be remote references or template placeholders:\n${JSON.stringify(
       leaks,
       null,
       2,
-    )}`,
-  );
+    )}`).toBe(0);
 });
 
 // Keep generated docs scoped to project-local files that can run in browser/runtime,
@@ -189,11 +184,7 @@ test('docs only mention allowed aretw0-scope in user-facing docs', () => {
     });
   }
 
-  assert.equal(
-    findings.length,
-    0,
-    `Found bare aretw0 mentions outside scoped forms:\n${JSON.stringify(findings, null, 2)}`,
-  );
+  expect(findings.length, `Found bare aretw0 mentions outside scoped forms:\n${JSON.stringify(findings, null, 2)}`).toBe(0);
 });
 
 // Regression guard for the discourse leaks that survived the absolute-path and
@@ -203,14 +194,14 @@ test('docs only mention allowed aretw0-scope in user-facing docs', () => {
 // cannot silently rot.
 test('host-path detector flags relative sibling checkouts but not github links', () => {
   const sibling = detectHostPathLines('Veja `../../agents-lab` para detalhes.');
-  assert.equal(sibling.length, 1, 'relative sibling checkout should be flagged');
-  assert.equal(sibling[0].reason, 'relative-sibling-checkout');
+  expect(sibling.length, 'relative sibling checkout should be flagged').toBe(1);
+  expect(sibling[0].reason).toBe('relative-sibling-checkout');
 
   const githubLink = detectHostPathLines('[`agents-lab`](https://github.com/aretw0/agents-lab) é outro projeto.');
-  assert.equal(githubLink.length, 0, 'a github.com link to the project must not be flagged');
+  expect(githubLink.length, 'a github.com link to the project must not be flagged').toBe(0);
 
   const plainName = detectHostPathLines('Use o `agents-lab` como incubadora.');
-  assert.equal(plainName.length, 0, 'mentioning the project by name is allowed');
+  expect(plainName.length, 'mentioning the project by name is allowed').toBe(0);
 });
 
 const SOURCE_EXTENSIONS = new Set([
@@ -275,16 +266,10 @@ test('internal-reference denylist matches the known leak shapes', () => {
     `espelha o sistema de taxonomia do ${INTERNAL_TOKENS.acronymFull} (\`${INTERNAL_TOKENS.taxonomy}\`)`,
   ];
   for (const sample of samples) {
-    assert.ok(
-      FORBIDDEN_INTERNAL.some(({ re }) => re.test(sample)),
-      `denylist should flag: ${sample}`,
-    );
+    expect(FORBIDDEN_INTERNAL.some(({ re }) => re.test(sample)), `denylist should flag: ${sample}`).toBeTruthy();
   }
   // Ordinary prose must stay clean.
-  assert.ok(
-    !FORBIDDEN_INTERNAL.some(({ re }) => re.test('O vault-seed usa frontmatter YAML padrão.')),
-    'denylist must not flag ordinary prose',
-  );
+  expect(!FORBIDDEN_INTERNAL.some(({ re }) => re.test('O vault-seed usa frontmatter YAML padrão.')), 'denylist must not flag ordinary prose').toBeTruthy();
 });
 
 test('repository source avoids work-identifying internal references', () => {
@@ -302,13 +287,9 @@ test('repository source avoids work-identifying internal references', () => {
     });
   }
 
-  assert.equal(
-    leaks.length,
-    0,
-    `Found internal work-identifying references that must stay out of the public template:\n${JSON.stringify(
+  expect(leaks.length, `Found internal work-identifying references that must stay out of the public template:\n${JSON.stringify(
       leaks,
       null,
       2,
-    )}`,
-  );
+    )}`).toBe(0);
 });

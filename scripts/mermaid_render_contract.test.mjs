@@ -8,10 +8,9 @@
 //
 // Run after `pnpm run site:build`.
 
-const { test, describe } = require("node:test");
-const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const path = require("node:path");
+import { describe, test, expect } from "vitest";
+import fs from "node:fs";
+import path from "node:path";
 
 const root = process.cwd();
 const distDir = path.join(root, "dist");
@@ -79,10 +78,7 @@ function extractMermaidSources(html) {
 
 describe("mermaid render contract", () => {
   test("dist/ exists (run site:build first)", () => {
-    assert.ok(
-      fs.existsSync(distDir),
-      "dist/ not found — run pnpm run site:build before this test",
-    );
+    expect(fs.existsSync(distDir), "dist/ not found — run pnpm run site:build before this test").toBeTruthy();
   });
 
   for (const slug of MERMAID_PAGES) {
@@ -90,10 +86,7 @@ describe("mermaid render contract", () => {
       const htmlPath = path.join(distDir, slug, "index.html");
 
       test("page exists in dist", () => {
-        assert.ok(
-          fs.existsSync(htmlPath),
-          `${slug}/index.html not found in dist — check status:published and vault loader`,
-        );
+        expect(fs.existsSync(htmlPath), `${slug}/index.html not found in dist — check status:published and vault loader`).toBeTruthy();
       });
 
       test("ec-line extraction produces valid mermaid sources", () => {
@@ -101,25 +94,16 @@ describe("mermaid render contract", () => {
         const html = fs.readFileSync(htmlPath, "utf8");
         const sources = extractMermaidSources(html);
 
-        assert.ok(
-          sources.length > 0,
-          `${slug}: no mermaid blocks found — diagram content lost in pipeline`,
-        );
+        expect(sources.length > 0, `${slug}: no mermaid blocks found — diagram content lost in pipeline`).toBeTruthy();
 
         for (const [i, source] of sources.entries()) {
           // Must be multi-line — single-line means ec-line extraction failed.
-          assert.ok(
-            source.includes("\n"),
-            `${slug} diagram ${i + 1}: source has no newlines — ec-line extraction broken (pre.textContent regression)`,
-          );
+          expect(source.includes("\n"), `${slug} diagram ${i + 1}: source has no newlines — ec-line extraction broken (pre.textContent regression)`).toBeTruthy();
 
           // Must start with a known diagram type declaration.
           const firstLine = source.split("\n")[0].trim();
           const knownType = KNOWN_TYPES.some((t) => firstLine.startsWith(t));
-          assert.ok(
-            knownType,
-            `${slug} diagram ${i + 1}: first line "${firstLine}" is not a known diagram type — source reconstruction may be wrong`,
-          );
+          expect(knownType, `${slug} diagram ${i + 1}: first line "${firstLine}" is not a known diagram type — source reconstruction may be wrong`).toBeTruthy();
         }
       });
     });
@@ -129,10 +113,7 @@ describe("mermaid render contract", () => {
     test("astro.config.mjs uses .ec-line querySelectorAll, not pre.textContent directly", () => {
       const configPath = path.join(root, "astro.config.mjs");
       const config = fs.readFileSync(configPath, "utf8");
-      assert.ok(
-        config.includes('querySelectorAll(".ec-line")') || config.includes("querySelectorAll('.ec-line')"),
-        "astro.config.mjs: mermaid render script must use .ec-line querySelectorAll to extract source lines",
-      );
+      expect(config.includes('querySelectorAll(".ec-line")') || config.includes("querySelectorAll('.ec-line')"), "astro.config.mjs: mermaid render script must use .ec-line querySelectorAll to extract source lines").toBeTruthy();
     });
   });
 });

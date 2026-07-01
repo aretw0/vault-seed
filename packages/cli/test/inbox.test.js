@@ -1,5 +1,4 @@
-import { test } from 'node:test';
-import assert from 'node:assert/strict';
+import { test, expect } from "vitest";
 import { inbox } from '../src/commands/inbox.js';
 
 function captureRun() {
@@ -11,17 +10,17 @@ function captureRun() {
 test('inbox telegram chama inbox_from_telegram.mjs via node', async () => {
   const { calls, runner } = captureRun();
   await inbox(['telegram'], runner);
-  assert.equal(calls.length, 1);
-  assert.equal(calls[0].cmd, 'node');
-  assert.ok(calls[0].args[0].includes('inbox_from_telegram.mjs'));
+  expect(calls.length).toBe(1);
+  expect(calls[0].cmd).toBe('node');
+  expect(calls[0].args[0].includes('inbox_from_telegram.mjs')).toBeTruthy();
 });
 
 test('inbox telegram repassa --limit N ao script', async () => {
   const { calls, runner } = captureRun();
   await inbox(['telegram', '--limit', '10'], runner);
   const { args } = calls[0];
-  assert.ok(args.includes('--limit'));
-  assert.ok(args.includes('10'));
+  expect(args.includes('--limit')).toBeTruthy();
+  expect(args.includes('10')).toBeTruthy();
 });
 
 test('inbox com canal desconhecido chama process.exit(1)', async () => {
@@ -30,8 +29,8 @@ test('inbox com canal desconhecido chama process.exit(1)', async () => {
   let exitCode;
   process.exit = (code) => { exitCode = code; throw new Error(`exit:${code}`); };
   try {
-    await assert.rejects(() => inbox(['nostr'], runner));
-    assert.equal(exitCode, 1);
+    await expect(() => inbox(['nostr'], runner)).rejects.toThrow();
+    expect(exitCode).toBe(1);
   } finally {
     process.exit = origExit;
   }
@@ -47,6 +46,6 @@ test('inbox sem canal imprime ajuda sem exit', async () => {
   } finally {
     console.log = origLog;
   }
-  assert.equal(calls.length, 0);
-  assert.ok(output.includes('dgk inbox'));
+  expect(calls.length).toBe(0);
+  expect(output.includes('dgk inbox')).toBeTruthy();
 });

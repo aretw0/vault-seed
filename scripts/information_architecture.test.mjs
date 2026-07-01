@@ -1,8 +1,8 @@
-const assert = require("node:assert/strict");
-const { execFileSync } = require("node:child_process");
-const { test } = require("node:test");
-const { folders: configuredVaultFolders } = require("../.site/vault-folders.json");
-const configuredSidebarSections = require("../.site/sidebar.sections.json");
+import { test, expect } from "vitest";
+import { execFileSync } from "node:child_process";
+import __refarmJsonModule0 from "../.site/vault-folders.json" with { type: "json" };
+import configuredSidebarSections from "../.site/sidebar.sections.json" with { type: "json" };
+const { folders: configuredVaultFolders } = __refarmJsonModule0;
 
 async function loadRuntime() {
   return import("../.site/lib/information-architecture.mjs");
@@ -19,9 +19,9 @@ async function loadAuditRuntime() {
 test("vault folder contract is shared from data to runtime", async () => {
   const { PUBLISHED_VAULT_FOLDERS, VAULT_FOLDERS } = await loadVaultFoldersRuntime();
 
-  assert.deepEqual(VAULT_FOLDERS, configuredVaultFolders);
-  assert.equal(VAULT_FOLDERS.includes("99 - Meta e Anexos"), true);
-  assert.equal(PUBLISHED_VAULT_FOLDERS.includes("90 - Modelos"), false);
+  expect(VAULT_FOLDERS).toEqual(configuredVaultFolders);
+  expect(VAULT_FOLDERS.includes("99 - Meta e Anexos")).toBe(true);
+  expect(PUBLISHED_VAULT_FOLDERS.includes("90 - Modelos")).toBe(false);
 });
 
 test("sidebar intent sections are backed by the shared information architecture", async () => {
@@ -31,12 +31,8 @@ test("sidebar intent sections are backed by the shared information architecture"
     .filter((section) => Object.hasOwn(section, "intent"))
     .map((section) => section.intent);
 
-  assert.deepEqual(configuredIntents, Object.keys(ia.intents));
-  assert.equal(
-    configuredSidebarSections.some((section) => section.directory === "docs"),
-    true,
-    "technical docs must remain an explicit sidebar section instead of leaking into intent sections",
-  );
+  expect(configuredIntents).toEqual(Object.keys(ia.intents));
+  expect(configuredSidebarSections.some((section) => section.directory === "docs"), "technical docs must remain an explicit sidebar section instead of leaking into intent sections").toBe(true);
 });
 
 test("information architecture audit exposes a reusable machine-readable report", async () => {
@@ -47,20 +43,17 @@ test("information architecture audit exposes a reusable machine-readable report"
   });
   const cliReport = JSON.parse(cliOutput);
 
-  assert.deepEqual(cliReport, moduleReport);
-  assert.equal(moduleReport.errors.length, 0);
-  assert.equal(moduleReport.warnings.some((warning) => warning.startsWith("Distribuição por intenção")), false);
-  assert.equal(moduleReport.notices.some((notice) => notice.startsWith("Distribuição por intenção")), true);
-  assert.ok(moduleReport.notesEvaluated > 0);
-  assert.deepEqual(
-    moduleReport.intentDistribution.map(({ intent }) => intent),
-    configuredSidebarSections
+  expect(cliReport).toEqual(moduleReport);
+  expect(moduleReport.errors.length).toBe(0);
+  expect(moduleReport.warnings.some((warning) => warning.startsWith("Distribuição por intenção"))).toBe(false);
+  expect(moduleReport.notices.some((notice) => notice.startsWith("Distribuição por intenção"))).toBe(true);
+  expect(moduleReport.notesEvaluated > 0).toBeTruthy();
+  expect(moduleReport.intentDistribution.map(({ intent }) => intent)).toEqual(configuredSidebarSections
       .filter((section) => Object.hasOwn(section, "intent"))
       .map((section) => section.intent)
-      .sort((a, b) => a.localeCompare(b, "pt")),
-  );
-  assert.ok(moduleReport.promotionCandidates.every((note) => note.file && note.title));
-  assert.ok(moduleReport.thinPublishedResources.every((note) => Number.isInteger(note.words)));
+      .sort((a, b) => a.localeCompare(b, "pt")));
+  expect(moduleReport.promotionCandidates.every((note) => note.file && note.title)).toBeTruthy();
+  expect(moduleReport.thinPublishedResources.every((note) => Number.isInteger(note.words))).toBeTruthy();
 });
 
 test("information architecture vocabulary normalizes aliases", async () => {
@@ -72,7 +65,7 @@ test("information architecture vocabulary normalizes aliases", async () => {
   } = await loadRuntime();
   const ia = loadInformationArchitecture();
 
-  assert.deepEqual(Object.keys(ia.intents), [
+  expect(Object.keys(ia.intents)).toEqual([
     "comecar",
     "organizar",
     "explorar",
@@ -80,54 +73,38 @@ test("information architecture vocabulary normalizes aliases", async () => {
     "automatizar",
     "manter",
   ]);
-  assert.equal(normalizeCategory("referência", ia), "referencia");
-  assert.equal(normalizeAudience("técnico", ia), "tecnico");
-  assert.equal(getIntentLabel("comecar", ia), "Começar");
+  expect(normalizeCategory("referência", ia)).toBe("referencia");
+  expect(normalizeAudience("técnico", ia)).toBe("tecnico");
+  expect(getIntentLabel("comecar", ia)).toBe("Começar");
 });
 
 test("information architecture derives explicit intents without broad guide fallback", async () => {
   const { deriveNoteIntents, loadInformationArchitecture } = await loadRuntime();
   const ia = loadInformationArchitecture();
 
-  assert.deepEqual(
-    deriveNoteIntents(
+  expect(deriveNoteIntents(
       { folder: "99 - Meta e Anexos", tags: ["meta/onboarding"], category: "guia" },
       ia,
       { fallback: null },
-    ),
-    ["comecar"],
-  );
+    )).toEqual(["comecar"]);
 
-  assert.deepEqual(
-    deriveNoteIntents(
+  expect(deriveNoteIntents(
       { folder: "99 - Meta e Anexos", tags: [], category: "guia" },
       ia,
       { fallback: null },
-    ),
-    [],
-    "generic guide category must not make every guide appear in Começar",
-  );
+    ), "generic guide category must not make every guide appear in Começar").toEqual([]);
 
-  assert.deepEqual(
-    deriveNoteIntents(
+  expect(deriveNoteIntents(
       { folder: "40 - Recursos", tags: ["obsidian/templates"], category: "ferramenta" },
       ia,
       { fallback: null },
-    ),
-    ["organizar"],
-  );
+    )).toEqual(["organizar"]);
 });
 
 test("information architecture keeps a safe UI fallback separate from audit strictness", async () => {
   const { deriveNoteIntents, loadInformationArchitecture } = await loadRuntime();
   const ia = loadInformationArchitecture();
 
-  assert.deepEqual(
-    deriveNoteIntents({ folder: "", tags: [], category: "" }, ia),
-    ["organizar"],
-  );
-  assert.deepEqual(
-    deriveNoteIntents({ folder: "", tags: [], category: "" }, ia, { fallback: null }),
-    [],
-  );
+  expect(deriveNoteIntents({ folder: "", tags: [], category: "" }, ia)).toEqual(["organizar"]);
+  expect(deriveNoteIntents({ folder: "", tags: [], category: "" }, ia, { fallback: null })).toEqual([]);
 });

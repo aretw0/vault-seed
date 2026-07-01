@@ -1,6 +1,5 @@
-import assert from "node:assert/strict";
+import { describe, test, expect } from "vitest";
 import { readFileSync } from "node:fs";
-import { test, describe } from "node:test";
 import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 import { replaceImportAndInjectRuntimeHelpers } from "./notebook_export_runtime_helpers.mjs";
@@ -47,8 +46,8 @@ describe("replaceImportAndInjectRuntimeHelpers — App() call variants", () => {
 
     const appCallEnd = result.indexOf("app = marimo.App(") + result.slice(result.indexOf("app = marimo.App(")).indexOf("\n");
     const firstCellPos = result.indexOf("@app.cell");
-    assert.ok(appCallEnd < firstCellPos, "helper @app.cell must come after the app = marimo.App(...) line");
-    assert.doesNotMatch(result, /from _lab_notebook_runtime import/, "runtime import must be removed");
+    expect(appCallEnd < firstCellPos, "helper @app.cell must come after the app = marimo.App(...) line").toBeTruthy();
+    expect(result, "runtime import must be removed").not.toMatch(/from _lab_notebook_runtime import/);
   });
 
   test("multi-line App(): helper injected after closing ) — e.g. presentation notebooks with layout_file", () => {
@@ -60,15 +59,15 @@ describe("replaceImportAndInjectRuntimeHelpers — App() call variants", () => {
     });
 
     // The App() constructor block must be intact in the output.
-    assert.match(result, /app = marimo\.App\(\n\s+width="medium",\n\s+layout_file="layouts\/foo\.slides\.json",\n\)/, "multi-line App() call must remain intact");
+    expect(result, "multi-line App() call must remain intact").toMatch(/app = marimo\.App\(\n\s+width="medium",\n\s+layout_file="layouts\/foo\.slides\.json",\n\)/);
 
     // No @app.cell may appear before the closing ) of the App call.
     const closingParen = result.indexOf("app = marimo.App(") + result.slice(result.indexOf("app = marimo.App(")).indexOf("\n)") + 2;
     const firstCell = result.indexOf("@app.cell");
-    assert.ok(firstCell > closingParen, "@app.cell must appear after the closing ) of marimo.App()");
+    expect(firstCell > closingParen, "@app.cell must appear after the closing ) of marimo.App()").toBeTruthy();
 
-    assert.doesNotMatch(result, /from _lab_notebook_runtime import/, "runtime import must be removed");
-    assert.match(result, /return lab_runtime_context, load_lab_manifest/, "used helpers must be returned");
+    expect(result, "runtime import must be removed").not.toMatch(/from _lab_notebook_runtime import/);
+    expect(result, "used helpers must be returned").toMatch(/return lab_runtime_context, load_lab_manifest/);
   });
 
   test("multi-line App() with nested parens in args does not break insertion point", () => {
@@ -80,15 +79,15 @@ describe("replaceImportAndInjectRuntimeHelpers — App() call variants", () => {
     });
 
     // Nested parens (os.path.join(...)) must not confuse paren-depth tracking.
-    assert.match(result, /app = marimo\.App\(\n\s+width="medium",\n\s+css_file=os\.path\.join\("a", "b\.css"\),\n\)/, "App() call with nested parens must remain intact");
+    expect(result, "App() call with nested parens must remain intact").toMatch(/app = marimo\.App\(\n\s+width="medium",\n\s+css_file=os\.path\.join\("a", "b\.css"\),\n\)/);
 
     // The outer ) of a multi-line App() call sits on its own line (\n)\n).
     // Helper cell must appear after that, not inside the App() call.
     const appStart = result.indexOf("app = marimo.App(");
     const outerClose = result.indexOf("\n)\n", appStart);
     const firstCell = result.indexOf("@app.cell");
-    assert.ok(outerClose >= 0, "multi-line App() closing ) must be on its own line");
-    assert.ok(firstCell > outerClose, "helper @app.cell must be inserted after the outer ) of marimo.App()");
+    expect(outerClose >= 0, "multi-line App() closing ) must be on its own line").toBeTruthy();
+    expect(firstCell > outerClose, "helper @app.cell must be inserted after the outer ) of marimo.App()").toBeTruthy();
   });
 });
 
@@ -121,40 +120,14 @@ test("notebook runtime helpers are injected after marimo app creation", () => {
 	const helperCellIndex = transformed.indexOf("@app.cell");
 	const helperDefinitionIndex = transformed.indexOf("def _():");
 
-	assert.notEqual(appIndex, -1, "transformed notebook should keep app setup");
-	assert.notEqual(
-		helperCellIndex,
-		-1,
-		"runtime helper cell should be injected",
-	);
-	assert.notEqual(
-		helperDefinitionIndex,
-		-1,
-		"runtime helper function should be injected",
-	);
-	assert.ok(
-		appIndex < helperCellIndex,
-		"the first @app.cell must appear after app = marimo.App(...) for Pyodide",
-	);
-	assert.ok(
-		helperCellIndex < helperDefinitionIndex,
-		"helper definition should be inside the injected marimo cell",
-	);
-	assert.doesNotMatch(
-		transformed,
-		/@app\.cell\n\n/,
-		"injected helper cell should remain parseable Python",
-	);
-	assert.match(
-		transformed.slice(helperDefinitionIndex),
-		/def lab_runtime_context\(/,
-		"runtime context helper should be bundled into the injected cell",
-	);
-	assert.doesNotMatch(
-		transformed,
-		/import json\n\s+import os\n\n\s+import json/,
-		"wrapper should not duplicate imports already present in runtime helper source",
-	);
+	expect(appIndex, "transformed notebook should keep app setup").not.toBe(-1);
+	expect(helperCellIndex, "runtime helper cell should be injected").not.toBe(-1);
+	expect(helperDefinitionIndex, "runtime helper function should be injected").not.toBe(-1);
+	expect(appIndex < helperCellIndex, "the first @app.cell must appear after app = marimo.App(...) for Pyodide").toBeTruthy();
+	expect(helperCellIndex < helperDefinitionIndex, "helper definition should be inside the injected marimo cell").toBeTruthy();
+	expect(transformed, "injected helper cell should remain parseable Python").not.toMatch(/@app\.cell\n\n/);
+	expect(transformed.slice(helperDefinitionIndex), "runtime context helper should be bundled into the injected cell").toMatch(/def lab_runtime_context\(/);
+	expect(transformed, "wrapper should not duplicate imports already present in runtime helper source").not.toMatch(/import json\n\s+import os\n\n\s+import json/);
 });
 
 test("notebook export strips UTF-8 BOM before Marimo parses the temporary source", () => {
@@ -165,70 +138,30 @@ test("notebook export strips UTF-8 BOM before Marimo parses the temporary source
 		},
 	);
 
-	assert.equal(
-		transformed.charCodeAt(0),
-		"i".charCodeAt(0),
-		"exported notebook source must not start with BOM",
-	);
-	assert.match(transformed, /^import marimo/);
+	expect(transformed.charCodeAt(0), "exported notebook source must not start with BOM").toBe("i".charCodeAt(0));
+	expect(transformed).toMatch(/^import marimo/);
 });
 
 test("notebook runtime helper import is removed from exported source", () => {
 	const transformed = transformEtcDemo();
 
-	assert.doesNotMatch(
-		transformed,
-		/from _lab_notebook_runtime import/,
-		"exported notebook source must be self-contained for browser runtime",
-	);
-	assert.match(
-		transformed,
-		/return clean_lab_text, extract_local_image_text, fetch_local_feed, fetch_local_url_text, fingerprint_data, get_local_secret, lab_runtime_context, load_lab_manifest, read_lab_dataset, read_lab_json, read_local_text_file, scrape_local_page_text, write_local_dataframe_snapshot, write_local_json_snapshot/,
-		"injected helper cell should return the helpers imported by the notebook",
-	);
-	assert.doesNotMatch(
-		transformed,
-		/^\s+lab_runtime_context,\s*$/m,
-		"multiline helper import members must also be removed from exported source",
-	);
+	expect(transformed, "exported notebook source must be self-contained for browser runtime").not.toMatch(/from _lab_notebook_runtime import/);
+	expect(transformed, "injected helper cell should return the helpers imported by the notebook").toMatch(/return clean_lab_text, extract_local_image_text, fetch_local_feed, fetch_local_url_text, fingerprint_data, get_local_secret, lab_runtime_context, load_lab_manifest, read_lab_dataset, read_lab_json, read_local_text_file, scrape_local_page_text, write_local_dataframe_snapshot, write_local_json_snapshot/);
+	expect(transformed, "multiline helper import members must also be removed from exported source").not.toMatch(/^\s+lab_runtime_context,\s*$/m);
 });
 
 test("wasm async fetch helpers are present in injected cell body", () => {
 	const transformed = transformEtcDemo();
-	assert.match(
-		transformed,
-		/async def fetch_wasm_json\(/,
-		"fetch_wasm_json must be present in the injected helper cell",
-	);
-	assert.match(
-		transformed,
-		/async def fetch_wasm_feed\(/,
-		"fetch_wasm_feed must be present in the injected helper cell",
-	);
-	assert.match(
-		transformed,
-		/pyfetch/,
-		"fetch_wasm_json and fetch_wasm_feed must use pyodide pyfetch",
-	);
+	expect(transformed, "fetch_wasm_json must be present in the injected helper cell").toMatch(/async def fetch_wasm_json\(/);
+	expect(transformed, "fetch_wasm_feed must be present in the injected helper cell").toMatch(/async def fetch_wasm_feed\(/);
+	expect(transformed, "fetch_wasm_json and fetch_wasm_feed must use pyodide pyfetch").toMatch(/pyfetch/);
 });
 
 test("injected runtime helper cell must not contain wildcard imports", () => {
 	// Marimo's AST parser converts cells with `import *` to app._unparsable_cell(),
 	// which is never executed in the WASM runtime — causing NameError in dependent cells.
 	const transformed = transformEtcDemo();
-	assert.doesNotMatch(
-		transformed,
-		/import \*/,
-		"injected helper cell must not use wildcard imports that marimo cannot statically analyze",
-	);
-	assert.doesNotMatch(
-		transformed,
-		/_unparsable_cell/,
-		"injected helper cell must not produce an _unparsable_cell in the exported notebook",
-	);
-	assert.match(
-		transformed,
-		/def is_pyodide_runtime\(\)/,
-		"inline fallback functions must be present in the injected cell",
-	);
+	expect(transformed, "injected helper cell must not use wildcard imports that marimo cannot statically analyze").not.toMatch(/import \*/);
+	expect(transformed, "injected helper cell must not produce an _unparsable_cell in the exported notebook").not.toMatch(/_unparsable_cell/);
+	expect(transformed, "inline fallback functions must be present in the injected cell").toMatch(/def is_pyodide_runtime\(\)/);
 });

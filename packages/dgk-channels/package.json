@@ -21,6 +21,6 @@
     "node": ">=22"
   },
   "scripts": {
-    "test": "node --test test/*.test.js"
+    "test": "vitest run"
   }
 }

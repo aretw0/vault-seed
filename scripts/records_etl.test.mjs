@@ -1,5 +1,4 @@
-import test from "node:test";
-import assert from "node:assert/strict";
+import { test, expect } from "vitest";
 // Test files may static-import @refarm.dev/* (dev-only; excluded by the distributed-scripts guard).
 import * as recordsMod from "@refarm.dev/records-contract-v1";
 import { createReferenceEnrichmentProvider } from "@refarm.dev/enrichment-contract-v1";
@@ -26,10 +25,10 @@ const hashedTransform = () => {
 
 test("runRecordsProfile degrades gracefully without refarm packages", async () => {
   const r = await runRecordsProfile({ snapshot: {}, transform: plainTransform }, { refarm: null });
-  assert.equal(r.degraded, true);
-  assert.equal(r.records.length, 2);
-  assert.equal(r.manifest, null);
-  assert.equal(r.validation, null);
+  expect(r.degraded).toBe(true);
+  expect(r.records.length).toBe(2);
+  expect(r.manifest).toBe(null);
+  expect(r.validation).toBe(null);
 });
 
 test("runRecordsProfile builds + validates a records:v1 manifest and enriches", async () => {
@@ -41,7 +40,7 @@ test("runRecordsProfile builds + validates a records:v1 manifest and enriches", 
     { snapshot: {}, transform: hashedTransform, enrichmentProvider },
     { refarm: { records: recordsMod } },
   );
-  assert.equal(r.degraded, false);
-  assert.equal(r.validation.ok, true, JSON.stringify(r.validation));
-  assert.equal(r.enriched.diagnostics.enriched, 2);
+  expect(r.degraded).toBe(false);
+  expect(r.validation.ok, JSON.stringify(r.validation)).toBe(true);
+  expect(r.enriched.diagnostics.enriched).toBe(2);
 });

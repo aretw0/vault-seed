@@ -1,5 +1,4 @@
-import { test } from 'node:test';
-import assert from 'node:assert/strict';
+import { test, expect } from "vitest";
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -29,14 +28,10 @@ function findScriptReferences() {
 
 test('todo script/* referenciado por um comando dgk existe na raiz do vault', () => {
   const refs = findScriptReferences();
-  assert.ok(refs.length > 0, 'deve encontrar ao menos uma referência scripts/* nos comandos dgk');
+  expect(refs.length > 0, 'deve encontrar ao menos uma referência scripts/* nos comandos dgk').toBeTruthy();
 
   const missing = refs.filter((ref) => !existsSync(join(VAULT_ROOT, ref)));
-  assert.deepEqual(
-    missing,
-    [],
-    `scripts ausentes referenciados por comandos dgk: ${missing.join(', ')}. ` +
+  expect(missing, `scripts ausentes referenciados por comandos dgk: ${missing.join(', ')}. ` +
       'Se um desses arquivos foi removido do vault, os comandos dgk correspondentes ' +
-      'vão falhar para o usuário. Restaure o arquivo ou vendorize-o em packages/cli/vendor/.',
-  );
+      'vão falhar para o usuário. Restaure o arquivo ou vendorize-o em packages/cli/vendor/.').toEqual([]);
 });

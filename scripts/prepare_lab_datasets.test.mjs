@@ -1,8 +1,7 @@
-import assert from "node:assert/strict";
+import { test, expect } from "vitest";
 import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import test from "node:test";
 import { buildLabDatasets, readManifest } from "./prepare_lab_datasets.mjs";
 
 test("readManifest accepts UTF-8 BOM", () => {
@@ -10,7 +9,7 @@ test("readManifest accepts UTF-8 BOM", () => {
   const manifestPath = join(cwd, "lab.datasets.json");
   writeFileSync(manifestPath, "\uFEFF" + JSON.stringify([{ id: "bom", runtimeUrl: "https://example.com/bom.json" }]), "utf8");
 
-  assert.deepEqual(readManifest(manifestPath), [{ id: "bom", runtimeUrl: "https://example.com/bom.json" }]);
+  expect(readManifest(manifestPath)).toEqual([{ id: "bom", runtimeUrl: "https://example.com/bom.json" }]);
 });
 
 test("buildLabDatasets copies local snapshots to root and WASM asset paths", () => {
@@ -32,12 +31,12 @@ test("buildLabDatasets copies local snapshots to root and WASM asset paths", () 
     ],
   });
 
-  assert.equal(data.datasetCount, 1);
-  assert.equal(data.datasets[0].kind, "snapshot");
-  assert.match(data.datasets[0].sha256, /^[a-f0-9]{64}$/);
-  assert.equal(readFileSync(join(targetRoot, "datasets", "exemplo.json"), "utf8"), '{"ok":true}');
-  assert.equal(readFileSync(join(targetRoot, "assets", "datasets", "exemplo.json"), "utf8"), '{"ok":true}');
-  assert.equal(JSON.parse(readFileSync(join(targetRoot, "assets", "datasets", "manifest.json"), "utf8")).datasetCount, 1);
+  expect(data.datasetCount).toBe(1);
+  expect(data.datasets[0].kind).toBe("snapshot");
+  expect(data.datasets[0].sha256).toMatch(/^[a-f0-9]{64}$/);
+  expect(readFileSync(join(targetRoot, "datasets", "exemplo.json"), "utf8")).toBe('{"ok":true}');
+  expect(readFileSync(join(targetRoot, "assets", "datasets", "exemplo.json"), "utf8")).toBe('{"ok":true}');
+  expect(JSON.parse(readFileSync(join(targetRoot, "assets", "datasets", "manifest.json"), "utf8")).datasetCount).toBe(1);
 });
 
 test("buildLabDatasets records runtime datasets without fetching them", () => {
@@ -57,19 +56,16 @@ test("buildLabDatasets records runtime datasets without fetching them", () => {
     ],
   });
 
-  assert.equal(data.datasets[0].kind, "runtime");
-  assert.equal(data.datasets[0].url, "https://example.com/data.json");
+  expect(data.datasets[0].kind).toBe("runtime");
+  expect(data.datasets[0].url).toBe("https://example.com/data.json");
 });
 
 test("buildLabDatasets rejects path traversal", () => {
   const cwd = mkdtempSync(join(tmpdir(), "vault-seed-etl-"));
-  assert.throws(
-    () =>
+  expect(() =>
       buildLabDatasets({
         cwd,
         targetRoot: join(cwd, "public", "lab"),
         manifest: [{ id: "escape", source: "../secret.json" }],
-      }),
-    /source do dataset escape inválido/,
-  );
+      })).toThrow(/source do dataset escape inválido/);
 });

@@ -1,5 +1,4 @@
-import { test, describe, beforeEach, afterEach } from "node:test";
-import assert from "node:assert/strict";
+import { describe, test, beforeEach, afterEach, expect } from "vitest";
 import { mkdirSync, rmSync, existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
@@ -16,16 +15,16 @@ const noSleep = async () => {};
 describe("PLATFORM_LIMITS", () => {
   test("cobre todas as plataformas esperadas", () => {
     for (const p of ["telegram", "mastodon", "bluesky", "whatsapp", "buttondown"]) {
-      assert.ok(p in PLATFORM_LIMITS, `${p} deve ter limites definidos`);
+      expect(p in PLATFORM_LIMITS, `${p} deve ter limites definidos`).toBeTruthy();
       const l = PLATFORM_LIMITS[p];
-      assert.ok(typeof l.minDelayMs === "number" && l.minDelayMs > 0);
-      assert.ok(typeof l.burstLimit === "number" && l.burstLimit > 0);
-      assert.ok(typeof l.burstWindowMs === "number" && l.burstWindowMs > 0);
+      expect(typeof l.minDelayMs === "number" && l.minDelayMs > 0).toBeTruthy();
+      expect(typeof l.burstLimit === "number" && l.burstLimit > 0).toBeTruthy();
+      expect(typeof l.burstWindowMs === "number" && l.burstWindowMs > 0).toBeTruthy();
     }
   });
 
   test("limites do telegram são conservadores (minDelay >= 1000ms)", () => {
-    assert.ok(PLATFORM_LIMITS.telegram.minDelayMs >= 1000);
+    expect(PLATFORM_LIMITS.telegram.minDelayMs >= 1000).toBeTruthy();
   });
 });
 
@@ -40,7 +39,7 @@ describe("throttle", () => {
       statePath: join(dir, "state.json"),
       sleep: async (ms) => slept.push(ms),
     });
-    assert.equal(slept.length, 0);
+    expect(slept.length).toBe(0);
   });
 
   test("primeira chamada não precisa esperar (sem estado anterior)", async () => {
@@ -50,16 +49,16 @@ describe("throttle", () => {
       limits: { minDelayMs: 500, burstLimit: 10, burstWindowMs: 60_000 },
       sleep: async (ms) => slept.push(ms),
     });
-    assert.equal(slept.length, 0, "primeira chamada não deve dormir");
+    expect(slept.length, "primeira chamada não deve dormir").toBe(0);
   });
 
   test("persiste estado após chamada", async () => {
     const statePath = join(dir, "state.json");
     await throttle("telegram", { statePath, sleep: noSleep });
-    assert.ok(existsSync(statePath), "estado deve ser salvo");
+    expect(existsSync(statePath), "estado deve ser salvo").toBeTruthy();
     const state = JSON.parse(readFileSync(statePath, "utf8"));
-    assert.ok(state.telegram?.lastSentAt > 0);
-    assert.equal(state.telegram.sentInWindow, 1);
+    expect(state.telegram?.lastSentAt > 0).toBeTruthy();
+    expect(state.telegram.sentInWindow).toBe(1);
   });
 
   test("segunda chamada imediata dorme o minDelay", async () => {
@@ -74,8 +73,8 @@ describe("throttle", () => {
       sleep: async (ms) => slept.push(ms),
     });
 
-    assert.ok(slept.length > 0, "deve dormir na segunda chamada imediata");
-    assert.ok(slept[0] <= 200, `sleep deve ser <= minDelayMs (foi ${slept[0]}ms)`);
+    expect(slept.length > 0, "deve dormir na segunda chamada imediata").toBeTruthy();
+    expect(slept[0] <= 200, `sleep deve ser <= minDelayMs (foi ${slept[0]}ms)`).toBeTruthy();
   });
 
   test("burst limit força espera ao atingir o limite", async () => {
@@ -88,17 +87,17 @@ describe("throttle", () => {
     }
     // 4ª chamada — deve atingir burst limit
     await throttle("telegram", { statePath, limits, sleep: async (ms) => slept.push(ms) });
-    assert.ok(slept.length > 0, "deve dormir ao atingir burst limit");
+    expect(slept.length > 0, "deve dormir ao atingir burst limit").toBeTruthy();
   });
 });
 
 describe("handleRateLimitResponse", () => {
   test("retorna 0 para resposta bem-sucedida", () => {
-    assert.equal(handleRateLimitResponse({ ok: true }, "telegram"), 0);
+    expect(handleRateLimitResponse({ ok: true }, "telegram")).toBe(0);
   });
 
   test("retorna 0 para null", () => {
-    assert.equal(handleRateLimitResponse(null, "telegram"), 0);
+    expect(handleRateLimitResponse(null, "telegram")).toBe(0);
   });
 
   test("telegram 429 retorna retry_after em ms", () => {
@@ -106,21 +105,21 @@ describe("handleRateLimitResponse", () => {
       { ok: false, error_code: 429, parameters: { retry_after: 10 } },
       "telegram",
     );
-    assert.equal(ms, 10_000);
+    expect(ms).toBe(10_000);
   });
 
   test("telegram 429 sem retry_after usa default 30s", () => {
     const ms = handleRateLimitResponse({ ok: false, error_code: 429 }, "telegram");
-    assert.equal(ms, 30_000);
+    expect(ms).toBe(30_000);
   });
 
   test("status 429 genérico retorna 30s por padrão", () => {
     const ms = handleRateLimitResponse({ status: 429 }, "mastodon");
-    assert.equal(ms, 30_000);
+    expect(ms).toBe(30_000);
   });
 
   test("retryAfter customizado é respeitado", () => {
     const ms = handleRateLimitResponse({ status: 429, retryAfter: 60 }, "mastodon");
-    assert.equal(ms, 60_000);
+    expect(ms).toBe(60_000);
   });
 });

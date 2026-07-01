@@ -1,5 +1,4 @@
-import test from "node:test";
-import assert from "node:assert/strict";
+import { test, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -25,7 +24,7 @@ const HELPER_COPIES = [
 
 function extractHelperBody(source) {
   const start = source.indexOf("def lab_altair_chart(chart):");
-  assert.notEqual(start, -1, "lab_altair_chart must exist in the helper source");
+  expect(start, "lab_altair_chart must exist in the helper source").not.toBe(-1);
   // Body runs until the next top-of-function marker after the definition.
   const rest = source.slice(start);
   const next = rest.slice(1).search(/\n\s*def lab_altair_status_color\(/);
@@ -36,16 +35,8 @@ test("lab_altair_chart asks charts to follow their container width (both copies)
   for (const file of HELPER_COPIES) {
     const body = extractHelperBody(readFileSync(file, "utf8"));
     const rel = file.slice(ROOT.length + 1).replaceAll("\\", "/");
-    assert.match(
-      body,
-      /width\s*=\s*"container"/,
-      `${rel}: lab_altair_chart must apply width="container" so charts fit the mobile viewport`,
-    );
-    assert.match(
-      body,
-      /configure_mark\(\s*color=LAB_CHART_PALETTE\["primary"\]\s*\)/,
-      `${rel}: lab_altair_chart must keep the single-series brand color`,
-    );
+    expect(body, `${rel}: lab_altair_chart must apply width="container" so charts fit the mobile viewport`).toMatch(/width\s*=\s*"container"/);
+    expect(body, `${rel}: lab_altair_chart must keep the single-series brand color`).toMatch(/configure_mark\(\s*color=LAB_CHART_PALETTE\["primary"\]\s*\)/);
   }
 });
 
@@ -61,17 +52,11 @@ test("marimo-vault.css contains the chart host so a wide chart cannot expand the
     ([, selector]) =>
       /\bmarimo-vega\b/.test(selector) || /\.vega-embed\b/.test(selector),
   );
-  assert.ok(
-    hostBlocks.length > 0,
-    "marimo-vault.css must style the chart host (marimo-vega / .vega-embed)",
-  );
+  expect(hostBlocks.length > 0, "marimo-vault.css must style the chart host (marimo-vega / .vega-embed)").toBeTruthy();
 
   const containing = hostBlocks.find(
     ([, , body]) =>
       /max-width:\s*100%/.test(body) && /overflow-x:\s*auto/.test(body),
   );
-  assert.ok(
-    containing,
-    "a marimo-vega / .vega-embed rule must set `max-width: 100%` and `overflow-x: auto` so an oversized chart scrolls inside its box instead of expanding the page",
-  );
+  expect(containing, "a marimo-vega / .vega-embed rule must set `max-width: 100%` and `overflow-x: auto` so an oversized chart scrolls inside its box instead of expanding the page").toBeTruthy();
 });

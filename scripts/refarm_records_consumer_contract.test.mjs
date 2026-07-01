@@ -1,5 +1,4 @@
-import test from "node:test";
-import assert from "node:assert/strict";
+import { test, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -12,7 +11,7 @@ const TGZ = "file:vendor/refarm.dev-records-contract-v1-0.1.0.tgz";
 
 test("vault-seed pins @refarm.dev/records-contract-v1 via the local tarball", () => {
   const pkg = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"));
-  assert.equal(pkg.dependencies?.[PKG], TGZ);
+  expect(pkg.dependencies?.[PKG]).toBe(TGZ);
 });
 
 test("the consumed records:v1 surface is exported", () => {
@@ -31,6 +30,6 @@ test("the consumed records:v1 surface is exported", () => {
     "computeRecordContentHash",
     "createReferenceRecordsProvider",
   ]) {
-    assert.match(dts, new RegExp(`\\b${name}\\b`), `missing ${name}`);
+    expect(dts, `missing ${name}`).toMatch(new RegExp(`\\b${name}\\b`));
   }
 });

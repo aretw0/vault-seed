@@ -1,5 +1,4 @@
-import { test, describe, beforeEach, afterEach } from "node:test";
-import assert from "node:assert/strict";
+import { describe, test, beforeEach, afterEach, expect } from "vitest";
 import { existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
@@ -33,7 +32,7 @@ function makeUpdate(updateId, text, date = 1700000000) {
 describe("inboxFromTelegram — sem token", () => {
   test("retorna {created:0} quando token ausente", async () => {
     const r = await inboxFromTelegram({ env: {} });
-    assert.deepEqual(r, { created: 0 });
+    expect(r).toEqual({ created: 0 });
   });
 });
 
@@ -49,7 +48,7 @@ describe("inboxFromTelegram — API errors", () => {
       inboxDir: join(dir, "inbox"),
       httpGet: mockGet({ ok: false, description: "Unauthorized" }),
     });
-    assert.deepEqual(r, { created: 0 });
+    expect(r).toEqual({ created: 0 });
   });
 
   test("retorna {created:0} quando httpGet lança exceção", async () => {
@@ -59,7 +58,7 @@ describe("inboxFromTelegram — API errors", () => {
       inboxDir: join(dir, "inbox"),
       httpGet: async () => { throw new Error("network"); },
     });
-    assert.deepEqual(r, { created: 0 });
+    expect(r).toEqual({ created: 0 });
   });
 
   test("retorna {created:0} quando não há updates", async () => {
@@ -69,7 +68,7 @@ describe("inboxFromTelegram — API errors", () => {
       inboxDir: join(dir, "inbox"),
       httpGet: mockGet({ ok: true, result: [] }),
     });
-    assert.deepEqual(r, { created: 0 });
+    expect(r).toEqual({ created: 0 });
   });
 });
 
@@ -87,13 +86,13 @@ describe("inboxFromTelegram — criação de notas", () => {
       inboxDir,
       httpGet: mockGet({ ok: true, result: [makeUpdate(100, "Olá do Telegram")] }),
     });
-    assert.equal(r.created, 1);
+    expect(r.created).toBe(1);
     const files = (await import("node:fs")).readdirSync(inboxDir);
-    assert.equal(files.length, 1);
+    expect(files.length).toBe(1);
     const content = readFileSync(join(inboxDir, files[0]), "utf8");
-    assert.ok(content.includes("source: telegram"), "nota deve ter source: telegram");
-    assert.ok(content.includes("Olá do Telegram"), "nota deve conter o texto da mensagem");
-    assert.ok(content.includes("tags: [entrada, telegram]"), "nota deve ter tags corretas");
+    expect(content.includes("source: telegram"), "nota deve ter source: telegram").toBeTruthy();
+    expect(content.includes("Olá do Telegram"), "nota deve conter o texto da mensagem").toBeTruthy();
+    expect(content.includes("tags: [entrada, telegram]"), "nota deve ter tags corretas").toBeTruthy();
   });
 
   test("persiste lastUpdateId no state após criação", async () => {
@@ -105,7 +104,7 @@ describe("inboxFromTelegram — criação de notas", () => {
       httpGet: mockGet({ ok: true, result: [makeUpdate(200, "msg")] }),
     });
     const state = JSON.parse(readFileSync(statePath, "utf8"));
-    assert.equal(state.lastUpdateId, 200);
+    expect(state.lastUpdateId).toBe(200);
   });
 
   test("usa lastUpdateId do state como offset na próxima chamada", async () => {
@@ -120,7 +119,7 @@ describe("inboxFromTelegram — criação de notas", () => {
     await inboxFromTelegram({ env: ENV, statePath, inboxDir, httpGet });
     await inboxFromTelegram({ env: ENV, statePath, inboxDir, httpGet });
 
-    assert.ok(calls[1].includes("offset=101"), `segunda chamada deve usar offset=101, foi: ${calls[1]}`);
+    expect(calls[1].includes("offset=101"), `segunda chamada deve usar offset=101, foi: ${calls[1]}`).toBeTruthy();
   });
 
   test("não sobrescreve nota existente com mesmo filename", async () => {
@@ -135,7 +134,7 @@ describe("inboxFromTelegram — criação de notas", () => {
     (await import("node:fs")).writeFileSync(statePath, JSON.stringify(stateAfter) + "\n");
 
     const r2 = await inboxFromTelegram({ env: ENV, statePath, inboxDir, httpGet: mockGet(updates) });
-    assert.equal(r2.created, 0, "não deve contar nota que já existe");
+    expect(r2.created, "não deve contar nota que já existe").toBe(0);
   });
 
   test("dry-run não cria arquivos e não atualiza state", async () => {
@@ -145,9 +144,9 @@ describe("inboxFromTelegram — criação de notas", () => {
       env: ENV, statePath, inboxDir, dryRun: true,
       httpGet: mockGet({ ok: true, result: [makeUpdate(400, "dry")] }),
     });
-    assert.equal(r.created, 0);
-    assert.ok(!existsSync(inboxDir), "dry-run não deve criar diretório de inbox");
-    assert.ok(!existsSync(statePath), "dry-run não deve criar state");
+    expect(r.created).toBe(0);
+    expect(!existsSync(inboxDir), "dry-run não deve criar diretório de inbox").toBeTruthy();
+    expect(!existsSync(statePath), "dry-run não deve criar state").toBeTruthy();
   });
 
   test("processa channel_post além de message", async () => {
@@ -169,7 +168,7 @@ describe("inboxFromTelegram — criação de notas", () => {
         }],
       }),
     });
-    assert.equal(r.created, 1);
+    expect(r.created).toBe(1);
   });
 
   test("ignora updates sem message nem channel_post", async () => {
@@ -183,6 +182,6 @@ describe("inboxFromTelegram — criação de notas", () => {
         result: [{ update_id: 600, inline_query: { id: "q", from: {}, query: "" } }],
       }),
     });
-    assert.equal(r.created, 0);
+    expect(r.created).toBe(0);
   });
 });

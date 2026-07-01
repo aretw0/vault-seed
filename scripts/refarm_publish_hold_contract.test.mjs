@@ -1,5 +1,4 @@
-import test from "node:test";
-import assert from "node:assert/strict";
+import { test, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -25,11 +24,7 @@ test("pacotes publicáveis com dep file:@refarm.dev/* declaram release hold", ()
       ([name, spec]) => name.startsWith("@refarm.dev/") && String(spec).startsWith("file:"),
     );
     if (hasFileRefarm) {
-      assert.equal(
-        pkg.dgk?.releaseHold,
-        "refarm-unpublished",
-        `${p} carrega dep file:@refarm.dev/* — precisa de "dgk.releaseHold":"refarm-unpublished"`,
-      );
+      expect(pkg.dgk?.releaseHold, `${p} carrega dep file:@refarm.dev/* — precisa de "dgk.releaseHold":"refarm-unpublished"`).toBe("refarm-unpublished");
     }
   }
 });

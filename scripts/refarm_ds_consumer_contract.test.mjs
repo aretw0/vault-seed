@@ -1,5 +1,4 @@
-import test from "node:test";
-import assert from "node:assert/strict";
+import { test, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -12,7 +11,7 @@ function read(path) {
 
 function blockVars(css, selector) {
   const index = css.indexOf(selector);
-  assert.notEqual(index, -1, `missing selector: ${selector}`);
+  expect(index, `missing selector: ${selector}`).not.toBe(-1);
   const open = css.indexOf("{", index);
   const close = css.indexOf("}", open);
   const block = css.slice(open + 1, close);
@@ -25,10 +24,7 @@ function blockVars(css, selector) {
 
 test("Lab consumes the Refarm DS verde-jardim tarball for exported notebooks", () => {
   const pkg = JSON.parse(read("package.json"));
-  assert.equal(
-    pkg.devDependencies["@refarm.dev/ds"],
-    "file:vendor/refarm.dev-ds-0.1.0.tgz",
-  );
+  expect(pkg.devDependencies["@refarm.dev/ds"]).toBe("file:vendor/refarm.dev-ds-0.1.0.tgz");
 
   const dsCss = read("node_modules/@refarm.dev/ds/src/themes/verde-jardim.css");
   const exportNotebooks = read("scripts/export_notebooks.mjs");
@@ -37,17 +33,14 @@ test("Lab consumes the Refarm DS verde-jardim tarball for exported notebooks", (
   // ds went product-neutral: `data-ds-theme` is the canonical attribute, with
   // `data-refarm-theme` preserved as a :where() alias — so our `refarmTheme`
   // export still themes the exported notebooks without any consumer change.
-  assert.match(dsCss, /data-ds-theme="verde-jardim"/);
-  assert.match(dsCss, /\[data-refarm-theme="verde-jardim"\]\)\[data-mode="light"\]/);
-  assert.match(exportNotebooks, /REFARM_DS_VERDE_JARDIM_CSS/);
-  assert.match(exportNotebooks, /root\.dataset\.refarmTheme = "verde-jardim"/);
-  assert.match(exportNotebooks, /root\.dataset\.mode = resolved/);
+  expect(dsCss).toMatch(/data-ds-theme="verde-jardim"/);
+  expect(dsCss).toMatch(/\[data-refarm-theme="verde-jardim"\]\)\[data-mode="light"\]/);
+  expect(exportNotebooks).toMatch(/REFARM_DS_VERDE_JARDIM_CSS/);
+  expect(exportNotebooks).toMatch(/root\.dataset\.refarmTheme = "verde-jardim"/);
+  expect(exportNotebooks).toMatch(/root\.dataset\.mode = resolved/);
 
-  assert.match(marimoCss, /:root:not\(\[data-refarm-theme\]\)/);
-  assert.doesNotMatch(
-    marimoCss,
-    /:root,\s*:root\[data-vault-marimo-theme="light"\],\s*\.light,\s*\.light-theme\s*\{[\s\S]*--background:/,
-  );
+  expect(marimoCss).toMatch(/:root:not\(\[data-refarm-theme\]\)/);
+  expect(marimoCss).not.toMatch(/:root,\s*:root\[data-vault-marimo-theme="light"\],\s*\.light,\s*\.light-theme\s*\{[\s\S]*--background:/);
 });
 
 test("Lab fallback verde-jardim values stay aligned with the DS light and dark modes", () => {
@@ -90,7 +83,7 @@ test("Lab fallback verde-jardim values stay aligned with the DS light and dark m
     "input",
     "ring",
   ]) {
-    assert.equal(labLight[token], dsLight[token], `light ${token}`);
-    assert.equal(labDark[token], dsDark[token], `dark ${token}`);
+    expect(labLight[token], `light ${token}`).toBe(dsLight[token]);
+    expect(labDark[token], `dark ${token}`).toBe(dsDark[token]);
   }
 });

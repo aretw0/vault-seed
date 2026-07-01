@@ -1,5 +1,4 @@
-﻿import test from "node:test";
-import assert from "node:assert/strict";
+import { test, expect } from "vitest";
 import { mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
@@ -58,35 +57,35 @@ test("buildPublicationOutbox extracts only explicit publication candidates", () 
     if (savedSite !== undefined) process.env.ASTRO_SITE = savedSite;
   }
 
-  assert.equal(data.kind, "publication-outbox");
-  assert.equal(data.itemCount, 1);
-  assert.equal(data.policy.humanReviewRequired, true);
-  assert.deepEqual(data.items[0].channels, ["mastodon", "rss"]);
-  assert.equal(data.items[0].license, "CC-BY-4.0");
+  expect(data.kind).toBe("publication-outbox");
+  expect(data.itemCount).toBe(1);
+  expect(data.policy.humanReviewRequired).toBe(true);
+  expect(data.items[0].channels).toEqual(["mastodon", "rss"]);
+  expect(data.items[0].license).toBe("CC-BY-4.0");
   // description: author-crafted sharing hook — preferred over excerpt in publish scripts.
-  assert.equal(data.items[0].description, "Gancho de compartilhamento para todos os canais.");
-  assert.match(data.items[0].excerpt, /Resumo auditável/);
-  assert.ok(data.channels.some((channel) => channel.id === "site"));
+  expect(data.items[0].description).toBe("Gancho de compartilhamento para todos os canais.");
+  expect(data.items[0].excerpt).toMatch(/Resumo auditável/);
+  expect(data.channels.some((channel) => channel.id === "site")).toBeTruthy();
   // url is null when ASTRO_SITE is unset, CNAME absent, and GITHUB_REPOSITORY absent.
-  assert.equal(data.items[0].url, null);
+  expect(data.items[0].url).toBe(null);
   // tags extracted from frontmatter (absent here → empty array).
-  assert.deepEqual(data.items[0].tags, []);
+  expect(data.items[0].tags).toEqual([]);
 
   // Envelope superset (channel-policy-v1): mantém os campos atuais e é válido.
-  assert.equal(data.schema, "refarm.channel-delivery-envelope.v1");
-  assert.equal(data.producer, "vault-seed:dgk-outbox");
-  assert.equal(validateChannelDeliveryEnvelope(data).ok, true);
+  expect(data.schema).toBe("refarm.channel-delivery-envelope.v1");
+  expect(data.producer).toBe("vault-seed:dgk-outbox");
+  expect(validateChannelDeliveryEnvelope(data).ok).toBe(true);
 
   // Uma delivery por item×canal (o item declara mastodon + rss).
-  assert.equal(data.deliveries.length, 2);
+  expect(data.deliveries.length).toBe(2);
   const mastodon = data.deliveries.find((d) => d.channelId === "mastodon");
   const rss = data.deliveries.find((d) => d.channelId === "rss");
-  assert.equal(mastodon.id, `${data.items[0].id}::mastodon`);
-  assert.equal(mastodon.contentHash.value, data.items[0].sha256);
-  assert.ok(mastodon.idempotencyKey.length > 0);
+  expect(mastodon.id).toBe(`${data.items[0].id}::mastodon`);
+  expect(mastodon.contentHash.value).toBe(data.items[0].sha256);
+  expect(mastodon.idempotencyKey.length > 0).toBeTruthy();
   // mastodon = risco "médio" → review obrigatória; rss = "baixo" → não obrigatória.
-  assert.deepEqual(mastodon.review, { required: true, state: "pending" });
-  assert.deepEqual(rss.review, { required: false, state: "not-required" });
+  expect(mastodon.review).toEqual({ required: true, state: "pending" });
+  expect(rss.review).toEqual({ required: false, state: "not-required" });
 });
 
 test("buildPublicationOutbox degrades to the legacy outbox when channel-policy is absent", () => {
@@ -104,9 +103,9 @@ test("buildPublicationOutbox degrades to the legacy outbox when channel-policy i
     channelPolicy: null,
   });
   // Legado: campos atuais presentes, campos do envelope ausentes.
-  assert.equal(data.kind, "publication-outbox");
-  assert.equal(data.itemCount, 1);
-  assert.deepEqual(data.items[0].channels, ["rss"]);
-  assert.equal(data.schema, undefined);
-  assert.equal(data.deliveries, undefined);
+  expect(data.kind).toBe("publication-outbox");
+  expect(data.itemCount).toBe(1);
+  expect(data.items[0].channels).toEqual(["rss"]);
+  expect(data.schema).toBe(undefined);
+  expect(data.deliveries).toBe(undefined);
 });

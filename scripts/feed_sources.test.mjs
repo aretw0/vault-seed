@@ -1,5 +1,4 @@
-import assert from "node:assert/strict";
-import test from "node:test";
+import { test, expect } from "vitest";
 import { parseOpmlFeeds } from "./prepare_feed_sources.mjs";
 
 test("parseOpmlFeeds extracts nested RSS subscriptions with categories", () => {
@@ -10,10 +9,10 @@ test("parseOpmlFeeds extracts nested RSS subscriptions with categories", () => {
     </outline>
   </body></opml>`);
 
-  assert.deepEqual(parsed.groups, ["Tecnologia"]);
-  assert.equal(parsed.subscriptions.length, 1);
-  assert.equal(parsed.subscriptions[0].title, "Feed Exemplo");
-  assert.equal(parsed.subscriptions[0].xmlUrl, "https://example.com/feed.xml");
-  assert.equal(parsed.subscriptions[0].group, "Tecnologia");
-  assert.deepEqual(parsed.subscriptions[0].categories, ["Tecnologia", "web", "pesquisa"]);
+  expect(parsed.groups).toEqual(["Tecnologia"]);
+  expect(parsed.subscriptions.length).toBe(1);
+  expect(parsed.subscriptions[0].title).toBe("Feed Exemplo");
+  expect(parsed.subscriptions[0].xmlUrl).toBe("https://example.com/feed.xml");
+  expect(parsed.subscriptions[0].group).toBe("Tecnologia");
+  expect(parsed.subscriptions[0].categories).toEqual(["Tecnologia", "web", "pesquisa"]);
 });

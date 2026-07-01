@@ -1,27 +1,26 @@
-import { test } from 'node:test';
-import assert from 'node:assert/strict';
+import { test, expect } from "vitest";
 import { resolveCommand } from '../src/index.js';
 
 test('resolveCommand retorna o nome para comandos conhecidos', () => {
-  assert.equal(resolveCommand('validate'), 'validate');
-  assert.equal(resolveCommand('lint'), 'lint');
-  assert.equal(resolveCommand('setup'), 'setup');
-  assert.equal(resolveCommand('check'), 'check');
-  assert.equal(resolveCommand('lab'), 'lab');
-  assert.equal(resolveCommand('obsidian'), 'obsidian');
-  assert.equal(resolveCommand('note'), 'note');
-  assert.equal(resolveCommand('open'), null);
-  assert.equal(resolveCommand('publish'), 'publish');
-  assert.equal(resolveCommand('sow'), 'sow');
-  assert.equal(resolveCommand('etl'), 'etl');
-  assert.equal(resolveCommand('outbox'), 'outbox');
-  assert.equal(resolveCommand('inbox'), 'inbox');
-  assert.equal(resolveCommand('vscode'), 'vscode');
-  assert.equal(resolveCommand('release'), null);
+  expect(resolveCommand('validate')).toBe('validate');
+  expect(resolveCommand('lint')).toBe('lint');
+  expect(resolveCommand('setup')).toBe('setup');
+  expect(resolveCommand('check')).toBe('check');
+  expect(resolveCommand('lab')).toBe('lab');
+  expect(resolveCommand('obsidian')).toBe('obsidian');
+  expect(resolveCommand('note')).toBe('note');
+  expect(resolveCommand('open')).toBe(null);
+  expect(resolveCommand('publish')).toBe('publish');
+  expect(resolveCommand('sow')).toBe('sow');
+  expect(resolveCommand('etl')).toBe('etl');
+  expect(resolveCommand('outbox')).toBe('outbox');
+  expect(resolveCommand('inbox')).toBe('inbox');
+  expect(resolveCommand('vscode')).toBe('vscode');
+  expect(resolveCommand('release')).toBe(null);
 });
 
 test('resolveCommand retorna null para comandos desconhecidos', () => {
-  assert.equal(resolveCommand('unknown'), null);
-  assert.equal(resolveCommand(''), null);
-  assert.equal(resolveCommand(undefined), null);
+  expect(resolveCommand('unknown')).toBe(null);
+  expect(resolveCommand('')).toBe(null);
+  expect(resolveCommand(undefined)).toBe(null);
 });

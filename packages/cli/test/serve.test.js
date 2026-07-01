@@ -1,5 +1,4 @@
-import { test, describe, beforeEach, afterEach } from 'node:test';
-import assert from 'node:assert/strict';
+import { describe, test, beforeEach, afterEach, expect } from "vitest";
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -52,26 +51,26 @@ async function startServer(root, siloPath, opts = {}) {
 
 test('defaultSpawn captura stdout e marca ok em exit 0', async () => {
   const r = await defaultSpawn('node', ['-e', "process.stdout.write('hi')"], process.cwd());
-  assert.equal(r.ok, true);
-  assert.equal(r.output, 'hi');
+  expect(r.ok).toBe(true);
+  expect(r.output).toBe('hi');
 });
 
 test('defaultSpawn marca ok=false em exit != 0', async () => {
   const r = await defaultSpawn('node', ['-e', 'process.exit(2)'], process.cwd());
-  assert.equal(r.ok, false);
+  expect(r.ok).toBe(false);
 });
 
 // --- parsePort ---
 
 describe('parsePort', () => {
   test('retorna porta padrão 4322 quando --port não fornecido', () => {
-    assert.equal(parsePort([]), 4322);
-    assert.equal(parsePort(['--dry-run']), 4322);
+    expect(parsePort([])).toBe(4322);
+    expect(parsePort(['--dry-run'])).toBe(4322);
   });
 
   test('retorna porta personalizada de --port N', () => {
-    assert.equal(parsePort(['--port', '8080']), 8080);
-    assert.equal(parsePort(['--port', '5000']), 5000);
+    expect(parsePort(['--port', '8080'])).toBe(8080);
+    expect(parsePort(['--port', '5000'])).toBe(5000);
   });
 });
 
@@ -91,19 +90,19 @@ describe('GET /api/status', () => {
 
   test('retorna array de canais', async () => {
     const res = await fetch(`${server.address}/api/status`);
-    assert.equal(res.status, 200);
+    expect(res.status).toBe(200);
     const data = await res.json();
-    assert.ok(Array.isArray(data.channels), 'channels deve ser array');
-    assert.ok(data.channels.length > 0, 'deve ter ao menos um canal');
+    expect(Array.isArray(data.channels), 'channels deve ser array').toBeTruthy();
+    expect(data.channels.length > 0, 'deve ter ao menos um canal').toBeTruthy();
   });
 
   test('cada canal tem id, label e keys', async () => {
     const res = await fetch(`${server.address}/api/status`);
     const data = await res.json();
     for (const ch of data.channels) {
-      assert.ok(ch.id, 'canal deve ter id');
-      assert.ok(ch.label, 'canal deve ter label');
-      assert.ok(Array.isArray(ch.keys), 'canal deve ter keys array');
+      expect(ch.id, 'canal deve ter id').toBeTruthy();
+      expect(ch.label, 'canal deve ter label').toBeTruthy();
+      expect(Array.isArray(ch.keys), 'canal deve ter keys array').toBeTruthy();
     }
   });
 
@@ -111,9 +110,9 @@ describe('GET /api/status', () => {
     const res = await fetch(`${server.address}/api/status`);
     const data = await res.json();
     const telegram = data.channels.find((c) => c.id === 'telegram');
-    assert.ok(telegram, 'telegram deve estar listado');
+    expect(telegram, 'telegram deve estar listado').toBeTruthy();
     const tokenKey = telegram.keys.find((k) => k.key === 'TELEGRAM_BOT_TOKEN');
-    assert.ok(tokenKey.configured, 'TELEGRAM_BOT_TOKEN deve aparecer como configurado');
+    expect(tokenKey.configured, 'TELEGRAM_BOT_TOKEN deve aparecer como configurado').toBeTruthy();
   });
 });
 
@@ -131,9 +130,9 @@ describe('GET /api/outbox', () => {
 
   test('retorna items vazio quando arquivo não existe', async () => {
     const res = await fetch(`${server.address}/api/outbox`);
-    assert.equal(res.status, 200);
+    expect(res.status).toBe(200);
     const data = await res.json();
-    assert.deepEqual(data.items, []);
+    expect(data.items).toEqual([]);
   });
 
   test('retorna items do arquivo quando presente', async () => {
@@ -147,8 +146,8 @@ describe('GET /api/outbox', () => {
     );
     const res = await fetch(`${server.address}/api/outbox`);
     const data = await res.json();
-    assert.equal(data.items.length, 1);
-    assert.equal(data.items[0].id, 'nota-1');
+    expect(data.items.length).toBe(1);
+    expect(data.items[0].id).toBe('nota-1');
   });
 });
 
@@ -166,11 +165,11 @@ describe('GET /api/contacts', () => {
 
   test('retorna plataformas com contagem', async () => {
     const res = await fetch(`${server.address}/api/contacts`);
-    assert.equal(res.status, 200);
+    expect(res.status).toBe(200);
     const data = await res.json();
-    assert.ok(typeof data.platforms === 'object', 'deve ter platforms');
-    assert.ok('telegram' in data.platforms, 'telegram deve estar listado');
-    assert.equal(data.platforms.telegram.count, 0, 'vazio sem contatos salvos');
+    expect(typeof data.platforms === 'object', 'deve ter platforms').toBeTruthy();
+    expect('telegram' in data.platforms, 'telegram deve estar listado').toBeTruthy();
+    expect(data.platforms.telegram.count, 'vazio sem contatos salvos').toBe(0);
   });
 });
 
@@ -188,9 +187,9 @@ describe('GET /api/rate-limits', () => {
 
   test('retorna objeto (vazio se sem histórico)', async () => {
     const res = await fetch(`${server.address}/api/rate-limits`);
-    assert.equal(res.status, 200);
+    expect(res.status).toBe(200);
     const data = await res.json();
-    assert.ok(typeof data.limits === 'object', 'deve ter limits');
+    expect(typeof data.limits === 'object', 'deve ter limits').toBeTruthy();
   });
 });
 
@@ -208,10 +207,10 @@ describe('GET /', () => {
 
   test('retorna HTML com Content-Type text/html', async () => {
     const res = await fetch(`${server.address}/`);
-    assert.equal(res.status, 200);
-    assert.ok(res.headers.get('content-type')?.includes('text/html'));
+    expect(res.status).toBe(200);
+    expect(res.headers.get('content-type')?.includes('text/html')).toBeTruthy();
     const html = await res.text();
-    assert.ok(html.includes('dgk admin'), 'deve conter título da página');
+    expect(html.includes('dgk admin'), 'deve conter título da página').toBeTruthy();
   });
 });
 
@@ -229,27 +228,27 @@ describe('GET /api/services', () => {
 
   test('retorna definições dos canais registrados sem credentials', async () => {
     const res = await fetch(`${server.address}/api/services`);
-    assert.equal(res.status, 200);
+    expect(res.status).toBe(200);
     const data = await res.json();
-    assert.ok(typeof data.services === 'object');
-    assert.ok('telegram' in data.services, 'telegram deve estar listado');
-    assert.ok(!('mastodon' in data.services), 'mastodon não deve estar listado (ciclo incompleto)');
+    expect(typeof data.services === 'object').toBeTruthy();
+    expect('telegram' in data.services, 'telegram deve estar listado').toBeTruthy();
+    expect(!('mastodon' in data.services), 'mastodon não deve estar listado (ciclo incompleto)').toBeTruthy();
   });
 
   test('cada serviço tem label, hint e prompts', async () => {
     const res = await fetch(`${server.address}/api/services`);
     const data = await res.json();
     for (const [, svc] of Object.entries(data.services)) {
-      assert.ok(svc.label, 'deve ter label');
-      assert.ok(svc.hint, 'deve ter hint');
-      assert.ok(Array.isArray(svc.prompts), 'deve ter prompts array');
+      expect(svc.label, 'deve ter label').toBeTruthy();
+      expect(svc.hint, 'deve ter hint').toBeTruthy();
+      expect(Array.isArray(svc.prompts), 'deve ter prompts array').toBeTruthy();
     }
   });
 
   test('serviços não expõem tokens ou valores sensíveis', async () => {
     const res = await fetch(`${server.address}/api/services`);
     const raw = await res.text();
-    assert.ok(!raw.includes('"configured"'), 'services não deve ter campo configured');
+    expect(!raw.includes('"configured"'), 'services não deve ter campo configured').toBeTruthy();
   });
 });
 
@@ -277,14 +276,14 @@ describe('POST /api/sow', () => {
       headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
       body: JSON.stringify({ service: 'telegram', tokens: { TELEGRAM_BOT_TOKEN: 'tok-test', TELEGRAM_CHAT_ID: '-999' } }),
     });
-    assert.equal(res.status, 200);
+    expect(res.status).toBe(200);
     const data = await res.json();
-    assert.equal(data.ok, true);
+    expect(data.ok).toBe(true);
 
     // Verify persisted in silo
     const { readFileSync } = await import('node:fs');
     const silo = JSON.parse(readFileSync(siloPath, 'utf8'));
-    assert.equal(silo.tokens.TELEGRAM_BOT_TOKEN, 'tok-test');
+    expect(silo.tokens.TELEGRAM_BOT_TOKEN).toBe('tok-test');
   });
 
   test('retorna 400 para serviço fora do ciclo completo (mastodon)', async () => {
@@ -293,7 +292,7 @@ describe('POST /api/sow', () => {
       headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
       body: JSON.stringify({ service: 'mastodon', tokens: { MASTODON_TOKEN: 'tok' } }),
     });
-    assert.equal(res.status, 400);
+    expect(res.status).toBe(400);
   });
 
   test('retorna 400 para serviço desconhecido', async () => {
@@ -302,7 +301,7 @@ describe('POST /api/sow', () => {
       headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
       body: JSON.stringify({ service: 'plataforma-inexistente', tokens: { X: 'y' } }),
     });
-    assert.equal(res.status, 400);
+    expect(res.status).toBe(400);
   });
 
   test('retorna 400 quando body não tem tokens', async () => {
@@ -311,7 +310,7 @@ describe('POST /api/sow', () => {
       headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
       body: JSON.stringify({ service: 'telegram' }),
     });
-    assert.equal(res.status, 400);
+    expect(res.status).toBe(400);
   });
 
   test('não substitui tokens existentes não fornecidos (merge parcial)', async () => {
@@ -320,19 +319,19 @@ describe('POST /api/sow', () => {
       headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
       body: JSON.stringify({ service: 'telegram', tokens: { TELEGRAM_BOT_TOKEN: 'tok1', TELEGRAM_CHAT_ID: '-100' } }),
     });
-    assert.equal(res1.status, 200);
+    expect(res1.status).toBe(200);
 
     const res2 = await fetch(`${server.address}/api/sow`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
       body: JSON.stringify({ service: 'telegram', tokens: { TELEGRAM_BOT_TOKEN: 'tok2' } }),
     });
-    assert.equal(res2.status, 200);
+    expect(res2.status).toBe(200);
 
     const { readFileSync } = await import('node:fs');
     const silo = JSON.parse(readFileSync(siloPath, 'utf8'));
-    assert.equal(silo.tokens.TELEGRAM_BOT_TOKEN, 'tok2', 'token atualizado');
-    assert.equal(silo.tokens.TELEGRAM_CHAT_ID, '-100', 'chat_id preservado');
+    expect(silo.tokens.TELEGRAM_BOT_TOKEN, 'token atualizado').toBe('tok2');
+    expect(silo.tokens.TELEGRAM_CHAT_ID, 'chat_id preservado').toBe('-100');
   });
 });
 
@@ -350,18 +349,18 @@ describe('DELETE /api/sow/:service', () => {
 
   test('remove credenciais do serviço', async () => {
     const res = await fetch(`${server.address}/api/sow/telegram`, { method: 'DELETE', headers: { 'X-Dgk-Admin': '1' } });
-    assert.equal(res.status, 200);
+    expect(res.status).toBe(200);
     const data = await res.json();
-    assert.equal(data.ok, true);
+    expect(data.ok).toBe(true);
 
     const { readFileSync } = await import('node:fs');
     const silo = JSON.parse(readFileSync(siloPath, 'utf8'));
-    assert.ok(!silo.tokens?.TELEGRAM_BOT_TOKEN, 'token deve ter sido removido');
+    expect(!silo.tokens?.TELEGRAM_BOT_TOKEN, 'token deve ter sido removido').toBeTruthy();
   });
 
   test('retorna 404 para serviço desconhecido (fora do ciclo completo)', async () => {
     const res = await fetch(`${server.address}/api/sow/mastodon`, { method: 'DELETE', headers: { 'X-Dgk-Admin': '1' } });
-    assert.equal(res.status, 404);
+    expect(res.status).toBe(404);
   });
 });
 
@@ -391,13 +390,13 @@ describe('POST /api/sow/telegram/chats', () => {
         headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
         body: JSON.stringify({ token: 'fake-bot-token' }),
       });
-      assert.equal(res.status, 200);
+      expect(res.status).toBe(200);
       const data = await res.json();
-      assert.ok(Array.isArray(data.chats));
-      assert.equal(data.chats.length, 2);
+      expect(Array.isArray(data.chats)).toBeTruthy();
+      expect(data.chats.length).toBe(2);
       const canal = data.chats.find((c) => c.type === 'channel');
-      assert.ok(canal, 'deve ter o canal');
-      assert.equal(canal.handle, '@meucanal');
+      expect(canal, 'deve ter o canal').toBeTruthy();
+      expect(canal.handle).toBe('@meucanal');
     } finally {
       await server.close();
     }
@@ -412,9 +411,9 @@ describe('POST /api/sow/telegram/chats', () => {
         headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
         body: JSON.stringify({ token: 'bad-token' }),
       });
-      assert.equal(res.status, 200);
+      expect(res.status).toBe(200);
       const data = await res.json();
-      assert.deepEqual(data.chats, []);
+      expect(data.chats).toEqual([]);
     } finally {
       await server.close();
     }
@@ -428,7 +427,7 @@ describe('POST /api/sow/telegram/chats', () => {
         headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
         body: JSON.stringify({}),
       });
-      assert.equal(res.status, 400);
+      expect(res.status).toBe(400);
     } finally {
       await server.close();
     }
@@ -449,9 +448,9 @@ describe('rota desconhecida', () => {
 
   test('retorna 404 com JSON de erro', async () => {
     const res = await fetch(`${server.address}/nao-existe`);
-    assert.equal(res.status, 404);
+    expect(res.status).toBe(404);
     const data = await res.json();
-    assert.ok(data.error);
+    expect(data.error).toBeTruthy();
   });
 });
 
@@ -476,9 +475,9 @@ describe('Host header validation (DNS rebinding protection)', () => {
       method: 'GET',
       headers: { host: 'evil.example.com' },
     });
-    assert.equal(r.status, 403);
+    expect(r.status).toBe(403);
     const data = JSON.parse(r.body);
-    assert.ok(data.error);
+    expect(data.error).toBeTruthy();
   });
 
   test('aceita Host 127.0.0.1:<port>', async () => {
@@ -488,7 +487,7 @@ describe('Host header validation (DNS rebinding protection)', () => {
       method: 'GET',
       headers: { host: `127.0.0.1:${url.port}` },
     });
-    assert.equal(r.status, 200);
+    expect(r.status).toBe(200);
   });
 
   test('aceita Host localhost:<port>', async () => {
@@ -498,7 +497,7 @@ describe('Host header validation (DNS rebinding protection)', () => {
       method: 'GET',
       headers: { host: `localhost:${url.port}` },
     });
-    assert.equal(r.status, 200);
+    expect(r.status).toBe(200);
   });
 });
 
@@ -520,9 +519,9 @@ describe('CSRF header validation', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ service: 'mastodon', tokens: { MASTODON_TOKEN: 'x' } }),
     });
-    assert.equal(res.status, 403);
+    expect(res.status).toBe(403);
     const data = await res.json();
-    assert.ok(data.error);
+    expect(data.error).toBeTruthy();
   });
 
   test('DELETE sem X-Dgk-Admin retorna 403', async () => {
@@ -530,9 +529,9 @@ describe('CSRF header validation', () => {
     const s = await startServer(tmp, siloWithToken);
     try {
       const res = await fetch(`${s.address}/api/sow/mastodon`, { method: 'DELETE' });
-      assert.equal(res.status, 403);
+      expect(res.status).toBe(403);
       const data = await res.json();
-      assert.ok(data.error);
+      expect(data.error).toBeTruthy();
     } finally {
       await s.close();
     }
@@ -540,7 +539,7 @@ describe('CSRF header validation', () => {
 
   test('GET não requer X-Dgk-Admin', async () => {
     const res = await fetch(`${server.address}/api/status`);
-    assert.equal(res.status, 200);
+    expect(res.status).toBe(200);
   });
 });
 
@@ -564,9 +563,9 @@ describe('POST /api/etl', () => {
       method: 'POST',
       headers: { 'X-Dgk-Admin': '1' },
     });
-    assert.equal(res.status, 200);
+    expect(res.status).toBe(200);
     const data = await res.json();
-    assert.equal(data.ok, true);
+    expect(data.ok).toBe(true);
   });
 
   test('retorna 500 e ok=false quando um script falha', async () => {
@@ -576,16 +575,16 @@ describe('POST /api/etl', () => {
         method: 'POST',
         headers: { 'X-Dgk-Admin': '1' },
       });
-      assert.equal(res.status, 500);
+      expect(res.status).toBe(500);
       const data = await res.json();
-      assert.equal(data.ok, false);
-      assert.ok(data.error);
+      expect(data.ok).toBe(false);
+      expect(data.error).toBeTruthy();
     } finally { await s.close(); }
   });
 
   test('requer X-Dgk-Admin', async () => {
     const res = await fetch(`${server.address}/api/etl`, { method: 'POST' });
-    assert.equal(res.status, 403);
+    expect(res.status).toBe(403);
   });
 });
 
@@ -604,9 +603,9 @@ describe('POST /api/outbox', () => {
       headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
       body: JSON.stringify({ channel: 'telegram' }),
     });
-    assert.equal(res.status, 200);
+    expect(res.status).toBe(200);
     const data = await res.json();
-    assert.equal(data.ok, true);
+    expect(data.ok).toBe(true);
   });
 
   test('retorna 400 para canal desconhecido', async () => {
@@ -615,9 +614,9 @@ describe('POST /api/outbox', () => {
       headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
       body: JSON.stringify({ channel: 'plataforma-inexistente' }),
     });
-    assert.equal(res.status, 400);
+    expect(res.status).toBe(400);
     const data = await res.json();
-    assert.ok(data.error);
+    expect(data.error).toBeTruthy();
   });
 });
 
@@ -632,9 +631,9 @@ describe('GET /api/inbox', () => {
 
   test('retorna lista vazia quando 00 - Entrada/ não existe', async () => {
     const res = await fetch(`${server.address}/api/inbox`);
-    assert.equal(res.status, 200);
+    expect(res.status).toBe(200);
     const data = await res.json();
-    assert.deepEqual(data.items, []);
+    expect(data.items).toEqual([]);
   });
 
   test('retorna notas do inbox com metadados básicos', async () => {
@@ -650,12 +649,12 @@ describe('GET /api/inbox', () => {
     ].join('\n'));
 
     const res = await fetch(`${server.address}/api/inbox`);
-    assert.equal(res.status, 200);
+    expect(res.status).toBe(200);
     const data = await res.json();
-    assert.equal(data.items.length, 1);
-    assert.equal(data.items[0].title, 'Nota de teste');
-    assert.equal(data.items[0].status, 'draft');
-    assert.equal(data.items[0].source, 'telegram');
+    expect(data.items.length).toBe(1);
+    expect(data.items[0].title).toBe('Nota de teste');
+    expect(data.items[0].status).toBe('draft');
+    expect(data.items[0].source).toBe('telegram');
   });
 });
 
@@ -667,12 +666,12 @@ test("GET / is server-rendered with the ds shell and the outbox table", async ()
   const server = await startServer(tmp2, siloPath2, {});
   try {
     const html = await fetch(`${server.address}/`).then((r) => r.text());
-    assert.match(html, /data-ds-theme="verde-jardim"/);     // ds shell
-    assert.match(html, /\/_ds\/themes\/verde-jardim\.css/);  // ds css linked by documentHtml
-    assert.match(html, /type="importmap"/);                   // import map present
-    assert.match(html, /ds-table/);                           // outbox rendered server-side
-    assert.match(html, /Nota A/);                             // the item, in the initial HTML
-    assert.doesNotMatch(html, /<div id="outbox"><\/div>/);   // not an empty client placeholder
+    expect(html).toMatch(/data-ds-theme="verde-jardim"/);     // ds shell
+    expect(html).toMatch(/\/_ds\/themes\/verde-jardim\.css/);  // ds css linked by documentHtml
+    expect(html).toMatch(/type="importmap"/);                   // import map present
+    expect(html).toMatch(/ds-table/);                           // outbox rendered server-side
+    expect(html).toMatch(/Nota A/);                             // the item, in the initial HTML
+    expect(html).not.toMatch(/<div id="outbox"><\/div>/);   // not an empty client placeholder
   } finally {
     await server.close();
     rmSync(tmp2, { recursive: true });
@@ -692,15 +691,15 @@ describe('GET /_hs/render.js and /_hs/admin_views.js', () => {
     try {
       const base = server.address;
       const r1 = await fetch(`${base}/_hs/render.js`);
-      assert.equal(r1.status, 200);
-      assert.match(r1.headers.get("content-type") || "", /javascript/);
-      assert.match(await r1.text(), /export function cardHtml/);
+      expect(r1.status).toBe(200);
+      expect(r1.headers.get("content-type") || "").toMatch(/javascript/);
+      expect(await r1.text()).toMatch(/export function cardHtml/);
 
       const r2 = await fetch(`${base}/_hs/admin_views.js`);
-      assert.equal(r2.status, 200);
+      expect(r2.status).toBe(200);
       const body = await r2.text();
-      assert.match(body, /export function channelsHtml/);
-      assert.match(body, /@refarm\.dev\/ds\/html/); // bare specifier (import map resolves in browser)
+      expect(body).toMatch(/export function channelsHtml/);
+      expect(body).toMatch(/@refarm\.dev\/ds\/html/); // bare specifier (import map resolves in browser)
     } finally {
       await server.close();
     }
@@ -722,10 +721,10 @@ describe('POST /api/inbox/fetch', () => {
       headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
       body: JSON.stringify({ channel: 'telegram' }),
     });
-    assert.equal(res.status, 200);
+    expect(res.status).toBe(200);
     const data = await res.json();
-    assert.equal(data.ok, true);
-    assert.ok(data.output);
+    expect(data.ok).toBe(true);
+    expect(data.output).toBeTruthy();
   });
 
   test('retorna 400 para canal desconhecido', async () => {
@@ -734,7 +733,7 @@ describe('POST /api/inbox/fetch', () => {
       headers: { 'Content-Type': 'application/json', 'X-Dgk-Admin': '1' },
       body: JSON.stringify({ channel: 'whatsapp' }),
     });
-    assert.equal(res.status, 400);
+    expect(res.status).toBe(400);
   });
 
   test('requer X-Dgk-Admin', async () => {
@@ -742,6 +741,6 @@ describe('POST /api/inbox/fetch', () => {
       method: 'POST',
       body: JSON.stringify({ channel: 'telegram' }),
     });
-    assert.equal(res.status, 403);
+    expect(res.status).toBe(403);
   });
 });

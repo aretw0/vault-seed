@@ -1,7 +1,6 @@
-import assert from "node:assert/strict";
+import { test, expect } from "vitest";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -83,8 +82,8 @@ test("lint: detects two sequential top-level mo.md() calls in same cell", () => 
 	].join("\n");
 
 	const issues = cellsWithMultipleTopLevelMoCalls(src);
-	assert.equal(issues.length, 1, "one bad cell");
-	assert.equal(issues[0].calls.length, 2);
+	expect(issues.length, "one bad cell").toBe(1);
+	expect(issues[0].calls.length).toBe(2);
 });
 
 test("lint: mo.vstack wrapping does not trigger false positive", () => {
@@ -101,11 +100,7 @@ test("lint: mo.vstack wrapping does not trigger false positive", () => {
 		"    return",
 	].join("\n");
 
-	assert.equal(
-		cellsWithMultipleTopLevelMoCalls(src).length,
-		0,
-		"mo.vstack body is at 8-space indent — no false positive",
-	);
+	expect(cellsWithMultipleTopLevelMoCalls(src).length, "mo.vstack body is at 8-space indent — no false positive").toBe(0);
 });
 
 test("lint: single mo.md() call is not flagged", () => {
@@ -119,7 +114,7 @@ test("lint: single mo.md() call is not flagged", () => {
 		"    return",
 	].join("\n");
 
-	assert.equal(cellsWithMultipleTopLevelMoCalls(src).length, 0);
+	expect(cellsWithMultipleTopLevelMoCalls(src).length).toBe(0);
 });
 
 test("lint: mo.ui.table after heading in same cell is detected", () => {
@@ -135,7 +130,7 @@ test("lint: mo.ui.table after heading in same cell is detected", () => {
 	].join("\n");
 
 	const issues = cellsWithMultipleTopLevelMoCalls(src);
-	assert.equal(issues.length, 1);
+	expect(issues.length).toBe(1);
 });
 
 test("lint: mo.output.append() is excluded (imperative multi-output API)", () => {
@@ -150,11 +145,7 @@ test("lint: mo.output.append() is excluded (imperative multi-output API)", () =>
 		"    return",
 	].join("\n");
 
-	assert.equal(
-		cellsWithMultipleTopLevelMoCalls(src).length,
-		0,
-		"mo.output.append is the valid imperative API",
-	);
+	expect(cellsWithMultipleTopLevelMoCalls(src).length, "mo.output.append is the valid imperative API").toBe(0);
 });
 
 test("lint: mo.stop() before another mo.*() is not flagged (early-exit gate)", () => {
@@ -169,11 +160,7 @@ test("lint: mo.stop() before another mo.*() is not flagged (early-exit gate)", (
 		"    return",
 	].join("\n");
 
-	assert.equal(
-		cellsWithMultipleTopLevelMoCalls(src).length,
-		0,
-		"mo.stop() is an early-exit gate, not a display call",
-	);
+	expect(cellsWithMultipleTopLevelMoCalls(src).length, "mo.stop() is an early-exit gate, not a display call").toBe(0);
 });
 
 // ── runtime key contract ──────────────────────────────────────────────────────
@@ -213,11 +200,7 @@ test("no notebook references an undefined lab_runtime_context() key", () => {
 			}
 		}
 	}
-	assert.equal(
-		violations.length,
-		0,
-		`Notebooks referenciam chaves indefinidas do runtime:\n${violations.join("\n")}`,
-	);
+	expect(violations.length, `Notebooks referenciam chaves indefinidas do runtime:\n${violations.join("\n")}`).toBe(0);
 });
 
 // ── contract tests against actual notebooks ───────────────────────────────────
@@ -234,10 +217,7 @@ for (const relPath of NOTEBOOKS) {
 		}
 		const source = readFileSync(absPath, "utf8");
 		const issues = cellsWithMultipleTopLevelMoCalls(source);
-		assert.equal(
-			issues.length,
-			0,
-			`${name} has cells with multiple unguarded top-level mo.*() calls ` +
+		expect(issues.length, `${name} has cells with multiple unguarded top-level mo.*() calls ` +
 				`(only the last would be shown in the browser):\n` +
 				issues
 					.map(
@@ -245,7 +225,6 @@ for (const relPath of NOTEBOOKS) {
 							`  cell ${cellIndex}:\n` +
 							calls.map((l) => `    ${l.trim()}`).join("\n"),
 					)
-					.join("\n"),
-		);
+					.join("\n")).toBe(0);
 	});
 }

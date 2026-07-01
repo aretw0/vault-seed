@@ -1,5 +1,4 @@
-import { test, describe, beforeEach, afterEach } from "node:test";
-import assert from "node:assert/strict";
+import { describe, test, beforeEach, afterEach, expect } from "vitest";
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
@@ -53,12 +52,12 @@ function mockPost(responses) {
 describe("publishToTelegram — credenciais ausentes", () => {
   test("retorna {sent:0} quando token ausente", async () => {
     const r = await publishToTelegram({ env: {} });
-    assert.deepEqual(r, { sent: 0, skipped: 0 });
+    expect(r).toEqual({ sent: 0, skipped: 0 });
   });
 
   test("retorna {sent:0} quando chat_id ausente", async () => {
     const r = await publishToTelegram({ env: { TELEGRAM_BOT_TOKEN: "tok" } });
-    assert.deepEqual(r, { sent: 0, skipped: 0 });
+    expect(r).toEqual({ sent: 0, skipped: 0 });
   });
 });
 
@@ -73,7 +72,7 @@ describe("publishToTelegram — outbox", () => {
       outboxPath: join(dir, "missing.json"),
       statePath: join(dir, "state.json"),
     });
-    assert.deepEqual(r, { sent: 0, skipped: 0 });
+    expect(r).toEqual({ sent: 0, skipped: 0 });
   });
 
   test("retorna {sent:0} quando outbox não tem itens com channel=telegram", async () => {
@@ -86,7 +85,7 @@ describe("publishToTelegram — outbox", () => {
       outboxPath,
       statePath: join(dir, "state.json"),
     });
-    assert.deepEqual(r, { sent: 0, skipped: 0 });
+    expect(r).toEqual({ sent: 0, skipped: 0 });
   });
 
   test("envia nota com channel=telegram e retorna {sent:1}", async () => {
@@ -101,13 +100,13 @@ describe("publishToTelegram — outbox", () => {
       statePath,
       httpPost: mockPost([{ ok: true, result: { message_id: 1 } }]),
     });
-    assert.equal(r.sent, 1);
-    assert.equal(r.skipped, 0);
+    expect(r.sent).toBe(1);
+    expect(r.skipped).toBe(0);
     const saved = JSON.parse(readFileSync(statePath, "utf8"));
     // Contract path: state is keyed by the delivery idempotencyKey, not sha(path).
-    assert.ok(Object.keys(saved.sent).includes("channel-delivery:telegram:telegram:default:sha256:hash-0"));
+    expect(Object.keys(saved.sent).includes("channel-delivery:telegram:telegram:default:sha256:hash-0")).toBeTruthy();
     // Receipt recorded in the channel-policy shape.
-    assert.ok(saved.receipts.some((r) => r.itemId === "item-0::telegram" && r.status === "sent"));
+    expect(saved.receipts.some((r) => r.itemId === "item-0::telegram" && r.status === "sent")).toBeTruthy();
   });
 
   test("não reenvia nota já registrada no state", async () => {
@@ -121,11 +120,11 @@ describe("publishToTelegram — outbox", () => {
 
     // primeira vez — envia
     await publishToTelegram({ env: ENV, outboxPath, statePath, httpPost });
-    assert.equal(postCalls.length, 1);
+    expect(postCalls.length).toBe(1);
 
     // segunda vez — não envia (já no state)
     await publishToTelegram({ env: ENV, outboxPath, statePath, httpPost });
-    assert.equal(postCalls.length, 1, "não deve reenviar nota já enviada");
+    expect(postCalls.length, "não deve reenviar nota já enviada").toBe(1);
   });
 
   test("dry-run não chama httpPost e não atualiza state", async () => {
@@ -140,8 +139,8 @@ describe("publishToTelegram — outbox", () => {
     const r = await publishToTelegram({
       env: ENV, outboxPath, statePath, httpPost, dryRun: true,
     });
-    assert.equal(postCalls.length, 0, "dry-run não deve chamar httpPost");
-    assert.equal(r.sent, 1, "dry-run ainda conta as notas processadas");
+    expect(postCalls.length, "dry-run não deve chamar httpPost").toBe(0);
+    expect(r.sent, "dry-run ainda conta as notas processadas").toBe(1);
   });
 
   test("erro no httpPost não conta como enviado", async () => {
@@ -156,7 +155,7 @@ describe("publishToTelegram — outbox", () => {
       statePath,
       httpPost: mockPost([{ ok: false, description: "Bad Request" }]),
     });
-    assert.equal(r.sent, 0, "erro da API não deve contar como enviado");
+    expect(r.sent, "erro da API não deve contar como enviado").toBe(0);
   });
 
   test("limit restringe o número de envios e conta skipped", async () => {
@@ -172,8 +171,8 @@ describe("publishToTelegram — outbox", () => {
       httpPost: mockPost([{ ok: true }, { ok: true }]),
       limit: 2,
     });
-    assert.equal(r.sent, 2);
-    assert.equal(r.skipped, 1);
+    expect(r.sent).toBe(2);
+    expect(r.skipped).toBe(1);
   });
 
   test("fallback legado: outbox sem deliveries ainda envia por items+channels", async () => {
@@ -188,10 +187,10 @@ describe("publishToTelegram — outbox", () => {
       env: ENV, outboxPath, statePath,
       httpPost: mockPost([{ ok: true, result: { message_id: 7 } }]),
     });
-    assert.equal(r.sent, 1);
-    assert.equal(r.skipped, 0);
+    expect(r.sent).toBe(1);
+    expect(r.skipped).toBe(0);
     const savedLegacy = JSON.parse(readFileSync(statePath, "utf8"));
     // Legacy path: receipt itemId is the note path, status sent.
-    assert.ok(savedLegacy.receipts.some((r) => r.itemId === "leg.md" && r.status === "sent"));
+    expect(savedLegacy.receipts.some((r) => r.itemId === "leg.md" && r.status === "sent")).toBeTruthy();
   });
 });

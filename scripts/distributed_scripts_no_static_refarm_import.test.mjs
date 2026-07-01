@@ -1,5 +1,4 @@
-import test from "node:test";
-import assert from "node:assert/strict";
+import { test, expect } from "vitest";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -17,7 +16,7 @@ test("template-distributed scripts must not statically import @refarm.dev/*", ()
   const scriptFiles = readdirSync(SCRIPTS_DIR).filter(
     (name) => /\.(mjs|cjs|js)$/.test(name) && !/\.test\./.test(name),
   );
-  assert.ok(scriptFiles.length > 0, "expected scripts/ to contain distributable scripts");
+  expect(scriptFiles.length > 0, "expected scripts/ to contain distributable scripts").toBeTruthy();
 
   const offenders = [];
   for (const name of scriptFiles) {
@@ -26,9 +25,5 @@ test("template-distributed scripts must not statically import @refarm.dev/*", ()
       offenders.push(`scripts/${name}`);
     }
   }
-  assert.deepEqual(
-    offenders,
-    [],
-    `distributed scripts statically import @refarm.dev/*: ${offenders.join(", ")} — use optional dynamic import()`,
-  );
+  expect(offenders, `distributed scripts statically import @refarm.dev/*: ${offenders.join(", ")} — use optional dynamic import()`).toEqual([]);
 });

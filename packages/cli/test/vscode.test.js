@@ -1,5 +1,5 @@
-import { test } from 'node:test';
-import assert from 'node:assert/strict';
+import { test, expect } from "vitest";
+import assert from "node:assert/strict";
 import { vscode, detectVSCode } from '../src/commands/vscode.js';
 
 function mockLauncher(found, opened = []) {
@@ -10,14 +10,14 @@ function mockLauncher(found, opened = []) {
 }
 
 test('detectVSCode usa runProcessHandoffSync injetável e lê exitCode', () => {
-  assert.equal(detectVSCode(() => ({ exitCode: 0 })), true);
-  assert.equal(detectVSCode(() => ({ exitCode: 1 })), false);
+  expect(detectVSCode(() => ({ exitCode: 0 }))).toBe(true);
+  expect(detectVSCode(() => ({ exitCode: 1 }))).toBe(false);
 });
 
 test('vscode abre quando code CLI está disponível', async () => {
   const opened = [];
   await vscode([], undefined, mockLauncher(true, opened));
-  assert.equal(opened.length, 1);
+  expect(opened.length).toBe(1);
 });
 
 test('vscode falha quando code CLI não está instalado', async () => {
@@ -25,11 +25,8 @@ test('vscode falha quando code CLI não está instalado', async () => {
   let exitCode;
   process.exit = (code) => { exitCode = code; throw new Error(`exit:${code}`); };
   try {
-    await assert.rejects(
-      () => vscode([], undefined, mockLauncher(false)),
-      (err) => { assert.ok(err.message.startsWith('exit:')); return true; },
-    );
-    assert.equal(exitCode, 1);
+    await (async () => { let __refarmDidThrow = false; let __refarmThrown; try { await (() => vscode([], undefined, mockLauncher(false)))(); } catch (error) { __refarmDidThrow = true; __refarmThrown = error; } expect(__refarmDidThrow).toBe(true); expect(((err) => { assert.ok(err.message.startsWith('exit:')); return true; })(__refarmThrown)).toBeTruthy(); })();
+    expect(exitCode).toBe(1);
   } finally {
     process.exit = origExit;
   }
@@ -45,6 +42,6 @@ test('vscode com --help imprime ajuda sem tentar abrir', async () => {
   } finally {
     console.log = origLog;
   }
-  assert.equal(opened.length, 0);
-  assert.ok(output.includes('dgk vscode'));
+  expect(opened.length).toBe(0);
+  expect(output.includes('dgk vscode')).toBeTruthy();
 });
