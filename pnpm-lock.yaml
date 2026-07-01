@@ -6,6 +6,9 @@ settings:
 
 overrides:
   '@refarm.dev/source-contract-v1': file:vendor/refarm.dev-source-contract-v1-0.1.0.tgz
+  '@refarm.dev/identity-contract-v1': file:vendor/refarm.dev-identity-contract-v1-0.1.0.tgz
+  '@refarm.dev/storage-contract-v1': file:vendor/refarm.dev-storage-contract-v1-0.1.0.tgz
+  '@refarm.dev/heartwood': file:vendor/refarm.dev-heartwood-0.1.0.tgz
 
 importers:
 
@@ -17,15 +20,24 @@ importers:
       '@refarm.dev/channel-policy-v1':
         specifier: file:vendor/refarm.dev-channel-policy-v1-0.1.0.tgz
         version: file:vendor/refarm.dev-channel-policy-v1-0.1.0.tgz
+      '@refarm.dev/credentials-contract-v1':
+        specifier: file:vendor/refarm.dev-credentials-contract-v1-0.1.0.tgz
+        version: file:vendor/refarm.dev-credentials-contract-v1-0.1.0.tgz
       '@refarm.dev/enrichment-contract-v1':
         specifier: file:vendor/refarm.dev-enrichment-contract-v1-0.1.0.tgz
         version: file:vendor/refarm.dev-enrichment-contract-v1-0.1.0.tgz
+      '@refarm.dev/identity-heartwood':
+        specifier: file:vendor/refarm.dev-identity-heartwood-0.1.0.tgz
+        version: file:vendor/refarm.dev-identity-heartwood-0.1.0.tgz
       '@refarm.dev/records-contract-v1':
         specifier: file:vendor/refarm.dev-records-contract-v1-0.1.0.tgz
         version: file:vendor/refarm.dev-records-contract-v1-0.1.0.tgz(yaml@2.9.0)
       '@refarm.dev/source-web':
         specifier: file:vendor/refarm.dev-source-web-0.1.0.tgz
         version: file:vendor/refarm.dev-source-web-0.1.0.tgz
+      '@refarm.dev/storage-memory':
+        specifier: file:vendor/refarm.dev-storage-memory-0.1.0.tgz
+        version: file:vendor/refarm.dev-storage-memory-0.1.0.tgz
     devDependencies:
       '@aretw0/dgk-channels':
         specifier: workspace:*
@@ -188,6 +200,9 @@ packages:
   '@babel/types@7.29.7':
     resolution: {integrity: sha512-4zBIxpPzowiZpusoFkyGVwakdRJUyuH5PxQ/PrqghfdFWWasvnCdPfQXHrenDai+gyLARulZjZowCOj6fjT4pA==}
     engines: {node: '>=6.9.0'}
+
+  '@bytecodealliance/preview2-shim@0.17.9':
+    resolution: {integrity: sha512-i0R3eQBe6PA/o/1EFE3Owe4In2rcccb6QxnjpntM/lPe3/duJ0bRQTVZM2Ufpo99X4eofGeltQUkape1C91FFA==}
 
   '@capsizecss/unpack@4.0.0':
     resolution: {integrity: sha512-VERIM64vtTP1C4mxQ5thVT9fK0apjPFobqybMtA1UdUujWka24ERHbRHFGmpbbhp73MhV+KSsHQH9C6uOTdEQA==}
@@ -667,12 +682,28 @@ packages:
     resolution: {integrity: sha512-DQ1fsTPBYZAf6ewBcmuwF7WVweM0O5qU76g0KLodzOIdKswgveJYUBJy/TJHCxyJrtkTDHwIaRFmvYDP6y08RQ==, tarball: file:vendor/refarm.dev-channel-policy-v1-0.1.0.tgz}
     version: 0.1.0
 
+  '@refarm.dev/credentials-contract-v1@file:vendor/refarm.dev-credentials-contract-v1-0.1.0.tgz':
+    resolution: {integrity: sha512-CguQE9yXlpJH8sbkkhu0OyxaHYmcVQfbEnPE+sNAotKQVBbpfQGA35TUCAnzRgE/1b8An5qvHAjoQXS+1LT67A==, tarball: file:vendor/refarm.dev-credentials-contract-v1-0.1.0.tgz}
+    version: 0.1.0
+
   '@refarm.dev/ds@file:vendor/refarm.dev-ds-0.1.0.tgz':
     resolution: {integrity: sha512-YpVPD0Tr76fOH7qFcfdMthxW3EcsEOd6ON5FIPtWPnPqNONg3gw6xtntSUojiA92W6hB1EegZlA5w141YS6ZFA==, tarball: file:vendor/refarm.dev-ds-0.1.0.tgz}
     version: 0.1.0
 
   '@refarm.dev/enrichment-contract-v1@file:vendor/refarm.dev-enrichment-contract-v1-0.1.0.tgz':
     resolution: {integrity: sha512-Vgl61bqbg79TZAlB3mEarwpr7381GCbqSB5ux/OkhTwv61qWcC+bOfJbzr6tIRLb/FKWD54J64SuszaqFOcZUQ==, tarball: file:vendor/refarm.dev-enrichment-contract-v1-0.1.0.tgz}
+    version: 0.1.0
+
+  '@refarm.dev/heartwood@file:vendor/refarm.dev-heartwood-0.1.0.tgz':
+    resolution: {integrity: sha512-UJSambz5uOu/lVCUfJCaFi2TCiEdoeh6xICrjstD+DPwewdBr9g/JlEsGdOZZEoafDDew+S6tjeN+rxFzSpkMQ==, tarball: file:vendor/refarm.dev-heartwood-0.1.0.tgz}
+    version: 0.1.0
+
+  '@refarm.dev/identity-contract-v1@file:vendor/refarm.dev-identity-contract-v1-0.1.0.tgz':
+    resolution: {integrity: sha512-kZuaoc+KVQFkBE1rshvCGDt30GAFvSomWFNxN0ILuHztDusH2fSu6xDXHToe14PpBm7u6n8J3XLX2Qv0lsdJeQ==, tarball: file:vendor/refarm.dev-identity-contract-v1-0.1.0.tgz}
+    version: 0.1.0
+
+  '@refarm.dev/identity-heartwood@file:vendor/refarm.dev-identity-heartwood-0.1.0.tgz':
+    resolution: {integrity: sha512-5bRvd5/1BmI3QYNDqLAl6zw/gkR4zkHqOAxeOvNQRCpZiCLX8sgRpvD79cBqoR0pKD8W4esy9M+N9zJf4GF7Dg==, tarball: file:vendor/refarm.dev-identity-heartwood-0.1.0.tgz}
     version: 0.1.0
 
   '@refarm.dev/process-handoff@file:vendor/refarm.dev-process-handoff-0.1.0.tgz':
@@ -694,6 +725,14 @@ packages:
 
   '@refarm.dev/source-web@file:vendor/refarm.dev-source-web-0.1.0.tgz':
     resolution: {integrity: sha512-9AB0Rv7fWCWu8th7oztbFa5yk1RnWu2IwpJALx2+3y2KX3WrOMu38z/pTzy7iPGasshKCNbcSP2AxSxdIsdeWQ==, tarball: file:vendor/refarm.dev-source-web-0.1.0.tgz}
+    version: 0.1.0
+
+  '@refarm.dev/storage-contract-v1@file:vendor/refarm.dev-storage-contract-v1-0.1.0.tgz':
+    resolution: {integrity: sha512-iflqZcGyx0e/b8weOSentf2LLhc7Shff6RnbODlFXhQ4rzMc8F8LTdilaBsPIY070EF9VTl9/xgTrGKuJrPArA==, tarball: file:vendor/refarm.dev-storage-contract-v1-0.1.0.tgz}
+    version: 0.1.0
+
+  '@refarm.dev/storage-memory@file:vendor/refarm.dev-storage-memory-0.1.0.tgz':
+    resolution: {integrity: sha512-/H3B2qieZtjiBPA1Tg1g/7Bwe0/fxNcGDL2aC5nbZGDC3CPFkkXjy8ljdNxq0+dvkPdc9KFStTff16DgimuA+Q==, tarball: file:vendor/refarm.dev-storage-memory-0.1.0.tgz}
     version: 0.1.0
 
   '@rollup/pluginutils@5.4.0':
@@ -2809,6 +2848,8 @@ snapshots:
       '@babel/helper-string-parser': 7.29.7
       '@babel/helper-validator-identifier': 7.29.7
 
+  '@bytecodealliance/preview2-shim@0.17.9': {}
+
   '@capsizecss/unpack@4.0.0':
     dependencies:
       fontkitten: 1.0.3
@@ -3273,9 +3314,25 @@ snapshots:
 
   '@refarm.dev/channel-policy-v1@file:vendor/refarm.dev-channel-policy-v1-0.1.0.tgz': {}
 
+  '@refarm.dev/credentials-contract-v1@file:vendor/refarm.dev-credentials-contract-v1-0.1.0.tgz':
+    dependencies:
+      '@refarm.dev/identity-contract-v1': file:vendor/refarm.dev-identity-contract-v1-0.1.0.tgz
+      '@refarm.dev/storage-contract-v1': file:vendor/refarm.dev-storage-contract-v1-0.1.0.tgz
+
   '@refarm.dev/ds@file:vendor/refarm.dev-ds-0.1.0.tgz': {}
 
   '@refarm.dev/enrichment-contract-v1@file:vendor/refarm.dev-enrichment-contract-v1-0.1.0.tgz': {}
+
+  '@refarm.dev/heartwood@file:vendor/refarm.dev-heartwood-0.1.0.tgz':
+    dependencies:
+      '@bytecodealliance/preview2-shim': 0.17.9
+
+  '@refarm.dev/identity-contract-v1@file:vendor/refarm.dev-identity-contract-v1-0.1.0.tgz': {}
+
+  '@refarm.dev/identity-heartwood@file:vendor/refarm.dev-identity-heartwood-0.1.0.tgz':
+    dependencies:
+      '@refarm.dev/heartwood': file:vendor/refarm.dev-heartwood-0.1.0.tgz
+      '@refarm.dev/identity-contract-v1': file:vendor/refarm.dev-identity-contract-v1-0.1.0.tgz
 
   '@refarm.dev/process-handoff@file:vendor/refarm.dev-process-handoff-0.1.0.tgz': {}
 
@@ -3288,6 +3345,12 @@ snapshots:
   '@refarm.dev/source-web@file:vendor/refarm.dev-source-web-0.1.0.tgz':
     dependencies:
       '@refarm.dev/source-contract-v1': file:vendor/refarm.dev-source-contract-v1-0.1.0.tgz
+
+  '@refarm.dev/storage-contract-v1@file:vendor/refarm.dev-storage-contract-v1-0.1.0.tgz': {}
+
+  '@refarm.dev/storage-memory@file:vendor/refarm.dev-storage-memory-0.1.0.tgz':
+    dependencies:
+      '@refarm.dev/storage-contract-v1': file:vendor/refarm.dev-storage-contract-v1-0.1.0.tgz
 
   '@rollup/pluginutils@5.4.0(rollup@4.61.1)':
     dependencies:
