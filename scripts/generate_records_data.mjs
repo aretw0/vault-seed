@@ -31,13 +31,20 @@ export function loadRecordsConfig(path = CONFIG_PATH) {
  * (`config.typeByFolder`, falling back to `config.defaultType`); the raw PARA folder is
  * preserved in `fields.folder` so surfaces that group/color by folder converge without loss.
  */
+// records:v1 base JSON-LD context, owned by the refarm contract (matches its reference impl).
+// A vault may extend it with its own vocabulary via `config.vocab` — a domain the vault controls —
+// which is optional and, when set, makes `@context` an array [base, vaultVocab]. No domain is
+// required for the base; it identifies the records:v1 contract, not the vault.
+export const RECORDS_BASE_CONTEXT = "https://refarm.dev/contexts/records/v1";
+
 export function noteToRecord(note, config = {}) {
   const typeByFolder = config.typeByFolder ?? {};
   const type = typeByFolder[note.folder] ?? config.defaultType ?? "Note";
+  const context = config.vocab ? [RECORDS_BASE_CONTEXT, config.vocab] : RECORDS_BASE_CONTEXT;
   return {
     id: note.id,
-    "@type": type,
-    "@context": "https://schema.dgk.vault/v1",
+    "@type": ["KnowledgeRecord", type],
+    "@context": context,
     fields: {
       title: note.title ?? note.id,
       status: note.status ?? null,

@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import * as recordsMod from "@refarm.dev/records-contract-v1";
-import { noteToRecord, buildRecordsFromNotes, recordsToGraph, loadRecordsConfig } from "./generate_records_data.mjs";
+import { noteToRecord, buildRecordsFromNotes, recordsToGraph, loadRecordsConfig, RECORDS_BASE_CONTEXT } from "./generate_records_data.mjs";
 
 // Intentional config drives folder -> @type (no hardcoded opinion).
 const CONFIG = {
@@ -13,15 +13,21 @@ const NOTES = [
   { id: "30-areas/ops", title: "Ops", folder: "30 - Áreas", status: "evergreen", tags: [], links: [] },
 ];
 
-test("noteToRecord derives @type from config and preserves the raw folder", () => {
+test("noteToRecord derives @type from config, uses the refarm base @context, preserves the raw folder", () => {
   const r = noteToRecord(NOTES[0], CONFIG);
-  assert.equal(r["@type"], "Project"); // config-driven
+  assert.deepEqual(r["@type"], ["KnowledgeRecord", "Project"]); // base type + config-driven type
+  assert.equal(r["@context"], RECORDS_BASE_CONTEXT); // refarm.dev — the contract's, not a made-up domain
   assert.equal(r.fields.folder, "20 - Projetos"); // raw PARA folder preserved for surfaces
   assert.deepEqual(r.relations, [{ type: "links", target: "30-areas/ops" }]);
 });
 
 test("noteToRecord falls back to config.defaultType for an unmapped folder", () => {
-  assert.equal(noteToRecord({ id: "x", folder: "99 - Meta" }, CONFIG)["@type"], "Note");
+  assert.deepEqual(noteToRecord({ id: "x", folder: "99 - Meta" }, CONFIG)["@type"], ["KnowledgeRecord", "Note"]);
+});
+
+test("config.vocab extends @context as [base, vaultVocab] (opt-in, vault-owned domain)", () => {
+  const r = noteToRecord(NOTES[0], { ...CONFIG, vocab: "https://arthursilva.dev/vault/v1" });
+  assert.deepEqual(r["@context"], [RECORDS_BASE_CONTEXT, "https://arthursilva.dev/vault/v1"]);
 });
 
 test("the canonical vault.config.json carries the records type mapping", () => {
