@@ -104,6 +104,7 @@ dist/
 .astro/
 .sandbox/
 public/lab/
+public/records-manifest.json
 
 # ===================================================================
 # Artefatos efêmeros de ETL e pipeline (.lab/)
