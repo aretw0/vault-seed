@@ -1,6 +1,7 @@
 import { test, expect } from "vitest";
 import path from "node:path";
 import fs from "node:fs";
+import { execFileSync } from "node:child_process";
 
 const REPO_ROOT = process.cwd();
 
@@ -236,26 +237,28 @@ const FORBIDDEN_INTERNAL = [
 function listSourceFiles() {
   const files = [];
   const thisFile = path.resolve(__filename);
-  const walk = (dir) => {
-    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-      const candidate = path.join(dir, entry.name);
-      if (isIgnoredDirectory(candidate)) continue;
-      if (['dist', 'build', '.astro', 'coverage', '.changeset'].includes(entry.name)) continue;
-      if (entry.isDirectory()) {
-        walk(candidate);
-        continue;
-      }
-      if (!entry.isFile()) continue;
-      if (path.resolve(candidate) === thisFile) continue; // this file holds the denylist
-      if (SKIP_SOURCE_FILES.has(entry.name)) continue;
-      if (!SOURCE_EXTENSIONS.has(path.extname(entry.name))) continue;
-      // Authored references live in source/docs (small). Skip large generated
-      // blobs (vault data, datasets) to keep the gate fast.
-      if (fs.statSync(candidate).size > 256 * 1024) continue;
-      files.push(candidate);
+  // Enumerate git-tracked files (repository SOURCE), not the working tree. Transient/untracked
+  // working-tree state — reinstall artifacts, concurrently-written temp files — can therefore never
+  // pollute this gate, and "repository source" is exactly what a leak guard should check.
+  const tracked = execFileSync('git', ['ls-files', '-z'], { cwd: REPO_ROOT })
+    .toString('utf8')
+    .split('\0')
+    .filter(Boolean);
+  for (const rel of tracked) {
+    const candidate = path.join(REPO_ROOT, rel);
+    if (path.resolve(candidate) === thisFile) continue; // this file holds the denylist
+    if (SKIP_SOURCE_FILES.has(path.basename(candidate))) continue;
+    if (!SOURCE_EXTENSIONS.has(path.extname(candidate))) continue;
+    // Authored references live in source/docs (small). Skip large generated blobs to keep the gate fast.
+    let size;
+    try {
+      size = fs.statSync(candidate).size;
+    } catch {
+      continue; // tracked but absent in the working tree (rare) — nothing to scan
     }
-  };
-  walk(REPO_ROOT);
+    if (size > 256 * 1024) continue;
+    files.push(candidate);
+  }
   return files;
 }
 
