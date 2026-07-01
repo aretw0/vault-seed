@@ -53,6 +53,13 @@ test("vaultFolders.excludeFromPublic is sourced from vault.config.json", async (
   expect(vaultFolders.excludeFromPublic).toEqual(cfg.folders.excludeFromPublic);
 });
 
+test("vaultFolders.all resolves the folder-list $ref to .site/vault-folders.json", async () => {
+  const { vaultFolders } = await import("../.site/lib/vault-config.mjs");
+  const list = JSON.parse(readFileSync(join(ROOT, ".site/vault-folders.json"), "utf8"));
+  expect(vaultFolders.all).toEqual(list.folders);
+  expect(vaultFolders.all.length).toBeGreaterThan(0); // non-empty — VAULT_FOLDERS depends on it
+});
+
 // --- vocab via $ref (manifest increment 3): the loader resolves the reference to the focused file ---
 test("vaultVocab resolves the $ref in vault.config.json to the vocabulary file", async () => {
   const { vaultVocab } = await import("../.site/lib/vault-config.mjs");

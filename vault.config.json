@@ -10,7 +10,8 @@
     "publicState": "published"
   },
   "folders": {
-    "excludeFromPublic": ["90 - Modelos"]
+    "excludeFromPublic": ["90 - Modelos"],
+    "list": { "$ref": ".site/vault-folders.json" }
   },
   "vocab": { "$ref": ".site/information-architecture.json" },
   "records": {

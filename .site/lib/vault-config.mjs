@@ -58,6 +58,8 @@ export const vaultStatus = {
 // templates folder). Surfaces derive PUBLISHED_VAULT_FOLDERS from this — never a hardcoded folder name.
 export const vaultFolders = {
   excludeFromPublic: Array.isArray(_cfg.folders?.excludeFromPublic) ? _cfg.folders.excludeFromPublic : [],
+  // The PARA folder list — referenced from .site/vault-folders.json via `$ref` ({ folders: [...] }).
+  all: Array.isArray(_cfg.folders?.list?.folders) ? _cfg.folders.list.folders : [],
 };
 
 export const vaultLicense = {
