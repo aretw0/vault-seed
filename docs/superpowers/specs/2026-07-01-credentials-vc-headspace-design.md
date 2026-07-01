@@ -57,18 +57,22 @@ consumed through the contract's `verify(input, policy)`:
 ```jsonc
 "credentials": {
   "verificationPolicy": {
-    "trustedIssuers": [],      // DIDs the vault owner trusts; the entry-level policy
-    "revocation": "required",  // check not-revoked via the contract's status mechanism
+    "trustSelf": true,         // trust the owner's own DID (resolved dynamically; no hardcoded DID)
+    "trustedIssuers": [],      // third-party DIDs the owner adds explicitly
+    "revocation": "required",  // check not-revoked via the contract's signed status-list
     "validity": "required"     // reject expired / not-yet-valid
     // future: requiredClaims, holderBinding, trustRegistry
   }
 }
 ```
 
-A **trust list is the simplest instance** of the policy (just `trustedIssuers`). The product UX exposes
-the trust list — the common case — while the policy object absorbs everything that grows later
-(revocation directives, claim constraints, holder binding). The policy is **subvertible**: the user
-overrides it at the same canonical entry point, like every other vault opinion.
+This object **is** the contract's `CredentialVerificationPolicy` (ADR-079) — it is passed **straight into
+`verify(input, policy)` with no translation layer**. A **trust list is the simplest instance** (just
+`trustedIssuers`); the policy absorbs everything that grows later (claim constraints, holder binding). The
+default seeds **no static DID** — `trustSelf: true` trusts the owner's own DID resolved at verify time (so
+self-issued VCs verify out of the box and survive key rotation), and the owner adds third parties
+explicitly. The policy is **subvertible**: the user overrides it at the same canonical entry point, like
+every other vault opinion.
 
 ## Seams (where things live)
 
@@ -117,9 +121,18 @@ an explanatory state — a generated vault never breaks because the sovereign st
 - The specific claim vocabularies the vault issues (a records/vocab decision, tracked with the records
   work, not here).
 
+## Resolved decisions (folded into the design)
+
+- **Config is the verify argument** — the `verificationPolicy` object is structurally the contract's
+  `CredentialVerificationPolicy`, passed through with no translation.
+- **Self-trust via `trustSelf`, not a seeded DID** — self-issued VCs verify without a hardcoded, rotation-
+  fragile entry.
+- **Revocation = a signed status-list credential** (W3C Bitstring shape), resolved **locally from
+  `storage:v1`** for v1. A future remote status reference resolves **only through an egress allowlist**
+  (peerd egress-chokepoint lesson) — the vault never fetches an arbitrary status URL.
+
 ## Open questions for the plan
 
-1. Revocation shape: a local status list the issuer maintains vs a referenced status endpoint — the
-   contract decides (ADR-079); the product consumes whichever lands.
-2. Trust list seed: empty by default (owner adds), or seed the owner's own issuer DID so self-issued VCs
-   verify out of the box.
+1. Wallet collection shape in `storage:v1` (one collection vs partitioned by issuer/subject) — a product
+   ergonomics call for the plan.
+2. Whether the headspace exposes `trustSelf` as a visible toggle or keeps it an implicit default.
