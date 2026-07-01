@@ -110,8 +110,15 @@ The manifest is **vault-seed product responsibility** — refarm is not required
 - A schema-driven config editor/UX.
 - Folding `sidebar.sections.json` (a build artifact) — evaluated in the plan, not assumed.
 
-## Open questions for the plan
+## Resolved decisions (folded from review)
 
-1. `$ref` convention: a JSON-Schema-style `$ref` vs a simpler explicit `include` key — pick one and guard it.
-2. Whether `vocab` inlines or stays `$ref` (size vs one-file canonicality).
-3. Override-layer source: a sibling `vault.config.local.json`, an env var, or a documented in-file block.
+1. **`$ref` for references** — the recognized convention (OpenAPI/JSON-Ref). No conflict with JSON-Schema's
+   own `$ref`: the schema validates the *resolved* manifest, so the validator never sees a raw `$ref`.
+   Resolution is relative to the manifest file.
+2. **`folders` and `vocab` are `$ref`'d; core stays inline** — both are the bulky lists the balance
+   references; status, records, credentials, and folder roles stay inline. The loader preserves logical
+   canonicality.
+3. **Override layer = a gitignored sibling `vault.config.local.json`**, merged over the committed
+   `vault.config.json`. This separates product defaults (committed, template-updatable) from user overrides
+   (local, surviving template updates without conflict) — essential for a template. An env-var layer is a
+   possible future secondary for deploy-time overrides.
