@@ -70,3 +70,25 @@ test("vaultVocab resolves the $ref in vault.config.json to the vocabulary file",
   expect(Object.keys(vaultVocab).sort()).toEqual(["audiences", "categories", "intents"]);
   expect(vaultVocab.categories).toEqual(ia.categories);
 });
+
+// --- manifest shape (the "schema" half of the design's schema + drift-guard) ---
+test("vault.config.json conforms to the manifest shape", () => {
+  const cfg = JSON.parse(readFileSync(join(ROOT, "vault.config.json"), "utf8"));
+
+  // status: a set of states with one designated public state that is a member of the set
+  expect(Array.isArray(cfg.status?.states), "status.states must be an array").toBe(true);
+  expect(typeof cfg.status?.publicState, "status.publicState must be a string").toBe("string");
+  expect(cfg.status.states, "publicState must be one of states").toContain(cfg.status.publicState);
+
+  // folders: an exclusion role + the list referenced via $ref
+  expect(Array.isArray(cfg.folders?.excludeFromPublic), "folders.excludeFromPublic must be an array").toBe(true);
+  expect(cfg.folders?.list, "folders.list must be a $ref").toHaveProperty("$ref");
+
+  // vocab: referenced via $ref
+  expect(cfg.vocab, "vocab must be a $ref").toHaveProperty("$ref");
+
+  // records: a context base + a default type + a folder->type map
+  expect(typeof cfg.records?.context?.base, "records.context.base must be a string").toBe("string");
+  expect(typeof cfg.records?.defaultType, "records.defaultType must be a string").toBe("string");
+  expect(typeof cfg.records?.typeByFolder, "records.typeByFolder must be an object").toBe("object");
+});
