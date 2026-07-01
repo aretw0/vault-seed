@@ -54,6 +54,11 @@ Adoção / produto (design já escrito em `docs/superpowers/specs/`):
 - [ ] **records ETL real** — profile com fonte/transform reais (decisão de produto: quais notas/vocab)
 - [x] **reference vault** (prova de composição = acceptance gate) — `validations/records-reference/`
   (gap ledger vazio: `source-web`→`records:v1`→`enrichment:v1` compõem ponta a ponta)
+- [x] **yaml codec (`records-contract-v1/yaml`)** — re-vendorizado + consumido em
+  `scripts/refarm_records_consumer_contract.test.mjs` (round-trip: projeção `noteToRecord` →
+  `recordToYamlLdObject` → `recordFromYamlLdObject`, + bridge record↔frontmatter). **2º-consumer proof
+  fechado.** (Atrito de vendoring: tgz `file:` mesmo nome+versão não re-extrai — precisou integrity nova
+  + reinstall limpo; sinalizado ao refarm.)
 - [x] **grafo do Explore via `records:v1`** — `.site/lib/vault-explore.ts` (`buildExploreGraph` →
   `buildRecordsGraph` sobre `vault.config.json`, fonte única config-driven; o `.site` e as superfícies
   de records não divergem) + teste TS `vault-explore.graph.test.ts`; verificado (suíte, build astro 82
