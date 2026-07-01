@@ -54,15 +54,28 @@ Adoção / produto (design já escrito em `docs/superpowers/specs/`):
 - [ ] **records ETL real** — profile com fonte/transform reais (decisão de produto: quais notas/vocab)
 - [x] **reference vault** (prova de composição = acceptance gate) — `validations/records-reference/`
   (gap ledger vazio: `source-web`→`records:v1`→`enrichment:v1` compõem ponta a ponta)
+- [x] **grafo do Explore via `records:v1`** — `.site/lib/vault-explore.ts` (`buildExploreGraph` →
+  `buildRecordsGraph` sobre `vault.config.json`, fonte única config-driven; o `.site` e as superfícies
+  de records não divergem) + teste TS `vault-explore.graph.test.ts`; verificado (suíte, build astro 82
+  páginas, graph-smoke)
 - [ ] (candidato) **guard de não-reimplementação** — ver `-logistica`
+
+## Stack de teste (convergido com o refarm)
+
+A suíte migrou **`node:test` → Vitest** via o codemod `node-test-to-vitest` do refarm (69 arquivos, 14
+CJS `.js`→`.mjs`). `pnpm test` = `vitest run`. Isso **fechou o proof do codemod** (robusto no consumidor
+real: assert/toThrow/rejects/regex/BOM/CJS→ESM) e **destravou teste TS** no `.site` (o grafo acima).
 
 ## Próxima ação concreta
 
-Os 3 blocos de T3 estão **assimilados** e a **reference vault** (acceptance gate) **passou com gap
-ledger vazio** — os seams compõem ponta a ponta. O próximo é construir as superfícies de produto
-sobre essa base provada: **records ETL profiles** (real, sobre os scripts existentes) e a **records
-view** (genérica, no `.site`). A POC então é a reference vault com as 3 fixtures trocadas por adapters
-reais. `credentials:v1` (T2) entra após o heartwood-signing no refarm.
+Os 3 blocos de T3 estão **assimilados**, a **reference vault** (acceptance gate) passou com gap ledger
+vazio, e o **grafo do Explore já lê a fonte `records:v1`** (com cobertura TS). O que resta de produto:
+**records ETL real** (profile com fonte/transform reais — decisão de quais notas/vocab) e a **records
+view astro** (convergir as superfícies existentes, sem página nova). A POC então é a reference vault com
+as 3 fixtures trocadas por adapters reais. `credentials:v1` (T2) entra após o heartwood-signing no refarm.
+
+Do lado refarm (pós-codemod): publicar T3 npm · ADR-078 fase 2 · os 3 candidatos profundos
+(verification-as-completion, tool-less orchestrator, `context:v1`) · handoff yaml codec + credentials.
 
 ## Mapa de docs de convergência
 
