@@ -68,3 +68,48 @@ test("a heartwood-signed credentials:v1 provider passes the contract conformance
   expect(result.pass).toBe(true);
   expect(result.total).toBeGreaterThanOrEqual(1);
 });
+
+// The downstream consumer proof that closes the ADR-079 promotion gate: vault-seed exercises the
+// policy-driven verify directly, the way the headspace verifier will (trust list + revocation).
+async function issuedFixture() {
+  const identity = createHeartwoodIdentityProvider();
+  const provider = createReferenceCredentialsProvider({ identity, storage: new MemoryStorage() });
+  const issuer = await identity.create({ label: "issuer" });
+  const holder = await identity.create({ label: "holder" });
+  const vc = await provider.issue(
+    {
+      "@context": ["https://www.w3.org/ns/credentials/v2"],
+      type: ["VerifiableCredential"],
+      issuer: issuer.id,
+      credentialSubject: { id: holder.id, claim: "demo" },
+    },
+    issuer.id,
+  );
+  return { provider, issuer, vc };
+}
+
+test("verify-policy: a trust list gates acceptance (trusted passes, untrusted fails)", async () => {
+  const { provider, issuer, vc } = await issuedFixture();
+
+  const trusted = await provider.verify(vc, { trustedIssuers: [issuer.id] });
+  expect(trusted.verified).toBe(true);
+  expect(trusted.checks.issuerTrusted?.ok).toBe(true);
+
+  const untrusted = await provider.verify(vc, { trustedIssuers: ["did:refarm:heartwood:stranger"] });
+  expect(untrusted.verified).toBe(false);
+  expect(untrusted.checks.issuerTrusted?.ok).toBe(false);
+});
+
+test("verify-policy: revocation gates acceptance (status-list revoke flips notRevoked)", async () => {
+  const { provider, issuer, vc } = await issuedFixture();
+
+  const before = await provider.verify(vc, { trustedIssuers: [issuer.id], revocation: "required" });
+  expect(before.verified).toBe(true);
+  expect(before.checks.notRevoked?.ok).toBe(true);
+
+  await provider.revoke(vc, issuer.id);
+
+  const after = await provider.verify(vc, { trustedIssuers: [issuer.id], revocation: "required" });
+  expect(after.verified).toBe(false);
+  expect(after.checks.notRevoked?.ok).toBe(false);
+});

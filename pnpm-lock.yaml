@@ -683,7 +683,7 @@ packages:
     version: 0.1.0
 
   '@refarm.dev/credentials-contract-v1@file:vendor/refarm.dev-credentials-contract-v1-0.1.0.tgz':
-    resolution: {integrity: sha512-CguQE9yXlpJH8sbkkhu0OyxaHYmcVQfbEnPE+sNAotKQVBbpfQGA35TUCAnzRgE/1b8An5qvHAjoQXS+1LT67A==, tarball: file:vendor/refarm.dev-credentials-contract-v1-0.1.0.tgz}
+    resolution: {integrity: sha512-rvgN5DSlwo9u5v86FZ6gkd6GgD4VDDopRXwTn96kk07KWF4hNkMZiVDa1GEU+iCVJ42zDhfjISJrSea1/a+YZQ==, tarball: file:vendor/refarm.dev-credentials-contract-v1-0.1.0.tgz}
     version: 0.1.0
 
   '@refarm.dev/ds@file:vendor/refarm.dev-ds-0.1.0.tgz':
