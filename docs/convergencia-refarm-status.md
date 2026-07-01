@@ -50,9 +50,13 @@ Adoção / produto (design já escrito em `docs/superpowers/specs/`):
   `enrichment:v1`, degradação graciosa) + teste
 - [x] **records view — camada de dados** — `scripts/generate_records_data.mjs` (notas PARA →
   `records:v1`: folder→`@type`, frontmatter→fields, links→relations; convergência) + teste
-- [ ] **records view — página astro** (`.site/pages/records/*`) — lê o manifest; não-testável sem
-  build, e a IA/colunas são decisão de produto
-- [ ] **records ETL real** — profile com fonte/transform reais (decisão de produto: quais notas/vocab)
+- [x] **records:v1 manifest — artefato distribuível servido** — `scripts/generate_records_manifest.mjs`
+  (notas reais → `resolveLinks` → `records:v1` validado, 76 records, 0 falhas), servido em
+  `/records-manifest.json` via endpoint astro (`.site/pages/records-manifest.json.ts`) + teste. **Decisão
+  de produto (aprovada): manifesto-como-artefato + superfícies são views (o grafo já é), sem página nova.**
+  O `@context` agora **resolve** (refarm serve `/contexts/records/v1`, `a01bdc1c`) → linked-data real.
+- [ ] **records ETL real** — profile com fonte/transform reais **externos** (source-web/enrichment) —
+  decisão de produto (quais fontes/vocab). O pipeline notas→manifesto já está feito (acima).
 - [x] **reference vault** (prova de composição = acceptance gate) — `validations/records-reference/`
   (gap ledger vazio: `source-web`→`records:v1`→`enrichment:v1` compõem ponta a ponta)
 - [x] **yaml codec (`records-contract-v1/yaml`)** — re-vendorizado + consumido em
