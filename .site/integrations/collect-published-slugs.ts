@@ -6,6 +6,7 @@ import matter from 'gray-matter';
 import { slugify } from '@aretw0/dgk-astro-plugins';
 import { readTechnicalDocEntries } from './technical-docs.js';
 import { VAULT_FOLDERS } from './vault-config.js';
+import { vaultStatus } from '../lib/vault-config.mjs';
 
 export interface VaultEntry {
   slug: string;
@@ -24,7 +25,7 @@ export async function collectVaultEntries(): Promise<VaultEntry[]> {
   for (const file of files) {
     const raw = readFileSync(join(process.cwd(), file), 'utf-8');
     const { data } = matter(raw);
-    if (data.status !== 'published') continue;
+    if (data.status !== vaultStatus.publicState) continue;
 
     // Normalize to forward slashes before slugifying (glob may return OS-native separators).
     const normalizedFile = file.replace(/\\/g, '/');

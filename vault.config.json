@@ -5,6 +5,10 @@
     "holderUrl": "https://github.com/aretw0"
   },
   "kudos": "Feito com ♥",
+  "status": {
+    "states": ["draft", "published"],
+    "publicState": "published"
+  },
   "records": {
     "context": {
       "base": "https://refarm.dev/contexts/records/v1",

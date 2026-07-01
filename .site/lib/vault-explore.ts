@@ -12,6 +12,7 @@ import {
 } from './information-architecture.mjs';
 import { buildInformationArchitectureReport } from './information-architecture-audit.mjs';
 import { VAULT_FOLDERS } from './vault-folders.mjs';
+import { vaultStatus } from './vault-config.mjs';
 import { buildRecordsGraph, loadRecordsConfig } from '../../scripts/generate_records_data.mjs';
 
 const WIKILINK_RE = /\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|[^\]]+)?\]\]/g;
@@ -191,7 +192,7 @@ export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData
     const normalizedFile = file.replace(/\\/g, '/');
     const raw = readFileSync(join(cwd, file), 'utf-8');
     const { data, content } = matter(raw);
-    if (data.status !== 'published') continue;
+    if (data.status !== vaultStatus.publicState) continue;
     // audience: user-vault = ships published to user vaults but excluded from any site's explore/graph.
     if (data.audience === 'user-vault') continue;
 

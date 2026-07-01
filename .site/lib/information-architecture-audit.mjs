@@ -11,6 +11,7 @@ import {
   normalizeCategory,
 } from "./information-architecture.mjs";
 import { VAULT_FOLDERS } from "./vault-folders.mjs";
+import { vaultStatus } from "./vault-config.mjs";
 
 const TEMPLATE_META_FOLDER = "99 - Meta e Anexos";
 const RESOURCE_FOLDER = "40 - Recursos";
@@ -53,7 +54,7 @@ export function readPublishedNotes({ root = process.cwd(), ia = loadInformationA
         words: content.split(/\s+/).filter(Boolean).length,
       };
     })
-    .filter((note) => note.status === "published")
+    .filter((note) => note.status === vaultStatus.publicState)
     .sort((a, b) => a.file.localeCompare(b.file, "pt"));
 }
 

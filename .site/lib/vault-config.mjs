@@ -28,6 +28,13 @@ function readVaultConfig() {
 
 const _cfg = readVaultConfig();
 
+// Note-status lifecycle (canonical, subvertible): the states the vault recognizes and which one is
+// public. Surfaces gate visibility on `vaultStatus.publicState` — never a hardcoded 'published'.
+export const vaultStatus = {
+  states: Array.isArray(_cfg.status?.states) ? _cfg.status.states : ['draft', 'published'],
+  publicState: _cfg.status?.publicState ?? 'published',
+};
+
 export const vaultLicense = {
   type:      _cfg.license?.type      ?? null,
   holder:    _cfg.license?.holder    ?? null,

@@ -6,6 +6,7 @@ import { join, basename } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { globSync } from 'glob';
 import matter from 'gray-matter';
+import { vaultStatus } from './lib/vault-config.mjs';
 import { slugify } from '@aretw0/dgk-astro-plugins';
 import { readTechnicalDocEntries } from './integrations/technical-docs.js';
 import { VAULT_FOLDERS } from './lib/vault-folders.mjs';
@@ -73,7 +74,7 @@ export const collections = {
           const raw = readFileSync(fullPath, 'utf-8');
           const { data, content } = matter(raw);
 
-          if (data.status !== 'published') continue;
+          if (data.status !== vaultStatus.publicState) continue;
 
           // Normalize to forward slashes before slugifying (glob may return OS-native separators).
           const id = slugify(file.replace(/\\/g, '/').replace(/\.md$/, ''));
