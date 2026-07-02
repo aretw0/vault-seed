@@ -156,3 +156,33 @@ export function buildRecordsGraph(notes, config = {}) {
     links: graph.links,
   };
 }
+
+/**
+ * Project records:v1 records → a generic table view (the "requirements surface"): one row per record;
+ * columns are config-driven (`config.surface.table.columns`, else the union of field keys). A surface is
+ * a VIEW over records:v1, exactly like the graph — requirements are just records with fields. Pure/testable.
+ * @param {object[]} records  records:v1 records (from buildRecordsFromNotes / a manifest)
+ * @param {object} [options]  { columns?: string[] }
+ * @returns {{ columns: string[], rows: Array<{ id: string, type: string|null, cells: Record<string, unknown>, relations: number }> }}
+ */
+export function recordsToTable(records, options = {}) {
+  const columns = options.columns ?? [...new Set(records.flatMap((r) => Object.keys(r.fields ?? {})))];
+  const rows = records.map((r) => {
+    const type = Array.isArray(r["@type"]) ? r["@type"][r["@type"].length - 1] : (r["@type"] ?? null);
+    const cells = {};
+    for (const col of columns) cells[col] = r.fields?.[col] ?? null;
+    return { id: r.id, type, cells, relations: (r.relations ?? []).length };
+  });
+  return { columns, rows };
+}
+
+/**
+ * Build the requirements/table surface from notes **via records:v1** — mirrors buildRecordsGraph.
+ * notes → records → recordsToTable (config surface).
+ * @param {object[]} notes
+ * @param {object} [config]  records config (typeByFolder, serialization, surface)
+ */
+export function buildRecordsTable(notes, config = {}) {
+  const records = notes.map((note) => noteToRecord(note, config));
+  return recordsToTable(records, config.surface?.table ?? {});
+}

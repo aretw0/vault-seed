@@ -35,7 +35,8 @@
       "preserveFolderAs": "folder"
     },
     "surface": {
-      "graph": { "labelField": "folder", "degree": "both" }
+      "graph": { "labelField": "folder", "degree": "both" },
+      "table": { "columns": ["title", "status", "tags", "folder"] }
     }
   }
 }
