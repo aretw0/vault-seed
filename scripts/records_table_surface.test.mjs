@@ -1,8 +1,8 @@
 import { test, expect } from "vitest";
 import { recordsToTable, buildRecordsTable } from "./generate_records_data.mjs";
 
-// The requirements surface is a VIEW over records:v1 — the same model the graph views. A record with
-// fields is a row; requirements are just records. Config-driven columns, exactly like the graph.
+// A table/list surface is a VIEW over records:v1 — the same model the graph views. A record with
+// fields is a row; any records become rows. Config-driven columns, exactly like the graph.
 
 const RECORDS = [
   {

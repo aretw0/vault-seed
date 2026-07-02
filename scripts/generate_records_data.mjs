@@ -158,9 +158,9 @@ export function buildRecordsGraph(notes, config = {}) {
 }
 
 /**
- * Project records:v1 records → a generic table view (the "requirements surface"): one row per record;
- * columns are config-driven (`config.surface.table.columns`, else the union of field keys). A surface is
- * a VIEW over records:v1, exactly like the graph — requirements are just records with fields. Pure/testable.
+ * Project records:v1 records → a generic table/list surface: one row per record; columns are
+ * config-driven (`config.surface.table.columns`, else the union of field keys). A surface is a VIEW over
+ * records:v1, exactly like the graph — any records with fields become rows. Pure/testable.
  * @param {object[]} records  records:v1 records (from buildRecordsFromNotes / a manifest)
  * @param {object} [options]  { columns?: string[] }
  * @returns {{ columns: string[], rows: Array<{ id: string, type: string|null, cells: Record<string, unknown>, relations: number }> }}
