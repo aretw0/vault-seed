@@ -3,7 +3,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
-import { buildVaultData, slugify, writeVaultData } from "./generate_vault_data.mjs";
+import { buildVaultData, contentGlobPatterns, slugify, writeVaultData } from "./generate_vault_data.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 
@@ -47,11 +47,15 @@ test("buildVaultData cada nota tem os campos de contrato obrigatórios", () => {
 
   for (const note of notes.slice(0, 5)) {
     expect(typeof note.id === "string" && note.id.length > 0, `nota.id deve ser string: ${JSON.stringify(note)}`).toBeTruthy();
-    expect(typeof note.path === "string" && note.path.endsWith(".md"), `nota.path deve terminar em .md: ${note.id}`).toBeTruthy();
+    expect(typeof note.path === "string" && /\.(md|mdx)$/i.test(note.path), `nota.path deve terminar em .md ou .mdx: ${note.id}`).toBeTruthy();
     expect(typeof note.title === "string" && note.title.length > 0, `nota.title deve ser string: ${note.id}`).toBeTruthy();
     expect(typeof note.folder === "string", `nota.folder deve ser string: ${note.id}`).toBeTruthy();
     expect(Array.isArray(note.links), `nota.links deve ser array: ${note.id}`).toBeTruthy();
   }
+});
+
+test("buildVaultData usa o mesmo glob para Markdown e MDX", () => {
+  expect(contentGlobPatterns(["00 - Entrada"])).toEqual(["00 - Entrada/**/*.md", "00 - Entrada/**/*.mdx"]);
 });
 
 test("buildVaultData funciona com diretório temporário com notas mínimas", () => {
@@ -71,6 +75,31 @@ test("buildVaultData funciona com diretório temporário com notas mínimas", ()
   expect(result.noteCount, "deve encontrar exatamente 1 nota").toBe(1);
   expect(result.notes[0].title).toBe("Nota de teste");
   expect(result.notes[0].links.includes("link para outra"), "deve extrair wikilinks").toBeTruthy();
+});
+
+test("buildVaultData projeta MDX no mesmo contrato das notas Markdown", () => {
+  const cwd = mkdtempSync(join(tmpdir(), "vault-seed-gvd-mdx-"));
+  const folder = "00 - Entrada";
+  mkdirSync(join(cwd, folder), { recursive: true });
+  writeFileSync(
+    join(cwd, folder, "Nota MDX.mdx"),
+    "---\ntitle: Nota MDX\nstatus: published\ntags: [mdx]\n---\n<Callout />\n\nConteúdo com [[Nota Markdown]].\n",
+    "utf8",
+  );
+  writeFileSync(
+    join(cwd, folder, "Nota Markdown.md"),
+    "---\ntitle: Nota Markdown\nstatus: published\n---\nConteúdo comum.\n",
+    "utf8",
+  );
+
+  const result = buildVaultData({ cwd });
+  const mdx = result.notes.find((note) => note.path.endsWith(".mdx"));
+
+  expect(result.noteCount, "deve encontrar Markdown e MDX").toBe(2);
+  expect(mdx?.id).toBe("entrada/nota-mdx");
+  expect(mdx?.title).toBe("Nota MDX");
+  expect(mdx?.tags).toEqual(["mdx"]);
+  expect(mdx?.links).toEqual(["Nota Markdown"]);
 });
 
 // --- writeVaultData ---

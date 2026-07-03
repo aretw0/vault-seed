@@ -23,6 +23,21 @@ want to avoid. So this design **converges the existing surfaces onto `records:v1
 a parallel view. This is the ocamento applied to the vault's *own* model: vault content *becomes* the
 `records:v1` primitive, one model behind explore, graph, and table views.
 
+## Decision: MDX is the authoring migration path
+
+The long-term migration is not "turn records into another Astro page". It is:
+
+- keep Astro for route shells, data endpoints, and genuinely interactive hosts;
+- move authorable content and page sections that only became Astro because Markdown was too limited
+  back to MDX;
+- consume reusable Astro/SSR blocks from refarm (`ds`, homestead-style render helpers, future content
+  blocks) instead of growing generic UI primitives in vault-seed;
+- when a block extension is vault-product-specific and does not belong upstream, package it here as a
+  narrow extension over refarm primitives, with tests and documentation.
+
+So `/explorar/` stays the canonical surface. MDX expands what can be authored inside the vault; it does
+not create a parallel records app.
+
 ## Approach — incremental, proven per surface (no big-bang)
 
 The existing surfaces work and are tested; convergence is one surface at a time, each with a test,
@@ -53,9 +68,11 @@ the surfaces render them as today — a generated vault never breaks.
 
 ## Boundary
 
-Refarm owns `records:v1`, `ds`, `surveyor` graph traversal. vault-seed owns the surfaces, the
-information architecture, and the notes→records projection. Private proofs own domain vocabulary and
-specific record types.
+Refarm owns `records:v1`, `ds`, `surveyor` graph traversal, and reusable Astro/SSR/content blocks.
+vault-seed owns the surfaces, the information architecture, MDX authoring conventions, and the
+notes→records projection. If a UI block is generic, it is refarm pressure/proof. If it is vault-product
+specific, vault-seed may package it as a thin extension over refarm primitives. Private proofs own
+domain vocabulary and specific record types.
 
 ## Verification
 
@@ -64,10 +81,12 @@ specific record types.
 3. a PARA note and a fixture `records:v1` record render through the **same** surface (one model);
 4. unknown fields / higher `schemaVersion` render (preserve-unknown), not crash;
 5. no second data model or parallel page is introduced.
+6. content that can be authored as MDX is not trapped in a new Astro-only page.
 
 ## Non-Goals
 
 - **No new `pages/records/*` surface** — converge the existing ones (this is the point).
+- No generic Astro block library in vault-seed; reusable blocks are upstream refarm candidates.
 - No record modeling here (that is `records:v1`); surfaces render.
 - No extraction/acquisition here (ETL profiles + `source:v1`).
 - No domain vocabulary, editorial governance, or runtime server.

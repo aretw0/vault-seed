@@ -111,12 +111,20 @@ Adoção / produto (design já escrito em `docs/superpowers/specs/`):
   `buildRecordsGraph` sobre `vault.config.json`, fonte única config-driven; o `.site` e as superfícies
   de records não divergem) + teste TS `vault-explore.graph.test.ts`; verificado (suíte, build astro 82
   páginas, graph-smoke)
+- [x] **Explorar como superfície MD/MDX** — a rota existente `/explorar/` continua a superfície única
+  (sem `/records/` paralelo). `scripts/generate_vault_data.mjs`,
+  `.site/lib/vault-explore.ts` e a auditoria editorial agora leem `*.md` + `*.mdx` com shape compatível
+  com `@refarm.dev/content-projection` (provado em consumer-contract, sem import estático no script
+  distribuído). Os contratos legados (`vault-data.json`, Lab/export, dados do Explore) preservam a mesma
+  shape enquanto passam a aceitar MDX. Direção de produto: MDX é o caminho para conteúdo/seções
+  authoráveis que só estavam em Astro por falta de bloco; blocos reutilizáveis Astro/SSR devem vir do
+  refarm ou ser empacotados aqui apenas como extensão fina de produto.
 - [x] **superfície de tabela (requirements) via `records:v1`** — `scripts/generate_records_data.mjs`
   (`recordsToTable(records, opts)` / `buildRecordsTable(notes, config)`, espelhando `buildRecordsGraph`):
   projeção config-driven (`records.surface.table.columns`, senão derivadas das field keys), uma linha por
   record com type/cells/relation-count. **Uma superfície é uma VIEW sobre `records:v1`, igual ao grafo —
   requisitos são só records com fields** (`62dfc54`); comentários neutralizados p/ não vazar domínio (`9e529d8`).
-  A view astro é consumidora fina (reconciliar com a direção MDX a seguir).
+  A view astro não vira rota separada: ela deve entrar como capacidades/filtros dentro do `Explorar`.
 - [x] **guard de não-reimplementação** — `scripts/refarm_no_reimplementation_contract.test.mjs`
   bloqueia nomes de arquivos de alto sinal para novas capacidades genéricas locais
   (`*-contract`, `*-provider`, `*-conformance`, etc.) sem allowlist explícita.
@@ -136,8 +144,10 @@ passou com gap ledger vazio, e o **grafo do Explore já lê a fonte `records:v1`
 resta de produto:
 1. **especializar o profile para a POC** — trocar source/lookup por adapters
    reais privados, mantendo o runner e os contratos.
-2. **records view astro** — consumidora fina das superfícies (grafo + tabela), reconciliar com a direção
-   MDX, sem página nova.
+2. **Explorar: filtros/colunas de records + MDX authoring** — adicionar a leitura tabular de
+   `records:v1` na rota existente e inventariar quais trechos Astro podem virar MDX quando os blocos
+   refarm correspondentes estiverem disponíveis, sem página nova e sem duplicar a experiência de
+   exploração.
 `credentials:v1` (T2) já está assimilado; a próxima fatia é UX/produto do
 headspace/wallet, não contrato.
 

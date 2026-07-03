@@ -1,7 +1,4 @@
-import { basename, dirname, join } from 'node:path';
-import { readFileSync } from 'node:fs';
-import { globSync } from 'glob';
-import matter from 'gray-matter';
+import { basename, dirname } from 'node:path';
 import { slugify } from '@aretw0/dgk-astro-plugins';
 import {
   deriveNoteIntents,
@@ -11,11 +8,14 @@ import {
   normalizeVocabularyValue,
 } from './information-architecture.mjs';
 import { buildInformationArchitectureReport } from './information-architecture-audit.mjs';
-import { VAULT_FOLDERS } from './vault-folders.mjs';
 import { vaultStatus } from './vault-config.mjs';
 import { buildRecordsGraph, loadRecordsConfig } from '../../scripts/generate_records_data.mjs';
-
-const WIKILINK_RE = /\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|[^\]]+)?\]\]/g;
+import {
+  extractVaultWikilinks,
+  loadVaultContentItems,
+  parseVaultFrontmatter,
+  stripContentExtension,
+} from '../../scripts/generate_vault_data.mjs';
 
 export type ExploreNote = {
   id: string;
@@ -135,21 +135,14 @@ function intentValues(map: Map<string, number>, ia: any): Array<{ name: string; 
 
 function extractWikiTargets(content: string, related: unknown): string[] {
   const targets = new Set<string>();
-  let match;
-  const re = new RegExp(WIKILINK_RE.source, 'g');
-  while ((match = re.exec(content)) !== null) {
-    targets.add(match[1].trim());
-  }
+  for (const link of extractVaultWikilinks(content)) targets.add(link.target.split('#')[0]?.trim() ?? '');
   for (const item of normalizeList(related)) {
-    const relatedMatch = item.match(WIKILINK_RE);
-    if (!relatedMatch) {
+    const relatedLinks = extractVaultWikilinks(item);
+    if (!relatedLinks.length) {
       targets.add(item.replace(/^\[\[|\]\]$/g, '').trim());
       continue;
     }
-    for (const raw of relatedMatch) {
-      const inner = raw.replace(/^\[\[|\]\]$/g, '').split('|')[0].split('#')[0].trim();
-      if (inner) targets.add(inner);
-    }
+    for (const link of relatedLinks) targets.add(link.target.split('#')[0]?.trim() ?? '');
   }
   return Array.from(targets).filter(Boolean);
 }
@@ -159,7 +152,7 @@ function folderLabel(folder: string): string {
 }
 
 function makeSlug(file: string): string {
-  return slugify(file.replace(/\\/g, '/').replace(/\.md$/, ''));
+  return slugify(stripContentExtension(file.replace(/\\/g, '/')));
 }
 
 // The Explore graph is derived from records:v1 through the config-driven single source
@@ -185,13 +178,12 @@ export function buildExploreGraph(
 
 export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData {
   const ia = loadInformationArchitecture(cwd);
-  const files = globSync(VAULT_FOLDERS.map((folder) => `${folder}/**/*.md`), { cwd });
+  const items = loadVaultContentItems({ cwd });
   const rawNotes = [] as Array<ExploreNote & { aliases: string[]; rawTargets: string[] }>;
 
-  for (const file of files) {
-    const normalizedFile = file.replace(/\\/g, '/');
-    const raw = readFileSync(join(cwd, file), 'utf-8');
-    const { data, content } = matter(raw);
+  for (const item of items) {
+    const normalizedFile = item.path;
+    const { data, body } = parseVaultFrontmatter(item.text);
     if (data.status !== vaultStatus.publicState) continue;
     // audience: user-vault = ships published to user vaults but excluded from any site's explore/graph.
     if (data.audience === 'user-vault') continue;
@@ -222,18 +214,18 @@ export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData
       tags,
       created: normalizeDate(data.created),
       updated: normalizeDate(data.updated),
-      words: countWords(content),
-      description: typeof data.description === 'string' ? data.description : summarize(content),
-      summary: summarize(content),
+      words: countWords(body),
+      description: typeof data.description === 'string' ? data.description : summarize(body),
+      summary: summarize(body),
       outgoing: [],
       aliases: normalizeList(data.aliases),
-      rawTargets: extractWikiTargets(content, data.related),
+      rawTargets: extractWikiTargets(body, data.related),
     });
   }
 
   const lookup = new Map<string, string>();
   for (const note of rawNotes) {
-    const names = [note.title, basename(note.path, '.md'), note.path.replace(/\.md$/, ''), ...note.aliases];
+    const names = [note.title, basename(stripContentExtension(note.path)), stripContentExtension(note.path), ...note.aliases];
     for (const name of names) {
       lookup.set(name.toLowerCase(), note.slug);
       lookup.set(slugify(name).toLowerCase(), note.slug);
@@ -245,7 +237,7 @@ export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData
   for (const note of rawNotes) {
     const outgoing = new Set<string>();
     for (const target of note.rawTargets) {
-      const normalizedTarget = target.replace(/\.md$/, '').trim();
+      const normalizedTarget = stripContentExtension(target).trim();
       const resolved =
         lookup.get(normalizedTarget.toLowerCase()) ??
         lookup.get(slugify(normalizedTarget).toLowerCase());

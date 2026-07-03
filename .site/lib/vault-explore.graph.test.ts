@@ -1,5 +1,8 @@
 import { test, expect } from 'vitest';
-import { buildExploreGraph } from './vault-explore';
+import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
+import { buildExploreGraph, buildVaultExploreData } from './vault-explore';
 import { loadRecordsConfig } from '../../scripts/generate_records_data.mjs';
 
 // The Explore graph must be derived from the config-driven records:v1 projection (single source),
@@ -32,4 +35,38 @@ test('buildExploreGraph honors an explicit surface config (subvertible, not hard
   const graph = buildExploreGraph(NOTES, config);
   expect(graph.nodes.find((n) => n.id === '20-projetos/launch')?.degree).toBe(0);
   expect(graph.nodes.find((n) => n.id === '30-areas/ops')?.degree).toBe(1);
+});
+
+test('buildVaultExploreData keeps Explorar as the MD/MDX content surface', () => {
+  const cwd = mkdtempSync(join(tmpdir(), 'vault-seed-explore-mdx-'));
+  mkdirSync(join(cwd, '.site'), { recursive: true });
+  mkdirSync(join(cwd, '00 - Entrada'), { recursive: true });
+  mkdirSync(join(cwd, '40 - Recursos'), { recursive: true });
+  writeFileSync(
+    join(cwd, '.site', 'information-architecture.json'),
+    JSON.stringify({
+      categories: { conceito: { label: 'Conceito', aliases: [] } },
+      audiences: { todos: { label: 'Todos', aliases: [] } },
+      intents: { explorar: { label: 'Explorar', folders: ['00 - Entrada', '40 - Recursos'], tags: [], categories: [] } },
+    }),
+    'utf8',
+  );
+  writeFileSync(
+    join(cwd, '00 - Entrada', 'Nota base.md'),
+    '---\ntitle: Nota base\nstatus: published\ncategory: conceito\naudience: todos\nrelated:\n  - "[[Nota MDX]]"\n---\nVeja a nota relacionada.\n',
+    'utf8',
+  );
+  writeFileSync(
+    join(cwd, '40 - Recursos', 'Nota MDX.mdx'),
+    '---\ntitle: Nota MDX\nstatus: published\ncategory: conceito\naudience: todos\ntags: [mdx]\n---\n<Callout />\n\nConteudo MDX publicado.\n',
+    'utf8',
+  );
+
+  const explore = buildVaultExploreData({ cwd });
+
+  expect(explore.metrics.notes).toBe(2);
+  expect(explore.notes.map((note) => note.path)).toContain('40 - Recursos/Nota MDX.mdx');
+  expect(explore.notes.find((note) => note.path.endsWith('.mdx'))?.tags).toEqual(['mdx']);
+  expect(explore.graph.links).toHaveLength(1);
+  expect(explore.editorial.notesEvaluated).toBe(2);
 });

@@ -6,7 +6,9 @@ import { globSync } from "glob";
 import matter from "gray-matter";
 import { VAULT_FOLDERS } from "../.site/lib/vault-folders.mjs";
 
-const WIKILINK_RE = /\[\[([^\]|]+?)(?:\|[^\]]+?)?\]\]/g;
+const CONTENT_EXTENSIONS = ["md", "mdx"];
+const CONTENT_EXTENSION_RE = /\.(md|mdx)$/i;
+const WIKILINK_RE = /\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|[^\]]+)?\]\]/g;
 
 function resolveNotebooksPath(value = process.env.VAULT_NOTEBOOKS_PATH || "lab") {
   const normalized = String(value || "lab")
@@ -42,38 +44,67 @@ export function slugify(input) {
     .join("/");
 }
 
-function extractLinks(content) {
+export function contentGlobPatterns(folders = VAULT_FOLDERS) {
+  return folders.flatMap((folder) => CONTENT_EXTENSIONS.map((extension) => `${folder}/**/*.${extension}`));
+}
+
+export function stripContentExtension(file) {
+  return file.replace(CONTENT_EXTENSION_RE, "");
+}
+
+function inferMediaType(file) {
+  return file.toLowerCase().endsWith(".mdx") ? "text/mdx" : "text/markdown";
+}
+
+export function parseVaultFrontmatter(text) {
+  const { data, content } = matter(text);
+  return { data, body: content };
+}
+
+export function extractVaultWikilinks(content) {
   const links = [];
   let match;
   const re = new RegExp(WIKILINK_RE.source, "g");
   while ((match = re.exec(content)) !== null) {
-    links.push(match[1].trim());
+    const target = match[1]?.trim();
+    if (target) links.push({ target });
   }
   return links;
 }
 
-export function buildVaultData({ cwd = process.cwd() } = {}) {
-  const patterns = VAULT_FOLDERS.map((folder) => `${folder}/**/*.md`);
-  const files = globSync(patterns, { cwd });
+function extractLinks(content) {
+  return extractVaultWikilinks(content).map((link) => link.target.trim()).filter(Boolean);
+}
 
-  const notes = files.map((file) => {
+export function loadVaultContentItems({ cwd = process.cwd() } = {}) {
+  const files = globSync(contentGlobPatterns(), { cwd });
+  return files.map((file) => {
     const normalizedFile = file.replace(/\\/g, "/");
-    const raw = readFileSync(join(cwd, file), "utf-8");
-    const { data, content } = matter(raw);
+    return {
+      path: normalizedFile,
+      text: readFileSync(join(cwd, file), "utf-8"),
+      mediaType: inferMediaType(normalizedFile),
+    };
+  });
+}
+
+export function buildVaultData({ cwd = process.cwd() } = {}) {
+  const notes = loadVaultContentItems({ cwd }).map((item) => {
+    const { data, body } = parseVaultFrontmatter(item.text);
     const rawTags = data.tags;
 
     return {
-      id: slugify(normalizedFile.replace(/\.md$/, "")),
-      path: normalizedFile,
-      title: data.title ? String(data.title) : basename(file, ".md"),
-      folder: normalizedFile.split("/")[0] ?? "",
+      id: slugify(stripContentExtension(item.path)),
+      path: item.path,
+      title: data.title ? String(data.title) : basename(stripContentExtension(item.path)),
+      folder: item.path.split("/")[0] ?? "",
       status: data.status ? String(data.status) : null,
       tags: Array.isArray(rawTags)
         ? rawTags.map(String)
         : typeof rawTags === "string"
           ? [rawTags]
           : [],
-      links: extractLinks(content),
+      links: extractLinks(body),
       created: data.created ? String(data.created) : null,
       updated: data.updated ? String(data.updated) : null,
     };

@@ -117,3 +117,10 @@ pra quando o container liberar (Codex ativo no `cranky_bassi`).
   lá o vault-seed mantém o normalizador local (`scripts/generate_records_data.mjs`) como stand-in,
   não reimplementação divergente. Decisão de serialização: **modelo JSON-LD (refarm) + serialização
   YAML-LD (nossa, por Obsidian)** — camadas, não ou/ou.
+- **blocos MDX/Astro/SSR reutilizáveis** — pressão de produto do vault-seed: muita coisa que hoje
+  precisa ser Astro deve voltar a ser MDX assim que existir bloco renderizável/empacotável. O refarm
+  deve ser a casa dos blocos genéricos (`ds`/homestead/content blocks); o vault-seed consome esses
+  blocos e só empacota extensões finas quando forem claramente específicas do produto-vault. Proof
+  local em andamento: `Explorar` continua a superfície canônica, agora com ingestão `*.md` + `*.mdx`
+  compatível com `@refarm.dev/content-projection` (consumer-contract dev; sem import estático em script
+  distribuído), sem criar `/records/` paralelo.

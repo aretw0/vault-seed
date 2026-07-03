@@ -1,7 +1,4 @@
-import { readFileSync } from "node:fs";
-import { basename, join } from "node:path";
-import { globSync } from "glob";
-import matter from "gray-matter";
+import { basename } from "node:path";
 
 import {
   deriveNoteIntents,
@@ -10,8 +7,12 @@ import {
   normalizeAudience,
   normalizeCategory,
 } from "./information-architecture.mjs";
-import { VAULT_FOLDERS } from "./vault-folders.mjs";
 import { vaultStatus } from "./vault-config.mjs";
+import {
+  loadVaultContentItems,
+  parseVaultFrontmatter,
+  stripContentExtension,
+} from "../../scripts/generate_vault_data.mjs";
 
 const TEMPLATE_META_FOLDER = "99 - Meta e Anexos";
 const RESOURCE_FOLDER = "40 - Recursos";
@@ -34,16 +35,15 @@ function summarizeNote(note) {
 }
 
 export function readPublishedNotes({ root = process.cwd(), ia = loadInformationArchitecture(root) } = {}) {
-  return globSync(VAULT_FOLDERS.map((folder) => `${folder}/**/*.md`), { cwd: root })
-    .map((file) => {
-      const normalizedFile = file.replace(/\\/g, "/");
-      const raw = readFileSync(join(root, file), "utf8");
-      const { data, content } = matter(raw);
+  return loadVaultContentItems({ cwd: root })
+    .map((item) => {
+      const normalizedFile = item.path;
+      const { data, body } = parseVaultFrontmatter(item.text);
       const category = data.category ? String(data.category) : "";
       const audience = data.audience ? String(data.audience) : "";
       return {
         file: normalizedFile,
-        title: data.title ? String(data.title) : basename(file, ".md"),
+        title: data.title ? String(data.title) : basename(stripContentExtension(item.path)),
         folder: normalizedFile.split("/")[0] ?? "",
         status: data.status ? String(data.status) : "",
         category,
@@ -51,7 +51,7 @@ export function readPublishedNotes({ root = process.cwd(), ia = loadInformationA
         audience,
         audienceKey: normalizeAudience(audience, ia),
         tags: normalizeList(data.tags),
-        words: content.split(/\s+/).filter(Boolean).length,
+        words: body.split(/\s+/).filter(Boolean).length,
       };
     })
     .filter((note) => note.status === vaultStatus.publicState)
