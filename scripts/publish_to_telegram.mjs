@@ -210,7 +210,7 @@ export async function publishToTelegram({
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const { loadSiloEnv } = await import("../packages/cli/src/silo.js");
-  const siloEnv = loadSiloEnv();
+  const siloEnv = await loadSiloEnv();
   for (const [k, v] of Object.entries(siloEnv)) {
     if (process.env[k] === undefined) process.env[k] = v;
   }

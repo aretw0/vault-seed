@@ -14,9 +14,11 @@ overrides:
   '@refarm.dev/heartwood': file:vendor/refarm.dev-heartwood-0.1.0.tgz
   '@refarm.dev/identity-contract-v1': file:vendor/refarm.dev-identity-contract-v1-0.1.0.tgz
   '@refarm.dev/identity-heartwood': file:vendor/refarm.dev-identity-heartwood-0.1.0.tgz
+  '@refarm.dev/local-surface': file:vendor/refarm.dev-local-surface-0.1.0.tgz
   '@refarm.dev/process-handoff': file:vendor/refarm.dev-process-handoff-0.1.0.tgz
   '@refarm.dev/quality-contract-v1': file:vendor/refarm.dev-quality-contract-v1-0.1.0.tgz
   '@refarm.dev/records-contract-v1': file:vendor/refarm.dev-records-contract-v1-0.1.0.tgz
+  '@refarm.dev/silo': file:vendor/refarm.dev-silo-0.1.0.tgz
   '@refarm.dev/source-contract-v1': file:vendor/refarm.dev-source-contract-v1-0.1.0.tgz
   '@refarm.dev/source-web': file:vendor/refarm.dev-source-web-0.1.0.tgz
   '@refarm.dev/storage-contract-v1': file:vendor/refarm.dev-storage-contract-v1-0.1.0.tgz
@@ -47,12 +49,18 @@ importers:
       '@refarm.dev/identity-heartwood':
         specifier: file:vendor/refarm.dev-identity-heartwood-0.1.0.tgz
         version: file:vendor/refarm.dev-identity-heartwood-0.1.0.tgz
+      '@refarm.dev/local-surface':
+        specifier: file:vendor/refarm.dev-local-surface-0.1.0.tgz
+        version: file:vendor/refarm.dev-local-surface-0.1.0.tgz
       '@refarm.dev/quality-contract-v1':
         specifier: file:vendor/refarm.dev-quality-contract-v1-0.1.0.tgz
         version: file:vendor/refarm.dev-quality-contract-v1-0.1.0.tgz
       '@refarm.dev/records-contract-v1':
         specifier: file:vendor/refarm.dev-records-contract-v1-0.1.0.tgz
         version: file:vendor/refarm.dev-records-contract-v1-0.1.0.tgz(yaml@2.9.0)
+      '@refarm.dev/silo':
+        specifier: file:vendor/refarm.dev-silo-0.1.0.tgz
+        version: file:vendor/refarm.dev-silo-0.1.0.tgz
       '@refarm.dev/source-web':
         specifier: file:vendor/refarm.dev-source-web-0.1.0.tgz
         version: file:vendor/refarm.dev-source-web-0.1.0.tgz
@@ -151,6 +159,9 @@ importers:
       '@refarm.dev/process-handoff':
         specifier: file:../../vendor/refarm.dev-process-handoff-0.1.0.tgz
         version: file:vendor/refarm.dev-process-handoff-0.1.0.tgz
+      '@refarm.dev/silo':
+        specifier: file:../../vendor/refarm.dev-silo-0.1.0.tgz
+        version: file:vendor/refarm.dev-silo-0.1.0.tgz
 
   packages/dgk-channels: {}
 
@@ -735,6 +746,10 @@ packages:
     resolution: {integrity: sha512-WO/cpyPbcB4y7YiWxIV9QtFk06ZACDt7rin9HlKOS4YydlV2DS3I1xJsO9hFXN0w64tgeXvoa5xjzZs8tG3YIQ==, tarball: file:vendor/refarm.dev-identity-heartwood-0.1.0.tgz}
     version: 0.1.0
 
+  '@refarm.dev/local-surface@file:vendor/refarm.dev-local-surface-0.1.0.tgz':
+    resolution: {integrity: sha512-XN0cJSqnqI3aMZ8mjE94PBICXIgSXK1LI94GmXFAKNq/A7RPgolPtmc1ZUQYeJwSxhPCXVVBXIoNcf87+6BFiQ==, tarball: file:vendor/refarm.dev-local-surface-0.1.0.tgz}
+    version: 0.1.0
+
   '@refarm.dev/process-handoff@file:vendor/refarm.dev-process-handoff-0.1.0.tgz':
     resolution: {integrity: sha512-VMcnrEtqZvxH2hGErRuPUAHQiInWUOIyZSOQsUXRSp/tVAFaxhJY6pOEr6YN6MwKKG1OfqOFuXuLYqtt0zxeoA==, tarball: file:vendor/refarm.dev-process-handoff-0.1.0.tgz}
     version: 0.1.0
@@ -751,6 +766,10 @@ packages:
     peerDependenciesMeta:
       yaml:
         optional: true
+
+  '@refarm.dev/silo@file:vendor/refarm.dev-silo-0.1.0.tgz':
+    resolution: {integrity: sha512-KWwvawvb/URRBtO4HOBk3K2YVbDVOZj9XSbBSbpAa6KnonfJFlG+gK7J80cCL5hRIKSmhanh1BMSm85c+azboA==, tarball: file:vendor/refarm.dev-silo-0.1.0.tgz}
+    version: 0.1.0
 
   '@refarm.dev/source-contract-v1@file:vendor/refarm.dev-source-contract-v1-0.1.0.tgz':
     resolution: {integrity: sha512-0pRYxKEXooJweZBhjrCNl0SDWm3rHCaRrpXkuml6vyJwpe4qG++pvCPYPVoM/HUeKaFnaBIqeAsL8zlKu9k/bA==, tarball: file:vendor/refarm.dev-source-contract-v1-0.1.0.tgz}
@@ -3376,6 +3395,11 @@ snapshots:
       '@refarm.dev/heartwood': file:vendor/refarm.dev-heartwood-0.1.0.tgz
       '@refarm.dev/identity-contract-v1': file:vendor/refarm.dev-identity-contract-v1-0.1.0.tgz
 
+  '@refarm.dev/local-surface@file:vendor/refarm.dev-local-surface-0.1.0.tgz':
+    dependencies:
+      '@refarm.dev/ds': file:vendor/refarm.dev-ds-0.1.0.tgz
+      '@refarm.dev/quality-contract-v1': file:vendor/refarm.dev-quality-contract-v1-0.1.0.tgz
+
   '@refarm.dev/process-handoff@file:vendor/refarm.dev-process-handoff-0.1.0.tgz': {}
 
   '@refarm.dev/quality-contract-v1@file:vendor/refarm.dev-quality-contract-v1-0.1.0.tgz': {}
@@ -3383,6 +3407,10 @@ snapshots:
   '@refarm.dev/records-contract-v1@file:vendor/refarm.dev-records-contract-v1-0.1.0.tgz(yaml@2.9.0)':
     optionalDependencies:
       yaml: 2.9.0
+
+  '@refarm.dev/silo@file:vendor/refarm.dev-silo-0.1.0.tgz':
+    optionalDependencies:
+      '@refarm.dev/heartwood': file:vendor/refarm.dev-heartwood-0.1.0.tgz
 
   '@refarm.dev/source-contract-v1@file:vendor/refarm.dev-source-contract-v1-0.1.0.tgz': {}
 

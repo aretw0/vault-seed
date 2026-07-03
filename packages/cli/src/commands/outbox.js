@@ -29,7 +29,7 @@ Exemplos:
 }
 
 export async function outbox(args, runner = run) {
-  injectSiloEnv();
+  await injectSiloEnv();
   const [channel, ...rest] = args;
 
   if (!channel || channel === '--help' || channel === '-h') {

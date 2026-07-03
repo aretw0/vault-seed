@@ -241,8 +241,8 @@ setInterval(load, 30000);
 <\/script>`;
 }
 
-function renderAdminHtml(root, siloPath) {
-  const channels = siloStatus(siloPath);
+async function renderAdminHtml(root, siloPath) {
+  const channels = await siloStatus(siloPath);
   const items = readOutbox(root);
   const limits = readRateLimits();
 
@@ -302,12 +302,12 @@ async function handleAsync(req, res, root, siloPath, fetchFn, spawnFn) {
 
   if (url.pathname === '/' && method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    res.end(renderAdminHtml(root, siloPath));
+    res.end(await renderAdminHtml(root, siloPath));
     return;
   }
 
   if (url.pathname === '/api/status' && method === 'GET') {
-    jsonResponse(res, { channels: siloStatus(siloPath) });
+    jsonResponse(res, { channels: await siloStatus(siloPath) });
     return;
   }
 
@@ -352,7 +352,7 @@ async function handleAsync(req, res, root, siloPath, fetchFn, spawnFn) {
         return;
       }
     }
-    saveTokens(filtered, siloPath);
+    await saveTokens(filtered, siloPath);
     const mod = await loadChannels();
     if (mod && service === 'telegram' && filtered.TELEGRAM_BOT_TOKEN) {
       const silo = loadSilo(siloPath);
@@ -379,7 +379,7 @@ async function handleAsync(req, res, root, siloPath, fetchFn, spawnFn) {
   const sowDeleteMatch = url.pathname.match(/^\/api\/sow\/([^/]+)$/);
   if (sowDeleteMatch && method === 'DELETE') {
     const serviceId = sowDeleteMatch[1];
-    const removed = removeService(serviceId, siloPath);
+    const removed = await removeService(serviceId, siloPath);
     if (!removed) {
       jsonResponse(res, { error: `Service '${serviceId}' not found or not configured` }, 404);
       return;

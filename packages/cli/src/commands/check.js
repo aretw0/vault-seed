@@ -5,8 +5,8 @@ import { siloStatus } from '../silo.js';
 const AVALIAR_TEXTOS = fileURLToPath(new URL('../../vendor/quality/avaliar_textos.py', import.meta.url));
 const AVALIAR_APRESENTACOES = fileURLToPath(new URL('../../vendor/quality/avaliar_apresentacoes.py', import.meta.url));
 
-function printSiloStatus() {
-  const status = siloStatus();
+async function printSiloStatus() {
+  const status = await siloStatus();
   const configured = status.filter((s) => s.keys.every((k) => k.configured));
   const unconfigured = status.filter((s) => s.keys.some((k) => !k.configured));
 
@@ -38,5 +38,5 @@ export async function check(args, runner = run) {
     process.exit(1);
   }
 
-  if (!isJson) printSiloStatus();
+  if (!isJson) await printSiloStatus();
 }

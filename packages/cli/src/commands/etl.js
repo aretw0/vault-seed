@@ -20,7 +20,7 @@ Fluxo típico:
 }
 
 export async function etl(args, runner = run) {
-  injectSiloEnv();
+  await injectSiloEnv();
   if (args.includes('--help') || args.includes('-h')) {
     printHelp();
     return;

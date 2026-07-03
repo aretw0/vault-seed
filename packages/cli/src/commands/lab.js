@@ -86,7 +86,7 @@ const PIPELINE_COMMANDS = {
 };
 
 export async function lab(args, runner = run, root) {
-  injectSiloEnv();
+  await injectSiloEnv();
   const [subcommand, ...rest] = args;
 
   if (!subcommand || subcommand === '--help' || subcommand === '-h') {

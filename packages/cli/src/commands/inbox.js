@@ -24,7 +24,7 @@ Exemplos:
 }
 
 export async function inbox(args, runner = run) {
-  injectSiloEnv();
+  await injectSiloEnv();
   const [channel, ...rest] = args;
 
   if (!channel || channel === '--help' || channel === '-h') {

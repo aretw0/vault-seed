@@ -18,7 +18,8 @@ handoff. **Toda a mecânica e os guards estão na doutrina:**
 | `@refarm.dev/ds` + `/ds/html` | tokens do Lab + admin do `dgk serve` | `convergencia-ds-lab.md`, `convergencia-homestead-admin.md` |
 | `@refarm.dev/process-handoff` | spawn em `dgk-runner`/cli | — |
 | `@refarm.dev/channel-policy-v1` | envelope/receipts do outbox (telegram) | — |
-| `@refarm.dev/silo` | credenciais (`silo.js`) — em chegada, forward-safe | `convergencia-refarm-feedback.md` |
+| `@refarm.dev/silo` | credenciais (`silo.js`) em namespace `publishing` | **vendorizado + adotado no adapter**; `packages/cli/test/silo.test.js` |
+| `@refarm.dev/local-surface` | proof candidate de superfície local/white-label | **tarball candidate + contract-test ✓**; `scripts/refarm_local_surface_consumer_contract.test.mjs` |
 | `@refarm.dev/enrichment-contract-v1` | enriquecimento de records (ETL) | **vendorizado + contract-test ✓**; adoção (usar no ETL) pendente |
 | `@refarm.dev/records-contract-v1` | modelo de records (view + ETL) | **vendorizado + contract-test ✓**; adoção (emitir/ler) pendente |
 | `@refarm.dev/source-web` (+ transitivo `source-contract-v1` via override) | aquisição/snapshot de fonte web (fixture sanitizada) → ETL | **vendorizado + contract-test ✓**; adoção (usar no ETL/reference vault) pendente |
@@ -37,6 +38,18 @@ proof em [`convergencia-refarm-proof-2026-07-03.md`](./convergencia-refarm-proof
 Vitest verdes, `records:manifest` com 93 records validado, `site:build` verde e
 `release:package:smoke:json` verde.
 
+Após essa proof, dois blocos foram adiantados:
+
+- `@refarm.dev/silo` passou de plano para adapter real: `packages/cli/src/silo.js`
+  grava credenciais em `SiloCore.saveSecret("publishing", key, value)`, lê por
+  `listSecrets("publishing")`, mantém fallback para `tokens` legado e preserva
+  `contacts.location` como estado de produto.
+- `@refarm.dev/local-surface` foi consumido como candidate tarball separado do
+  handoff oficial (`refarm.dev-local-surface-0.1.0.tgz`, SHA-256
+  `e4651f9eac6e458c862c65ee3bfcd5ff7d7f1e3a4ce58a665166400e83d7b553`) e
+  provado com manifest local-first, render DS, launch plan white-label e
+  `quality:v1`.
+
 ### T2 (jornada soberana) — credentials:v1 assimilado, UX pendente
 `credentials:v1` (VC/wallet W3C) **assimilado** (2026-07-01): vendorizado + conformance passando com
 assinatura heartwood real (Ed25519). Fundação pronta atrás de seam. Falta o **produto**: a UX do
@@ -54,6 +67,10 @@ Assimilação (vendorização + contract-test):
 - [x] `credentials:v1` — `scripts/refarm_credentials_consumer_contract.test.mjs` (vendor
   credentials-contract + identity-heartwood + storage-memory; overrides identity/storage/heartwood;
   **round-trip: provider assinado por heartwood passa o conformance do contrato, 8 checks**)
+- [x] `silo` — `packages/cli/src/silo.js` delega storage de credenciais para
+  `@refarm.dev/silo`, com fallback legado e testes focados
+- [x] `local-surface:v1` — proof candidate para Trabalho 1, sem seleção oficial
+  no handoff ainda
 
 Adoção / produto (design já escrito em `docs/superpowers/specs/`):
 - [x] **records ETL profile runner** — `scripts/records_etl.mjs` (source snapshot → `records:v1` →
@@ -123,7 +140,7 @@ Do lado refarm (pós-codemod): publicar T3 npm · ADR-078 fase 2 · os 3 candida
 Preparação local para o publish: o runbook
 [`convergencia-refarm-release.md`](./convergencia-refarm-release.md) está alinhado ao handoff de 20
 tarballs e há um check mecânico em `scripts/check_refarm_publication_readiness.mjs`
-(`pnpm run refarm:publication:plan`) que lista as 11 refs diretas, os 16 overrides e a troca exata
+(`pnpm run refarm:publication:plan`) que lista as 13 refs diretas, os 18 overrides e a troca exata
 `file:`→npm quando o refarm informar as versões publicadas.
 
 ## Mapa de docs de convergência

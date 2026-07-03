@@ -49,7 +49,21 @@ Resultado: `ok: 20 tarballs match manifest 6a6d31fa2cf5d64fd6abc555448541388beb8
 Dependências diretas novas no `vault-seed`:
 
 - `@refarm.dev/content-projection`: `file:vendor/refarm.dev-content-projection-0.1.0.tgz`
+- `@refarm.dev/local-surface`: `file:vendor/refarm.dev-local-surface-0.1.0.tgz`
 - `@refarm.dev/quality-contract-v1`: `file:vendor/refarm.dev-quality-contract-v1-0.1.0.tgz`
+- `@refarm.dev/silo`: `file:vendor/refarm.dev-silo-0.1.0.tgz`
+
+Nota: `local-surface` é candidate tarball posterior ao handoff oficial de 20
+tarballs. Foi gerado no refarm atual (`sourceGitSha`
+`e0ad0527779b03d247c27b64b722d96e980b5f4b`) com:
+
+```powershell
+docker exec -u 1001:1001 kind_fermat pnpm --filter '@refarm.dev/local-surface' run build
+docker exec -u 1001:1001 kind_fermat pnpm --filter '@refarm.dev/local-surface' pack --pack-destination /tmp/refarm-local-surface-proof
+docker cp kind_fermat:/tmp/refarm-local-surface-proof/refarm.dev-local-surface-0.1.0.tgz vendor\refarm.dev-local-surface-0.1.0.tgz
+```
+
+SHA-256 local: `e4651f9eac6e458c862c65ee3bfcd5ff7d7f1e3a4ce58a665166400e83d7b553`.
 
 O `pnpm-workspace.yaml` recebeu overrides para todos os pacotes inéditos do
 handoff, não só os diretos, porque o pnpm 11 não aplica `pnpm.overrides` dentro
@@ -139,6 +153,26 @@ Resultado: `.dgk/task-artifacts.json` gerado com 3 artifacts e validado por
 `@refarm.dev/artifact-contract-v1`: manifesto de datasets do Lab, outbox de
 publicacao e `records-manifest.json`.
 
+## Provas pós-handoff adiantadas
+
+```powershell
+node node_modules/vitest/vitest.mjs run packages/cli/test/silo.test.js scripts/refarm_local_surface_consumer_contract.test.mjs
+```
+
+Resultado: 2 arquivos, 15 testes, todos verdes.
+
+Cobertura:
+
+- `silo` — `packages/cli/src/silo.js` delega credenciais para
+  `SiloCore.saveSecret("publishing", key, value)`, lê via
+  `listSecrets("publishing")`, remove via `removeSecret`, mantém fallback para
+  `tokens` legado e preserva `contacts.location` como estado local do produto.
+- `local-surface:v1` — `scripts/refarm_local_surface_consumer_contract.test.mjs`
+  consome o candidate tarball, cria manifest `refarm.local-surface.v1`, renderiza
+  HTML via DS, gera launch plan white-label (`dgk ...`) e valida relatório
+  `quality:v1` sem mover rotas, screenshots, adapters ou vocabulário de produto
+  para o refarm.
+
 ## Consumer proofs cobertas
 
 Esta rodada cobre o pacote completo, com enfase nos itens novos e nos itens T3:
@@ -148,6 +182,8 @@ Esta rodada cobre o pacote completo, com enfase nos itens novos e nos itens T3:
 - `process-handoff.dgk-runner-adapter`
 - `quality-contract.declared-lint-envelope`
 - `content-projection.markdown-mdx-records`
+- `silo.publishing-credentials-adapter`
+- `local-surface.white-label-operator-proof`
 - `requirements-source-contract.transitive-source-web-support`
 - `requirements-enrichment.private-provider-wrapper`
 - `requirements-records.knowledge-manifest`

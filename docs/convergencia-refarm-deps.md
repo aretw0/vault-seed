@@ -79,9 +79,11 @@ O handoff oficial atual é `.refarm/handoff/vault-seed/2026-07-03/`, provado em
 [`convergencia-refarm-proof-2026-07-03.md`](./convergencia-refarm-proof-2026-07-03.md):
 
 - 20 tarballs copiados e verificados por SHA-256 contra `vendor/manifest.json`;
-- 16 pacotes `@refarm.dev/*` com refs `file:` ou overrides locais;
-- 11 refs diretas em `package.json`;
-- 16 overrides em `pnpm-workspace.yaml`;
+- 1 candidate tarball adicional (`@refarm.dev/local-surface`) packado do refarm
+  atual para proof downstream;
+- 18 pacotes `@refarm.dev/*` com refs `file:` ou overrides locais;
+- 13 refs diretas em `package.json`;
+- 18 overrides em `pnpm-workspace.yaml`;
 - proof focada cobrindo contracts, outbox, process handoff, artifact manifest, records/source/enrichment,
   content projection e quality.
 

@@ -18,8 +18,12 @@ Proof oficial: [`convergencia-refarm-proof-2026-07-03.md`](./convergencia-refarm
 - handoff consumido: `.refarm/handoff/vault-seed/2026-07-03/`
 - `sourceGitSha`: `6a6d31fa2cf5d64fd6abc555448541388beb8077`
 - pacote aceito: 20 tarballs, 58 required checks, 20 consumer proofs
-- refs diretas atuais no root: 11 `file:vendor/*.tgz`
-- overrides atuais: 16 `@refarm.dev/*` no `pnpm-workspace.yaml`
+- refs diretas atuais no root: 13 `file:vendor/*.tgz`
+- overrides atuais: 18 `@refarm.dev/*` no `pnpm-workspace.yaml`
+- extra candidate consumido após o handoff: `@refarm.dev/local-surface`
+  (`vendor/refarm.dev-local-surface-0.1.0.tgz`), gerado por `pnpm pack` no
+  checkout atual do refarm para fechar a proof downstream antes da próxima
+  seleção `vault-seed-ready`
 
 Refs diretas atuais:
 
@@ -31,8 +35,10 @@ Refs diretas atuais:
 | `dependencies` | `@refarm.dev/credentials-contract-v1` |
 | `dependencies` | `@refarm.dev/enrichment-contract-v1` |
 | `dependencies` | `@refarm.dev/identity-heartwood` |
+| `dependencies` | `@refarm.dev/local-surface` |
 | `dependencies` | `@refarm.dev/quality-contract-v1` |
 | `dependencies` | `@refarm.dev/records-contract-v1` |
+| `dependencies` | `@refarm.dev/silo` |
 | `dependencies` | `@refarm.dev/source-web` |
 | `dependencies` | `@refarm.dev/storage-memory` |
 | `devDependencies` | `@refarm.dev/ds` |
@@ -41,9 +47,9 @@ Overrides atuais:
 
 `artifact-contract-v1`, `channel-policy-v1`, `content-projection`,
 `credentials-contract-v1`, `ds`, `enrichment-contract-v1`, `heartwood`,
-`identity-contract-v1`, `identity-heartwood`, `process-handoff`,
-`quality-contract-v1`, `records-contract-v1`, `source-contract-v1`,
-`source-web`, `storage-contract-v1`, `storage-memory`.
+`identity-contract-v1`, `identity-heartwood`, `local-surface`,
+`process-handoff`, `quality-contract-v1`, `records-contract-v1`, `silo`,
+`source-contract-v1`, `source-web`, `storage-contract-v1`, `storage-memory`.
 
 ## Pré-condição
 
@@ -107,7 +113,7 @@ por:
 ^<versão publicada>
 ```
 
-Aplicar para as 11 refs diretas listadas acima.
+Aplicar para as 13 refs diretas listadas acima.
 
 ## Passo 2 — remover overrides
 

@@ -2,7 +2,7 @@ import { describe, test, expect } from "vitest";
 import { mkdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { loadSilo, saveTokens, removeService, loadSiloEnv, siloStatus, SERVICES } from '../src/silo.js';
+import { loadSilo, saveSilo, saveTokens, removeService, loadSiloEnv, siloStatus, SERVICES } from '../src/silo.js';
 
 function tempPath() {
   const dir = join(tmpdir(), `dgk-silo-${Date.now()}-${Math.random().toString(36).slice(2)}`);
@@ -15,81 +15,103 @@ test('loadSilo retorna {} quando arquivo não existe', () => {
 });
 
 describe('saveTokens e loadSiloEnv', () => {
-  test('salva e carrega tokens corretamente', () => {
+  test('salva e carrega tokens corretamente no namespace publishing do refarm silo', async () => {
     const { path, cleanup } = tempPath();
     try {
-      saveTokens({ MASTODON_INSTANCE: 'fosstodon.org', MASTODON_TOKEN: 'abc123' }, path);
-      expect(loadSiloEnv(path).MASTODON_INSTANCE).toBe('fosstodon.org');
-      expect(loadSiloEnv(path).MASTODON_TOKEN).toBe('abc123');
+      await saveTokens({ MASTODON_INSTANCE: 'fosstodon.org', MASTODON_TOKEN: 'abc123' }, path);
+      const env = await loadSiloEnv(path);
+      const raw = loadSilo(path);
+      expect(env.MASTODON_INSTANCE).toBe('fosstodon.org');
+      expect(env.MASTODON_TOKEN).toBe('abc123');
+      expect(raw.tokens).toBe(undefined);
+      expect(raw.secrets.publishing.MASTODON_INSTANCE.value).toBe('fosstodon.org');
+      expect(raw.secrets.publishing.MASTODON_TOKEN.value).toBe('abc123');
     } finally { cleanup(); }
   });
 
-  test('saveTokens faz merge sem apagar tokens existentes', () => {
+  test('saveTokens faz merge sem apagar tokens existentes', async () => {
     const { path, cleanup } = tempPath();
     try {
-      saveTokens({ MASTODON_TOKEN: 'tok1' }, path);
-      saveTokens({ BLUESKY_HANDLE: 'user.bsky.social' }, path);
-      const env = loadSiloEnv(path);
+      await saveTokens({ MASTODON_TOKEN: 'tok1' }, path);
+      await saveTokens({ BLUESKY_HANDLE: 'user.bsky.social' }, path);
+      const env = await loadSiloEnv(path);
       expect(env.MASTODON_TOKEN, 'token anterior deve permanecer').toBe('tok1');
       expect(env.BLUESKY_HANDLE, 'novo token deve estar presente').toBe('user.bsky.social');
     } finally { cleanup(); }
   });
 
-  test('loadSiloEnv retorna {} quando silo vazio', () => {
+  test('loadSiloEnv retorna {} quando silo vazio', async () => {
     const { path, cleanup } = tempPath();
     try {
-      expect(loadSiloEnv(path)).toEqual({});
+      expect(await loadSiloEnv(path)).toEqual({});
+    } finally { cleanup(); }
+  });
+
+  test('loadSiloEnv usa tokens legados como fallback', async () => {
+    const { path, cleanup } = tempPath();
+    try {
+      saveSilo({ tokens: { TELEGRAM_BOT_TOKEN: 'legacy' } }, path);
+      expect((await loadSiloEnv(path)).TELEGRAM_BOT_TOKEN).toBe('legacy');
     } finally { cleanup(); }
   });
 });
 
 describe('removeService', () => {
-  test('remove chaves do serviço especificado sem afetar outros tokens no silo', () => {
+  test('remove chaves do serviço especificado sem afetar outros tokens no silo', async () => {
     const { path, cleanup } = tempPath();
     try {
-      saveTokens({ TELEGRAM_BOT_TOKEN: 'tok', TELEGRAM_CHAT_ID: '-100', OTHER_KEY: 'x' }, path);
-      removeService('telegram', path);
-      const env = loadSiloEnv(path);
+      await saveTokens({ TELEGRAM_BOT_TOKEN: 'tok', TELEGRAM_CHAT_ID: '-100', OTHER_KEY: 'x' }, path);
+      await removeService('telegram', path);
+      const env = await loadSiloEnv(path);
       expect(env.TELEGRAM_BOT_TOKEN, 'TELEGRAM_BOT_TOKEN deve ser removido').toBe(undefined);
       expect(env.TELEGRAM_CHAT_ID, 'TELEGRAM_CHAT_ID deve ser removido').toBe(undefined);
       expect(env.OTHER_KEY, 'outras chaves não devem ser afetadas').toBe('x');
     } finally { cleanup(); }
   });
 
-  test('removeService retorna false para serviço desconhecido', () => {
-    expect(removeService('servico-inexistente')).toBe(false);
+  test('removeService retorna false para serviço desconhecido', async () => {
+    expect(await removeService('servico-inexistente')).toBe(false);
   });
 
-  test('removeService retorna false quando silo não existe', () => {
-    expect(removeService('telegram', '/caminho/inexistente/silo.json')).toBe(false);
+  test('removeService retorna false quando silo não existe', async () => {
+    expect(await removeService('telegram', '/caminho/inexistente/silo.json')).toBe(false);
+  });
+
+  test('removeService remove tokens legados para concluir migração local', async () => {
+    const { path, cleanup } = tempPath();
+    try {
+      saveSilo({ tokens: { TELEGRAM_BOT_TOKEN: 'legacy', TELEGRAM_CHAT_ID: '-100' } }, path);
+      expect(await removeService('telegram', path)).toBe(true);
+      expect(await loadSiloEnv(path)).toEqual({});
+    } finally { cleanup(); }
   });
 });
 
 describe('siloStatus', () => {
-  test('retorna todos os serviços registrados mesmo sem nenhum configurado', () => {
+  test('retorna todos os serviços registrados mesmo sem nenhum configurado', async () => {
     const { path, cleanup } = tempPath();
     try {
-      const status = siloStatus(path);
+      const status = await siloStatus(path);
       const ids = status.map((s) => s.id);
       expect(ids.includes('telegram'), 'deve incluir telegram').toBeTruthy();
     } finally { cleanup(); }
   });
 
-  test('marca chaves como configuradas quando presentes no silo', () => {
+  test('marca chaves como configuradas quando presentes no silo', async () => {
     const { path, cleanup } = tempPath();
     try {
-      saveTokens({ TELEGRAM_BOT_TOKEN: 'tok', TELEGRAM_CHAT_ID: '-100' }, path);
-      const status = siloStatus(path);
+      await saveTokens({ TELEGRAM_BOT_TOKEN: 'tok', TELEGRAM_CHAT_ID: '-100' }, path);
+      const status = await siloStatus(path);
       const telegram = status.find((s) => s.id === 'telegram');
       expect(telegram.keys.every((k) => k.configured), 'todas as chaves telegram devem estar configuradas').toBeTruthy();
     } finally { cleanup(); }
   });
 
-  test('preview mascara o valor (mostra apenas 4 chars)', () => {
+  test('preview mascara o valor (mostra apenas 4 chars)', async () => {
     const { path, cleanup } = tempPath();
     try {
-      saveTokens({ TELEGRAM_BOT_TOKEN: 'secrettoken123' }, path);
-      const status = siloStatus(path);
+      await saveTokens({ TELEGRAM_BOT_TOKEN: 'secrettoken123' }, path);
+      const status = await siloStatus(path);
       const telegram = status.find((s) => s.id === 'telegram');
       const tokenKey = telegram.keys.find((k) => k.key === 'TELEGRAM_BOT_TOKEN');
       expect(tokenKey.preview.startsWith('secr'), 'preview deve começar com os 4 primeiros chars').toBeTruthy();

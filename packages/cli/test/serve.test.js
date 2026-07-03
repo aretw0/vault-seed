@@ -280,10 +280,11 @@ describe('POST /api/sow', () => {
     const data = await res.json();
     expect(data.ok).toBe(true);
 
-    // Verify persisted in silo
+    // Verify persisted in refarm silo's publishing namespace.
     const { readFileSync } = await import('node:fs');
     const silo = JSON.parse(readFileSync(siloPath, 'utf8'));
-    expect(silo.tokens.TELEGRAM_BOT_TOKEN).toBe('tok-test');
+    expect(silo.tokens?.TELEGRAM_BOT_TOKEN).toBe(undefined);
+    expect(silo.secrets.publishing.TELEGRAM_BOT_TOKEN.value).toBe('tok-test');
   });
 
   test('retorna 400 para serviço fora do ciclo completo (mastodon)', async () => {
@@ -330,8 +331,8 @@ describe('POST /api/sow', () => {
 
     const { readFileSync } = await import('node:fs');
     const silo = JSON.parse(readFileSync(siloPath, 'utf8'));
-    expect(silo.tokens.TELEGRAM_BOT_TOKEN, 'token atualizado').toBe('tok2');
-    expect(silo.tokens.TELEGRAM_CHAT_ID, 'chat_id preservado').toBe('-100');
+    expect(silo.secrets.publishing.TELEGRAM_BOT_TOKEN.value, 'token atualizado').toBe('tok2');
+    expect(silo.secrets.publishing.TELEGRAM_CHAT_ID.value, 'chat_id preservado').toBe('-100');
   });
 });
 

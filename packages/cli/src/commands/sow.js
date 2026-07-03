@@ -303,7 +303,7 @@ async function sowService(serviceId) {
   }
 
   console.log(`${identity}`);
-  saveTokens(collected);
+  await saveTokens(collected);
   console.log(`✓ Salvo em ${SILO_PATH}\n`);
 
   if (serviceId === 'telegram') {
@@ -326,8 +326,8 @@ async function saveTelegramContacts(token) {
   }
 }
 
-function sowList() {
-  const status = siloStatus();
+async function sowList() {
+  const status = await siloStatus();
   console.log(`\nServiços configurados em ${SILO_PATH}:\n`);
   for (const svc of status) {
     const allConfigured = svc.keys.every((k) => k.configured);
@@ -350,7 +350,7 @@ async function sowRemove(serviceId) {
     console.error(`dgk sow remove: serviço desconhecido '${serviceId}'`);
     process.exit(1);
   }
-  const removed = removeService(serviceId);
+  const removed = await removeService(serviceId);
   if (!removed) {
     console.error(`dgk sow remove: nenhuma credencial configurada para '${serviceId}'`);
     process.exit(1);

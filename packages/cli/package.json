@@ -30,7 +30,8 @@
     "@aretw0/dgk-channels": "workspace:*",
     "@aretw0/dgk-runner": "workspace:*",
     "@refarm.dev/ds": "file:../../vendor/refarm.dev-ds-0.1.0.tgz",
-    "@refarm.dev/process-handoff": "file:../../vendor/refarm.dev-process-handoff-0.1.0.tgz"
+    "@refarm.dev/process-handoff": "file:../../vendor/refarm.dev-process-handoff-0.1.0.tgz",
+    "@refarm.dev/silo": "file:../../vendor/refarm.dev-silo-0.1.0.tgz"
   },
   "license": "GPL-3.0-only",
   "engines": {

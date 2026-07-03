@@ -19,9 +19,11 @@ pacotes `@refarm.dev/*`. Itens essenciais relayados pro refarm.
 
 > 2026-06-29. Não é defeito nem lacuna pontual: é o **requisito de consumidor** que o
 > vault-seed (primeiro consumidor do namespace `channel`/`publishing`) leva ao refarm pra
-> o `silo` amadurecer. **Adoção adiada** — o silo está conceitualmente certo mas embrionário
-> na superfície de consumo. Reimplementação atual: `packages/cli/src/silo.js` (sync, JSON
-> `0600` em `~/.dgk/silo.json`).
+> o `silo` amadurecer. Histórico: a adoção foi adiada enquanto a superfície de consumo
+> amadurecia. Reimplementação original: `packages/cli/src/silo.js` (sync, JSON
+> `0600` em `~/.dgk/silo.json`). Em 2026-07-03 a adoção de storage foi feita:
+> `packages/cli/src/silo.js` agora delega credenciais para `@refarm.dev/silo`
+> em `secrets.publishing`, mantendo fallback para `tokens` legado.
 
 **Convergência que valida a fronteira:** o reserved set de namespaces do silo
 (`model | runtime | channel | publishing`, em `collect.d.ts`) é **exatamente** a disciplina
@@ -74,6 +76,12 @@ upgradeTarget:"opaque-envelope-v1"}}` + `describeProtection()`). Dobrou tudo no 
 `0.1.0`** (não 0.1.1) com **API congelada**; OPAQUE/Sentinel viram "Post-0.1, internal, surface
 frozen". Verificado no `dist`: closure split real (heartwood nunca resolve em storage-only, testado
 por contagem de import).
+
+**Adoção downstream (2026-07-03):** `vault-seed` consome o tarball
+`@refarm.dev/silo@0.1.0`, grava novos tokens com `SiloCore.saveSecret("publishing", key, value)`,
+lista com `listSecrets("publishing")`, remove via `removeSecret`, injeta env de forma non-overriding
+e apaga tokens legados no `removeService` para concluir migração local. `contacts.location`,
+catálogo de serviços e UX `dgk sow` continuam downstream-owned.
 
 **2ª rodada porta-voz (commit `921f22c1`, via container):** achei defeito de forward-compat
 silencioso — `readSecretEnvelope` devolvia `entry.value` pra qualquer envelope, ignorando
