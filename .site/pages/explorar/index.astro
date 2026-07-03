@@ -76,6 +76,14 @@ const exploreJson = JSON.stringify(explore).replace(/</g, '\\u003c');
         </label>
 
         <label class="vault-field">
+          <span>Tipo</span>
+          <select data-vault-explore-type>
+            <option value="">Todos</option>
+            {explore.facets.types.map((type) => <option value={type.name}>{type.name} ({type.count})</option>)}
+          </select>
+        </label>
+
+        <label class="vault-field">
           <span>Intenção</span>
           <select data-vault-explore-intent>
             <option value="">Todas</option>
@@ -128,6 +136,7 @@ const exploreJson = JSON.stringify(explore).replace(/</g, '\\u003c');
               class="vault-resource-card"
               data-note-title={note.title.toLowerCase()}
               data-note-folder={note.area}
+              data-note-type={note.recordType}
               data-note-category={note.category}
               data-note-audience={note.audience}
               data-note-intents={note.intents.join(' ')}
@@ -135,7 +144,7 @@ const exploreJson = JSON.stringify(explore).replace(/</g, '\\u003c');
               data-note-summary={note.summary.toLowerCase()}
             >
               <div>
-                <span class="vault-card__eyebrow">{note.primaryIntentLabel} · {note.area} · {note.category}</span>
+                <span class="vault-card__eyebrow">{note.primaryIntentLabel} · {note.recordType} · {note.area} · {note.category}</span>
                 <h3><a href={`${base}${note.href}`}>{note.title}</a></h3>
               </div>
               {note.summary && <p>{note.summary}</p>}
@@ -281,6 +290,7 @@ const exploreJson = JSON.stringify(explore).replace(/</g, '\\u003c');
       if (!root) return;
       const search = root.querySelector('[data-vault-explore-search]');
       const folder = root.querySelector('[data-vault-explore-folder]');
+      const recordType = root.querySelector('[data-vault-explore-type]');
       const intent = root.querySelector('[data-vault-explore-intent]');
       const category = root.querySelector('[data-vault-explore-category]');
       const audience = root.querySelector('[data-vault-explore-audience]');
@@ -296,6 +306,7 @@ const exploreJson = JSON.stringify(explore).replace(/</g, '\\u003c');
       function apply() {
         const query = normalize(search?.value);
         const folderValue = folder?.value || '';
+        const typeValue = recordType?.value || '';
         const intentValue = intent?.value || '';
         const categoryValue = category?.value || '';
         const audienceValue = audience?.value || '';
@@ -310,6 +321,7 @@ const exploreJson = JSON.stringify(explore).replace(/</g, '\\u003c');
           const matches =
             (!query || haystack.includes(query)) &&
             (!folderValue || card.dataset.noteFolder === folderValue) &&
+            (!typeValue || card.dataset.noteType === typeValue) &&
             (!intentValue || String(card.dataset.noteIntents || '').split(' ').includes(intentValue)) &&
             (!categoryValue || card.dataset.noteCategory === categoryValue) &&
             (!audienceValue || card.dataset.noteAudience === audienceValue) &&
@@ -331,8 +343,8 @@ const exploreJson = JSON.stringify(explore).replace(/</g, '\\u003c');
           apply();
         });
       });
-      [search, folder, intent, category, audience].forEach((control) => control?.addEventListener('input', apply));
-      [folder, intent, category, audience].forEach((control) => control?.addEventListener('change', apply));
+      [search, folder, recordType, intent, category, audience].forEach((control) => control?.addEventListener('input', apply));
+      [folder, recordType, intent, category, audience].forEach((control) => control?.addEventListener('change', apply));
       apply();
     })();
   </script>

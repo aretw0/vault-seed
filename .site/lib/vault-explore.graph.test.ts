@@ -2,7 +2,7 @@ import { test, expect } from 'vitest';
 import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { buildExploreGraph, buildVaultExploreData } from './vault-explore';
+import { buildExploreGraph, buildExploreRecordsTable, buildVaultExploreData } from './vault-explore';
 import { loadRecordsConfig } from '../../scripts/generate_records_data.mjs';
 
 // The Explore graph must be derived from the config-driven records:v1 projection (single source),
@@ -37,6 +37,20 @@ test('buildExploreGraph honors an explicit surface config (subvertible, not hard
   expect(graph.nodes.find((n) => n.id === '30-areas/ops')?.degree).toBe(1);
 });
 
+test('buildExploreRecordsTable derives table rows from records:v1 without a parallel page', () => {
+  const table = buildExploreRecordsTable(NOTES);
+
+  expect(table.columns).toEqual(expect.arrayContaining(['title', 'status', 'tags', 'folder']));
+  expect(table.rows.find((row) => row.id === '20-projetos/launch')).toMatchObject({
+    id: '20-projetos/launch',
+    type: 'Project',
+  });
+  expect(table.rows.find((row) => row.id === '30-areas/ops')).toMatchObject({
+    id: '30-areas/ops',
+    type: 'Area',
+  });
+});
+
 test('buildVaultExploreData keeps Explorar as the MD/MDX content surface', () => {
   const cwd = mkdtempSync(join(tmpdir(), 'vault-seed-explore-mdx-'));
   mkdirSync(join(cwd, '.site'), { recursive: true });
@@ -68,5 +82,8 @@ test('buildVaultExploreData keeps Explorar as the MD/MDX content surface', () =>
   expect(explore.notes.map((note) => note.path)).toContain('40 - Recursos/Nota MDX.mdx');
   expect(explore.notes.find((note) => note.path.endsWith('.mdx'))?.tags).toEqual(['mdx']);
   expect(explore.graph.links).toHaveLength(1);
+  expect(explore.records.rows.find((row) => row.id === 'recursos/nota-mdx')).toMatchObject({ type: 'Resource' });
+  expect(explore.notes.find((note) => note.path.endsWith('.mdx'))?.recordType).toBe('Resource');
+  expect(explore.facets.types.map((type) => type.name)).toContain('Resource');
   expect(explore.editorial.notesEvaluated).toBe(2);
 });

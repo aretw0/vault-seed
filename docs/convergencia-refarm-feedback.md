@@ -123,4 +123,6 @@ pra quando o container liberar (Codex ativo no `cranky_bassi`).
   blocos e só empacota extensões finas quando forem claramente específicas do produto-vault. Proof
   local em andamento: `Explorar` continua a superfície canônica, agora com ingestão `*.md` + `*.mdx`
   compatível com `@refarm.dev/content-projection` (consumer-contract dev; sem import estático em script
-  distribuído), sem criar `/records/` paralelo.
+  distribuído), sem criar `/records/` paralelo. O filtro por `@type`/facet de records fica local como
+  costura de produto; se evoluir para componente reutilizável de facetas/listas/tabela, deve partir do
+  refarm como bloco genérico em vez de virar biblioteca local do vault-seed.

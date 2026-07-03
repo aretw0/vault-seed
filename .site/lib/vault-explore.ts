@@ -9,7 +9,7 @@ import {
 } from './information-architecture.mjs';
 import { buildInformationArchitectureReport } from './information-architecture-audit.mjs';
 import { vaultStatus } from './vault-config.mjs';
-import { buildRecordsGraph, loadRecordsConfig } from '../../scripts/generate_records_data.mjs';
+import { buildRecordsGraph, buildRecordsTable, loadRecordsConfig } from '../../scripts/generate_records_data.mjs';
 import {
   extractVaultWikilinks,
   loadVaultContentItems,
@@ -38,6 +38,7 @@ export type ExploreNote = {
   description: string;
   summary: string;
   outgoing: string[];
+  recordType: string;
 };
 
 export type ExploreData = {
@@ -56,6 +57,7 @@ export type ExploreData = {
     audiences: Array<{ name: string; count: number }>;
     intents: Array<{ name: string; label: string; count: number }>;
     tags: Array<{ name: string; count: number }>;
+    types: Array<{ name: string; count: number }>;
   };
   graph: {
     nodes: Array<{ id: string; title: string; folder: string; tags: string[]; degree: number }>;
@@ -64,6 +66,10 @@ export type ExploreData = {
       hubs: Array<{ id: string; title: string; folder: string; degree: number }>;
       orphans: Array<{ id: string; title: string; folder: string }>;
     };
+  };
+  records: {
+    columns: string[];
+    rows: Array<{ id: string; type: string | null; cells: Record<string, unknown>; relations: number }>;
   };
   editorial: {
     notesEvaluated: number;
@@ -176,6 +182,24 @@ export function buildExploreGraph(
   return buildRecordsGraph(recordNotes, config);
 }
 
+export function buildExploreRecordsTable(
+  notes: Array<{ slug: string; title: string; folder: string; status?: string; tags: string[]; outgoing: string[] }>,
+  config: ReturnType<typeof loadRecordsConfig> = loadRecordsConfig(),
+): {
+  columns: string[];
+  rows: Array<{ id: string; type: string | null; cells: Record<string, unknown>; relations: number }>;
+} {
+  const recordNotes = notes.map((note) => ({
+    id: note.slug,
+    title: note.title,
+    folder: note.folder,
+    status: note.status,
+    tags: note.tags,
+    links: note.outgoing,
+  }));
+  return buildRecordsTable(recordNotes, config);
+}
+
 export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData {
   const ia = loadInformationArchitecture(cwd);
   const items = loadVaultContentItems({ cwd });
@@ -189,7 +213,7 @@ export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData
     if (data.audience === 'user-vault') continue;
 
     const slug = makeSlug(normalizedFile);
-    const title = data.title ? String(data.title) : basename(file, '.md');
+    const title = data.title ? String(data.title) : basename(stripContentExtension(normalizedFile));
     const folder = normalizedFile.split('/')[0] ?? '';
     const tags = normalizeList(data.tags);
     const categoryKey = normalizeVocabularyValue(typeof data.category === 'string' ? data.category : '', ia.categories) || 'conceito';
@@ -218,6 +242,7 @@ export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData
       description: typeof data.description === 'string' ? data.description : summarize(body),
       summary: summarize(body),
       outgoing: [],
+      recordType: 'Note',
       aliases: normalizeList(data.aliases),
       rawTargets: extractWikiTargets(body, data.related),
     });
@@ -249,23 +274,32 @@ export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData
     for (const target of note.outgoing) links.push({ source: note.slug, target });
   }
 
+  const notes = rawNotes
+    .map(({ aliases: _aliases, rawTargets: _rawTargets, ...note }) => note)
+    .sort((a, b) => a.title.localeCompare(b.title, 'pt'));
+  const recordsTable = buildExploreRecordsTable(notes);
+  const recordRowById = new Map(recordsTable.rows.map((row) => [row.id, row]));
+  const notesWithRecords = notes.map((note) => ({
+    ...note,
+    recordType: recordRowById.get(note.slug)?.type ?? 'Note',
+  }));
+
   const folders = new Map<string, number>();
   const categories = new Map<string, number>();
   const audiences = new Map<string, number>();
   const intents = new Map<string, number>();
   const tags = new Map<string, number>();
-  for (const note of rawNotes) {
+  const types = new Map<string, number>();
+  for (const note of notesWithRecords) {
     increment(folders, note.area);
     increment(categories, note.category);
     increment(audiences, note.audience);
     for (const intent of note.intents) increment(intents, intent);
     for (const tag of note.tags) increment(tags, tag);
+    increment(types, note.recordType);
   }
 
-  const notes = rawNotes
-    .map(({ aliases: _aliases, rawTargets: _rawTargets, ...note }) => note)
-    .sort((a, b) => a.title.localeCompare(b.title, 'pt'));
-  const graphNodes = buildExploreGraph(notes).nodes;
+  const graphNodes = buildExploreGraph(notesWithRecords).nodes;
   const hubCandidates = graphNodes.filter((node) => node.degree >= 4);
   const orphanCandidates = graphNodes.filter((node) => node.degree === 0);
   const hubInsights = hubCandidates
@@ -287,7 +321,7 @@ export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData
       links: links.length,
       hubs: hubCandidates.length,
       orphanCandidates: orphanCandidates.length,
-      totalWords: notes.reduce((sum, note) => sum + note.words, 0),
+      totalWords: notesWithRecords.reduce((sum, note) => sum + note.words, 0),
     },
     facets: {
       folders: topValues(folders),
@@ -295,6 +329,7 @@ export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData
       audiences: topValues(audiences),
       intents: intentValues(intents, ia),
       tags: topValues(tags),
+      types: topValues(types),
     },
     graph: {
       nodes: graphNodes,
@@ -304,6 +339,7 @@ export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData
         orphans: orphanInsights,
       },
     },
+    records: recordsTable,
     editorial: {
       notesEvaluated: editorialReport.notesEvaluated,
       errorCount: editorialReport.errors.length,
@@ -314,6 +350,6 @@ export function buildVaultExploreData({ cwd = process.cwd() } = {}): ExploreData
       thinPublishedResources: editorialReport.thinPublishedResources,
       intentDistribution: editorialReport.intentDistribution,
     },
-    notes,
+    notes: notesWithRecords,
   };
 }

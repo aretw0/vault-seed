@@ -11,13 +11,17 @@ test("Explorar remains the canonical MD/MDX surface instead of adding records pa
   const explorePage = read(".site/pages/explorar/index.astro");
   const exploreLib = read(".site/lib/vault-explore.ts");
   const vaultData = read("scripts/generate_vault_data.mjs");
+  const rootPkg = read("package.json");
 
   expect(explorePage).toMatch(/buildVaultExploreData/);
   expect(explorePage).toMatch(/data-vault-explore-results/);
+  expect(explorePage).toMatch(/data-vault-explore-type/);
   expect(exploreLib).toMatch(/loadVaultContentItems/);
+  expect(exploreLib).toMatch(/buildExploreRecordsTable/);
   expect(exploreLib).not.toMatch(/globSync/);
   expect(vaultData).not.toMatch(/from\s+["']@refarm\.dev\//);
   expect(vaultData).toMatch(/CONTENT_EXTENSIONS = \["md", "mdx"\]/);
+  expect(rootPkg).not.toMatch(/@aretw0\/(?:vault|dgk)-(?:blocks|content-blocks|astro-blocks)/);
 });
 
 test("MDX migration boundary keeps reusable Astro blocks upstream in refarm", () => {

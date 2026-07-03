@@ -125,6 +125,10 @@ Adoção / produto (design já escrito em `docs/superpowers/specs/`):
   record com type/cells/relation-count. **Uma superfície é uma VIEW sobre `records:v1`, igual ao grafo —
   requisitos são só records com fields** (`62dfc54`); comentários neutralizados p/ não vazar domínio (`9e529d8`).
   A view astro não vira rota separada: ela deve entrar como capacidades/filtros dentro do `Explorar`.
+- [x] **Explorar: facet de tipo via `records:v1`** — `buildExploreRecordsTable()` deriva rows/`@type`
+  da projeção de records e a rota existente adiciona filtro `Tipo`. Isso é costura local de produto;
+  um componente genérico de facetas/listas/tabela fica sinalizado ao refarm como bloco reutilizável, não
+  como biblioteca nova no vault-seed.
 - [x] **guard de não-reimplementação** — `scripts/refarm_no_reimplementation_contract.test.mjs`
   bloqueia nomes de arquivos de alto sinal para novas capacidades genéricas locais
   (`*-contract`, `*-provider`, `*-conformance`, etc.) sem allowlist explícita.
@@ -144,10 +148,10 @@ passou com gap ledger vazio, e o **grafo do Explore já lê a fonte `records:v1`
 resta de produto:
 1. **especializar o profile para a POC** — trocar source/lookup por adapters
    reais privados, mantendo o runner e os contratos.
-2. **Explorar: filtros/colunas de records + MDX authoring** — adicionar a leitura tabular de
-   `records:v1` na rota existente e inventariar quais trechos Astro podem virar MDX quando os blocos
-   refarm correspondentes estiverem disponíveis, sem página nova e sem duplicar a experiência de
-   exploração.
+2. **Explorar: colunas de records + MDX authoring** — inventariar quais trechos Astro podem virar MDX
+   quando os blocos refarm correspondentes estiverem disponíveis, sem página nova e sem duplicar a
+   experiência de exploração. Se filtros/listas/tabelas crescerem além da costura local, promover a
+   pressão para bloco refarm.
 `credentials:v1` (T2) já está assimilado; a próxima fatia é UX/produto do
 headspace/wallet, não contrato.
 
