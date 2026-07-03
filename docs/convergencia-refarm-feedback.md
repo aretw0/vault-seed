@@ -126,4 +126,6 @@ pra quando o container liberar (Codex ativo no `cranky_bassi`).
   distribuído), sem criar `/records/` paralelo. O filtro por `@type`/facet de records fica local como
   costura de produto; se evoluir para componente reutilizável de facetas/listas/tabela, deve partir do
   refarm como bloco genérico em vez de virar biblioteca local do vault-seed. Inventário downstream:
-  `docs/superpowers/specs/2026-07-03-mdx-block-migration-inventory.md`.
+  `docs/superpowers/specs/2026-07-03-mdx-block-migration-inventory.md`. O loader publicado já aceita
+  `.mdx` markdown-compatible; o que falta para a migração completa é a história de blocos/imports
+  reutilizáveis para MDX com componentes.

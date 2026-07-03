@@ -11,6 +11,7 @@ test("Explorar remains the canonical MD/MDX surface instead of adding records pa
   const explorePage = read(".site/pages/explorar/index.astro");
   const exploreLib = read(".site/lib/vault-explore.ts");
   const vaultData = read("scripts/generate_vault_data.mjs");
+  const vaultLoader = read(".site/content.config.ts");
   const rootPkg = read("package.json");
 
   expect(explorePage).toMatch(/buildVaultExploreData/);
@@ -21,6 +22,9 @@ test("Explorar remains the canonical MD/MDX surface instead of adding records pa
   expect(exploreLib).not.toMatch(/globSync/);
   expect(vaultData).not.toMatch(/from\s+["']@refarm\.dev\//);
   expect(vaultData).toMatch(/CONTENT_EXTENSIONS = \["md", "mdx"\]/);
+  expect(vaultLoader).toMatch(/contentGlobPatterns\(VAULT_FOLDERS\)/);
+  expect(vaultLoader).toMatch(/stripContentExtension\(normalizedFile\)/);
+  expect(vaultLoader).not.toMatch(/VAULT_FOLDERS\.map\(f => `\$\{f\}\/\*\*\/\*\.md`\)/);
   expect(rootPkg).not.toMatch(/@aretw0\/(?:vault|dgk)-(?:blocks|content-blocks|astro-blocks)/);
 });
 

@@ -133,6 +133,10 @@ Adoção / produto (design já escrito em `docs/superpowers/specs/`):
   classifica cada `.astro` como shell, host interativo, conteúdo MDX-ready ou pressão de bloco refarm.
   A regra operacional enquanto o refarm não publica: adiantar só costura local fina; blocos genéricos
   viram feedback/proof para refarm.
+- [x] **loader publicado aceita `.mdx`** — `.site/content.config.ts` agora usa o mesmo glob
+  `*.md`/`*.mdx` do fluxo de dados (`contentGlobPatterns`) e normaliza slug/título com
+  `stripContentExtension`. Isso destrava MDX markdown-compatible no site publicado sem adicionar
+  dependência nova; JSX/blocos MDX continuam aguardando a história de blocos/imports do refarm.
 - [x] **guard de não-reimplementação** — `scripts/refarm_no_reimplementation_contract.test.mjs`
   bloqueia nomes de arquivos de alto sinal para novas capacidades genéricas locais
   (`*-contract`, `*-provider`, `*-conformance`, etc.) sem allowlist explícita.

@@ -43,13 +43,16 @@ Until then, the vault-seed implementation stays as route-level product glue.
 ## Near-term queue
 
 1. Keep `/explorar/` as the canonical shell while adding only thin records-driven filters.
-2. Convert copy-heavy sections to MDX only after there is a stable block import story.
-3. Avoid creating new `.site/components/*` generic blocks unless they are explicitly product shell.
-4. Relay reusable block pressure to refarm via `docs/convergencia-refarm-feedback.md`.
+2. Allow published `.mdx` files through the same loader as `.md` for markdown-compatible MDX.
+3. Convert copy-heavy sections that need JSX/components only after there is a stable block import story.
+4. Avoid creating new `.site/components/*` generic blocks unless they are explicitly product shell.
+5. Relay reusable block pressure to refarm via `docs/convergencia-refarm-feedback.md`.
 
 ## Verification
 
 - `scripts/mdx_content_surface_contract.test.mjs` guards that `/records/` is not introduced and no local
   generic block package appears.
+- `.site/content.config.ts` must use the shared `*.md`/`*.mdx` content glob, so published MDX files can
+  render when they are markdown-compatible.
 - This inventory must mention every `.site/pages/*.astro` page and every reusable component category.
 - Refarm feedback must carry the reusable block pressure so upstream can decide what belongs there.
