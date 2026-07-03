@@ -8,6 +8,7 @@ pacotes `@refarm.dev/*`. Itens essenciais relayados pro refarm.
 | Pacote | Versão | Sintoma | Repro/evidência | Status |
 | --- | --- | --- | --- | --- |
 | `@refarm.dev/launch-process` | `0.1.0` | `launchDetachedProcess não anexa listener 'error' ao child; num ENOENT (ex.: xdg-open/cmd/open ausente) o spawn emite 'error' sem handler → exceção não-capturada (crash do processo), onde o spawn cru antes rejeitava uma Promise capturável. Exposto via launchVault/openUri (Obsidian), que não é guardado por detect.` | `dist/index.js launchDetachedProcess: spawn(..., {detached:true, stdio:[...]}); child.unref(); — sem child.on('error', ...). Consumido em packages/cli/src/launcher.js (openUri) e commands/vscode.js (openVSCode).` | `corrigido` — refarm `0eb1a193` anexa `child.once('error', e => options.onError?.(e))` (listener sempre presente → crash-safe por padrão; `onError` opcional). Re-vendorizado do handoff `2026-06-28`; dist instalado nos dois consumidores tem o fix; suíte 356/356. |
+| `@refarm.dev/ds-astro` | `0.1.0` | peer `astro: ^6.4.8` não-satisfeito no consumidor — a última versão disponível do astro é `6.4.4`, então o peer floor está **à frente do ecossistema**. Install só emite warning (não-fatal), mas polui o `pnpm install`/`peers check` de qualquer consumidor. | `pnpm peers check` → `✕ unmet peer astro / @refarm.dev/ds-astro@0.1.0`; `require('astro/package.json').version` = `6.4.4`. Assimilado no `2026-07-03` com o consumer-proof verde mesmo assim (a prova testa surface JS + subpaths, independe do runtime astro). | `aberto` (relayar — baixar o peer floor pra `^6.4.4` ou publicar astro `6.4.8`) |
 
 ## Lacunas essenciais (backlog pro refarm)
 
@@ -134,3 +135,12 @@ pra quando o container liberar (Codex ativo no `cranky_bassi`).
   `NotebookCard`, `AvailabilityBadge`, `CardGrid`, `GraphView`, `GraphToolbar` e `GraphLegend`.
   Até isso existir, o vault-seed não cria pacote local de blocos; mantém shells Astro e wrappers finos.
   Plano de proof downstream: `docs/superpowers/plans/2026-07-03-ds-astro-mdx-consumer-proof.md`.
+  **Entregue + assimilado (2026-07-03):** o refarm cultivou `@refarm.dev/ds-astro` (embed set sancionado
+  Card/MetricStrip/CalloutSection/ContentList + `mdxComponents`/`dsAstroCssImports` sobre `ds`) e o
+  vault-seed assimilou via `file:` tarball do handoff `2026-07-03` (sha256 conferido). Consumer-proof
+  verde: `scripts/refarm_ds_astro_consumer_contract.test.mjs` (pin + surface + o mapa MDX resolve pros
+  `.astro` embarcados + css imports ficam sobre `@refarm.dev/ds`); suíte completa 521/521, sem regressão.
+  Copy/rotas MDX de produto ficam downstream. Defeito relayado junto: peer `astro ^6.4.8` não-satisfeito
+  (acima). O bloco irmão `@refarm.dev/content-projection` (MD/MDX→`records:v1`) e o `@refarm.dev/quality-contract-v1`
+  também foram assimilados no mesmo handoff (proofs `content-projection.markdown-mdx-records` e
+  `quality-contract.declared-lint-envelope`, verdes).

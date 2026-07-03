@@ -23,6 +23,9 @@ handoff. **Toda a mecânica e os guards estão na doutrina:**
 | `@refarm.dev/enrichment-contract-v1` | enriquecimento de records (ETL) | **vendorizado + contract-test ✓**; provider genérico local e reference vault verdes |
 | `@refarm.dev/records-contract-v1` | modelo de records (view + ETL) | **vendorizado + contract-test ✓**; manifesto, grafo e tabela já usam `records:v1` |
 | `@refarm.dev/source-web` (+ transitivo `source-contract-v1` via override) | aquisição/snapshot de fonte web (fixture sanitizada) → ETL | **vendorizado + contract-test ✓**; reference vault compõe `source-web`→`records:v1`→`enrichment:v1` |
+| `@refarm.dev/content-projection` | MD/MDX (frontmatter/wikilink/inline-link) → `records:v1` genérico | **vendorizado + contract-test ✓** (`scripts/refarm_content_projection_consumer_contract.test.mjs`); MD e MDX no mesmo caminho, PARA/vocab/rendering downstream |
+| `@refarm.dev/quality-contract-v1` | envelope de qualidade/lint declarável (`quality:v1`) | **vendorizado + contract-test ✓** (`scripts/refarm_quality_consumer_contract.test.mjs`); catálogo de rules/severidade/copy downstream |
+| `@refarm.dev/ds-astro` | embed set MDX sancionado (Card/MetricStrip/CalloutSection/ContentList) sobre `ds` | **vendorizado + contract-test ✓** (`scripts/refarm_ds_astro_consumer_contract.test.mjs`); mapa MDX resolve pros `.astro` embarcados; copy/rotas MDX downstream. Defeito relayado: peer `astro ^6.4.8` não-satisfeito (ver `-feedback.md`) |
 
 ## Blocos a chegar do refarm
 
@@ -77,6 +80,14 @@ Assimilação (vendorização + contract-test):
   `@refarm.dev/silo`, com fallback legado e testes focados
 - [x] `local-surface:v1` — proof para Trabalho 1, agora selecionada no handoff
   oficial `vault-seed-ready`
+- [x] `content-projection` — `scripts/refarm_content_projection_consumer_contract.test.mjs`
+  (MD/MDX → `records:v1` genérico: frontmatter→fields, wikilink+inline-link→relations, external
+  links preservados, MD/MDX no mesmo caminho, `validateProjectedRecords` verde)
+- [x] `quality:v1` — `scripts/refarm_quality_consumer_contract.test.mjs` (declara profile downstream
+  `vault-seed-docs` + emite report `quality:v1` via `createRegexQualityChecker`/`runQualityCheck`)
+- [x] `ds-astro` — `scripts/refarm_ds_astro_consumer_contract.test.mjs` (embed set MDX sancionado:
+  mapa `mdxComponents` resolve pros 4 `.astro` embarcados + `dsAstroCssImports` sobre `ds`; peer
+  `astro ^6.4.8` não-satisfeito relayado ao refarm)
 
 Adoção / produto (design já escrito em `docs/superpowers/specs/`):
 - [x] **records ETL profile runner** — `scripts/records_etl.mjs` (source snapshot → `records:v1` →
