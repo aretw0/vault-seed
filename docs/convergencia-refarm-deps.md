@@ -1,6 +1,6 @@
 # Consumindo packages do refarm (`file:` agora → npm no publish)
 
-> Status: nota de mecanismo (2026-06-25). Como o vault-seed depende de pacotes `@refarm.dev/*`
+> Status: nota de mecanismo (atualizada em 2026-07-03). Como o vault-seed depende de pacotes `@refarm.dev/*`
 > durante o consumer-proof (antes do publish) e como migrar quando publicarem. Resolve a fricção
 > com a política de supply-chain e prepara a transição.
 
@@ -48,15 +48,17 @@ re-extrai (`pnpm install` diz "Already up to date"). Para refrescar: atualizar a
 O **código consumidor não muda** na transição — o Lab (`.site/styles/marimo-vault.css`) e o admin
 (rota `/_ds` no `serve.js`) consomem o package igual, seja `file:` ou publicado.
 
-### Dep transitiva não-publicada (ao consumir `homestead-ssr`)
+### Deps transitivas não-publicadas
 
-Quando consumirmos um pacote que **depende de outro `@refarm.dev/*` ainda não publicado** (ex.:
-`homestead-ssr` declara `@refarm.dev/ds@0.1.0`), fixa-se o **direto** no `package.json` do
-consumidor e o **transitivo** via `overrides`, até ambos publicarem.
+Quando consumimos um pacote que **depende de outro `@refarm.dev/*` ainda não publicado**, fixa-se o
+**direto** no `package.json` do consumidor e o **transitivo** via `overrides`, até ambos publicarem.
+Exemplos atuais: `content-projection` precisa de `records-contract-v1`; `credentials-contract-v1` precisa
+de `identity-contract-v1`/`storage-contract-v1`; `identity-heartwood` precisa de
+`identity-contract-v1`/`heartwood`; `ds` precisa de `quality-contract-v1`.
 
 Direto — no `package.json` do consumidor, como `file:` pro tarball em `vendor/`:
 ```jsonc
-{ "dependencies": { "@refarm.dev/homestead-ssr": "file:vendor/refarm.dev-homestead-ssr-0.1.0.tgz" } }
+{ "dependencies": { "@refarm.dev/content-projection": "file:vendor/refarm.dev-content-projection-0.1.0.tgz" } }
 ```
 (o `file:` é relativo ao `package.json` que o declara; num pacote aninhado como
 `packages/cli`, ajuste a profundidade do caminho até o `vendor/` da raiz.)
@@ -67,40 +69,39 @@ pnpm 11 **não lê** mais `pnpm.overrides` do `package.json` (o install avisa
 `pnpm-workspace.yaml`:
 ```yaml
 overrides:
-  "@refarm.dev/ds": "file:vendor/refarm.dev-ds-0.1.0.tgz"
+  "@refarm.dev/records-contract-v1": "file:vendor/refarm.dev-records-contract-v1-0.1.0.tgz"
 ```
 (o `file:` do override é relativo à raiz do workspace.)
 
 ## Estado atual
 
-- **`@refarm.dev/ds`** — consumido via `file:` (4a Lab tokens + 4b admin `/_ds`). Instala e serve. ✓
-  - Superfície enxuta (sem tests/stories/fontes TS); subpaths consumidos (`./tokens.css`,
-    `./components.css`, `./themes/*`) seguem exportados (exports ganharam `./contract` +
-    `./theme-conformance`, aditivo).
-  - **Re-sync 2026-06-28 (product-neutral css):** o `verde-jardim.css` trocou os seletores de
-    `[data-refarm-theme=…]`/`@layer refarm.theme` para `:where([data-ds-theme=…], [data-refarm-theme=…])`/
-    `@layer ds.theme` — `data-ds-theme` é o atributo canônico agora, com **`data-refarm-theme`
-    preservado como alias `:where()`**. Os **valores dos 17 tokens são idênticos**, então o runtime
-    do tema **não muda** (nosso export segue setando `refarmTheme`, coberto pelo alias) e o fallback
-    do `marimo-vault.css` continua alinhado. Só o `refarm_ds_consumer_contract.test.mjs` foi
-    atualizado pros novos seletores (mantendo a checagem dos 17 valores). Re-vendorizado do handoff
-    `2026-06-28`; integrity do lock atualizada; suíte 356/356.
-  - **Adoção futura opcional:** migrar nosso export/`marimo-vault.css` para o atributo neutro
-    `data-ds-theme` (e os guards `:not([data-ds-theme])`) quando/ se o refarm aposentar o alias
-    `data-refarm-theme`. Hoje desnecessário — o alias cobre.
-  - **Re-sync 2026-06-29 (handoff `2026-06-29`):** o `ds` passou a exportar **`./html`** (emissores
-    HTML build-free + `documentHtml`) — o admin do `dgk serve` consome `@refarm.dev/ds/html` direto;
-    o `cli` ganhou `@refarm.dev/ds` como dep própria. Override transitivo **removido** (não há mais
-    transitivo a redirecionar — ds é dep direta). Re-vendorizado do `2026-06-29`; integrity do lock
-    atualizada.
-- **`@refarm.dev/ds/html`** (ADR-072) — **substitui o removido `@refarm.dev/homestead-ssr`**. Os
-  emissores HTML build-free são DS-owned (coesão com o CSS que estiliza as classes `ds-*`); o shell
-  de página foi renomeado `shellHtml`→**`documentHtml`** (sinal nosso aceito, refarm `12760dc7`).
-  Consumido no admin (`serve.js` + `admin_views.mjs` isomórfico via import map → `/_hs/render.js`).
-- **`@refarm.dev/process-handoff`** (ADR-072) — **substitui o removido `@refarm.dev/launch-process`**
-  (renomeou pacote **e** funções: `createLaunchProcessRunner`→`createProcessHandoffRunner`,
-  `runLaunchProcess`→`runProcessHandoff`, `launchDetachedProcess`→`startDetachedProcessHandoff`, …).
-  Re-apontado em `dgk-runner` + cli (launcher/obsidian/vscode/serve/setup). Não colapsa no cli.
+O handoff oficial atual é `.refarm/handoff/vault-seed/2026-07-03/`, provado em
+[`convergencia-refarm-proof-2026-07-03.md`](./convergencia-refarm-proof-2026-07-03.md):
 
-> Handoff `2026-06-26` também trouxe `@refarm.dev/heartwood` (core cripto WASM) e `@refarm.dev/silo`
-> (segredos) — **fora da caminhada de UI/admin/lab**; assimilação futura, não-agora.
+- 20 tarballs copiados e verificados por SHA-256 contra `vendor/manifest.json`;
+- 16 pacotes `@refarm.dev/*` com refs `file:` ou overrides locais;
+- 11 refs diretas em `package.json`;
+- 16 overrides em `pnpm-workspace.yaml`;
+- proof focada cobrindo contracts, outbox, process handoff, artifact manifest, records/source/enrichment,
+  content projection e quality.
+
+Refs diretas atuais:
+
+`artifact-contract-v1`, `channel-policy-v1`, `content-projection`,
+`credentials-contract-v1`, `enrichment-contract-v1`, `identity-heartwood`,
+`quality-contract-v1`, `records-contract-v1`, `source-web`, `storage-memory`, `ds`.
+
+Overrides atuais:
+
+`artifact-contract-v1`, `channel-policy-v1`, `content-projection`,
+`credentials-contract-v1`, `ds`, `enrichment-contract-v1`, `heartwood`,
+`identity-contract-v1`, `identity-heartwood`, `process-handoff`,
+`quality-contract-v1`, `records-contract-v1`, `source-contract-v1`,
+`source-web`, `storage-contract-v1`, `storage-memory`.
+
+Para a migração final, usar o runbook graduado:
+[`convergencia-refarm-release.md`](./convergencia-refarm-release.md), apoiado pelo check:
+
+```powershell
+pnpm run refarm:publication:plan
+```

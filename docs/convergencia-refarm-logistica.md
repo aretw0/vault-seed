@@ -43,7 +43,7 @@ Nunca reimplementar o que o refarm fornece. Quando aparecer dor de um bloco-refa
 | consumer-contract tests | mudança no refarm quebrar nosso consumo em silêncio |
 | `distributed_scripts_no_static_refarm_import.test.mjs` | script do template hard-depender do refarm (quebra no repo do usuário) |
 | publish-hold `dgk.releaseHold:"refarm-unpublished"` | pacote nosso que depende de refarm não-publicado publicar cedo |
-| **(candidato) guard de não-reimplementação** | um módulo nosso crescer uma capacidade que devia ser do refarm — flag pra virar porta-voz em vez de stand-in |
+| `refarm_no_reimplementation_contract.test.mjs` | um módulo nosso crescer uma capacidade que devia ser do refarm — flag pra virar porta-voz em vez de stand-in |
 
 ## Loop porta-voz (o lado de cá da relação)
 

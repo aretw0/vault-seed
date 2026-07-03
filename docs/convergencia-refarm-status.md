@@ -27,6 +27,16 @@ handoff. **Toda a mecânica e os guards estão na doutrina:**
 
 (vazio — os blocos de T3 estão assimilados; o de T2 abaixo é capability refarm/POC.)
 
+## Proof oficial do handoff 2026-07-03
+
+O checkout oficial assimilou o pacote `vault-seed-ready` do refarm
+(`sourceGitSha` `6a6d31fa2cf5d64fd6abc555448541388beb8077`) e registrou a
+proof em [`convergencia-refarm-proof-2026-07-03.md`](./convergencia-refarm-proof-2026-07-03.md):
+20 tarballs verificados por SHA-256, overrides transientes alinhados ao
+`consumerInstall.pnpmOverrides`, lockfile refresh/reinstall, 9 arquivos/33 testes
+Vitest verdes, `records:manifest` com 93 records validado, `site:build` verde e
+`release:package:smoke:json` verde.
+
 ### T2 (jornada soberana) — credentials:v1 assimilado, UX pendente
 `credentials:v1` (VC/wallet W3C) **assimilado** (2026-07-01): vendorizado + conformance passando com
 assinatura heartwood real (Ed25519). Fundação pronta atrás de seam. Falta o **produto**: a UX do
@@ -51,12 +61,22 @@ Adoção / produto (design já escrito em `docs/superpowers/specs/`):
 - [x] **records view — camada de dados** — `scripts/generate_records_data.mjs` (notas PARA →
   `records:v1`: folder→`@type`, frontmatter→fields, links→relations; convergência) + teste
 - [x] **records:v1 manifest — artefato distribuível servido** — `scripts/generate_records_manifest.mjs`
-  (notas reais → `resolveLinks` → `records:v1` validado, 76 records, 0 falhas), servido em
+  (notas reais → `resolveLinks` → `records:v1` validado, **76 note records + 17 Source records = 93**,
+  uma só shape, 0 falhas; `records:v1` modela qualquer entidade de conhecimento, não só notas), servido em
   `/records-manifest.json` via endpoint astro (`.site/pages/records-manifest.json.ts`) + teste. **Decisão
   de produto (aprovada): manifesto-como-artefato + superfícies são views (o grafo já é), sem página nova.**
   O `@context` agora **resolve** (refarm serve `/contexts/records/v1`, `a01bdc1c`) → linked-data real.
-- [ ] **records ETL real** — profile com fonte/transform reais **externos** (source-web/enrichment) —
-  decisão de produto (quais fontes/vocab). O pipeline notas→manifesto já está feito (acima).
+- [~] **records ETL real** — as duas pontas genéricas pousaram; falta costurar num profile coeso +
+  trocar as fixtures da reference vault por adapters reais.
+  - [x] **fonte real** — os feeds do vault (`fontes/feeds.opml`) viram `records:v1` `@type [KnowledgeRecord, Source]`
+    (config mapeia a pasta `fontes`→`Source`) carregando o vocab `source:v1` (`sourceKind: feed`,
+    `sourceLocation: xmlUrl`); 17 no manifesto servido (`73b3f9f`). Fonte natural do conteúdo de exemplo
+    (as notas não têm chave externa → key-lookup seria forçado). `Source` proposto ao `@context` do refarm.
+  - [x] **transform real** — `scripts/enrichment_key_lookup.mjs`: `createKeyLookupEnrichmentProvider({ keyField, lookup })`
+    genérico (lookup injetado: fixture no teste/reference, resolver real downstream), provenance idempotente,
+    `runEnrichmentV1Conformance` verde (`4d86e47`). O lookup específico é a especialização do POC/downstream.
+  - [ ] **costura** — profile coeso source→records→enrichment com decisão de produto (quais fontes/vocab)
+    e as 3 fixtures da reference vault trocadas por adapters reais (= a POC).
 - [x] **reference vault** (prova de composição = acceptance gate) — `validations/records-reference/`
   (gap ledger vazio: `source-web`→`records:v1`→`enrichment:v1` compõem ponta a ponta)
 - [x] **yaml codec (`records-contract-v1/yaml`)** — re-vendorizado + consumido em
@@ -68,7 +88,15 @@ Adoção / produto (design já escrito em `docs/superpowers/specs/`):
   `buildRecordsGraph` sobre `vault.config.json`, fonte única config-driven; o `.site` e as superfícies
   de records não divergem) + teste TS `vault-explore.graph.test.ts`; verificado (suíte, build astro 82
   páginas, graph-smoke)
-- [ ] (candidato) **guard de não-reimplementação** — ver `-logistica`
+- [x] **superfície de tabela (requirements) via `records:v1`** — `scripts/generate_records_data.mjs`
+  (`recordsToTable(records, opts)` / `buildRecordsTable(notes, config)`, espelhando `buildRecordsGraph`):
+  projeção config-driven (`records.surface.table.columns`, senão derivadas das field keys), uma linha por
+  record com type/cells/relation-count. **Uma superfície é uma VIEW sobre `records:v1`, igual ao grafo —
+  requisitos são só records com fields** (`62dfc54`); comentários neutralizados p/ não vazar domínio (`9e529d8`).
+  A view astro é consumidora fina (reconciliar com a direção MDX a seguir).
+- [x] **guard de não-reimplementação** — `scripts/refarm_no_reimplementation_contract.test.mjs`
+  bloqueia nomes de arquivos de alto sinal para novas capacidades genéricas locais
+  (`*-contract`, `*-provider`, `*-conformance`, etc.) sem allowlist explícita.
 
 ## Stack de teste (convergido com o refarm)
 
@@ -79,13 +107,24 @@ real: assert/toThrow/rejects/regex/BOM/CJS→ESM) e **destravou teste TS** no `.
 ## Próxima ação concreta
 
 Os 3 blocos de T3 estão **assimilados**, a **reference vault** (acceptance gate) passou com gap ledger
-vazio, e o **grafo do Explore já lê a fonte `records:v1`** (com cobertura TS). O que resta de produto:
-**records ETL real** (profile com fonte/transform reais — decisão de quais notas/vocab) e a **records
-view astro** (convergir as superfícies existentes, sem página nova). A POC então é a reference vault com
-as 3 fixtures trocadas por adapters reais. `credentials:v1` (T2) entra após o heartwood-signing no refarm.
+vazio, e o **grafo do Explore já lê a fonte `records:v1`** (com cobertura TS). As duas pontas do **records
+ETL real** pousaram genéricas — **fonte** (feeds→`Source`/`source:v1`, 17 no manifesto servido) e
+**transform** (`enrichment_key_lookup`, conformance verde) — e uma 2ª superfície-view (**tabela**) já
+espelha o grafo. O que resta de produto:
+1. **costurar o ETL real** num profile coeso source→records→enrichment e **trocar as 3 fixtures da
+   reference vault por adapters reais** (= a POC).
+2. **records view astro** — consumidora fina das superfícies (grafo + tabela), reconciliar com a direção
+   MDX, sem página nova.
+`credentials:v1` (T2) entra após o heartwood-signing no refarm.
 
 Do lado refarm (pós-codemod): publicar T3 npm · ADR-078 fase 2 · os 3 candidatos profundos
 (verification-as-completion, tool-less orchestrator, `context:v1`) · handoff yaml codec + credentials.
+
+Preparação local para o publish: o runbook
+[`convergencia-refarm-release.md`](./convergencia-refarm-release.md) está alinhado ao handoff de 20
+tarballs e há um check mecânico em `scripts/check_refarm_publication_readiness.mjs`
+(`pnpm run refarm:publication:plan`) que lista as 11 refs diretas, os 16 overrides e a troca exata
+`file:`→npm quando o refarm informar as versões publicadas.
 
 ## Mapa de docs de convergência
 

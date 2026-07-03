@@ -17,14 +17,23 @@ policies:
     severity: warn
 minimumReleaseAgeExclude:
   - "@refarm.dev/*"
-# Transitive unpublished deps redirected to local tarballs until upstream publishes.
-# file: is relative to this root.
-#   - @refarm.dev/source-web -> source-contract-v1
-#   - @refarm.dev/credentials-contract-v1 -> identity-contract-v1 + storage-contract-v1
-#   - @refarm.dev/identity-heartwood -> identity-contract-v1 + heartwood
-#   - @refarm.dev/storage-memory -> storage-contract-v1
+# Unpublished refarm handoff deps redirected to local tarballs until upstream publishes.
+# file: is relative to this root. Keep this aligned with the latest
+# consumerInstall.pnpmOverrides block in the refarm vault-seed handoff manifest.
 overrides:
-  "@refarm.dev/source-contract-v1": "file:vendor/refarm.dev-source-contract-v1-0.1.0.tgz"
-  "@refarm.dev/identity-contract-v1": "file:vendor/refarm.dev-identity-contract-v1-0.1.0.tgz"
-  "@refarm.dev/storage-contract-v1": "file:vendor/refarm.dev-storage-contract-v1-0.1.0.tgz"
+  "@refarm.dev/artifact-contract-v1": "file:vendor/refarm.dev-artifact-contract-v1-0.1.0.tgz"
+  "@refarm.dev/channel-policy-v1": "file:vendor/refarm.dev-channel-policy-v1-0.1.0.tgz"
+  "@refarm.dev/content-projection": "file:vendor/refarm.dev-content-projection-0.1.0.tgz"
+  "@refarm.dev/credentials-contract-v1": "file:vendor/refarm.dev-credentials-contract-v1-0.1.0.tgz"
+  "@refarm.dev/ds": "file:vendor/refarm.dev-ds-0.1.0.tgz"
+  "@refarm.dev/enrichment-contract-v1": "file:vendor/refarm.dev-enrichment-contract-v1-0.1.0.tgz"
   "@refarm.dev/heartwood": "file:vendor/refarm.dev-heartwood-0.1.0.tgz"
+  "@refarm.dev/identity-contract-v1": "file:vendor/refarm.dev-identity-contract-v1-0.1.0.tgz"
+  "@refarm.dev/identity-heartwood": "file:vendor/refarm.dev-identity-heartwood-0.1.0.tgz"
+  "@refarm.dev/process-handoff": "file:vendor/refarm.dev-process-handoff-0.1.0.tgz"
+  "@refarm.dev/quality-contract-v1": "file:vendor/refarm.dev-quality-contract-v1-0.1.0.tgz"
+  "@refarm.dev/records-contract-v1": "file:vendor/refarm.dev-records-contract-v1-0.1.0.tgz"
+  "@refarm.dev/source-contract-v1": "file:vendor/refarm.dev-source-contract-v1-0.1.0.tgz"
+  "@refarm.dev/source-web": "file:vendor/refarm.dev-source-web-0.1.0.tgz"
+  "@refarm.dev/storage-contract-v1": "file:vendor/refarm.dev-storage-contract-v1-0.1.0.tgz"
+  "@refarm.dev/storage-memory": "file:vendor/refarm.dev-storage-memory-0.1.0.tgz"
