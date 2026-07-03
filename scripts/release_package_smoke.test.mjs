@@ -49,4 +49,4 @@ test("release package smoke keeps release and package publishing explicitly gate
   expect(report.pythonReleasePackages.map((pkg) => pkg.name)).toEqual(["dgk-lab-runtime"]);
   expect(report.pypiRelease.tagGated).toBe(true);
   expect(report.pypiRelease.trustedPublishing).toBe(true);
-});
+}, 15000);

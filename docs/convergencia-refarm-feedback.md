@@ -127,7 +127,7 @@ pra quando o container liberar (Codex ativo no `cranky_bassi`).
 | 1 | **health** | **Auditor de toolchain/ambiente** — presença de `node`/`pnpm`/`uv`/`python` (via `--version`), mount `node_modules`/devcontainer, report `{id,label,ok,required,version}` + `--json`. `HealthCore` já é registry (`register`/`audit`), **falta o auditor de toolchain** (hoje só Complexity/FileSystem/Project). | `packages/cli/vendor/check-substrate.mjs` | labels/hints de instalação |
 | 2 | **health** | **Auditor de estrutura/onboarding** — arquivos exigidos presentes (README/AGENTS/onboarding) + coerência de IA. Hospeda no `HealthCore` (estilo `FileSystemAuditor`). | `scripts/validate_onboarding.js`, `scripts/audit_information_architecture.mjs` | quais arquivos/seções são exigidos (PARA) |
 | 3 | **quality** | **`quality:v1` para prosa/apresentação** — pt-text (drift de acento) + `avaliar_textos.py`/`avaliar_apresentacoes.py` viram `quality:v1` checkers (contrato já assimilado; falta a história Python/CLI). **É quality, não health.** | `scripts/check_pt_text.js`, `packages/cli/vendor/quality/avaliar_*.py` | rubricas, pesos, catálogo de regras, copy |
-| 4 | build | **generator/codemod** para `setup`/scaffold + `publish` (skill/Pi). Alguns codemods já existem (`node-test-to-vitest`). | `packages/cli/src/commands/{setup,publish}.js`, `scripts/smoke_template.js` | nomes `@aretw0/*`, UX do comando |
+| 4 | build | **generator/codemod** para `setup`/scaffold + `publish` (skill/Pi). Alguns codemods já existem (`node-test-to-vitest`). | `packages/cli/src/commands/{setup,publish}.js`, `scripts/smoke_template.js` | nomes de pacotes do produto, UX do comando |
 
 **`dgk check` fica downstream como comando de produto** que compõe um **passo de health** (#1+#2, estrutural)
 e um **passo de quality** (#3, conteúdo) e imprime o resumo combinado + silo status. A composição/UX é do dgk;
@@ -138,6 +138,16 @@ Observação de superfície (pra não induzir erro): o `@refarm.dev/cli` é **ma
 estreito (`json-output`/`command-result` pra padronizar `--json`) — baixo valor isolado. E `dispatch-surface`/`effort-contract`
 seguem **fora de escopo** (control-plane de runtime, ver Defeitos). O item mais pronto/desbloqueado é o **#1** (o dgk já
 carrega a reference impl inteira em `check-substrate.mjs`).
+
+**Respondido no handoff vigente (2026-07-03, `4f0e058d`):** o refarm incluiu
+`@refarm.dev/health` no `vault-seed-ready` com `ToolchainAuditor`,
+`buildEnvironmentPressureReport` e `planEnvironmentWorkCeiling`. O vault-seed
+assimilou como `devDependency` + override, sem mudar o produto `dgk check` ainda,
+e provou a fronteira em `scripts/refarm_health_consumer_contract.test.mjs`:
+checks de toolchain/path são declarados pelo consumidor; `health` só mede
+ambiente/estrutura e retorna plano, não executa recovery nem avalia conteúdo. A
+adoção real do `dgk check` fica como próxima fatia local, compondo `health`
+(estrutura/toolchain) com `quality:v1` (conteúdo/prosa).
 
 ## Candidatos sinalizados ao refarm (proof-gated)
 

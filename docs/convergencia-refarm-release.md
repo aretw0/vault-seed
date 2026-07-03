@@ -16,15 +16,15 @@ Entra no fim do pipeline de assimilação
 Proof oficial: [`convergencia-refarm-proof-2026-07-03.md`](./convergencia-refarm-proof-2026-07-03.md).
 
 - handoff consumido: `.refarm/handoff/vault-seed/2026-07-03/`
-- `sourceGitSha`: `9aaf54d580d823de64eee7419fbdd42f5d179fa5`
-- pacote aceito: 21 tarballs, 63 required checks, 21 consumer proofs
-- refs diretas atuais no root: 13 `file:vendor/*.tgz`
-- overrides atuais: 18 `@refarm.dev/*` no `pnpm-workspace.yaml`
-- o check `refarm:publication:plan` separa esses números: **21 pacotes no handoff**
-  contra **18 pacotes com refs `file:`/overrides a migrar**. Os vendor-only do
-  handoff (`@refarm.dev/dispatch-surface`, `@refarm.dev/effort-contract-v1` e
-  `@refarm.dev/release-engine`) são parte da proof/cópia local, mas hoje não
-  geram edição em `package.json`/`pnpm-workspace.yaml`.
+- `sourceGitSha`: `4f0e058d1a108a3f185d99fd931f6dd93b703a1c`
+- pacote aceito: 23 tarballs, 72 required checks, 23 consumer proofs
+- refs diretas atuais no root: 15 `file:vendor/*.tgz`
+- overrides atuais: 23 `@refarm.dev/*` no `pnpm-workspace.yaml`
+- o check `refarm:publication:plan` separa esses números: **23 pacotes no handoff**
+  e **23 pacotes com refs `file:`/overrides a migrar**. Alguns continuam
+  vendor-only no produto (`@refarm.dev/dispatch-surface`, `@refarm.dev/effort-contract-v1`
+  e `@refarm.dev/release-engine`), mas permanecem em overrides para preservar
+  resolução transitiva idêntica ao handoff.
 - `@refarm.dev/local-surface` agora faz parte do handoff oficial
   `vault-seed-ready`; a proof downstream anterior foi assimilada pelo refarm e
   o vendor local foi ressincronizado contra o manifest novo.
@@ -37,6 +37,7 @@ Refs diretas atuais:
 | `dependencies` | `@refarm.dev/channel-policy-v1` |
 | `dependencies` | `@refarm.dev/content-projection` |
 | `dependencies` | `@refarm.dev/credentials-contract-v1` |
+| `dependencies` | `@refarm.dev/ds-astro` |
 | `dependencies` | `@refarm.dev/enrichment-contract-v1` |
 | `dependencies` | `@refarm.dev/identity-heartwood` |
 | `dependencies` | `@refarm.dev/local-surface` |
@@ -46,14 +47,17 @@ Refs diretas atuais:
 | `dependencies` | `@refarm.dev/source-web` |
 | `dependencies` | `@refarm.dev/storage-memory` |
 | `devDependencies` | `@refarm.dev/ds` |
+| `devDependencies` | `@refarm.dev/health` |
 
 Overrides atuais:
 
 `artifact-contract-v1`, `channel-policy-v1`, `content-projection`,
-`credentials-contract-v1`, `ds`, `enrichment-contract-v1`, `heartwood`,
+`credentials-contract-v1`, `dispatch-surface`, `ds`, `ds-astro`,
+`effort-contract-v1`, `enrichment-contract-v1`, `health`, `heartwood`,
 `identity-contract-v1`, `identity-heartwood`, `local-surface`,
-`process-handoff`, `quality-contract-v1`, `records-contract-v1`, `silo`,
-`source-contract-v1`, `source-web`, `storage-contract-v1`, `storage-memory`.
+`process-handoff`, `quality-contract-v1`, `records-contract-v1`,
+`release-engine`, `silo`, `source-contract-v1`, `source-web`,
+`storage-contract-v1`, `storage-memory`.
 
 ## Pré-condição
 
@@ -117,7 +121,7 @@ por:
 ^<versão publicada>
 ```
 
-Aplicar para as 13 refs diretas listadas acima.
+Aplicar para as 15 refs diretas listadas acima.
 
 ## Passo 2 — remover overrides
 
@@ -155,6 +159,7 @@ Tests afetados:
 - `scripts/refarm_ds_consumer_contract.test.mjs`
 - `scripts/refarm_ds_html_consumer_contract.test.mjs`
 - `scripts/refarm_enrichment_consumer_contract.test.mjs`
+- `scripts/refarm_health_consumer_contract.test.mjs`
 - `scripts/refarm_process_handoff_consumer_contract.test.mjs`
 - `scripts/refarm_quality_consumer_contract.test.mjs`
 - `scripts/refarm_records_consumer_contract.test.mjs`

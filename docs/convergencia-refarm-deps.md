@@ -78,28 +78,31 @@ overrides:
 O handoff oficial atual é `.refarm/handoff/vault-seed/2026-07-03/`, provado em
 [`convergencia-refarm-proof-2026-07-03.md`](./convergencia-refarm-proof-2026-07-03.md):
 
-- 21 tarballs copiados e verificados por SHA-256 contra `vendor/manifest.json`;
-- `@refarm.dev/local-surface` incluido no handoff oficial `vault-seed-ready`
-  depois da proof downstream;
-- 18 pacotes `@refarm.dev/*` com refs `file:` ou overrides locais;
-- 13 refs diretas em `package.json`;
-- 18 overrides em `pnpm-workspace.yaml`;
+- 23 tarballs copiados e verificados por SHA-256 contra `vendor/manifest.json`;
+- `@refarm.dev/local-surface`, `@refarm.dev/ds-astro` e `@refarm.dev/health`
+  incluidos no handoff oficial `vault-seed-ready` depois das proofs downstream;
+- 23 pacotes `@refarm.dev/*` com refs `file:` ou overrides locais;
+- 15 refs diretas em `package.json`;
+- 23 overrides em `pnpm-workspace.yaml`;
 - proof focada cobrindo contracts, outbox, process handoff, artifact manifest, records/source/enrichment,
   content projection e quality.
 
 Refs diretas atuais:
 
 `artifact-contract-v1`, `channel-policy-v1`, `content-projection`,
-`credentials-contract-v1`, `enrichment-contract-v1`, `identity-heartwood`,
-`quality-contract-v1`, `records-contract-v1`, `source-web`, `storage-memory`, `ds`.
+`credentials-contract-v1`, `ds-astro`, `enrichment-contract-v1`, `health`,
+`identity-heartwood`, `local-surface`, `quality-contract-v1`, `records-contract-v1`,
+`silo`, `source-web`, `storage-memory`, `ds`.
 
 Overrides atuais:
 
 `artifact-contract-v1`, `channel-policy-v1`, `content-projection`,
-`credentials-contract-v1`, `ds`, `enrichment-contract-v1`, `heartwood`,
-`identity-contract-v1`, `identity-heartwood`, `process-handoff`,
-`quality-contract-v1`, `records-contract-v1`, `source-contract-v1`,
-`source-web`, `storage-contract-v1`, `storage-memory`.
+`credentials-contract-v1`, `dispatch-surface`, `ds`, `ds-astro`,
+`effort-contract-v1`, `enrichment-contract-v1`, `health`, `heartwood`,
+`identity-contract-v1`, `identity-heartwood`, `local-surface`,
+`process-handoff`, `quality-contract-v1`, `records-contract-v1`,
+`release-engine`, `silo`, `source-contract-v1`, `source-web`,
+`storage-contract-v1`, `storage-memory`.
 
 Para a migração final, usar o runbook graduado:
 [`convergencia-refarm-release.md`](./convergencia-refarm-release.md), apoiado pelo check:

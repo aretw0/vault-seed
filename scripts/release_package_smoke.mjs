@@ -3,6 +3,7 @@ import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { uvEnv } from "./uv_env.mjs";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const PACKAGE_DIR = path.join(ROOT, "packages");
@@ -104,6 +105,7 @@ function runPythonBuildSmoke(pkg) {
   const build = spawnSync(UV_BIN, ["build", pkg.relPath, "--out-dir", outputDir], {
     cwd: ROOT,
     encoding: "utf8",
+    env: uvEnv(),
   });
   const buildOutput = `${build.stdout ?? ""}${build.stderr ?? ""}`.trim();
   if (build.status !== 0) {
@@ -146,6 +148,7 @@ function runPythonBuildSmoke(pkg) {
     {
       cwd: ROOT,
       encoding: "utf8",
+      env: uvEnv(),
     },
   );
   const probeOutput = `${probe.stdout ?? ""}${probe.stderr ?? ""}`.trim();

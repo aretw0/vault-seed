@@ -26,6 +26,7 @@ handoff. **Toda a mecânica e os guards estão na doutrina:**
 | `@refarm.dev/content-projection` | MD/MDX (frontmatter/wikilink/inline-link) → `records:v1` genérico | **vendorizado + contract-test ✓** (`scripts/refarm_content_projection_consumer_contract.test.mjs`); MD e MDX no mesmo caminho, PARA/vocab/rendering downstream |
 | `@refarm.dev/quality-contract-v1` | envelope de qualidade/lint declarável (`quality:v1`) | **vendorizado + contract-test ✓** (`scripts/refarm_quality_consumer_contract.test.mjs`); catálogo de rules/severidade/copy downstream |
 | `@refarm.dev/ds-astro` | embed set MDX sancionado (Card/MetricStrip/CalloutSection/ContentList) sobre `ds` | **vendorizado + contract-test ✓** (`scripts/refarm_ds_astro_consumer_contract.test.mjs`); mapa MDX resolve pros `.astro` embarcados; copy/rotas MDX downstream. Bump `astro`→`6.4.8` p/ satisfazer o peer do bloco (ver `-feedback.md`) |
+| `@refarm.dev/health` | diagnóstico de toolchain/ambiente e pressure ceiling | **vendorizado + contract-test ✓** (`scripts/refarm_health_consumer_contract.test.mjs`); prova dev para o futuro `dgk check`, sem alterar produto ainda. `health` mede ambiente/estrutura; `quality` continua conteúdo/prosa |
 
 ## Blocos a chegar do refarm
 
@@ -33,13 +34,13 @@ handoff. **Toda a mecânica e os guards estão na doutrina:**
 
 ## Proof oficial do handoff 2026-07-03
 
-O checkout oficial assimilou o pacote `vault-seed-ready` do refarm
-(`sourceGitSha` `9aaf54d580d823de64eee7419fbdd42f5d179fa5`) e registrou a
-proof em [`convergencia-refarm-proof-2026-07-03.md`](./convergencia-refarm-proof-2026-07-03.md):
-21 tarballs verificados por SHA-256, overrides transientes alinhados ao
-`consumerInstall.pnpmOverrides`, lockfile refresh/reinstall, 9 arquivos/33 testes
-Vitest verdes, `records:manifest` com 93 records validado, `site:build` verde e
-`release:package:smoke:json` verde.
+O checkout oficial assimilou o pacote `vault-seed-ready` do refarm. A captura
+vigente é `sourceGitSha` `4f0e058d1a108a3f185d99fd931f6dd93b703a1c`
+(`generatedAt` `2026-07-03T14:26:03.806Z`), registrada em
+[`convergencia-refarm-proof-2026-07-03.md`](./convergencia-refarm-proof-2026-07-03.md):
+23 tarballs verificados por SHA-256, 72 required checks, 23 consumer proofs,
+15 refs diretas, 23 overrides alinhados ao `consumerInstall.pnpmOverrides`,
+lockfile refresh/reinstall e consumer contracts focados verdes.
 
 Após essa proof, dois blocos foram adiantados e depois incorporados ao handoff
 oficial:
@@ -48,11 +49,15 @@ oficial:
   grava credenciais em `SiloCore.saveSecret("publishing", key, value)`, lê por
   `listSecrets("publishing")`, mantém fallback para `tokens` legado e preserva
   `contacts.location` como estado de produto.
-- `@refarm.dev/local-surface` entrou no handoff oficial de 21 tarballs
+- `@refarm.dev/local-surface` entrou na captura inicial do handoff oficial
+  (21 tarballs)
   (`refarm.dev-local-surface-0.1.0.tgz`, SHA-256
   `fe889457797673bb2985d79cecf1007e2ab7a23189c7921a8239a10d73e2f921`) e
   continua provado com manifest local-first, render DS, launch plan white-label
   e `quality:v1`.
+- `@refarm.dev/health` entrou no handoff vigente de 23 tarballs como bloco
+  programático de auditoria de toolchain/ambiente e pressure ceiling; consumido
+  como `devDependency` para proof, não como troca de comportamento do `dgk check`.
 
 ### T2 (jornada soberana) — credentials:v1 assimilado, UX pendente
 `credentials:v1` (VC/wallet W3C) **assimilado** (2026-07-01): vendorizado + conformance passando com
@@ -88,6 +93,9 @@ Assimilação (vendorização + contract-test):
 - [x] `ds-astro` — `scripts/refarm_ds_astro_consumer_contract.test.mjs` (embed set MDX sancionado:
   mapa `mdxComponents` resolve pros 4 `.astro` embarcados + `dsAstroCssImports` sobre `ds`; exigiu bump
   `astro ^6.4.4`→`^6.4.8` no vault-seed p/ satisfazer o peer do bloco — não era defeito do refarm)
+- [x] `health` — `scripts/refarm_health_consumer_contract.test.mjs`
+  (`ToolchainAuditor` expressa substrato do `dgk` com checks declarados pelo consumidor;
+  `buildEnvironmentPressureReport`/`planEnvironmentWorkCeiling` retornam decisão sem executar recovery)
 
 Adoção / produto (design já escrito em `docs/superpowers/specs/`):
 - [x] **records ETL profile runner** — `scripts/records_etl.mjs` (source snapshot → `records:v1` →
@@ -161,6 +169,9 @@ Adoção / produto (design já escrito em `docs/superpowers/specs/`):
 A suíte migrou **`node:test` → Vitest** via o codemod `node-test-to-vitest` do refarm (69 arquivos, 14
 CJS `.js`→`.mjs`). `pnpm test` = `vitest run`. Isso **fechou o proof do codemod** (robusto no consumidor
 real: assert/toThrow/rejects/regex/BOM/CJS→ESM) e **destravou teste TS** no `.site` (o grafo acima).
+No Windows, `pnpm test` usa o runner direto com `--configLoader runner` para evitar falha do bundler
+do config via esbuild dentro do lifecycle do pnpm; testes que tocavam rate-limit e `uv` agora isolam
+estado em diretórios temporários/`.sandbox` em vez de depender do host.
 
 ## Próxima ação concreta
 
@@ -182,9 +193,9 @@ os candidatos profundos que ainda precisarem de proof
 (verification-as-completion, tool-less orchestrator, `context:v1`).
 
 Preparação local para o publish: o runbook
-[`convergencia-refarm-release.md`](./convergencia-refarm-release.md) está alinhado ao handoff de 21
+[`convergencia-refarm-release.md`](./convergencia-refarm-release.md) está alinhado ao handoff de 23
 tarballs e há um check mecânico em `scripts/check_refarm_publication_readiness.mjs`
-(`pnpm run refarm:publication:plan`) que lista as 13 refs diretas, os 18 overrides e a troca exata
+(`pnpm run refarm:publication:plan`) que lista as 15 refs diretas, os 23 overrides e a troca exata
 `file:`→npm quando o refarm informar as versões publicadas.
 
 ## Mapa de docs de convergência

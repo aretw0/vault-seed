@@ -49,6 +49,13 @@ function mockPost(responses) {
   return async (_url, _body) => responses[i++] ?? { ok: true, result: { message_id: i } };
 }
 
+function telegramOptions(dir, options = {}) {
+  return {
+    rateLimiterStatePath: join(dir, "rate-limits.json"),
+    ...options,
+  };
+}
+
 describe("publishToTelegram — credenciais ausentes", () => {
   test("retorna {sent:0} quando token ausente", async () => {
     const r = await publishToTelegram({ env: {} });
@@ -67,11 +74,11 @@ describe("publishToTelegram — outbox", () => {
   afterEach(() => rmSync(dir, { recursive: true }));
 
   test("retorna {sent:0} quando outbox não existe", async () => {
-    const r = await publishToTelegram({
+    const r = await publishToTelegram(telegramOptions(dir, {
       env: ENV,
       outboxPath: join(dir, "missing.json"),
       statePath: join(dir, "state.json"),
-    });
+    }));
     expect(r).toEqual({ sent: 0, skipped: 0 });
   });
 
@@ -80,11 +87,11 @@ describe("publishToTelegram — outbox", () => {
     writeFileSync(outboxPath, makeOutbox([
       { title: "Post", path: "a.md", channels: ["mastodon"] },
     ]));
-    const r = await publishToTelegram({
+    const r = await publishToTelegram(telegramOptions(dir, {
       env: ENV,
       outboxPath,
       statePath: join(dir, "state.json"),
-    });
+    }));
     expect(r).toEqual({ sent: 0, skipped: 0 });
   });
 
@@ -94,12 +101,12 @@ describe("publishToTelegram — outbox", () => {
     writeFileSync(outboxPath, makeOutbox([
       { title: "Jardim digital", path: "30/jardim.md", channels: ["telegram"] },
     ]));
-    const r = await publishToTelegram({
+    const r = await publishToTelegram(telegramOptions(dir, {
       env: ENV,
       outboxPath,
       statePath,
       httpPost: mockPost([{ ok: true, result: { message_id: 1 } }]),
-    });
+    }));
     expect(r.sent).toBe(1);
     expect(r.skipped).toBe(0);
     const saved = JSON.parse(readFileSync(statePath, "utf8"));
@@ -119,11 +126,11 @@ describe("publishToTelegram — outbox", () => {
     const httpPost = async (url, body) => { postCalls.push(body); return { ok: true }; };
 
     // primeira vez — envia
-    await publishToTelegram({ env: ENV, outboxPath, statePath, httpPost });
+    await publishToTelegram(telegramOptions(dir, { env: ENV, outboxPath, statePath, httpPost }));
     expect(postCalls.length).toBe(1);
 
     // segunda vez — não envia (já no state)
-    await publishToTelegram({ env: ENV, outboxPath, statePath, httpPost });
+    await publishToTelegram(telegramOptions(dir, { env: ENV, outboxPath, statePath, httpPost }));
     expect(postCalls.length, "não deve reenviar nota já enviada").toBe(1);
   });
 
@@ -136,9 +143,9 @@ describe("publishToTelegram — outbox", () => {
     const postCalls = [];
     const httpPost = async () => { postCalls.push(1); return { ok: true }; };
 
-    const r = await publishToTelegram({
+    const r = await publishToTelegram(telegramOptions(dir, {
       env: ENV, outboxPath, statePath, httpPost, dryRun: true,
-    });
+    }));
     expect(postCalls.length, "dry-run não deve chamar httpPost").toBe(0);
     expect(r.sent, "dry-run ainda conta as notas processadas").toBe(1);
   });
@@ -149,12 +156,12 @@ describe("publishToTelegram — outbox", () => {
     writeFileSync(outboxPath, makeOutbox([
       { title: "Nota ruim", path: "ruim.md", channels: ["telegram"] },
     ]));
-    const r = await publishToTelegram({
+    const r = await publishToTelegram(telegramOptions(dir, {
       env: ENV,
       outboxPath,
       statePath,
       httpPost: mockPost([{ ok: false, description: "Bad Request" }]),
-    });
+    }));
     expect(r.sent, "erro da API não deve contar como enviado").toBe(0);
   });
 
@@ -166,11 +173,11 @@ describe("publishToTelegram — outbox", () => {
       { title: "N2", path: "n2.md", channels: ["telegram"] },
       { title: "N3", path: "n3.md", channels: ["telegram"] },
     ]));
-    const r = await publishToTelegram({
+    const r = await publishToTelegram(telegramOptions(dir, {
       env: ENV, outboxPath, statePath,
       httpPost: mockPost([{ ok: true }, { ok: true }]),
       limit: 2,
-    });
+    }));
     expect(r.sent).toBe(2);
     expect(r.skipped).toBe(1);
   });
@@ -183,10 +190,10 @@ describe("publishToTelegram — outbox", () => {
       schemaVersion: 1,
       items: [{ id: "leg", title: "Legado", path: "leg.md", channels: ["telegram"] }],
     }));
-    const r = await publishToTelegram({
+    const r = await publishToTelegram(telegramOptions(dir, {
       env: ENV, outboxPath, statePath,
       httpPost: mockPost([{ ok: true, result: { message_id: 7 } }]),
-    });
+    }));
     expect(r.sent).toBe(1);
     expect(r.skipped).toBe(0);
     const savedLegacy = JSON.parse(readFileSync(statePath, "utf8"));
