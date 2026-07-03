@@ -20,6 +20,11 @@ Proof oficial: [`convergencia-refarm-proof-2026-07-03.md`](./convergencia-refarm
 - pacote aceito: 21 tarballs, 63 required checks, 21 consumer proofs
 - refs diretas atuais no root: 13 `file:vendor/*.tgz`
 - overrides atuais: 18 `@refarm.dev/*` no `pnpm-workspace.yaml`
+- o check `refarm:publication:plan` separa esses números: **21 pacotes no handoff**
+  contra **18 pacotes com refs `file:`/overrides a migrar**. Os vendor-only do
+  handoff (`@refarm.dev/dispatch-surface`, `@refarm.dev/effort-contract-v1` e
+  `@refarm.dev/release-engine`) são parte da proof/cópia local, mas hoje não
+  geram edição em `package.json`/`pnpm-workspace.yaml`.
 - `@refarm.dev/local-surface` agora faz parte do handoff oficial
   `vault-seed-ready`; a proof downstream anterior foi assimilada pelo refarm e
   o vendor local foi ressincronizado contra o manifest novo.

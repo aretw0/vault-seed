@@ -100,8 +100,28 @@ function probeNpmVersions(names) {
   return { versions, errors };
 }
 
-export function buildPublicationPlan({ pkg, workspace, versionMap = {}, defaultVersion = null, probeErrors = {}, planOnly = false }) {
+function collectManifestPackageNames(manifest) {
+  return (manifest?.packages ?? [])
+    .map((item) => item?.packageName)
+    .filter((name) => typeof name === "string" && name.startsWith(REFARM_SCOPE))
+    .sort();
+}
+
+export function buildPublicationPlan({
+  pkg,
+  workspace,
+  manifest = null,
+  versionMap = {},
+  defaultVersion = null,
+  probeErrors = {},
+  planOnly = false,
+}) {
   const collected = collectRefarmFileSpecs(pkg, workspace);
+  const manifestPackageNames = collectManifestPackageNames(manifest);
+  const referencedNames = new Set(collected.names);
+  const manifestNames = new Set(manifestPackageNames);
+  const vendorOnlyPackages = manifestPackageNames.filter((name) => !referencedNames.has(name));
+  const referencedMissingFromManifest = collected.names.filter((name) => manifestPackageNames.length > 0 && !manifestNames.has(name));
   const packages = collected.names.map((name) => {
     const publishedVersion = versionMap[name] ?? defaultVersion;
     return {
@@ -150,6 +170,10 @@ export function buildPublicationPlan({ pkg, workspace, versionMap = {}, defaultV
     ok: blockers.length === 0,
     planOnly,
     packageCount: packages.length,
+    activeMigrationPackageCount: packages.length,
+    handoffPackageCount: manifestPackageNames.length || null,
+    vendorOnlyPackages,
+    referencedMissingFromManifest,
     directFileRefCount: collected.direct.length,
     overrideFileRefCount: collected.overrides.length,
     packages,
@@ -163,9 +187,18 @@ function formatPlan(plan) {
   const lines = [];
   const status = plan.planOnly ? "PLAN ONLY" : plan.ok ? "READY" : "BLOCKED";
   lines.push(`Refarm publication readiness: ${status}`);
-  lines.push(`Packages covered: ${plan.packageCount}`);
+  if (plan.handoffPackageCount !== null) {
+    lines.push(`Handoff manifest packages: ${plan.handoffPackageCount}`);
+  }
+  lines.push(`Active file-ref packages to migrate: ${plan.activeMigrationPackageCount}`);
   lines.push(`Direct file refs: ${plan.directFileRefCount}`);
   lines.push(`Workspace override file refs: ${plan.overrideFileRefCount}`);
+  if (plan.vendorOnlyPackages.length) {
+    lines.push(`Vendor-only handoff packages: ${plan.vendorOnlyPackages.join(", ")}`);
+  }
+  if (plan.referencedMissingFromManifest.length) {
+    lines.push(`Referenced packages missing from manifest: ${plan.referencedMissingFromManifest.join(", ")}`);
+  }
   lines.push("");
 
   if (plan.blockers.length) {
@@ -193,11 +226,13 @@ export function createPlanFromDisk(options = {}) {
   const root = resolve(options.root ?? ROOT);
   const pkgPath = join(root, "package.json");
   const workspacePath = join(root, "pnpm-workspace.yaml");
+  const manifestPath = join(root, "vendor", "manifest.json");
   if (!existsSync(pkgPath)) throw new Error(`Missing ${pkgPath}`);
   if (!existsSync(workspacePath)) throw new Error(`Missing ${workspacePath}`);
 
   const pkg = readJson(pkgPath);
   const workspace = readYaml(workspacePath);
+  const manifest = existsSync(manifestPath) ? readJson(manifestPath) : null;
   const collected = collectRefarmFileSpecs(pkg, workspace);
   const { defaultVersion, versions } = loadVersionMap({
     root,
@@ -213,6 +248,7 @@ export function createPlanFromDisk(options = {}) {
   return buildPublicationPlan({
     pkg,
     workspace,
+    manifest,
     versionMap: { ...versions, ...probe.versions },
     defaultVersion,
     probeErrors: probe.errors,

@@ -20,11 +20,24 @@ const workspace = {
   },
 };
 
+const manifest = {
+  packages: [
+    { packageName: "@refarm.dev/content-projection" },
+    { packageName: "@refarm.dev/ds" },
+    { packageName: "@refarm.dev/records-contract-v1" },
+    { packageName: "@refarm.dev/release-engine" },
+    { packageName: "@refarm.dev/source-contract-v1" },
+  ],
+};
+
 test("builds the file-to-npm target edits when versions are known", () => {
-  const plan = buildPublicationPlan({ pkg, workspace, defaultVersion: "0.2.0" });
+  const plan = buildPublicationPlan({ pkg, workspace, manifest, defaultVersion: "0.2.0" });
 
   expect(plan.ok).toBe(true);
   expect(plan.packageCount).toBe(4);
+  expect(plan.handoffPackageCount).toBe(5);
+  expect(plan.activeMigrationPackageCount).toBe(4);
+  expect(plan.vendorOnlyPackages).toEqual(["@refarm.dev/release-engine"]);
   expect(plan.directFileRefCount).toBe(3);
   expect(plan.overrideFileRefCount).toBe(3);
   expect(plan.targetEdits).toContainEqual({
