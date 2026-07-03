@@ -128,4 +128,8 @@ pra quando o container liberar (Codex ativo no `cranky_bassi`).
   refarm como bloco genérico em vez de virar biblioteca local do vault-seed. Inventário downstream:
   `docs/superpowers/specs/2026-07-03-mdx-block-migration-inventory.md`. O loader publicado já aceita
   `.mdx` markdown-compatible; o que falta para a migração completa é a história de blocos/imports
-  reutilizáveis para MDX com componentes.
+  reutilizáveis para MDX com componentes. Pedido concreto ao refarm: cultivar `@refarm.dev/ds-astro`
+  (embed set sancionado sobre `ds/html`) + uma história de `mdx-components`/imports e blocos
+  product-neutral para `GraphHero`, `FacetPanel`, `RecordsList`, `InsightGrid`, `MetricStrip`,
+  `NotebookCard`, `AvailabilityBadge`, `CardGrid`, `GraphView`, `GraphToolbar` e `GraphLegend`.
+  Até isso existir, o vault-seed não cria pacote local de blocos; mantém shells Astro e wrappers finos.

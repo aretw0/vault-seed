@@ -16,6 +16,19 @@ This inventory prevents two bad outcomes while refarm is not published:
 - growing local generic Astro block libraries in vault-seed;
 - moving route shells to MDX before the required refarm blocks exist.
 
+## Upstream ask
+
+The next generic block to cultivate in refarm is the MDX render/import layer, not another local
+vault-seed component package:
+
+- `@refarm.dev/ds-astro`: sanctioned MDX embed set over `@refarm.dev/ds/html`.
+- `mdx-components` mapping or equivalent import story for consumers that render Astro MDX.
+- Content blocks with stable, product-neutral props/slots for the surfaces below.
+
+vault-seed should only consume those blocks and provide product wrappers/copy. If a component name below
+starts needing reusable props, tests, or docs, that is a refarm supply request; if it only names PARA,
+routes, `dgk`, notebook copy, or editorial vocabulary, it stays here.
+
 ## Inventory
 
 | Surface | Keep in Astro | Candidate for MDX | Refarm block pressure | Local action before publish |

@@ -38,7 +38,12 @@ test("MDX migration boundary keeps reusable Astro blocks upstream in refarm", ()
   expect(design).toMatch(/Refarm owns .*reusable Astro\/SSR\/content blocks/);
   expect(status).toMatch(/blocos reutilizáveis[\s\S]*devem vir do\s+refarm/);
   expect(feedback).toMatch(/blocos MDX\/Astro\/SSR reutilizáveis/);
+  expect(feedback).toMatch(/@refarm\.dev\/ds-astro/);
+  expect(feedback).toMatch(/mdx-components/);
   expect(feedback).toMatch(/2026-07-03-mdx-block-migration-inventory\.md/);
+  expect(inventory).toMatch(/The next generic block to cultivate in refarm/);
+  expect(inventory).toMatch(/@refarm\.dev\/ds-astro/);
+  expect(inventory).toMatch(/vault-seed should only consume those blocks/);
 
   for (const page of [
     ".site/pages/index.astro",
@@ -49,7 +54,7 @@ test("MDX migration boundary keeps reusable Astro blocks upstream in refarm", ()
     expect(inventory).toContain(page);
   }
 
-  for (const block of ["GraphHero", "FacetPanel", "RecordsList", "NotebookCard", "GraphView"]) {
+  for (const block of ["GraphHero", "FacetPanel", "RecordsList", "NotebookCard", "GraphView", "GraphToolbar"]) {
     expect(inventory).toContain(block);
   }
 
