@@ -56,9 +56,9 @@ oficial:
 assinatura heartwood real (Ed25519). Fundação pronta atrás de seam. Falta o **produto**: a UX do
 headspace pra emitir/apresentar/verificar VC (telas). A política de verificação de produto já está em
 `vault.config.json`, exposta como `vaultCredentials.verificationPolicy`, e a costura
-`.site/lib/vault-credentials.mjs` já compõe o stack por import dinâmico com degradação graciosa. A rota
-`/headspace/` já mostra política efetiva e estado de capacidades; a próxima fatia é interatividade real
-de carteira/verificador. Isso é vault-seed-local quando priorizado.
+`.site/lib/vault-credentials.mjs` já compõe o stack por import dinâmico com degradação graciosa. Não há
+rota pública/deep-link só para prova; a próxima fatia deve ser interatividade real de
+carteira/verificador. Isso é vault-seed-local quando priorizado.
 
 ## Trabalho restante no vault-seed (pós-handoff)
 
@@ -163,8 +163,8 @@ resta de produto:
 2. **Explorar: colunas de records + MDX authoring** — seguir o inventário MDX/blocos: manter shells em
    Astro, mover conteúdo authorável quando houver bloco refarm estável, e promover filtros/listas/tabelas
    reutilizáveis para refarm quando passarem da costura local.
-`credentials:v1` (T2) já está assimilado, a política de verificação já está no config e `/headspace/`
-existe como scaffold; a próxima fatia é UX interativa do wallet/verificador, não contrato nem seam.
+`credentials:v1` (T2) já está assimilado e a política de verificação/seam já estão no vault-seed; a
+próxima fatia é UX interativa do wallet/verificador, não contrato nem página de prova.
 
 Do lado refarm: publicar a lane `vault-seed-ready` completa · ADR-078 fase 2 ·
 os candidatos profundos que ainda precisarem de proof
