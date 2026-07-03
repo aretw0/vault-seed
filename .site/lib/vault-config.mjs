@@ -65,6 +65,17 @@ export const vaultFolders = {
   all: Array.isArray(_cfg.folders?.list?.folders) ? _cfg.folders.list.folders : [],
 };
 
+// Credentials product policy (canonical, subvertible): the headspace passes this object directly to
+// credentials:v1 verify(input, policy). Secrets, keys, signatures, and revocation mechanics stay in refarm.
+export const vaultCredentials = {
+  verificationPolicy: _cfg.credentials?.verificationPolicy ?? {
+    trustSelf: true,
+    trustedIssuers: [],
+    revocation: 'required',
+    validity: 'required',
+  },
+};
+
 export const vaultLicense = {
   type:      _cfg.license?.type      ?? null,
   holder:    _cfg.license?.holder    ?? null,

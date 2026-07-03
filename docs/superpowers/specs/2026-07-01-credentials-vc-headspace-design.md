@@ -74,6 +74,10 @@ self-issued VCs verify out of the box and survive key rotation), and the owner a
 explicitly. The policy is **subvertible**: the user overrides it at the same canonical entry point, like
 every other vault opinion.
 
+Implementation status: this policy is now present in `vault.config.json` and exported by
+`.site/lib/vault-config.mjs` as `vaultCredentials.verificationPolicy`. The remaining T2 work is the
+headspace surface that calls `verify(input, policy)`.
+
 ## Seams (where things live)
 
 - **Wallet (holder-owned VCs)** → `storage:v1` via the provider's `store` / `list`. The wallet is a

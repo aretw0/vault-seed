@@ -14,6 +14,14 @@
     "list": { "$ref": ".site/vault-folders.json" }
   },
   "vocab": { "$ref": ".site/information-architecture.json" },
+  "credentials": {
+    "verificationPolicy": {
+      "trustSelf": true,
+      "trustedIssuers": [],
+      "revocation": "required",
+      "validity": "required"
+    }
+  },
   "records": {
     "context": {
       "base": "https://refarm.dev/contexts/records/v1",

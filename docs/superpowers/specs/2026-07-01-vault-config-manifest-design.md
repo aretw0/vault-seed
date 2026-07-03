@@ -47,7 +47,7 @@ lists-referenced.
 |---|---|---|
 | `license`, `kudos` | present | — |
 | `records` | present | — |
-| `credentials.verificationPolicy` | designed (T2) | — |
+| `credentials.verificationPolicy` | present (T2) | — |
 | **`status`** | **new** | the hardcoded `'published'`/`'draft'` lifecycle |
 | **`folders`** | consolidate | `vault-folders.json` + the hardcoded `'90 - Modelos'` exclusion |
 | **`vocab`** | consolidate | `.site/information-architecture.json` (categories/audiences/intents) |
@@ -86,8 +86,11 @@ One section at a time, each behind the loader, each with a test, none breaking t
 3. **`vocab`** — ✅ landed (increment 3, `ebee228`). `config.vocab` `$ref`s
    `.site/information-architecture.json`, exposed as `vaultVocab`. This increment added the **`$ref`
    resolver** in the loader — the reusable reference mechanism (folders' list uses it too).
+4. **`credentials.verificationPolicy`** — ✅ landed (T2/headspace). The product-owned verification
+   policy now lives in `vault.config.json`, is exposed as `vaultCredentials.verificationPolicy`, and is
+   passed straight to `credentials:v1 verify(input, policy)` when the headspace surface is wired.
 
-All three planned sections are migrated; each keeps its tests green and adds a config-driven assertion.
+All planned sections are migrated; each keeps its tests green and adds a config-driven assertion.
 
 Remaining (future): a neutral loader location — CJS/scripts reach the loader via `.site/lib/vault-config.mjs`
 (a mild reverse coupling; the loader reads from `process.cwd()`, which is the repo root in every current

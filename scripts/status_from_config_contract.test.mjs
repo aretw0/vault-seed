@@ -71,6 +71,19 @@ test("vaultVocab resolves the $ref in vault.config.json to the vocabulary file",
   expect(vaultVocab.categories).toEqual(ia.categories);
 });
 
+// --- credentials.verificationPolicy (T2/headspace): product policy is config, not crypto code ---
+test("vaultCredentials.verificationPolicy is sourced from vault.config.json", async () => {
+  const { vaultCredentials } = await import("../.site/lib/vault-config.mjs");
+  const cfg = JSON.parse(readFileSync(join(ROOT, "vault.config.json"), "utf8"));
+  expect(vaultCredentials.verificationPolicy).toEqual(cfg.credentials.verificationPolicy);
+  expect(vaultCredentials.verificationPolicy).toMatchObject({
+    trustSelf: true,
+    trustedIssuers: [],
+    revocation: "required",
+    validity: "required",
+  });
+});
+
 // --- manifest shape (the "schema" half of the design's schema + drift-guard) ---
 test("vault.config.json conforms to the manifest shape", () => {
   const cfg = JSON.parse(readFileSync(join(ROOT, "vault.config.json"), "utf8"));
@@ -91,4 +104,15 @@ test("vault.config.json conforms to the manifest shape", () => {
   expect(typeof cfg.records?.context?.base, "records.context.base must be a string").toBe("string");
   expect(typeof cfg.records?.defaultType, "records.defaultType must be a string").toBe("string");
   expect(typeof cfg.records?.typeByFolder, "records.typeByFolder must be an object").toBe("object");
+
+  // credentials: product-owned verification policy, passed straight through to credentials:v1
+  expect(typeof cfg.credentials?.verificationPolicy, "credentials.verificationPolicy must be an object").toBe("object");
+  expect(typeof cfg.credentials.verificationPolicy.trustSelf, "credentials.verificationPolicy.trustSelf must be boolean").toBe("boolean");
+  expect(Array.isArray(cfg.credentials.verificationPolicy.trustedIssuers), "trustedIssuers must be an array").toBe(true);
+  expect(["required", "optional", "disabled"], "revocation must be a known policy mode").toContain(
+    cfg.credentials.verificationPolicy.revocation,
+  );
+  expect(["required", "optional", "disabled"], "validity must be a known policy mode").toContain(
+    cfg.credentials.verificationPolicy.validity,
+  );
 });

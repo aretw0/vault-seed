@@ -54,7 +54,9 @@ oficial:
 ### T2 (jornada soberana) — credentials:v1 assimilado, UX pendente
 `credentials:v1` (VC/wallet W3C) **assimilado** (2026-07-01): vendorizado + conformance passando com
 assinatura heartwood real (Ed25519). Fundação pronta atrás de seam. Falta o **produto**: a UX do
-headspace pra emitir/apresentar/verificar VC (telas). Isso é vault-seed-local quando priorizado.
+headspace pra emitir/apresentar/verificar VC (telas). A política de verificação de produto já está em
+`vault.config.json` e exposta como `vaultCredentials.verificationPolicy`; isso é vault-seed-local quando
+priorizado.
 
 ## Trabalho restante no vault-seed (pós-handoff)
 
@@ -159,8 +161,8 @@ resta de produto:
 2. **Explorar: colunas de records + MDX authoring** — seguir o inventário MDX/blocos: manter shells em
    Astro, mover conteúdo authorável quando houver bloco refarm estável, e promover filtros/listas/tabelas
    reutilizáveis para refarm quando passarem da costura local.
-`credentials:v1` (T2) já está assimilado; a próxima fatia é UX/produto do
-headspace/wallet, não contrato.
+`credentials:v1` (T2) já está assimilado e a política de verificação já está no config; a próxima fatia
+é UX/produto do headspace/wallet, não contrato.
 
 Do lado refarm: publicar a lane `vault-seed-ready` completa · ADR-078 fase 2 ·
 os candidatos profundos que ainda precisarem de proof
