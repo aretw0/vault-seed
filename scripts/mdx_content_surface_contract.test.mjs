@@ -33,6 +33,8 @@ test("MDX migration boundary keeps reusable Astro blocks upstream in refarm", ()
   const status = read("docs/convergencia-refarm-status.md");
   const feedback = read("docs/convergencia-refarm-feedback.md");
   const inventory = read("docs/superpowers/specs/2026-07-03-mdx-block-migration-inventory.md");
+  const proofPlanPath = "docs/superpowers/plans/2026-07-03-ds-astro-mdx-consumer-proof.md";
+  const proofPlan = read(proofPlanPath);
 
   expect(design).toMatch(/MDX is the authoring migration path/);
   expect(design).toMatch(/Refarm owns .*reusable Astro\/SSR\/content blocks/);
@@ -40,10 +42,15 @@ test("MDX migration boundary keeps reusable Astro blocks upstream in refarm", ()
   expect(feedback).toMatch(/blocos MDX\/Astro\/SSR reutilizáveis/);
   expect(feedback).toMatch(/@refarm\.dev\/ds-astro/);
   expect(feedback).toMatch(/mdx-components/);
+  expect(feedback).toContain(proofPlanPath);
   expect(feedback).toMatch(/2026-07-03-mdx-block-migration-inventory\.md/);
   expect(inventory).toMatch(/The next generic block to cultivate in refarm/);
   expect(inventory).toMatch(/@refarm\.dev\/ds-astro/);
   expect(inventory).toMatch(/vault-seed should only consume those blocks/);
+  expect(inventory).toContain(proofPlanPath);
+  expect(proofPlan).toMatch(/@refarm\.dev\/ds-astro/);
+  expect(proofPlan).toMatch(/scripts\/refarm_ds_astro_consumer_contract\.test\.mjs/);
+  expect(proofPlan).toMatch(/Nenhum pacote local genérico de blocos é criado/);
 
   for (const page of [
     ".site/pages/index.astro",

@@ -4,6 +4,7 @@
 **Date:** 2026-07-03
 **Related:** `2026-06-30-records-view-design.md`, `docs/convergencia-refarm-feedback.md`,
 `@refarm.dev/ds`, `@refarm.dev/content-projection`, future refarm content blocks
+**Plan:** `docs/superpowers/plans/2026-07-03-ds-astro-mdx-consumer-proof.md`
 
 ## Decision
 
@@ -69,3 +70,5 @@ Until then, the vault-seed implementation stays as route-level product glue.
   render when they are markdown-compatible.
 - This inventory must mention every `.site/pages/*.astro` page and every reusable component category.
 - Refarm feedback must carry the reusable block pressure so upstream can decide what belongs there.
+- The downstream proof plan must stay explicit so `ds-astro` is cultivated upstream before vault-seed
+  migrates JSX-heavy Astro content to MDX.

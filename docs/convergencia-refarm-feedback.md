@@ -133,3 +133,4 @@ pra quando o container liberar (Codex ativo no `cranky_bassi`).
   product-neutral para `GraphHero`, `FacetPanel`, `RecordsList`, `InsightGrid`, `MetricStrip`,
   `NotebookCard`, `AvailabilityBadge`, `CardGrid`, `GraphView`, `GraphToolbar` e `GraphLegend`.
   Até isso existir, o vault-seed não cria pacote local de blocos; mantém shells Astro e wrappers finos.
+  Plano de proof downstream: `docs/superpowers/plans/2026-07-03-ds-astro-mdx-consumer-proof.md`.
