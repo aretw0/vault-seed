@@ -190,7 +190,9 @@ próxima fatia é UX interativa do wallet/verificador, não contrato nem página
 
 Do lado refarm: publicar a lane `vault-seed-ready` completa · ADR-078 fase 2 ·
 os candidatos profundos que ainda precisarem de proof
-(verification-as-completion, tool-less orchestrator, `context:v1`).
+(records profile runner, records/explore surface blocks, verification-as-completion,
+tool-less orchestrator, `context:v1`). `plugin-surface-loader` já aparece em andamento no checkout do
+refarm; o vault-seed deve aguardar handoff/proof em vez de criar loader local.
 
 Preparação local para o publish: o runbook
 [`convergencia-refarm-release.md`](./convergencia-refarm-release.md) está alinhado ao handoff de 23

@@ -151,6 +151,19 @@ adoção real do `dgk check` fica como próxima fatia local, compondo `health`
 
 ## Candidatos sinalizados ao refarm (proof-gated)
 
+- **records profile runner (`source` → `records:v1` → `enrichment:v1` → `artifact`)** — o mecanismo
+  de runner já foi provado no vault-seed, mas não é mais específico do vault. O refarm deveria
+  hospedar a orquestração e o report; o vault-seed manteria profiles, transforms, PARA, vocabulário e
+  UX `dgk`. Plano downstream:
+  `docs/superpowers/plans/2026-07-03-refarm-records-profile-runner-candidate.md`.
+- **records/explore surface blocks** — `/explorar/` permanece a rota canônica, mas facetas/listas/
+  tabelas/grafo são pressão de bloco reutilizável. Prioridade: `RecordsList`/`RecordsTable`,
+  `FacetPanel`, `MetricStrip` sobre coleções, `GraphView`, `GraphToolbar`, `GraphLegend`. Plano
+  downstream:
+  `docs/superpowers/plans/2026-07-03-refarm-records-surface-blocks-candidate.md`.
+- **plugin surface loader** — visto em andamento no refarm como `@refarm.dev/plugin-surface-loader`.
+  Para T1, isso parece a casa correta para carregar themes/skills/superfícies declaradas por plugin.
+  vault-seed não deve reimplementar; quando entrar em handoff, consumir como proof/white-label.
 - **codec YAML-LD ↔ `records:v1`** — refarm spec `2026-06-30-records-yaml-ld-codec-candidate.md`
   (`7b2c1f90`). `records:v1` é JSON-LD; um vault de frontmatter (Obsidian) autora records como
   **YAML-LD**. O codec (parse/serialize, preserve-unknown, forward-safe) é **genérico** e serve
