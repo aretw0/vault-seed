@@ -117,18 +117,27 @@ pra quando o container liberar (Codex ativo no `cranky_bassi`).
 > **Nenhum é adoção 1:1 pronta** — segue o que o refarm precisaria expor (proof-gated). Referência
 > de origem a montar: `packages/cli/vendor/check-substrate.mjs`, `packages/cli/src/commands/{doctor,check}.js`.
 
-| # | Pedido (bloco pro refarm quebrar) | Origem no dgk (reference impl) | Fronteira (fica downstream) |
-| --- | --- | --- | --- |
-| 1 | **Auditor de toolchain/ambiente** consumer-neutro — presença de `node`/`pnpm`/`uv`/`python` (via `--version`), mount `node_modules`/devcontainer, com report `{id,label,ok,required,version}` + `--json`. Casa natural: `@refarm.dev/health` (o `HealthCore` já é orquestrador + `register(auditor)`, mas **não tem auditor de toolchain**; hoje só Complexity/FileSystem/Project). | `packages/cli/vendor/check-substrate.mjs` (`addCommandCheck`/`addPathCheck`, `devcontainer_node_modules_mount`) | labels/hints de instalação e mensagens de onboarding |
-| 2 | **`HealthCore` como orquestrador do `dgk check`** — interface de auditor estável/documentada pra o dgk **registrar** seus auditores (onboarding, IA-PARA, pt-text) em vez de rolar o loop run→coleta→`--json` à mão. Os **corpos** dos auditores ficam downstream (produto); convergem a orquestração + shape do report. | `packages/cli/src/commands/check.js` (sequência de `runner('node', [...])` + `--json` + silo status) | conteúdo dos audits (PARA/PT/onboarding), rubricas |
-| 3 | **quality:v1 para os scorers Python** — `avaliar_textos.py`/`avaliar_apresentacoes.py` viram `quality:v1` checkers (o contrato já foi assimilado, falta a história Python/CLI). | `packages/cli/vendor/quality/avaliar_*.py` | rubricas, pesos, catálogo de regras, copy |
-| 4 | **generator/codemod** para `setup`/scaffold de template + `publish` (skill/Pi). Alguns codemods já existem (`node-test-to-vitest` a gente usou). | `packages/cli/src/commands/{setup,publish}.js`, `scripts/smoke_template.js` | nomes de pacote `@aretw0/*`, UX do comando |
+**A fronteira que NÃO pode borrar: `health` ≠ `quality`.** `health` = ambiente + estrutura de projeto
+(toolchain presente, mount sanidade, arquivos exigidos, IA coerente). `quality` = conteúdo/prosa
+(scoring de texto, drift de acento PT, apresentações, md-lint). Nunca dobrar scoring de texto dentro de
+`health` nem estrutura dentro de `quality`. O `dgk check` **hoje mistura os dois** (por isso o cuidado).
 
-Observação de superfície (pra não induzir erro): o `@refarm.dev/cli` é rico mas **majoritariamente runtime-produto do refarm**
+| # | Capability | Pedido (bloco pro refarm quebrar) | Reference impl no dgk | Fronteira (downstream) |
+| --- | --- | --- | --- | --- |
+| 1 | **health** | **Auditor de toolchain/ambiente** — presença de `node`/`pnpm`/`uv`/`python` (via `--version`), mount `node_modules`/devcontainer, report `{id,label,ok,required,version}` + `--json`. `HealthCore` já é registry (`register`/`audit`), **falta o auditor de toolchain** (hoje só Complexity/FileSystem/Project). | `packages/cli/vendor/check-substrate.mjs` | labels/hints de instalação |
+| 2 | **health** | **Auditor de estrutura/onboarding** — arquivos exigidos presentes (README/AGENTS/onboarding) + coerência de IA. Hospeda no `HealthCore` (estilo `FileSystemAuditor`). | `scripts/validate_onboarding.js`, `scripts/audit_information_architecture.mjs` | quais arquivos/seções são exigidos (PARA) |
+| 3 | **quality** | **`quality:v1` para prosa/apresentação** — pt-text (drift de acento) + `avaliar_textos.py`/`avaliar_apresentacoes.py` viram `quality:v1` checkers (contrato já assimilado; falta a história Python/CLI). **É quality, não health.** | `scripts/check_pt_text.js`, `packages/cli/vendor/quality/avaliar_*.py` | rubricas, pesos, catálogo de regras, copy |
+| 4 | build | **generator/codemod** para `setup`/scaffold + `publish` (skill/Pi). Alguns codemods já existem (`node-test-to-vitest`). | `packages/cli/src/commands/{setup,publish}.js`, `scripts/smoke_template.js` | nomes `@aretw0/*`, UX do comando |
+
+**`dgk check` fica downstream como comando de produto** que compõe um **passo de health** (#1+#2, estrutural)
+e um **passo de quality** (#3, conteúdo) e imprime o resumo combinado + silo status. A composição/UX é do dgk;
+o que converge são os auditores de health e os checkers de quality, **cada um na sua capability**.
+
+Observação de superfície (pra não induzir erro): o `@refarm.dev/cli` é **majoritariamente runtime-produto do refarm**
 (`status`=trust/plugins, `workspace-execution`=turbo/nx, `command-plan`/`action-affordances`); o genérico pro dgk é
 estreito (`json-output`/`command-result` pra padronizar `--json`) — baixo valor isolado. E `dispatch-surface`/`effort-contract`
 seguem **fora de escopo** (control-plane de runtime, ver Defeitos). O item mais pronto/desbloqueado é o **#1** (o dgk já
-carrega a reference impl inteira).
+carrega a reference impl inteira em `check-substrate.mjs`).
 
 ## Candidatos sinalizados ao refarm (proof-gated)
 
