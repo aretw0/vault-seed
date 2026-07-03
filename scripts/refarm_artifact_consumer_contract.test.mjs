@@ -42,6 +42,7 @@ test("vault-seed maps Lab, outbox, and records outputs to a valid task artifact 
   mkdirSync(join(cwd, "dist"), { recursive: true });
   writeFileSync(join(cwd, "public", "lab", "datasets", "manifest.json"), '{"datasetCount":1}\n');
   writeFileSync(join(cwd, ".dgk", "outbox-publicacao.json"), '{"itemCount":1}\n');
+  writeFileSync(join(cwd, ".dgk", "records-profile-report.json"), '{"recordCount":1}\n');
   writeFileSync(join(cwd, "dist", "records-manifest.json"), '{"records":[]}\n');
 
   const manifest = buildTaskArtifactsManifest({
@@ -55,7 +56,9 @@ test("vault-seed maps Lab, outbox, and records outputs to a valid task artifact 
     "lab-datasets-manifest",
     "publication-outbox",
     "records-manifest",
+    "records-profile-report",
   ]);
   expect(selectTaskArtifacts(manifest, { labels: ["publication"] })).toHaveLength(1);
+  expect(selectTaskArtifacts(manifest, { labels: ["profile"] })).toHaveLength(1);
   expect(selectTaskArtifacts(manifest, { labels: ["lab"] })[0].uri).toBe("public/lab/datasets/manifest.json");
 });

@@ -1,6 +1,7 @@
 # Design: Records ETL Profiles (vault-seed product layer)
 
-**Status:** DRAFT — design, no implementation yet
+**Status:** IMPLEMENTED — `scripts/vault_records_profile.mjs` + `records:profile`;
+POC-specific source/lookup adapters remain downstream
 **Date:** 2026-06-30
 **Related:** refarm `source:v1` / `source-web` adapter, refarm `records:v1`
 (`@refarm.dev/records-contract-v1`), refarm `enrichment:v1`, refarm `artifact-contract-v1`,
@@ -19,7 +20,8 @@ authenticated web), the ad-hoc scripts do not compose.
 
 This design adds a **profile-driven extraction layer** that consumes the Refarm acquisition/model
 contracts and produces structured records, while keeping the vault-specific decisions (PARA
-placement, transform bodies, command UX) in the product.
+placement, transform bodies, command UX) in the product. The first implementation is
+`scripts/vault_records_profile.mjs`, exposed as `pnpm run records:profile`.
 
 ## Boundary (who owns what)
 
@@ -49,9 +51,22 @@ the profiles vault-local and flags promotion as a later candidate, not a depende
 }
 ```
 
-The transform module receives the materialized snapshot (from `source:v1`) and returns a
-`records:v1` manifest. The runner then: (optionally) applies `enrichment:v1` providers, places notes
-per `target.para`, and emits an `artifact-contract-v1` manifest recording what was produced.
+The transform module receives the materialized snapshot (from `source:v1` or a vault-local
+manifest source) and returns a `records:v1` manifest. The runner then: (optionally) applies
+`enrichment:v1` providers, places notes per `target.para`, and emits an `artifact-contract-v1`
+manifest recording what was produced.
+
+Implemented profile:
+
+```powershell
+pnpm run records:profile
+pnpm run artifacts:manifest
+```
+
+The default `vault-default` profile uses the real vault records manifest as its source, validates
+through `records:v1`, accepts an injected key-lookup enrichment seam for POCs, writes
+`.dgk/records-profile-report.json`, and lets `generate_task_artifacts_manifest.mjs` include that
+report as a `records`/`etl`/`profile` artifact when present.
 
 ## Data flow
 
@@ -72,11 +87,19 @@ The ETL scripts ship in generated vaults. They MUST NOT hard-break without the R
 
 ## Verification
 
-1. a fixture profile over a `source-local` snapshot emits a valid `records:v1` manifest (conformance);
+1. a fixture profile over a source snapshot emits a valid `records:v1` manifest (conformance);
 2. PARA placement is deterministic for the same manifest;
 3. an `artifact-contract-v1` manifest records the produced notes + records manifest + any enrichment;
 4. degradation: with Refarm packages absent, `dgk etl` still runs the legacy scripts and exits 0;
 5. no static `@refarm.dev/*` import in distributed profile scripts.
+
+Current proof:
+
+- `scripts/vault_records_profile.test.mjs` proves source→records→enrichment composition and
+  graceful degradation;
+- `scripts/refarm_artifact_consumer_contract.test.mjs` proves the records profile report is captured
+  by the artifact manifest;
+- `pnpm run records:profile` on the real vault currently reports 93 validated records.
 
 ## Non-Goals
 

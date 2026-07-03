@@ -77,6 +77,12 @@ export function buildTaskArtifactsManifest({
       role: "manifest",
       labels: ["records", "site"],
     },
+    {
+      id: "records-profile-report",
+      path: join(cwd, ".dgk", "records-profile-report.json"),
+      role: "report",
+      labels: ["records", "etl", "profile"],
+    },
   ];
 
   const artifacts = candidates

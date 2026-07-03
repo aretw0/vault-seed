@@ -85,8 +85,10 @@ Adoção / produto (design já escrito em `docs/superpowers/specs/`):
   `/records-manifest.json` via endpoint astro (`.site/pages/records-manifest.json.ts`) + teste. **Decisão
   de produto (aprovada): manifesto-como-artefato + superfícies são views (o grafo já é), sem página nova.**
   O `@context` agora **resolve** (refarm serve `/contexts/records/v1`, `a01bdc1c`) → linked-data real.
-- [~] **records ETL real** — as duas pontas genéricas pousaram; falta costurar num profile coeso +
-  trocar as fixtures da reference vault por adapters reais.
+- [x] **records ETL real — profile coeso** — `scripts/vault_records_profile.mjs`
+  (`records:profile`) costura source real do vault → `records:v1` → enrichment
+  opcional e grava `.dgk/records-profile-report.json`; o manifesto de artifacts
+  inclui esse report quando presente.
   - [x] **fonte real** — os feeds do vault (`fontes/feeds.opml`) viram `records:v1` `@type [KnowledgeRecord, Source]`
     (config mapeia a pasta `fontes`→`Source`) carregando o vocab `source:v1` (`sourceKind: feed`,
     `sourceLocation: xmlUrl`); 17 no manifesto servido (`73b3f9f`). Fonte natural do conteúdo de exemplo
@@ -94,8 +96,10 @@ Adoção / produto (design já escrito em `docs/superpowers/specs/`):
   - [x] **transform real** — `scripts/enrichment_key_lookup.mjs`: `createKeyLookupEnrichmentProvider({ keyField, lookup })`
     genérico (lookup injetado: fixture no teste/reference, resolver real downstream), provenance idempotente,
     `runEnrichmentV1Conformance` verde (`4d86e47`). O lookup específico é a especialização do POC/downstream.
-  - [ ] **costura** — profile coeso source→records→enrichment com decisão de produto (quais fontes/vocab)
-    e as 3 fixtures da reference vault trocadas por adapters reais (= a POC).
+  - [x] **costura genérica** — profile coeso source→records→enrichment com
+    source/lookup injetáveis e fallback sem refarm.
+  - [ ] **especialização POC** — trocar source/lookup por adapters reais
+    privados e vocabulário do projeto, sem mudar o runner.
 - [x] **reference vault** (prova de composição = acceptance gate) — `validations/records-reference/`
   (gap ledger vazio: `source-web`→`records:v1`→`enrichment:v1` compõem ponta a ponta)
 - [x] **yaml codec (`records-contract-v1/yaml`)** — re-vendorizado + consumido em
@@ -125,13 +129,13 @@ real: assert/toThrow/rejects/regex/BOM/CJS→ESM) e **destravou teste TS** no `.
 
 ## Próxima ação concreta
 
-Os 3 blocos de T3 estão **assimilados**, a **reference vault** (acceptance gate) passou com gap ledger
-vazio, e o **grafo do Explore já lê a fonte `records:v1`** (com cobertura TS). As duas pontas do **records
-ETL real** pousaram genéricas — **fonte** (feeds→`Source`/`source:v1`, 17 no manifesto servido) e
-**transform** (`enrichment_key_lookup`, conformance verde) — e uma 2ª superfície-view (**tabela**) já
-espelha o grafo. O que resta de produto:
-1. **costurar o ETL real** num profile coeso source→records→enrichment e **trocar as 3 fixtures da
-   reference vault por adapters reais** (= a POC).
+Os 3 blocos de T3 estão **assimilados**, a **reference vault** (acceptance gate)
+passou com gap ledger vazio, e o **grafo do Explore já lê a fonte `records:v1`**
+(com cobertura TS). O **records ETL real** agora tem profile coeso
+(`records:profile`) e report local rastreável em `artifact-contract-v1`. O que
+resta de produto:
+1. **especializar o profile para a POC** — trocar source/lookup por adapters
+   reais privados, mantendo o runner e os contratos.
 2. **records view astro** — consumidora fina das superfícies (grafo + tabela), reconciliar com a direção
    MDX, sem página nova.
 `credentials:v1` (T2) já está assimilado; a próxima fatia é UX/produto do

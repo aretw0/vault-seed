@@ -154,6 +154,17 @@ Resultado: `.dgk/task-artifacts.json` gerado com 3 artifacts e validado por
 `@refarm.dev/artifact-contract-v1`: manifesto de datasets do Lab, outbox de
 publicacao e `records-manifest.json`.
 
+Depois da costura do profile T3 local:
+
+```powershell
+pnpm run records:profile
+pnpm run artifacts:manifest
+```
+
+Resultado: `.dgk/records-profile-report.json` gerado com 93 records validados
+e `.dgk/task-artifacts.json` atualizado para 4 artifacts, incluindo o report
+`records-profile-report` como artefato `records`/`etl`/`profile`.
+
 ## Provas pós-handoff adiantadas
 
 ```powershell
