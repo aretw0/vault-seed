@@ -56,10 +56,11 @@ oficial:
 assinatura heartwood real (Ed25519). Fundação pronta atrás de seam. Falta o **produto**: a UX do
 headspace pra emitir/apresentar/verificar VC (telas). Isso é vault-seed-local quando priorizado.
 
-## Trabalho pendente no vault-seed (quando os blocos pousarem)
+## Trabalho restante no vault-seed (pós-handoff)
 
-Por bloco, seguir a doutrina (`-logistica`): **vendorizar `file:` → consumer-contract test → adoção
-atrás de seam de produto (degradação graciosa)**.
+Para novos blocos, seguir a doutrina (`-logistica`): **vendorizar `file:` → consumer-contract test →
+adoção atrás de seam de produto (degradação graciosa)**. Para os blocos atuais, a assimilação já
+fechou; o trabalho restante é produto/POC.
 
 Assimilação (vendorização + contract-test):
 - [x] `enrichment:v1` — `scripts/refarm_enrichment_consumer_contract.test.mjs`
