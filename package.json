@@ -84,7 +84,7 @@
     "@changesets/cli": "^2.0.0",
     "@playwright/test": "^1.60.0",
     "@refarm.dev/ds": "file:vendor/refarm.dev-ds-0.1.0.tgz",
-    "astro": "^6.4.4",
+    "astro": "^6.4.8",
     "glob": "^13.0.6",
     "gray-matter": "^4.0.3",
     "markdownlint-cli": "^0.48.0",

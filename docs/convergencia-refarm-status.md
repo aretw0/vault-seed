@@ -25,7 +25,7 @@ handoff. **Toda a mecânica e os guards estão na doutrina:**
 | `@refarm.dev/source-web` (+ transitivo `source-contract-v1` via override) | aquisição/snapshot de fonte web (fixture sanitizada) → ETL | **vendorizado + contract-test ✓**; reference vault compõe `source-web`→`records:v1`→`enrichment:v1` |
 | `@refarm.dev/content-projection` | MD/MDX (frontmatter/wikilink/inline-link) → `records:v1` genérico | **vendorizado + contract-test ✓** (`scripts/refarm_content_projection_consumer_contract.test.mjs`); MD e MDX no mesmo caminho, PARA/vocab/rendering downstream |
 | `@refarm.dev/quality-contract-v1` | envelope de qualidade/lint declarável (`quality:v1`) | **vendorizado + contract-test ✓** (`scripts/refarm_quality_consumer_contract.test.mjs`); catálogo de rules/severidade/copy downstream |
-| `@refarm.dev/ds-astro` | embed set MDX sancionado (Card/MetricStrip/CalloutSection/ContentList) sobre `ds` | **vendorizado + contract-test ✓** (`scripts/refarm_ds_astro_consumer_contract.test.mjs`); mapa MDX resolve pros `.astro` embarcados; copy/rotas MDX downstream. Defeito relayado: peer `astro ^6.4.8` não-satisfeito (ver `-feedback.md`) |
+| `@refarm.dev/ds-astro` | embed set MDX sancionado (Card/MetricStrip/CalloutSection/ContentList) sobre `ds` | **vendorizado + contract-test ✓** (`scripts/refarm_ds_astro_consumer_contract.test.mjs`); mapa MDX resolve pros `.astro` embarcados; copy/rotas MDX downstream. Bump `astro`→`6.4.8` p/ satisfazer o peer do bloco (ver `-feedback.md`) |
 
 ## Blocos a chegar do refarm
 
@@ -86,8 +86,8 @@ Assimilação (vendorização + contract-test):
 - [x] `quality:v1` — `scripts/refarm_quality_consumer_contract.test.mjs` (declara profile downstream
   `vault-seed-docs` + emite report `quality:v1` via `createRegexQualityChecker`/`runQualityCheck`)
 - [x] `ds-astro` — `scripts/refarm_ds_astro_consumer_contract.test.mjs` (embed set MDX sancionado:
-  mapa `mdxComponents` resolve pros 4 `.astro` embarcados + `dsAstroCssImports` sobre `ds`; peer
-  `astro ^6.4.8` não-satisfeito relayado ao refarm)
+  mapa `mdxComponents` resolve pros 4 `.astro` embarcados + `dsAstroCssImports` sobre `ds`; exigiu bump
+  `astro ^6.4.4`→`^6.4.8` no vault-seed p/ satisfazer o peer do bloco — não era defeito do refarm)
 
 Adoção / produto (design já escrito em `docs/superpowers/specs/`):
 - [x] **records ETL profile runner** — `scripts/records_etl.mjs` (source snapshot → `records:v1` →

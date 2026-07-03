@@ -8,13 +8,14 @@ pacotes `@refarm.dev/*`. Itens essenciais relayados pro refarm.
 | Pacote | Versão | Sintoma | Repro/evidência | Status |
 | --- | --- | --- | --- | --- |
 | `@refarm.dev/launch-process` | `0.1.0` | `launchDetachedProcess não anexa listener 'error' ao child; num ENOENT (ex.: xdg-open/cmd/open ausente) o spawn emite 'error' sem handler → exceção não-capturada (crash do processo), onde o spawn cru antes rejeitava uma Promise capturável. Exposto via launchVault/openUri (Obsidian), que não é guardado por detect.` | `dist/index.js launchDetachedProcess: spawn(..., {detached:true, stdio:[...]}); child.unref(); — sem child.on('error', ...). Consumido em packages/cli/src/launcher.js (openUri) e commands/vscode.js (openVSCode).` | `corrigido` — refarm `0eb1a193` anexa `child.once('error', e => options.onError?.(e))` (listener sempre presente → crash-safe por padrão; `onError` opcional). Re-vendorizado do handoff `2026-06-28`; dist instalado nos dois consumidores tem o fix; suíte 356/356. |
-| `@refarm.dev/ds-astro` | `0.1.0` | peer `astro: ^6.4.8` não-satisfeito no consumidor — a última versão disponível do astro é `6.4.4`, então o peer floor está **à frente do ecossistema**. Install só emite warning (não-fatal), mas polui o `pnpm install`/`peers check` de qualquer consumidor. | `pnpm peers check` → `✕ unmet peer astro / @refarm.dev/ds-astro@0.1.0`; `require('astro/package.json').version` = `6.4.4`. Assimilado no `2026-07-03` com o consumer-proof verde mesmo assim (a prova testa surface JS + subpaths, independe do runtime astro). | `aberto` (relayar — baixar o peer floor pra `^6.4.4` ou publicar astro `6.4.8`) |
+| `@refarm.dev/ds-astro` | `0.1.0` | (auto-infligido, corrigido) o peer `astro ^6.4.8` aparecia como unmet **só porque o lockfile do vault-seed estava preso em `6.4.4`** — o `6.4.8` já existe (linha 6.x vai até 6.4.8; latest geral do astro é `7.0.6`). **Não** era peer floor à frente do ecossistema (leitura errada minha, retificada). | Bump `astro` `^6.4.4`→`^6.4.8` + `pnpm update astro` → resolve `6.4.8`; `pnpm peers check` = "No peer dependency issues found"; suíte 521/521 + `site:build` 86 páginas verdes. | `corrigido` (fix no vault-seed; NÃO é defeito do refarm) |
 
 ## Lacunas essenciais (backlog pro refarm)
 
 | Pacote | O que falta | Por que é essencial | Workaround | Status |
 | --- | --- | --- | --- | --- |
 | `@refarm.dev/homestead-ssr` | `fieldHtml` não aceita `attrs` (o `buttonHtml` aceita — inconsistência) | inputs não recebem `autocomplete`/`spellcheck`/`inputmode`/`autocomplete="off"` etc.; campos de token do admin perdem `autocomplete=off`/`spellcheck=false` | montar o `<input>` à mão sem `fieldHtml`, ou pós-processar | `aberto` (relayar — paralelo ao `buttonHtml.attrs`) |
+| `@refarm.dev/ds-astro` | peer `astro` fixado em `^6.4.8` (= `<7`) **exclui astro 7**, que já é o latest (`7.0.6`) | qualquer consumidor que migrar pra astro 7 verá o peer do `ds-astro` como unmet; o floor deveria acompanhar o major disponível | ficar em 6.x por ora (vault-seed em 6.4.8, ok); ao migrar pra 7 o peer trava | `aberto` (relayar — alargar pra `^6.4.8 \|\| ^7` ou `>=6.4.8`) |
 
 ## Requirements de consumo — `@refarm.dev/silo` (maturação, porta-voz)
 
@@ -140,7 +141,8 @@ pra quando o container liberar (Codex ativo no `cranky_bassi`).
   vault-seed assimilou via `file:` tarball do handoff `2026-07-03` (sha256 conferido). Consumer-proof
   verde: `scripts/refarm_ds_astro_consumer_contract.test.mjs` (pin + surface + o mapa MDX resolve pros
   `.astro` embarcados + css imports ficam sobre `@refarm.dev/ds`); suíte completa 521/521, sem regressão.
-  Copy/rotas MDX de produto ficam downstream. Defeito relayado junto: peer `astro ^6.4.8` não-satisfeito
-  (acima). O bloco irmão `@refarm.dev/content-projection` (MD/MDX→`records:v1`) e o `@refarm.dev/quality-contract-v1`
+  Copy/rotas MDX de produto ficam downstream. Nota de fronteira relayada junto: o peer `astro ^6.4.8` do
+  ds-astro exclui astro 7 (já latest) — alargar quando um consumidor migrar (acima). O bloco irmão
+  `@refarm.dev/content-projection` (MD/MDX→`records:v1`) e o `@refarm.dev/quality-contract-v1`
   também foram assimilados no mesmo handoff (proofs `content-projection.markdown-mdx-records` e
   `quality-contract.declared-lint-envelope`, verdes).
