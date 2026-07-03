@@ -9,40 +9,41 @@ handoff `vault-seed-ready` do refarm gerado em 2026-07-03.
 - container refarm usado para copiar: `kind_fermat`
 - usuário no container: `1001:1001`
 - comando de cópia usado no consumidor: `docker cp kind_fermat:/workspaces/refarm/.refarm/handoff/vault-seed/2026-07-03/. vendor/`
-- `sourceGitSha`: `6a6d31fa2cf5d64fd6abc555448541388beb8077`
-- `generatedAt`: `2026-07-03T03:47:53.985Z`
+- `sourceGitSha`: `9aaf54d580d823de64eee7419fbdd42f5d179fa5`
+- `generatedAt`: `2026-07-03T06:00:25.415Z`
 - acceptance: `accepted`
-- pacote: 20 tarballs, `manifest.json`, `manifest.md`
-- gates refarm: 4 required gates, 58 required checks
-- consumer proofs declaradas: 20
+- pacote: 21 tarballs, `manifest.json`, `manifest.md`
+- gates refarm: 4 required gates, 63 required checks
+- consumer proofs declaradas: 21
 
 ## Tarballs verificados
 
 Todos os tarballs em `vendor/` foram comparados contra `vendor/manifest.json`.
-Resultado: `ok: 20 tarballs match manifest 6a6d31fa2cf5d64fd6abc555448541388beb8077`.
+Resultado: `ok: 21 tarballs match manifest 9aaf54d580d823de64eee7419fbdd42f5d179fa5`.
 
 | Tarball | SHA-256 |
 |---|---|
-| `refarm.dev-artifact-contract-v1-0.1.0.tgz` | `197d71655e20014f2b8795bcdcc27cba321c468c51c9875c5bb24444574a7dce` |
-| `refarm.dev-channel-policy-v1-0.1.0.tgz` | `4c2b5b76c300a6dbf91523ede99e3a770b18b74548a8cdf7330c3f3adff20c81` |
-| `refarm.dev-content-projection-0.1.0.tgz` | `f220d7e2119555801c83e7ad518fe2c90ea1610f95477926760c6e5829ae099d` |
-| `refarm.dev-credentials-contract-v1-0.1.0.tgz` | `bb81767587e44f7010417133546ee5f7051fe7e427e3406dd95d39ad29251a32` |
-| `refarm.dev-dispatch-surface-0.1.0.tgz` | `874b8a0ce8a3bd4d5f490a98d568fc44c88b258461c10a4e29ad3ddff7dcb392` |
-| `refarm.dev-ds-0.1.0.tgz` | `9504c4682971338fc4d7c70e288c03c0be7a8619b415b7a45348a7a5dbe4c48b` |
-| `refarm.dev-effort-contract-v1-0.1.0.tgz` | `f4d880e5293fd43d99550ba7448191ea4fd67863be9345c975776abc8f8d3101` |
-| `refarm.dev-enrichment-contract-v1-0.1.0.tgz` | `eefca674c8bf7a54759ff8c1ee741b8c0f81f5fcf138d739a23317a608f58d0e` |
-| `refarm.dev-heartwood-0.1.0.tgz` | `95b1f0a026d14e35237d9c9435c319ec1a605851d4df6d1a6e420b441899bc9c` |
-| `refarm.dev-identity-contract-v1-0.1.0.tgz` | `b20ae63ef7c6facb48af1e16616868682ad89762cb0e999bb80ef21b5714d548` |
-| `refarm.dev-identity-heartwood-0.1.0.tgz` | `8c02045b5d30b49b1d853c2ac51ac3554de5f2f8d3c415f751624e7ea9ca5674` |
-| `refarm.dev-process-handoff-0.1.0.tgz` | `9d88e5f6f74015ccf400e5c4f28e630f8287a1b45b59e3a8f31533f5fc572d7a` |
-| `refarm.dev-quality-contract-v1-0.1.0.tgz` | `bee3a0828c5afbdd4f84c152816a2c3e40736c4a4d5be6b8cf9e43b5939f9ff9` |
-| `refarm.dev-records-contract-v1-0.1.0.tgz` | `c6fc47242e6c63463c5945c6d6c1e38bc5756524d65afbdfcae58c7a47ba7c8f` |
-| `refarm.dev-release-engine-0.1.0.tgz` | `476d9bb6f2af658282b24b456f578ab06da7ce0c0146b4b9a24747f0bbc60939` |
-| `refarm.dev-silo-0.1.0.tgz` | `f3f1f8fe57b754169b2f6299396955f559102362897df292ec2d0d712e26f0c0` |
+| `refarm.dev-storage-contract-v1-0.1.0.tgz` | `b06bc71b618b34bf51bf01ae87d35ed37846cf562cb08df18ebaaa51aab77abf` |
+| `refarm.dev-identity-contract-v1-0.1.0.tgz` | `5c3cba63f6f34ea644afae70fe983a7c2a293a63b9fd33d63030f419d3cef527` |
+| `refarm.dev-artifact-contract-v1-0.1.0.tgz` | `9484b35e61977908d11197e674c868d5bf1bf26547fd9af97398c7571d90d8d3` |
+| `refarm.dev-channel-policy-v1-0.1.0.tgz` | `63e666e0f364309dcb213edb49f41e44980f2144451d9d4b412f1c87fd899ae9` |
+| `refarm.dev-effort-contract-v1-0.1.0.tgz` | `3f1d8701322233e66408a0b2412328f2029db0760962071fff7cd4bff1bc73a3` |
+| `refarm.dev-quality-contract-v1-0.1.0.tgz` | `1dbe3df2bf9cffebaf120bbfb6aef5455f4821f67dc50ecc1a6160e5fdd45d86` |
 | `refarm.dev-source-contract-v1-0.1.0.tgz` | `8efb8631dfe5dd39db3d6249b57a372ea931e030558ff3d555805f4c351f974b` |
-| `refarm.dev-source-web-0.1.0.tgz` | `ca33f09ed9159cdf20439565be5dba23e1f05724e5cd168923b3d5991d75e9a5` |
-| `refarm.dev-storage-contract-v1-0.1.0.tgz` | `8cff344d2eeb3b0b812338dc46e7c0f1d25e1b282ed88fb90e8607af2222f31c` |
+| `refarm.dev-enrichment-contract-v1-0.1.0.tgz` | `5cc33a867e847d691722d1a77c8343ef7b81d2b86a99e45cc49fa2595797847c` |
+| `refarm.dev-records-contract-v1-0.1.0.tgz` | `d64b554f0900471761c02667bdde1664fa29f572e02c7e7bec5f73858b0bfa1f` |
+| `refarm.dev-process-handoff-0.1.0.tgz` | `d1bd357e7d52f6183a256115bbd32efb84b59e9cf0f29256e04d28e24bb84145` |
+| `refarm.dev-release-engine-0.1.0.tgz` | `476d9bb6f2af658282b24b456f578ab06da7ce0c0146b4b9a24747f0bbc60939` |
+| `refarm.dev-heartwood-0.1.0.tgz` | `95b1f0a026d14e35237d9c9435c319ec1a605851d4df6d1a6e420b441899bc9c` |
+| `refarm.dev-silo-0.1.0.tgz` | `e23cc494b1b9a6399ae15621b178ea26a084819b50a13e39e92742465cc2e1c5` |
 | `refarm.dev-storage-memory-0.1.0.tgz` | `276e5e930b90a82b68e11676433bbf0292b17f89b7cc77691026c1067f0d7d44` |
+| `refarm.dev-credentials-contract-v1-0.1.0.tgz` | `bb81767587e44f7010417133546ee5f7051fe7e427e3406dd95d39ad29251a32` |
+| `refarm.dev-dispatch-surface-0.1.0.tgz` | `7ea0dfd1a2a43e501a6af9893fe9f99720f38da891c341dd7de8a83a02bfc8fc` |
+| `refarm.dev-ds-0.1.0.tgz` | `9504c4682971338fc4d7c70e288c03c0be7a8619b415b7a45348a7a5dbe4c48b` |
+| `refarm.dev-source-web-0.1.0.tgz` | `96a8fe55c856427f17a90e1441b33b5573b02ecfe836d02fd942c0016ceb55a5` |
+| `refarm.dev-content-projection-0.1.0.tgz` | `9a6a8e8d13fb84a950a9937397d7630c3f0822d2b6b3649aeb205a83c1299a5c` |
+| `refarm.dev-identity-heartwood-0.1.0.tgz` | `8fce1939c8906d18de93ad56a7e10e345f609971958a19794d372d604ba86e91` |
+| `refarm.dev-local-surface-0.1.0.tgz` | `fe889457797673bb2985d79cecf1007e2ab7a23189c7921a8239a10d73e2f921` |
 
 ## Instalação downstream
 
@@ -53,17 +54,17 @@ Dependências diretas novas no `vault-seed`:
 - `@refarm.dev/quality-contract-v1`: `file:vendor/refarm.dev-quality-contract-v1-0.1.0.tgz`
 - `@refarm.dev/silo`: `file:vendor/refarm.dev-silo-0.1.0.tgz`
 
-Nota: `local-surface` é candidate tarball posterior ao handoff oficial de 20
-tarballs. Foi gerado no refarm atual (`sourceGitSha`
-`e0ad0527779b03d247c27b64b722d96e980b5f4b`) com:
+Nota: `local-surface` começou como proof adiantada, mas agora está incluido no
+handoff oficial de 21 tarballs. O `vendor/` local foi ressincronizado do refarm
+com:
 
 ```powershell
-docker exec -u 1001:1001 kind_fermat pnpm --filter '@refarm.dev/local-surface' run build
-docker exec -u 1001:1001 kind_fermat pnpm --filter '@refarm.dev/local-surface' pack --pack-destination /tmp/refarm-local-surface-proof
-docker cp kind_fermat:/tmp/refarm-local-surface-proof/refarm.dev-local-surface-0.1.0.tgz vendor\refarm.dev-local-surface-0.1.0.tgz
+docker cp kind_fermat:/workspaces/refarm/.refarm/handoff/vault-seed/2026-07-03/. vendor/
+pnpm install --lockfile-only --ignore-scripts
 ```
 
-SHA-256 local: `e4651f9eac6e458c862c65ee3bfcd5ff7d7f1e3a4ce58a665166400e83d7b553`.
+SHA-256 local de `local-surface`:
+`fe889457797673bb2985d79cecf1007e2ab7a23189c7921a8239a10d73e2f921`.
 
 O `pnpm-workspace.yaml` recebeu overrides para todos os pacotes inéditos do
 handoff, não só os diretos, porque o pnpm 11 não aplica `pnpm.overrides` dentro
@@ -168,7 +169,7 @@ Cobertura:
   `listSecrets("publishing")`, remove via `removeSecret`, mantém fallback para
   `tokens` legado e preserva `contacts.location` como estado local do produto.
 - `local-surface:v1` — `scripts/refarm_local_surface_consumer_contract.test.mjs`
-  consome o candidate tarball, cria manifest `refarm.local-surface.v1`, renderiza
+  consome o pacote do handoff oficial, cria manifest `refarm.local-surface.v1`, renderiza
   HTML via DS, gera launch plan white-label (`dgk ...`) e valida relatório
   `quality:v1` sem mover rotas, screenshots, adapters ou vocabulário de produto
   para o refarm.

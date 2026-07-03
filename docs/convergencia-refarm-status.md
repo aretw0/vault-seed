@@ -19,10 +19,10 @@ handoff. **Toda a mecânica e os guards estão na doutrina:**
 | `@refarm.dev/process-handoff` | spawn em `dgk-runner`/cli | — |
 | `@refarm.dev/channel-policy-v1` | envelope/receipts do outbox (telegram) | — |
 | `@refarm.dev/silo` | credenciais (`silo.js`) em namespace `publishing` | **vendorizado + adotado no adapter**; `packages/cli/test/silo.test.js` |
-| `@refarm.dev/local-surface` | proof candidate de superfície local/white-label | **tarball candidate + contract-test ✓**; `scripts/refarm_local_surface_consumer_contract.test.mjs` |
-| `@refarm.dev/enrichment-contract-v1` | enriquecimento de records (ETL) | **vendorizado + contract-test ✓**; adoção (usar no ETL) pendente |
-| `@refarm.dev/records-contract-v1` | modelo de records (view + ETL) | **vendorizado + contract-test ✓**; adoção (emitir/ler) pendente |
-| `@refarm.dev/source-web` (+ transitivo `source-contract-v1` via override) | aquisição/snapshot de fonte web (fixture sanitizada) → ETL | **vendorizado + contract-test ✓**; adoção (usar no ETL/reference vault) pendente |
+| `@refarm.dev/local-surface` | superfície local/white-label | **vendorizado no handoff oficial + contract-test ✓**; `scripts/refarm_local_surface_consumer_contract.test.mjs` |
+| `@refarm.dev/enrichment-contract-v1` | enriquecimento de records (ETL) | **vendorizado + contract-test ✓**; provider genérico local e reference vault verdes |
+| `@refarm.dev/records-contract-v1` | modelo de records (view + ETL) | **vendorizado + contract-test ✓**; manifesto, grafo e tabela já usam `records:v1` |
+| `@refarm.dev/source-web` (+ transitivo `source-contract-v1` via override) | aquisição/snapshot de fonte web (fixture sanitizada) → ETL | **vendorizado + contract-test ✓**; reference vault compõe `source-web`→`records:v1`→`enrichment:v1` |
 
 ## Blocos a chegar do refarm
 
@@ -31,24 +31,25 @@ handoff. **Toda a mecânica e os guards estão na doutrina:**
 ## Proof oficial do handoff 2026-07-03
 
 O checkout oficial assimilou o pacote `vault-seed-ready` do refarm
-(`sourceGitSha` `6a6d31fa2cf5d64fd6abc555448541388beb8077`) e registrou a
+(`sourceGitSha` `9aaf54d580d823de64eee7419fbdd42f5d179fa5`) e registrou a
 proof em [`convergencia-refarm-proof-2026-07-03.md`](./convergencia-refarm-proof-2026-07-03.md):
-20 tarballs verificados por SHA-256, overrides transientes alinhados ao
+21 tarballs verificados por SHA-256, overrides transientes alinhados ao
 `consumerInstall.pnpmOverrides`, lockfile refresh/reinstall, 9 arquivos/33 testes
 Vitest verdes, `records:manifest` com 93 records validado, `site:build` verde e
 `release:package:smoke:json` verde.
 
-Após essa proof, dois blocos foram adiantados:
+Após essa proof, dois blocos foram adiantados e depois incorporados ao handoff
+oficial:
 
 - `@refarm.dev/silo` passou de plano para adapter real: `packages/cli/src/silo.js`
   grava credenciais em `SiloCore.saveSecret("publishing", key, value)`, lê por
   `listSecrets("publishing")`, mantém fallback para `tokens` legado e preserva
   `contacts.location` como estado de produto.
-- `@refarm.dev/local-surface` foi consumido como candidate tarball separado do
-  handoff oficial (`refarm.dev-local-surface-0.1.0.tgz`, SHA-256
-  `e4651f9eac6e458c862c65ee3bfcd5ff7d7f1e3a4ce58a665166400e83d7b553`) e
-  provado com manifest local-first, render DS, launch plan white-label e
-  `quality:v1`.
+- `@refarm.dev/local-surface` entrou no handoff oficial de 21 tarballs
+  (`refarm.dev-local-surface-0.1.0.tgz`, SHA-256
+  `fe889457797673bb2985d79cecf1007e2ab7a23189c7921a8239a10d73e2f921`) e
+  continua provado com manifest local-first, render DS, launch plan white-label
+  e `quality:v1`.
 
 ### T2 (jornada soberana) — credentials:v1 assimilado, UX pendente
 `credentials:v1` (VC/wallet W3C) **assimilado** (2026-07-01): vendorizado + conformance passando com
@@ -69,8 +70,8 @@ Assimilação (vendorização + contract-test):
   **round-trip: provider assinado por heartwood passa o conformance do contrato, 8 checks**)
 - [x] `silo` — `packages/cli/src/silo.js` delega storage de credenciais para
   `@refarm.dev/silo`, com fallback legado e testes focados
-- [x] `local-surface:v1` — proof candidate para Trabalho 1, sem seleção oficial
-  no handoff ainda
+- [x] `local-surface:v1` — proof para Trabalho 1, agora selecionada no handoff
+  oficial `vault-seed-ready`
 
 Adoção / produto (design já escrito em `docs/superpowers/specs/`):
 - [x] **records ETL profile runner** — `scripts/records_etl.mjs` (source snapshot → `records:v1` →
@@ -132,13 +133,15 @@ espelha o grafo. O que resta de produto:
    reference vault por adapters reais** (= a POC).
 2. **records view astro** — consumidora fina das superfícies (grafo + tabela), reconciliar com a direção
    MDX, sem página nova.
-`credentials:v1` (T2) entra após o heartwood-signing no refarm.
+`credentials:v1` (T2) já está assimilado; a próxima fatia é UX/produto do
+headspace/wallet, não contrato.
 
-Do lado refarm (pós-codemod): publicar T3 npm · ADR-078 fase 2 · os 3 candidatos profundos
-(verification-as-completion, tool-less orchestrator, `context:v1`) · handoff yaml codec + credentials.
+Do lado refarm: publicar a lane `vault-seed-ready` completa · ADR-078 fase 2 ·
+os candidatos profundos que ainda precisarem de proof
+(verification-as-completion, tool-less orchestrator, `context:v1`).
 
 Preparação local para o publish: o runbook
-[`convergencia-refarm-release.md`](./convergencia-refarm-release.md) está alinhado ao handoff de 20
+[`convergencia-refarm-release.md`](./convergencia-refarm-release.md) está alinhado ao handoff de 21
 tarballs e há um check mecânico em `scripts/check_refarm_publication_readiness.mjs`
 (`pnpm run refarm:publication:plan`) que lista as 13 refs diretas, os 18 overrides e a troca exata
 `file:`→npm quando o refarm informar as versões publicadas.

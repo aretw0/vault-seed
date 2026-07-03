@@ -16,14 +16,13 @@ Entra no fim do pipeline de assimilação
 Proof oficial: [`convergencia-refarm-proof-2026-07-03.md`](./convergencia-refarm-proof-2026-07-03.md).
 
 - handoff consumido: `.refarm/handoff/vault-seed/2026-07-03/`
-- `sourceGitSha`: `6a6d31fa2cf5d64fd6abc555448541388beb8077`
-- pacote aceito: 20 tarballs, 58 required checks, 20 consumer proofs
+- `sourceGitSha`: `9aaf54d580d823de64eee7419fbdd42f5d179fa5`
+- pacote aceito: 21 tarballs, 63 required checks, 21 consumer proofs
 - refs diretas atuais no root: 13 `file:vendor/*.tgz`
 - overrides atuais: 18 `@refarm.dev/*` no `pnpm-workspace.yaml`
-- extra candidate consumido após o handoff: `@refarm.dev/local-surface`
-  (`vendor/refarm.dev-local-surface-0.1.0.tgz`), gerado por `pnpm pack` no
-  checkout atual do refarm para fechar a proof downstream antes da próxima
-  seleção `vault-seed-ready`
+- `@refarm.dev/local-surface` agora faz parte do handoff oficial
+  `vault-seed-ready`; a proof downstream anterior foi assimilada pelo refarm e
+  o vendor local foi ressincronizado contra o manifest novo.
 
 Refs diretas atuais:
 

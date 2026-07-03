@@ -78,9 +78,9 @@ overrides:
 O handoff oficial atual é `.refarm/handoff/vault-seed/2026-07-03/`, provado em
 [`convergencia-refarm-proof-2026-07-03.md`](./convergencia-refarm-proof-2026-07-03.md):
 
-- 20 tarballs copiados e verificados por SHA-256 contra `vendor/manifest.json`;
-- 1 candidate tarball adicional (`@refarm.dev/local-surface`) packado do refarm
-  atual para proof downstream;
+- 21 tarballs copiados e verificados por SHA-256 contra `vendor/manifest.json`;
+- `@refarm.dev/local-surface` incluido no handoff oficial `vault-seed-ready`
+  depois da proof downstream;
 - 18 pacotes `@refarm.dev/*` com refs `file:` ou overrides locais;
 - 13 refs diretas em `package.json`;
 - 18 overrides em `pnpm-workspace.yaml`;

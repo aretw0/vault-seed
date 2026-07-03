@@ -8,7 +8,7 @@ function readJson(path) {
 }
 
 describe("refarm local-surface consumer proof", () => {
-  test("declares the local-surface candidate as a packed dependency", () => {
+  test("declares the local-surface handoff package as a packed dependency", () => {
     const pkg = readJson("package.json");
     const workspace = readFileSync("pnpm-workspace.yaml", "utf8");
 
@@ -53,7 +53,7 @@ describe("refarm local-surface consumer proof", () => {
       evidence: ["docs/convergencia-refarm-proof-2026-07-03.md"],
       boundaries: [
         "Provider adapters, routes, screenshots, and product vocabulary stay in vault-seed.",
-        "The proof consumes a candidate tarball; publication remains a Refarm release-lane decision.",
+        "The proof consumes the vault-seed-ready handoff package; publication remains a Refarm release-lane decision.",
       ],
     });
 
