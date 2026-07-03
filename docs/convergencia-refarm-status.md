@@ -55,8 +55,9 @@ oficial:
 `credentials:v1` (VC/wallet W3C) **assimilado** (2026-07-01): vendorizado + conformance passando com
 assinatura heartwood real (Ed25519). Fundação pronta atrás de seam. Falta o **produto**: a UX do
 headspace pra emitir/apresentar/verificar VC (telas). A política de verificação de produto já está em
-`vault.config.json` e exposta como `vaultCredentials.verificationPolicy`; isso é vault-seed-local quando
-priorizado.
+`vault.config.json`, exposta como `vaultCredentials.verificationPolicy`, e a costura
+`.site/lib/vault-credentials.mjs` já compõe o stack por import dinâmico com degradação graciosa; isso é
+vault-seed-local quando priorizado.
 
 ## Trabalho restante no vault-seed (pós-handoff)
 
@@ -162,7 +163,7 @@ resta de produto:
    Astro, mover conteúdo authorável quando houver bloco refarm estável, e promover filtros/listas/tabelas
    reutilizáveis para refarm quando passarem da costura local.
 `credentials:v1` (T2) já está assimilado e a política de verificação já está no config; a próxima fatia
-é UX/produto do headspace/wallet, não contrato.
+é UX/produto visível do headspace/wallet, não contrato nem seam.
 
 Do lado refarm: publicar a lane `vault-seed-ready` completa · ADR-078 fase 2 ·
 os candidatos profundos que ainda precisarem de proof

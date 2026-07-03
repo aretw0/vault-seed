@@ -74,9 +74,11 @@ self-issued VCs verify out of the box and survive key rotation), and the owner a
 explicitly. The policy is **subvertible**: the user overrides it at the same canonical entry point, like
 every other vault opinion.
 
-Implementation status: this policy is now present in `vault.config.json` and exported by
-`.site/lib/vault-config.mjs` as `vaultCredentials.verificationPolicy`. The remaining T2 work is the
-headspace surface that calls `verify(input, policy)`.
+Implementation status: this policy is now present in `vault.config.json`, exported by
+`.site/lib/vault-config.mjs` as `vaultCredentials.verificationPolicy`, and consumed by
+`.site/lib/vault-credentials.mjs`. That headspace seam dynamically composes the refarm stack when present
+and returns disabled capabilities when absent. The remaining T2 work is the visible wallet/issue/verify
+surface.
 
 ## Seams (where things live)
 
@@ -85,6 +87,8 @@ headspace surface that calls `verify(input, policy)`.
 - **Keys / DID** → `identity-heartwood` (Ed25519, WASM). The owner's issuer/holder DID comes from the
   identity provider; secrets that must not be exported → `silo`.
 - **Verification policy** → `vault.config.json` (product config), loaded and passed to `verify`.
+- **Headspace runtime seam** → `.site/lib/vault-credentials.mjs` dynamically loads `credentials:v1`,
+  `identity-heartwood`, and `storage-memory`, then exposes `provider + policy` to the UI.
 
 The provider is composed once (`createReferenceCredentialsProvider({ identity, storage })`) behind a
 product seam, exactly as the consumer-contract proof already does.
@@ -112,6 +116,8 @@ an explanatory state — a generated vault never breaks because the sovereign st
   the wallet CRUD and that a policy with the issuer in `trustedIssuers` passes while an untrusted issuer or
   a revoked VC fails. This extends the conformance proof already in
   `refarm_credentials_consumer_contract.test.mjs`.
+- **Product seam:** `vault_credentials_headspace.test.mjs` proves graceful degradation and that
+  `verifyWithVaultPolicy` passes the configured policy through unchanged.
 - **Graceful-degradation test:** the headspace path with the stack stubbed out yields the read-only wallet
   and disabled actions.
 - The refarm side proves `verify(input, policy)` + revocation via the contract's own conformance (ADR-079
