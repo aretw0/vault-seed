@@ -26,6 +26,7 @@ overrides:
   "@refarm.dev/content-projection": "file:vendor/refarm.dev-content-projection-0.1.0.tgz"
   "@refarm.dev/credentials-contract-v1": "file:vendor/refarm.dev-credentials-contract-v1-0.1.0.tgz"
   "@refarm.dev/ds": "file:vendor/refarm.dev-ds-0.1.0.tgz"
+  "@refarm.dev/ds-astro": "file:vendor/refarm.dev-ds-astro-0.1.0.tgz"
   "@refarm.dev/enrichment-contract-v1": "file:vendor/refarm.dev-enrichment-contract-v1-0.1.0.tgz"
   "@refarm.dev/heartwood": "file:vendor/refarm.dev-heartwood-0.1.0.tgz"
   "@refarm.dev/identity-contract-v1": "file:vendor/refarm.dev-identity-contract-v1-0.1.0.tgz"

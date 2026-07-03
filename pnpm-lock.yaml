@@ -10,6 +10,7 @@ overrides:
   '@refarm.dev/content-projection': file:vendor/refarm.dev-content-projection-0.1.0.tgz
   '@refarm.dev/credentials-contract-v1': file:vendor/refarm.dev-credentials-contract-v1-0.1.0.tgz
   '@refarm.dev/ds': file:vendor/refarm.dev-ds-0.1.0.tgz
+  '@refarm.dev/ds-astro': file:vendor/refarm.dev-ds-astro-0.1.0.tgz
   '@refarm.dev/enrichment-contract-v1': file:vendor/refarm.dev-enrichment-contract-v1-0.1.0.tgz
   '@refarm.dev/heartwood': file:vendor/refarm.dev-heartwood-0.1.0.tgz
   '@refarm.dev/identity-contract-v1': file:vendor/refarm.dev-identity-contract-v1-0.1.0.tgz
@@ -43,6 +44,9 @@ importers:
       '@refarm.dev/credentials-contract-v1':
         specifier: file:vendor/refarm.dev-credentials-contract-v1-0.1.0.tgz
         version: file:vendor/refarm.dev-credentials-contract-v1-0.1.0.tgz
+      '@refarm.dev/ds-astro':
+        specifier: file:vendor/refarm.dev-ds-astro-0.1.0.tgz
+        version: file:vendor/refarm.dev-ds-astro-0.1.0.tgz(astro@6.4.4(@types/node@24.13.1)(rollup@4.61.1)(yaml@2.9.0))
       '@refarm.dev/enrichment-contract-v1':
         specifier: file:vendor/refarm.dev-enrichment-contract-v1-0.1.0.tgz
         version: file:vendor/refarm.dev-enrichment-contract-v1-0.1.0.tgz
@@ -711,27 +715,33 @@ packages:
     hasBin: true
 
   '@refarm.dev/artifact-contract-v1@file:vendor/refarm.dev-artifact-contract-v1-0.1.0.tgz':
-    resolution: {integrity: sha512-fjPF8TpASqB173TDMgeFsp+zB9Tg6/OHk8ldSjXoIJgd4ILm0RYfLFz1xay5+lTqo6D79o9JWylp1ZuvZt+rcQ==, tarball: file:vendor/refarm.dev-artifact-contract-v1-0.1.0.tgz}
+    resolution: {integrity: sha512-0K0MVZ4B0/kGFBtws0JL5btsjagw5eX6fslEMg4bH77AnMnFwA3lNarsoclCJLA9T4GkTFkcIm6Z0VIbY/C8ug==, tarball: file:vendor/refarm.dev-artifact-contract-v1-0.1.0.tgz}
     version: 0.1.0
 
   '@refarm.dev/channel-policy-v1@file:vendor/refarm.dev-channel-policy-v1-0.1.0.tgz':
-    resolution: {integrity: sha512-UxfOZrRxC/OdFjvV2b7xDcBQhnBjmpTU0nfKIDPEHZaOeeEc4bmg3NmYVZKsQim0Lhz4cO4ubccFcg6XK+nixw==, tarball: file:vendor/refarm.dev-channel-policy-v1-0.1.0.tgz}
+    resolution: {integrity: sha512-XboLez2t54FOBUU+GwSFxnBYpHL4ldaB3H43og9VnciuVb3zpeZk1oMlswvL4Bt9mdyiFjIaogiqkh6h49q3hQ==, tarball: file:vendor/refarm.dev-channel-policy-v1-0.1.0.tgz}
     version: 0.1.0
 
   '@refarm.dev/content-projection@file:vendor/refarm.dev-content-projection-0.1.0.tgz':
-    resolution: {integrity: sha512-7L6t2sFrtPiNr37qMJSwBep9j5SukhEnhi60QkGyL6TQiy65AJ9hCgP1NfOx5qez5+ZUqqpAtYum3DkBcCjYmQ==, tarball: file:vendor/refarm.dev-content-projection-0.1.0.tgz}
+    resolution: {integrity: sha512-gvXd7vaFUxURZhVgviMubR9iimpznpxRy1iDNUc1nHl9XOHMp8EwfGXasiV+aMdcvCO3rJwXjk9G4dBcYMOUtg==, tarball: file:vendor/refarm.dev-content-projection-0.1.0.tgz}
     version: 0.1.0
 
   '@refarm.dev/credentials-contract-v1@file:vendor/refarm.dev-credentials-contract-v1-0.1.0.tgz':
     resolution: {integrity: sha512-L46OdYxuOqGq/6jRQJjtNr4MUdTbHmndw+C1u0iA2gOEZIDEvDoLdhY5yPWOw8pptWxjDZ8sL28GCbTotlpvkw==, tarball: file:vendor/refarm.dev-credentials-contract-v1-0.1.0.tgz}
     version: 0.1.0
 
+  '@refarm.dev/ds-astro@file:vendor/refarm.dev-ds-astro-0.1.0.tgz':
+    resolution: {integrity: sha512-i6ip1t1VXnVX6Mbv/ONA5Nl0FY2pRTLgqMN70Mh8BY0XHIJiObuGZubeP05iSwg8ZFdfi6PZhXCWD1pLHmc0PA==, tarball: file:vendor/refarm.dev-ds-astro-0.1.0.tgz}
+    version: 0.1.0
+    peerDependencies:
+      astro: ^6.4.8
+
   '@refarm.dev/ds@file:vendor/refarm.dev-ds-0.1.0.tgz':
     resolution: {integrity: sha512-u9p66wW2ah807rUl+iC4XvAQV2WhEqz9ldXpw/4/l8BHA6kF0XBp1DYjoO94VosV3HB1k5LTxlN/QWtrG7OcIQ==, tarball: file:vendor/refarm.dev-ds-0.1.0.tgz}
     version: 0.1.0
 
   '@refarm.dev/enrichment-contract-v1@file:vendor/refarm.dev-enrichment-contract-v1-0.1.0.tgz':
-    resolution: {integrity: sha512-HJQ7EGbwbZDEMyUhBiUMWS2mav2Aa0r1AxLOTCJ5WGdPbIb4AsoVcYgNE8svs7CoxpuJQvUxPNG1C3EgvRUPGg==, tarball: file:vendor/refarm.dev-enrichment-contract-v1-0.1.0.tgz}
+    resolution: {integrity: sha512-DOazlmjIyksT2NeYfwtEAPkahIP8yiNF+NSTtIAA7W0nb2awUpRfM/21TDuUdwoMY55lnRqMlP74ZTR4jIZcuA==, tarball: file:vendor/refarm.dev-enrichment-contract-v1-0.1.0.tgz}
     version: 0.1.0
 
   '@refarm.dev/heartwood@file:vendor/refarm.dev-heartwood-0.1.0.tgz':
@@ -739,27 +749,27 @@ packages:
     version: 0.1.0
 
   '@refarm.dev/identity-contract-v1@file:vendor/refarm.dev-identity-contract-v1-0.1.0.tgz':
-    resolution: {integrity: sha512-OShwOKFVA4MeF8anMlaFrDl0gVZ8VC9fHfQpRz5G6qlT+gD37DAzj2tzyC7lv98MUWZxdx64takLuN74rhKKyw==, tarball: file:vendor/refarm.dev-identity-contract-v1-0.1.0.tgz}
+    resolution: {integrity: sha512-ptPKtC5YEJZLbRw2vKTvQ610/soZCe/xFS7vjEvirMYY+vAcZ7Uwd9q/js0tBnAod9PQPvkLkBjPvlpFSLcZOw==, tarball: file:vendor/refarm.dev-identity-contract-v1-0.1.0.tgz}
     version: 0.1.0
 
   '@refarm.dev/identity-heartwood@file:vendor/refarm.dev-identity-heartwood-0.1.0.tgz':
-    resolution: {integrity: sha512-WO/cpyPbcB4y7YiWxIV9QtFk06ZACDt7rin9HlKOS4YydlV2DS3I1xJsO9hFXN0w64tgeXvoa5xjzZs8tG3YIQ==, tarball: file:vendor/refarm.dev-identity-heartwood-0.1.0.tgz}
+    resolution: {integrity: sha512-ogZZswBB3xmkFFdKCG5j3+Ipz2cu/eHtAh7xMvc6pdE1mwbFL4N1AN0FvvvN+sCHhYwZ8ZBcvG95dR7pnZ9jMQ==, tarball: file:vendor/refarm.dev-identity-heartwood-0.1.0.tgz}
     version: 0.1.0
 
   '@refarm.dev/local-surface@file:vendor/refarm.dev-local-surface-0.1.0.tgz':
-    resolution: {integrity: sha512-XN0cJSqnqI3aMZ8mjE94PBICXIgSXK1LI94GmXFAKNq/A7RPgolPtmc1ZUQYeJwSxhPCXVVBXIoNcf87+6BFiQ==, tarball: file:vendor/refarm.dev-local-surface-0.1.0.tgz}
+    resolution: {integrity: sha512-I34G1XZDk0xl9IMDvhWqhO37IPlw9IzmfiUmo6vkGIfh74+wlmcDR95IYRtkC0NiP4Kp9qAgA9JaI/S3GTIetw==, tarball: file:vendor/refarm.dev-local-surface-0.1.0.tgz}
     version: 0.1.0
 
   '@refarm.dev/process-handoff@file:vendor/refarm.dev-process-handoff-0.1.0.tgz':
-    resolution: {integrity: sha512-VMcnrEtqZvxH2hGErRuPUAHQiInWUOIyZSOQsUXRSp/tVAFaxhJY6pOEr6YN6MwKKG1OfqOFuXuLYqtt0zxeoA==, tarball: file:vendor/refarm.dev-process-handoff-0.1.0.tgz}
+    resolution: {integrity: sha512-ePEMpgOEeg+5VfsgGSTnrNFyFtosSTf4lwtGWIQe95lZ9+ejsUMHWLELGpQZeVWvQXMwz4JYtieqTHLYUyGM6A==, tarball: file:vendor/refarm.dev-process-handoff-0.1.0.tgz}
     version: 0.1.0
 
   '@refarm.dev/quality-contract-v1@file:vendor/refarm.dev-quality-contract-v1-0.1.0.tgz':
-    resolution: {integrity: sha512-Ao++XGFVrMfvvSx8lBOZ01bu/4b9uutaMndYwWLb9+edLDCUtEfzTRSlDWCEafDyfsJuJlK5NMYoUtP2tyWSqg==, tarball: file:vendor/refarm.dev-quality-contract-v1-0.1.0.tgz}
+    resolution: {integrity: sha512-r667ASsp+cdJCFYRo9Jo2WnGyKns/cAMpT4AfySsxKMrtluRjYViKI1KfJlwdvXi1lkCc4LHRbG/jRlCQYMxqQ==, tarball: file:vendor/refarm.dev-quality-contract-v1-0.1.0.tgz}
     version: 0.1.0
 
   '@refarm.dev/records-contract-v1@file:vendor/refarm.dev-records-contract-v1-0.1.0.tgz':
-    resolution: {integrity: sha512-2KehTUWNHuQ9wSeErQeD3BRNV6LtEvKUPT/HYNqhlzMF09+wv7TAXgA6X5DSTl0B53ytfTbG+S0UtSbCl44agw==, tarball: file:vendor/refarm.dev-records-contract-v1-0.1.0.tgz}
+    resolution: {integrity: sha512-4wETaI0h5cmEnXrpDV0aDwSoI61euPfB12OPcrr8C/2IFdT1UOnEC4fnMHSk9wcdmL/5mhaGGtzhUUGJzLG30g==, tarball: file:vendor/refarm.dev-records-contract-v1-0.1.0.tgz}
     version: 0.1.0
     peerDependencies:
       yaml: ^2.9.0
@@ -768,7 +778,7 @@ packages:
         optional: true
 
   '@refarm.dev/silo@file:vendor/refarm.dev-silo-0.1.0.tgz':
-    resolution: {integrity: sha512-KWwvawvb/URRBtO4HOBk3K2YVbDVOZj9XSbBSbpAa6KnonfJFlG+gK7J80cCL5hRIKSmhanh1BMSm85c+azboA==, tarball: file:vendor/refarm.dev-silo-0.1.0.tgz}
+    resolution: {integrity: sha512-48e5pud4wQGZOlTW2y3FoM0nr076fHQ/p5NMWY2kTdtO+iDbVaHilJKvbbpiMtI8/HlaWnEkiMtaccGxJ8XuoQ==, tarball: file:vendor/refarm.dev-silo-0.1.0.tgz}
     version: 0.1.0
 
   '@refarm.dev/source-contract-v1@file:vendor/refarm.dev-source-contract-v1-0.1.0.tgz':
@@ -776,11 +786,11 @@ packages:
     version: 0.1.0
 
   '@refarm.dev/source-web@file:vendor/refarm.dev-source-web-0.1.0.tgz':
-    resolution: {integrity: sha512-hMwqJiNx9prhbdmHnIbAhoA/xq77/TspbVmqonAZfwhsdLeTAe4T+lk8dQHIBwUXDwmQlgiwg8CZdCMrJnQAmw==, tarball: file:vendor/refarm.dev-source-web-0.1.0.tgz}
+    resolution: {integrity: sha512-52QFsLVrn+Fa4a0zSdZsLhhyFChV+EU2oFeHKyVDUoz+6WBUaBRZTD0e3YWvY+owGL9lZYCXgSxN2xbK6kG5Xw==, tarball: file:vendor/refarm.dev-source-web-0.1.0.tgz}
     version: 0.1.0
 
   '@refarm.dev/storage-contract-v1@file:vendor/refarm.dev-storage-contract-v1-0.1.0.tgz':
-    resolution: {integrity: sha512-6nRATZf/hPNfie5P3Dfgj0N/vK2DJO8UOVJ76/ZxF9OYyAOT2omF2ePePAMJZZWWOKRUhTYpaZaFZn9+MDI/xA==, tarball: file:vendor/refarm.dev-storage-contract-v1-0.1.0.tgz}
+    resolution: {integrity: sha512-eWtKuJv2FeRqRdFoLruTecu6LrOwlSOBEXa/wQm9q5AvqsCzGxH3kFQd8Iv3fVGzmGXB9KJYd/EaXZbQlcafMQ==, tarball: file:vendor/refarm.dev-storage-contract-v1-0.1.0.tgz}
     version: 0.1.0
 
   '@refarm.dev/storage-memory@file:vendor/refarm.dev-storage-memory-0.1.0.tgz':
@@ -3377,6 +3387,11 @@ snapshots:
     dependencies:
       '@refarm.dev/identity-contract-v1': file:vendor/refarm.dev-identity-contract-v1-0.1.0.tgz
       '@refarm.dev/storage-contract-v1': file:vendor/refarm.dev-storage-contract-v1-0.1.0.tgz
+
+  '@refarm.dev/ds-astro@file:vendor/refarm.dev-ds-astro-0.1.0.tgz(astro@6.4.4(@types/node@24.13.1)(rollup@4.61.1)(yaml@2.9.0))':
+    dependencies:
+      '@refarm.dev/ds': file:vendor/refarm.dev-ds-0.1.0.tgz
+      astro: 6.4.4(@types/node@24.13.1)(rollup@4.61.1)(yaml@2.9.0)
 
   '@refarm.dev/ds@file:vendor/refarm.dev-ds-0.1.0.tgz':
     dependencies:

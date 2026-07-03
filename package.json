@@ -103,6 +103,7 @@
     "@refarm.dev/channel-policy-v1": "file:vendor/refarm.dev-channel-policy-v1-0.1.0.tgz",
     "@refarm.dev/content-projection": "file:vendor/refarm.dev-content-projection-0.1.0.tgz",
     "@refarm.dev/credentials-contract-v1": "file:vendor/refarm.dev-credentials-contract-v1-0.1.0.tgz",
+    "@refarm.dev/ds-astro": "file:vendor/refarm.dev-ds-astro-0.1.0.tgz",
     "@refarm.dev/enrichment-contract-v1": "file:vendor/refarm.dev-enrichment-contract-v1-0.1.0.tgz",
     "@refarm.dev/identity-heartwood": "file:vendor/refarm.dev-identity-heartwood-0.1.0.tgz",
     "@refarm.dev/local-surface": "file:vendor/refarm.dev-local-surface-0.1.0.tgz",
