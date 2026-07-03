@@ -129,6 +129,10 @@ Adoção / produto (design já escrito em `docs/superpowers/specs/`):
   da projeção de records e a rota existente adiciona filtro `Tipo`. Isso é costura local de produto;
   um componente genérico de facetas/listas/tabela fica sinalizado ao refarm como bloco reutilizável, não
   como biblioteca nova no vault-seed.
+- [x] **inventário MDX/blocos** — `docs/superpowers/specs/2026-07-03-mdx-block-migration-inventory.md`
+  classifica cada `.astro` como shell, host interativo, conteúdo MDX-ready ou pressão de bloco refarm.
+  A regra operacional enquanto o refarm não publica: adiantar só costura local fina; blocos genéricos
+  viram feedback/proof para refarm.
 - [x] **guard de não-reimplementação** — `scripts/refarm_no_reimplementation_contract.test.mjs`
   bloqueia nomes de arquivos de alto sinal para novas capacidades genéricas locais
   (`*-contract`, `*-provider`, `*-conformance`, etc.) sem allowlist explícita.
@@ -148,10 +152,9 @@ passou com gap ledger vazio, e o **grafo do Explore já lê a fonte `records:v1`
 resta de produto:
 1. **especializar o profile para a POC** — trocar source/lookup por adapters
    reais privados, mantendo o runner e os contratos.
-2. **Explorar: colunas de records + MDX authoring** — inventariar quais trechos Astro podem virar MDX
-   quando os blocos refarm correspondentes estiverem disponíveis, sem página nova e sem duplicar a
-   experiência de exploração. Se filtros/listas/tabelas crescerem além da costura local, promover a
-   pressão para bloco refarm.
+2. **Explorar: colunas de records + MDX authoring** — seguir o inventário MDX/blocos: manter shells em
+   Astro, mover conteúdo authorável quando houver bloco refarm estável, e promover filtros/listas/tabelas
+   reutilizáveis para refarm quando passarem da costura local.
 `credentials:v1` (T2) já está assimilado; a próxima fatia é UX/produto do
 headspace/wallet, não contrato.
 

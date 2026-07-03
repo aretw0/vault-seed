@@ -125,4 +125,5 @@ pra quando o container liberar (Codex ativo no `cranky_bassi`).
   compatível com `@refarm.dev/content-projection` (consumer-contract dev; sem import estático em script
   distribuído), sem criar `/records/` paralelo. O filtro por `@type`/facet de records fica local como
   costura de produto; se evoluir para componente reutilizável de facetas/listas/tabela, deve partir do
-  refarm como bloco genérico em vez de virar biblioteca local do vault-seed.
+  refarm como bloco genérico em vez de virar biblioteca local do vault-seed. Inventário downstream:
+  `docs/superpowers/specs/2026-07-03-mdx-block-migration-inventory.md`.

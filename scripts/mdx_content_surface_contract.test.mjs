@@ -28,9 +28,27 @@ test("MDX migration boundary keeps reusable Astro blocks upstream in refarm", ()
   const design = read("docs/superpowers/specs/2026-06-30-records-view-design.md");
   const status = read("docs/convergencia-refarm-status.md");
   const feedback = read("docs/convergencia-refarm-feedback.md");
+  const inventory = read("docs/superpowers/specs/2026-07-03-mdx-block-migration-inventory.md");
 
   expect(design).toMatch(/MDX is the authoring migration path/);
   expect(design).toMatch(/Refarm owns .*reusable Astro\/SSR\/content blocks/);
   expect(status).toMatch(/blocos reutilizáveis[\s\S]*devem vir do\s+refarm/);
   expect(feedback).toMatch(/blocos MDX\/Astro\/SSR reutilizáveis/);
+  expect(feedback).toMatch(/2026-07-03-mdx-block-migration-inventory\.md/);
+
+  for (const page of [
+    ".site/pages/index.astro",
+    ".site/pages/explorar/index.astro",
+    ".site/pages/explorar/intencoes.astro",
+    ".site/pages/lab/index.astro",
+  ]) {
+    expect(inventory).toContain(page);
+  }
+
+  for (const block of ["GraphHero", "FacetPanel", "RecordsList", "NotebookCard", "GraphView"]) {
+    expect(inventory).toContain(block);
+  }
+
+  expect(inventory).toMatch(/A block is promoted to refarm pressure/);
+  expect(inventory).toMatch(/Avoid creating new `\.site\/components\/\*` generic blocks/);
 });
