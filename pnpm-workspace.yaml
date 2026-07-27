@@ -23,6 +23,7 @@ minimumReleaseAgeExclude:
 overrides:
   "@refarm.dev/artifact-contract-v1": "file:vendor/refarm.dev-artifact-contract-v1-0.1.0.tgz"
   "@refarm.dev/channel-policy-v1": "file:vendor/refarm.dev-channel-policy-v1-0.1.0.tgz"
+  "@refarm.dev/config": "file:vendor/refarm.dev-config-0.1.0.tgz"
   "@refarm.dev/content-projection": "file:vendor/refarm.dev-content-projection-0.1.0.tgz"
   "@refarm.dev/credentials-contract-v1": "file:vendor/refarm.dev-credentials-contract-v1-0.1.0.tgz"
   "@refarm.dev/dispatch-surface": "file:vendor/refarm.dev-dispatch-surface-0.1.0.tgz"

@@ -57,7 +57,7 @@ describe("refarm local-surface consumer proof", () => {
       ],
     });
 
-    expect(manifest.schema).toBe("refarm.local-surface.v1");
+    expect(manifest.schema).toBe("local-surface.v1");
     expect(manifest.capability).toBe("local-surface:v1");
     expect(manifest.routeBase).toBe("/operator");
     expect(manifest.localFirst).toEqual({
@@ -76,7 +76,7 @@ describe("refarm local-surface consumer proof", () => {
       manifestPath: ".dgk/local-surface.json",
       port: 4322,
     });
-    expect(launchPlan.schema).toBe("refarm.local-surface.launch-plan.v1");
+    expect(launchPlan.schema).toBe("local-surface.launch-plan.v1");
     expect(launchPlan.steps.map((step) => step.id)).toEqual(["doctor", "render", "serve", "handoff"]);
     expect(launchPlan.steps.every((step) => step.command.startsWith("dgk "))).toBe(true);
 
