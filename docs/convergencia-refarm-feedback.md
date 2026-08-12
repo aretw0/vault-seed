@@ -140,7 +140,7 @@ seguem **fora de escopo** (control-plane de runtime, ver Defeitos). O item mais 
 carrega a reference impl inteira em `check-substrate.mjs`).
 
 **Respondido no handoff vigente (2026-07-03, `4f0e058d`):** o refarm incluiu
-`@refarm.dev/health` no `vault-seed-ready` com `ToolchainAuditor`,
+`@refarm.dev/health` no `consumer-ready` com `ToolchainAuditor`,
 `buildEnvironmentPressureReport` e `planEnvironmentWorkCeiling`. O vault-seed
 assimilou como `devDependency` + override, sem mudar o produto `dgk check` ainda,
 e provou a fronteira em `scripts/refarm_health_consumer_contract.test.mjs`:

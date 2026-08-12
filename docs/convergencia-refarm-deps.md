@@ -80,7 +80,7 @@ O handoff oficial atual é `.refarm/handoff/vault-seed/2026-07-03/`, provado em
 
 - 23 tarballs copiados e verificados por SHA-256 contra `vendor/manifest.json`;
 - `@refarm.dev/local-surface`, `@refarm.dev/ds-astro` e `@refarm.dev/health`
-  incluidos no handoff oficial `vault-seed-ready` depois das proofs downstream;
+  incluidos no handoff oficial `consumer-ready` depois das proofs downstream;
 - 23 pacotes `@refarm.dev/*` com refs `file:` ou overrides locais;
 - 15 refs diretas em `package.json`;
 - 23 overrides em `pnpm-workspace.yaml`;

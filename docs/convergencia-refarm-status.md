@@ -11,6 +11,19 @@ vault-seed importa primitivas `@refarm.dev/*` internamente e mantém só o produ
 handoff. **Toda a mecânica e os guards estão na doutrina:**
 [`convergencia-refarm-logistica.md`](./convergencia-refarm-logistica.md).
 
+> **A lane mudou de nome em 2026-08-12: `vault-seed-ready` → `consumer-ready`.** O significado é o
+> mesmo — pacotes que um checkout a jusante adota **direto**, por tarball, antes de qualquer
+> publicação em npm/crates. O nome do consumidor não desapareceu: vive em
+> `releasePolicy.selections[].audienceBoundary.consumer` no refarm, que é o campo cujo trabalho é
+> nomeá-lo. O termo antigo nomeava um consumidor para uma relação que **todo** consumidor tem.
+>
+> Consequência prática: o token de confirmação do first-publish é derivado da seleção, então passou
+> a ser `publish-consumer-ready-0.1.0`.
+>
+> Os registos datados deste repo (o proof de 2026-07-03, os planos e specs em `superpowers/`)
+> mantêm a palavra antiga de propósito — eles descrevem o que era verdade no dia em que foram
+> escritos.
+
 ## Blocos já consumidos (feito)
 
 | Bloco | Pra quê | Onde |
@@ -34,7 +47,7 @@ handoff. **Toda a mecânica e os guards estão na doutrina:**
 
 ## Proof oficial do handoff 2026-07-03
 
-O checkout oficial assimilou o pacote `vault-seed-ready` do refarm. A captura
+O checkout oficial assimilou o pacote `consumer-ready` do refarm. A captura
 vigente é `sourceGitSha` `4f0e058d1a108a3f185d99fd931f6dd93b703a1c`
 (`generatedAt` `2026-07-03T14:26:03.806Z`), registrada em
 [`convergencia-refarm-proof-2026-07-03.md`](./convergencia-refarm-proof-2026-07-03.md):
@@ -84,7 +97,7 @@ Assimilação (vendorização + contract-test):
 - [x] `silo` — `packages/cli/src/silo.js` delega storage de credenciais para
   `@refarm.dev/silo`, com fallback legado e testes focados
 - [x] `local-surface:v1` — proof para Trabalho 1, agora selecionada no handoff
-  oficial `vault-seed-ready`
+  oficial `consumer-ready`
 - [x] `content-projection` — `scripts/refarm_content_projection_consumer_contract.test.mjs`
   (MD/MDX → `records:v1` genérico: frontmatter→fields, wikilink+inline-link→relations, external
   links preservados, MD/MDX no mesmo caminho, `validateProjectedRecords` verde)
@@ -188,7 +201,7 @@ resta de produto:
 `credentials:v1` (T2) já está assimilado e a política de verificação/seam já estão no vault-seed; a
 próxima fatia é UX interativa do wallet/verificador, não contrato nem página de prova.
 
-Do lado refarm: publicar a lane `vault-seed-ready` completa · ADR-078 fase 2 ·
+Do lado refarm: publicar a lane `consumer-ready` completa · ADR-078 fase 2 ·
 os candidatos profundos que ainda precisarem de proof
 (records profile runner, records/explore surface blocks, verification-as-completion,
 tool-less orchestrator, `context:v1`). `plugin-surface-loader` já aparece em andamento no checkout do

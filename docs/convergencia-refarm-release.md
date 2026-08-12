@@ -26,7 +26,7 @@ Proof oficial: [`convergencia-refarm-proof-2026-07-03.md`](./convergencia-refarm
   e `@refarm.dev/release-engine`), mas permanecem em overrides para preservar
   resolução transitiva idêntica ao handoff.
 - `@refarm.dev/local-surface` agora faz parte do handoff oficial
-  `vault-seed-ready`; a proof downstream anterior foi assimilada pelo refarm e
+  `consumer-ready`; a proof downstream anterior foi assimilada pelo refarm e
   o vendor local foi ressincronizado contra o manifest novo.
 
 Refs diretas atuais:
