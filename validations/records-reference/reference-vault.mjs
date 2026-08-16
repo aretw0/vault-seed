@@ -18,6 +18,32 @@ import {
   RECORDS_MANIFEST_VERSION,
 } from "@refarm.dev/records-contract-v1";
 import { createReferenceEnrichmentProvider } from "@refarm.dev/enrichment-contract-v1";
+import { projectContentToRecords } from "@refarm.dev/content-projection";
+
+// The sanitized authoring fixture for the content lane. Two notes, one wikilink between them,
+// one external Markdown link — the smallest shape that exercises frontmatter, relations, and
+// the external-link carve-out (records:v1 relations must target records in the same manifest).
+const CONTENT_FIXTURE = [
+  {
+    path: "notes/one.md",
+    mediaType: "text/markdown",
+    text: [
+      "---",
+      "title: Nota um",
+      "status: draft",
+      "---",
+      "# Nota um",
+      "",
+      "Veja [[notes/two|nota dois]] e [site](https://example.test).",
+      "",
+    ].join("\n"),
+  },
+  {
+    path: "notes/two.mdx",
+    mediaType: "text/mdx",
+    text: ["---", "title: Nota dois", "status: draft", "---", "<Callout />", ""].join("\n"),
+  },
+];
 
 export async function runReferenceVault() {
   const gaps = [];
@@ -54,9 +80,29 @@ export async function runReferenceVault() {
     record.contentHash = computeRecordContentHash(record);
     return record;
   };
+  const webRecords = [mkRecord("req-1", "K-001", "First"), mkRecord("req-2", "K-002", "Second")];
+
+  // 2b. STRUCTURE, content lane — MD/MDX -> records:v1 through the generic projection block.
+  // A vault is Markdown before it is anything else, and `mkRecord` above never covered that
+  // branch. `@refarm.dev/content-projection` owns the mechanics (frontmatter, wikilinks, inline
+  // links); everything vault-specific stays here in the CONFIG — folder-to-type, field map, id
+  // prefix, relation vocabulary. That split is the package's declared ownership boundary, and
+  // this call is where it gets tested rather than asserted.
+  const contentRecords =
+    (await track("content-projection.project", () =>
+      projectContentToRecords(CONTENT_FIXTURE, {
+        context: "https://schema.example/v1",
+        folderTypes: { notes: "KnowledgeRecord" },
+        fieldMap: { title: "title", status: "status" },
+        includeFrontmatterKeys: ["title", "status"],
+        idPrefix: "note:",
+        relationType: "mentions",
+      }),
+    )) ?? [];
+
   const manifest = {
     manifestVersion: RECORDS_MANIFEST_VERSION,
-    records: [mkRecord("req-1", "K-001", "First"), mkRecord("req-2", "K-002", "Second")],
+    records: [...webRecords, ...contentRecords],
   };
   const validation = await track("records:v1.validate", () => createReferenceRecordsProvider().validate(manifest));
   if (validation && !validation.ok) gaps.push(`records validate failures: ${JSON.stringify(validation.failures)}`);
@@ -66,8 +112,13 @@ export async function runReferenceVault() {
     keyField: "key",
     fixture: { "K-001": { fields: { tag: "alpha" } }, "K-002": { fields: { tag: "beta" } } },
   });
-  const inputs = manifest.records.map((r) => ({ id: r.id, fields: r.fields, sourceRef: r.sourceRefs?.[0] }));
+  // Enrichment runs over the WEB records only, and the reason is a boundary rather than an
+  // omission: this fixture provider is keyed on `key`, a field the web ETL vocabulary emits and
+  // note frontmatter does not. Giving notes a key would mean inventing note vocabulary here —
+  // the downstream half of the projection block's ownership boundary. Nothing is hidden by the
+  // exclusion: keyless records resolve to no fixture entry, so including them would be a no-op.
+  const inputs = webRecords.map((r) => ({ id: r.id, fields: r.fields, sourceRef: r.sourceRefs?.[0] }));
   const enriched = await track("enrichment:v1.enrich", () => enricher.enrich(inputs, { mode: "dry-run" }));
 
-  return { gaps, materialized, provenance, manifest, validation, enriched };
+  return { gaps, materialized, provenance, manifest, validation, enriched, contentRecords };
 }
