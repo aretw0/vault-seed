@@ -1,56 +1,108 @@
-# Removendo Arquivos do Histórico do Git com o Script de Automação
+# Removendo Arquivos do Histórico do Git
 
-Este documento descreve o processo para remover completamente arquivos ou pastas que foram acidentalmente commitados no histórico de um repositório Git, utilizando o script de automação fornecido pelo projeto.
+Este documento descreve como remover arquivos ou pastas que foram commitados e
+não deveriam estar no histórico.
 
-## O Problema: Dados Indesejados no Histórico
+## O problema
 
-Quando um arquivo ou pasta é commitado, não basta apenas apagá-lo e fazer um novo commit. O conteúdo ainda existirá no histórico do Git, acessível a qualquer pessoa que tenha um clone do repositório. Isso pode ser um problema por várias razões, como a presença de arquivos grandes, dados temporários ou informações que simplesmente não deveriam estar no controle de versão.
+Quando um arquivo é commitado, apagá-lo num commit novo não basta: o conteúdo
+continua no histórico, acessível a qualquer pessoa com um clone. Isso vale para
+arquivos grandes, estado temporário e informações que não deveriam ser
+versionadas.
 
-## A Ferramenta: `scripts/remove_from_git_history.sh`
+## Por que não existe um comando único
 
-Para resolver isso de forma segura e automatizada, o projeto fornece o script `remove_from_git_history.sh`. Ele utiliza a ferramenta `git-filter-repo` (a abordagem moderna e recomendada pelo Git para reescrever o histórico) e encapsula todo o processo, incluindo:
+Uma versão anterior deste documento descrevia um script que fazia tudo de uma
+vez, incluindo `git push --force --all` e `--force --tags` na mesma execução da
+reescrita, com uma opção para apagar o backup sem perguntar.
 
-1.  **Criação de um backup espelho** antes de qualquer modificação.
-2.  **Execução do `git-filter-repo`** para remover o caminho especificado de todo o histórico.
-3.  **Verificação** para garantir que o arquivo foi removido com sucesso.
-4.  **Sincronização forçada** com o repositório remoto (`origin`), atualizando todas as branches e tags.
-5.  **Limpeza opcional** do backup.
+Esse desenho foi retirado. Reescrever histórico e publicá-lo são decisões
+diferentes, tomadas em momentos diferentes:
 
-**Analogia:** Pense no script como um "revisor de história" automatizado. Se você publicou uma série de documentos, mas acidentalmente incluiu um rascunho pessoal em um deles, o revisor pode voltar, apagar esse rascunho de todas as versões publicadas e republicar a série corrigida, garantindo que o erro nunca tenha existido para futuros leitores. É uma operação poderosa e, por isso, o script toma várias precauções.
+- a reescrita é reversível enquanto for local, porque existe um backup espelho;
+- o push **não é reversível**. Ele invalida todos os clones, e qualquer commit
+  que outra pessoa tenha feito e não publicado passa a existir só na máquina
+  dela.
 
-## Pré-requisitos
+Um script que faz as duas coisas junto remove a única janela em que dá para
+conferir o resultado. Por isso o fluxo tem três peças, e a última é sua.
 
-O script `setup.sh` do projeto já cuida da instalação do `git-filter-repo` e de outras dependências. Certifique-se de ter executado o setup antes de usar o script de remoção.
+## As três peças
 
-## Passo a Passo: Limpando o Repositório com o Script
+### 1. Manifesto local
 
-O processo é simplificado para a execução de um único comando.
+Liste um caminho por linha em `.local/history-cleanup.paths`. O diretório
+`.local/` é ignorado pelo Git de propósito, e o script de aplicação **recusa**
+um manifesto rastreado — um manifesto versionado é um índice público do que se
+quis esconder.
 
-### 1. Execute o Script de Remoção
-
-Abra o terminal na raiz do seu repositório e execute o script, passando o caminho do arquivo ou pasta que você deseja remover como argumento.
-
-**IMPORTANTE:** O caminho deve ser informado entre aspas, especialmente se contiver espaços.
-
-```bash
-# Exemplo para remover um arquivo específico
-bash scripts/remove_from_git_history.sh "caminho/para/meu-arquivo-indesejado.ext"
-
-# Exemplo para remover uma pasta inteira
-bash scripts/remove_from_git_history.sh "caminho/para/minha-pasta-indesejada/"
+```
+50 - Arquivo/Documentos/
+99 - Meta e Anexos/Anexos/arquivo-indesejado.pdf
 ```
 
-O script é interativo e irá guiá-lo pelo processo, pedindo confirmações em etapas críticas, como a exclusão do diretório de backup.
+### 2. Plano
 
-### 2. Comunique a Equipe
+```bash
+bash scripts/history_cleanup_plan.sh .local/history-cleanup.paths
+```
 
-**AVISO:** A reescrita do histórico é uma operação destrutiva para o histórico compartilhado. Se outras pessoas colaboram no mesmo repositório, é crucial que você as avise sobre a alteração.
+Relata, para cada caminho, se ele está no índice atual e em quantos commits
+aparece. Não altera arquivos, refs ou remotes.
 
-Após a execução do script, outros colaboradores precisarão atualizar seus clones locais para se alinharem ao novo histórico. A maneira mais segura e simples para eles fazerem isso é **clonar o repositório novamente** em um novo diretório. Tentar fazer `pull` ou `rebase` pode levar a conflitos complexos.
+### 3. Aplicação local
 
-## Prevenção: Evitando que Aconteça Novamente
+Com a árvore de trabalho limpa e a decisão tomada:
 
-A melhor solução é a prevenção:
+```bash
+bash scripts/history_cleanup_apply_local.sh \
+  .local/history-cleanup.paths \
+  REESCREVER_APENAS_LOCALMENTE \
+  [.local/history-cleanup.mailmap]
+```
 
--   **`.gitignore`**: Sempre verifique e atualize seu arquivo `.gitignore` para excluir arquivos e pastas que não devem ser versionados *antes* de executar `git add`.
--   **Revisão antes do Commit**: Use `git status` e `git diff --staged` para revisar os arquivos que você está prestes a commitar.
+O script cria um backup espelho, reescreve **apenas o clone atual**, consolida
+identidades se um mailmap for informado, verifica que nenhum caminho e nenhuma
+identidade antiga sobreviveu, restaura o remote e para. **Ele não faz push.**
+
+O mailmap é opcional e usa o formato do Git:
+
+```
+Nome Canônico <canonico@exemplo> Nome Antigo <antigo@exemplo>
+```
+
+## Antes de publicar
+
+> [!warning]
+> `git filter-repo` faz checkout do resultado. Um arquivo **rastreado** que
+> entra no manifesto **some da árvore de trabalho**. Copie para fora do
+> repositório o que precisar manter antes de aplicar.
+
+1. abra as notas e anexos restantes e confira o conteúdo;
+2. rode a suíte de testes do vault;
+3. confira `git shortlog -sne --all` se usou mailmap;
+4. procure cada caminho em todos os refs;
+5. restaure o backup espelho num diretório temporário e confirme que ele abre;
+6. confirme que nenhum dispositivo tem commit local não publicado.
+
+## Publicar
+
+```bash
+git fetch origin
+git push --force-with-lease=main:<sha-do-remoto> origin main
+```
+
+Nunca `--force` cego. E rode o `fetch` **imediatamente antes**: o
+`--force-with-lease` compara com a referência remota que o seu clone conhece, e
+uma referência velha protege contra menos do que parece.
+
+Depois do push, todo clone existente fica órfão e não consegue `pull`, porque
+não há ancestral comum. Cada dispositivo precisa reclonar. O backup espelho e os
+clones antigos continuam contendo o que foi removido, e precisam ser tratados.
+
+## Prevenção
+
+- **`.gitignore` antes do `git add`**, e por lugar em vez de por extensão: uma
+  pasta designada declara intenção, enquanto `*.pdf` barra anexo legítimo em
+  qualquer lugar e continua cego para a mesma informação em `.jpg`;
+- **revisão antes do commit**, com `git status` e `git diff --staged`.

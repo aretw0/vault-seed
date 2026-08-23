@@ -47,6 +47,12 @@ Thumbs.db
 # Ignora index do Plugin Copilot
 .obsidian/copilot-index-*.json
 .copilot-index/
+
+# Estado local de cerimônias e artefatos que não são do repositório.
+.local/
+# Conversas são estado local e podem incorporar conteúdo pessoal.
+# Prompts reutilizáveis continuam rastreados.
+copilot/copilot-conversations/
 # Ignora index do Plugin Smart Composer
 .smtcmp_json_db/.initial_migration_completed
 .smtcmp_vector_db.tar.gz
