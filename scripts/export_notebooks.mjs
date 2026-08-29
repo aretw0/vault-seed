@@ -50,7 +50,7 @@ const packageJson = JSON.parse(
 const THEME_SELECTOR_MARKER = "data-vault-marimo-theme-selector";
 const NAVIGATION_MARKER = "data-vault-marimo-navigation";
 const REFARM_DS_VERDE_JARDIM_CSS = readFileSync(
-	join(ROOT, "node_modules", "@refarm.dev", "ds", "src", "themes", "verde-jardim.css"),
+	fileURLToPath(import.meta.resolve("@refarm.dev/ds/themes/verde-jardim.css")),
 	"utf8",
 );
 const MARIMO_VAULT_CSS = [

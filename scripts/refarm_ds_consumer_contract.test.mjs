@@ -26,7 +26,10 @@ test("Lab consumes the Refarm DS verde-jardim tarball for exported notebooks", (
   const pkg = JSON.parse(read("package.json"));
   expect(pkg.devDependencies["@refarm.dev/ds"]).toBe("file:vendor/refarm.dev-ds-0.1.0.tgz");
 
-  const dsCss = read("node_modules/@refarm.dev/ds/src/themes/verde-jardim.css");
+  const dsCss = readFileSync(
+    fileURLToPath(import.meta.resolve("@refarm.dev/ds/themes/verde-jardim.css")),
+    "utf8",
+  );
   const exportNotebooks = read("scripts/export_notebooks.mjs");
   const marimoCss = read(".site/styles/marimo-vault.css");
 
@@ -36,6 +39,8 @@ test("Lab consumes the Refarm DS verde-jardim tarball for exported notebooks", (
   expect(dsCss).toMatch(/data-ds-theme="verde-jardim"/);
   expect(dsCss).toMatch(/\[data-refarm-theme="verde-jardim"\]\)\[data-mode="light"\]/);
   expect(exportNotebooks).toMatch(/REFARM_DS_VERDE_JARDIM_CSS/);
+  expect(exportNotebooks).toMatch(/import\.meta\.resolve\("@refarm\.dev\/ds\/themes\/verde-jardim\.css"\)/);
+  expect(exportNotebooks).not.toMatch(/node_modules["'],\s*["']@refarm\.dev["'],\s*["']ds/);
   expect(exportNotebooks).toMatch(/root\.dataset\.refarmTheme = "verde-jardim"/);
   expect(exportNotebooks).toMatch(/root\.dataset\.mode = resolved/);
 
@@ -44,7 +49,10 @@ test("Lab consumes the Refarm DS verde-jardim tarball for exported notebooks", (
 });
 
 test("Lab fallback verde-jardim values stay aligned with the DS light and dark modes", () => {
-  const dsCss = read("node_modules/@refarm.dev/ds/src/themes/verde-jardim.css");
+  const dsCss = readFileSync(
+    fileURLToPath(import.meta.resolve("@refarm.dev/ds/themes/verde-jardim.css")),
+    "utf8",
+  );
   const marimoCss = read(".site/styles/marimo-vault.css");
 
   // Selectors carry the :where() product-neutral wrapper now; anchor on the
