@@ -1,6 +1,5 @@
 // astro.config.mjs
 import { defineConfig } from 'astro/config';
-import { unified } from '@astrojs/markdown-remark';
 import starlight from '@astrojs/starlight';
 import remarkDirective from 'remark-directive';
 import { remarkCallouts, remarkWikiImages, remarkWikiLinks } from '@aretw0/dgk-astro-plugins';
@@ -410,14 +409,16 @@ export default defineConfig({
   site,
   base,
   markdown: {
-    processor: unified({
-      remarkPlugins: [
-        remarkDirective,
-        remarkCallouts,
-        [remarkWikiImages, { base }],
-        [remarkWikiLinks, { publishedSlugs, base }],
-      ],
-    }),
+    // A API estável é `markdown.remarkPlugins`; o `processor` custom não é
+    // aplicado pelo renderMarkdown do Content Layer em todas as versões do
+    // Astro — no enem (6.3.5) os wikilinks/callouts nunca rodaram nos corpos
+    // das notas e o site publicou [[...]] cru. A API padrão vale nas duas.
+    remarkPlugins: [
+      remarkDirective,
+      remarkCallouts,
+      [remarkWikiImages, { base }],
+      [remarkWikiLinks, { publishedSlugs, base }],
+    ],
   },
   integrations: [
     copyVaultAttachments(),
