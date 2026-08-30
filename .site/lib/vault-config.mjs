@@ -13,12 +13,28 @@
  * Unknown strings are passed through as plain text with no badge URL.
  */
 import { existsSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-// Repo root resolved relative to this module (this file lives at .site/lib/), not process.cwd(), so the
-// manifest + its $ref targets resolve identically no matter where a build or script is invoked from.
-const ROOT = fileURLToPath(new URL('../../', import.meta.url));
+// The repo root is wherever vault.config.json lives. Resolving it from
+// import.meta.url alone broke under the Astro build: Vite bundles this module
+// into dist/…/chunks/, `../../` lands outside the repo, every $ref read fails
+// silently and the explore/graph pages see zero notes (vaultStatus.publicState
+// undefined). Walk up from the process cwd first (the build runs at the root),
+// then from this file's own location (vitest, plain node).
+function findRoot() {
+  const starts = [process.cwd(), fileURLToPath(new URL('../../', import.meta.url))];
+  for (let dir of starts) {
+    for (let depth = 0; depth < 8; depth += 1) {
+      if (existsSync(join(dir, 'vault.config.json'))) return dir;
+      const parent = dirname(dir);
+      if (parent === dir) break;
+      dir = parent;
+    }
+  }
+  return starts[1];
+}
+const ROOT = findRoot();
 
 // ---------------------------------------------------------------------------
 // vault.config.json
