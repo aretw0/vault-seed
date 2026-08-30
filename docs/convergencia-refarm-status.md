@@ -39,7 +39,7 @@ handoff. **Toda a mecânica e os guards estão na doutrina:**
 | `@refarm.dev/content-projection` | MD/MDX (frontmatter/wikilink/inline-link) → `records:v1` genérico | **vendorizado + contract-test ✓** (`scripts/refarm_content_projection_consumer_contract.test.mjs`); MD e MDX no mesmo caminho, PARA/vocab/rendering downstream |
 | `@refarm.dev/quality-contract-v1` | envelope de qualidade/lint declarável (`quality:v1`) | **vendorizado + contract-test ✓** (`scripts/refarm_quality_consumer_contract.test.mjs`); catálogo de rules/severidade/copy downstream |
 | `@refarm.dev/ds-astro` | embed set MDX sancionado (Card/MetricStrip/CalloutSection/ContentList) sobre `ds` | **vendorizado + contract-test ✓** (`scripts/refarm_ds_astro_consumer_contract.test.mjs`); mapa MDX resolve pros `.astro` embarcados; copy/rotas MDX downstream. Bump `astro`→`6.4.8` p/ satisfazer o peer do bloco (ver `-feedback.md`) |
-| `@refarm.dev/health` | diagnóstico de toolchain/ambiente e pressure ceiling | **vendorizado + contract-test ✓** (`scripts/refarm_health_consumer_contract.test.mjs`); prova dev para o futuro `dgk check`, sem alterar produto ainda. `health` mede ambiente/estrutura; `quality` continua conteúdo/prosa |
+| `@refarm.dev/health` | diagnóstico de toolchain/ambiente e pressure ceiling | **retido no refarm** (fora da lane `consumer-ready` 2026-08-30, junto com `config`, até `config` passar no boundary review); devDependency, override, tarball e contract-test removidos do vault-seed. Reentra quando o packet trouxer. `health` mede ambiente/estrutura; `quality` continua conteúdo/prosa |
 
 ## Blocos a chegar do refarm
 
@@ -68,9 +68,11 @@ oficial:
   `fe889457797673bb2985d79cecf1007e2ab7a23189c7921a8239a10d73e2f921`) e
   continua provado com manifest local-first, render DS, launch plan white-label
   e `quality:v1`.
-- `@refarm.dev/health` entrou no handoff vigente de 23 tarballs como bloco
-  programático de auditoria de toolchain/ambiente e pressure ceiling; consumido
-  como `devDependency` para proof, não como troca de comportamento do `dgk check`.
+- `@refarm.dev/health` entrou no handoff de 2026-07-03 como bloco programático de
+  auditoria de toolchain/ambiente e pressure ceiling, consumido como `devDependency`
+  para proof; **saiu** no packet 2026-08-30 (retido com `config` até o boundary review).
+- packet vigente: `2026-08-30` (27 pacotes, 19 vendorizados e rastreados no git;
+  ver [`convergencia-refarm-deps.md`](./convergencia-refarm-deps.md)).
 
 ### T2 (jornada soberana) — credentials:v1 assimilado, UX pendente
 `credentials:v1` (VC/wallet W3C) **assimilado** (2026-07-01): vendorizado + conformance passando com
