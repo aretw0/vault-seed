@@ -20,7 +20,9 @@ test('Astro header keeps theme controls discoverable without mobile duplication'
   expect(header).toMatch(/data-vault-palette-select/);
   expect(header).toMatch(/data-vault-mode-select/);
   expect(header).toMatch(/repoName === 'vault-seed'/);
-  expect(header).toMatch(/content: 'VS'/);
+  // A sigla deixou de ser 'VS' fixo (2026-08-30): deriva do nome do repo e
+  // chega ao CSS por --vault-title-abbrev, com 'VS' só como fallback.
+  expect(header).toMatch(/content: var\(--vault-title-abbrev, 'VS'\)/);
   expect(header).not.toMatch(/data-vault-sidebar-toggle/);
   expect(header).not.toMatch(/data-vault-focus-toggle/);
   expect(header).not.toMatch(/vault-seed:focus-mode/);
