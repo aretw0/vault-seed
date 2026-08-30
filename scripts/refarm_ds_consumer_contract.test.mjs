@@ -24,7 +24,9 @@ function blockVars(css, selector) {
 
 test("Lab consumes the Refarm DS verde-jardim tarball for exported notebooks", () => {
   const pkg = JSON.parse(read("package.json"));
+  const packageTemplate = JSON.parse(read("package.template.json"));
   expect(pkg.devDependencies["@refarm.dev/ds"]).toBe("file:vendor/refarm.dev-ds-0.1.0.tgz");
+  expect(packageTemplate.devDependencies["@refarm.dev/ds"]).toBe("^0.1.0");
 
   const dsCss = readFileSync(
     fileURLToPath(import.meta.resolve("@refarm.dev/ds/themes/verde-jardim.css")),

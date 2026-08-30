@@ -51,6 +51,7 @@
   "devDependencies": {
     "@aretw0/dgk-channels": "latest",
     "@aretw0/dgk-cli": "latest",
+    "@refarm.dev/ds": "^0.1.0",
     "@astrojs/starlight": "^0.39.2",
     "@playwright/test": "^1.60.0",
     "astro": "^6.3.5",
