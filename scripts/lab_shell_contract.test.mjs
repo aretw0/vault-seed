@@ -136,7 +136,7 @@ test("published Lab pages keep the vault shell contract", () => {
   expect(ensureSnapshots).toMatch(/command: "pnpm"/);
   expect(exportNotebooks).toMatch(/MARIMO_VAULT_CSS/);
   expect(exportNotebooks).toMatch(/REFARM_DS_VERDE_JARDIM_CSS/);
-  expect(exportNotebooks).toMatch(/@refarm\.dev", "ds", "src", "themes", "verde-jardim\.css"/);
+  expect(exportNotebooks).toMatch(/import\.meta\.resolve\("@refarm\.dev\/ds\/themes\/verde-jardim\.css"\)/);
   expect(exportNotebooks).toMatch(/root\.dataset\.refarmTheme = "verde-jardim"/);
   expect(exportNotebooks).toMatch(/root\.dataset\.mode = resolved/);
   expect(exportNotebooks).toMatch(/data-vault-marimo-shell-css/);
