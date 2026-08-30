@@ -13,13 +13,22 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const themeSelectorMode = import.meta.env.VAULT_THEME_SELECTOR;
 const repoName = import.meta.env.GITHUB_REPOSITORY?.split('/')[1] ?? process.cwd().split(/[\\/]/).pop();
 const isVaultSeedRepo = import.meta.env.GITHUB_REPOSITORY === 'aretw0/vault-seed' || repoName === 'vault-seed';
+// Sigla mostrada no lugar do título em ecrãs estreitos: iniciais das duas
+// primeiras palavras do repo (vault-seed → VS). Era 'VS' fixo no CSS e todo
+// vault derivado do template publicava a marca do vault-seed no header.
+const titleAbbrev = (repoName ?? 'vault')
+	.split(/[^a-zA-Z0-9]+/)
+	.filter(Boolean)
+	.slice(0, 2)
+	.map((w) => w[0].toUpperCase())
+	.join('') || 'V';
 const shouldRenderThemeSelect = themeSelectorMode === '1' || (themeSelectorMode !== '0' && isVaultSeedRepo);
 const shouldRenderTechnicalDocs =
 	import.meta.env.VAULT_SEED_TECHNICAL_DOCS !== '0' && existsSync(join(process.cwd(), 'docs', 'INDEX.md'));
 ---
 
 <div class="header">
-	<div class="title-wrapper sl-flex">
+	<div class="title-wrapper sl-flex" style={`--vault-title-abbrev: '${titleAbbrev}'`}>
 		<SiteTitle />
 		<a class="lab-link" href={`${base}/explorar/`}>Explorar</a>
 		<a class="lab-link" href={`${base}/lab/`}>Lab</a>
@@ -236,7 +245,7 @@ const shouldRenderTechnicalDocs =
 				position: absolute;
 				inset: 0;
 				color: var(--sl-color-text-accent);
-				content: 'VS';
+				content: var(--vault-title-abbrev, 'VS');
 				font-weight: 800;
 			}
 

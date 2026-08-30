@@ -22,6 +22,16 @@ const attributions = (entry?.data?.attributions as Array<{file:string;license:st
 
 const year = new Date().getFullYear();
 
+// Coluna "projeto" do rodapé: aponta para o repositório deste vault, não para
+// o template. Era vault-seed fixo e todo derivado publicava os links dele.
+const repoSlug = (import.meta.env.GITHUB_REPOSITORY as string | undefined)
+	?? `aretw0/${process.cwd().split(/[\\/]/).pop()}`;
+const repoName = repoSlug.split('/')[1];
+const repoUrl = `https://github.com/${repoSlug}`;
+// A comunidade (WhatsApp, Sponsors) é do vault-seed; um vault derivado não a
+// herda no rodapé — volta quando o vault declarar a sua em vault.config.json.
+const isVaultSeedRepo = repoSlug === 'aretw0/vault-seed';
+
 // Version row — only show entries that resolved (before first pnpm install, some may be null).
 const versionParts: string[] = [];
 if (versions.dgkCli)   versionParts.push(`dgk v${versions.dgkCli}`);
@@ -57,21 +67,23 @@ if (versions.starlight) versionParts.push(`Starlight ${versions.starlight}`);
 
 	<div class="vault-footer-links" lang="pt-BR" aria-label="Links do projeto">
 		<div class="vault-footer-col">
-			<p class="vault-footer-col__heading">vault-seed</p>
+			<p class="vault-footer-col__heading">{repoName}</p>
 			<ul>
-				<li><a href="https://github.com/aretw0/vault-seed">Código-fonte</a></li>
-				<li><a href="https://github.com/aretw0/vault-seed/releases">Releases</a></li>
-				<li><a href="https://github.com/aretw0/vault-seed/issues">Issues</a></li>
-				<li><a href="https://github.com/aretw0/vault-seed/blob/main/LICENSE.md">Licença do código (GPL v3)</a></li>
+				<li><a href={repoUrl}>Código-fonte</a></li>
+				<li><a href={`${repoUrl}/releases`}>Releases</a></li>
+				<li><a href={`${repoUrl}/issues`}>Issues</a></li>
+				<li><a href={`${repoUrl}/blob/main/LICENSE.md`}>Licença do código</a></li>
 			</ul>
 		</div>
-		<div class="vault-footer-col">
-			<p class="vault-footer-col__heading">Comunidade</p>
-			<ul>
-				<li><a href={`https://wa.me/5581999499582?text=${encodeURIComponent('Olá! Vim pelo vault-seed e gostaria de conhecer mais sobre a comunidade.')}`} target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
-				<li><a href="https://github.com/sponsors/aretw0">GitHub Sponsors</a></li>
-			</ul>
-		</div>
+		{isVaultSeedRepo && (
+			<div class="vault-footer-col">
+				<p class="vault-footer-col__heading">Comunidade</p>
+				<ul>
+					<li><a href={`https://wa.me/5581999499582?text=${encodeURIComponent('Olá! Vim pelo vault-seed e gostaria de conhecer mais sobre a comunidade.')}`} target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
+					<li><a href="https://github.com/sponsors/aretw0">GitHub Sponsors</a></li>
+				</ul>
+			</div>
+		)}
 	</div>
 
 	{activeLicense && (
