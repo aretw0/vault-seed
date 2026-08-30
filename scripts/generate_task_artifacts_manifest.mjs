@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const DEFAULT_OUTPUT = join(ROOT, ".dgk", "task-artifacts.json");
-const SCHEMA = "refarm.task-artifacts.v1";
+const SCHEMA = "sovereign.task-artifacts.v1";
 
 async function loadArtifactContract() {
   try {

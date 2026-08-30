@@ -1,0 +1,176 @@
+{
+  "schemaVersion": 1,
+  "source": "refarm handoff packet",
+  "packetDate": "2026-08-30",
+  "handoffDir": ".refarm/handoff/vault-seed/2026-08-30",
+  "selection": "consumer-ready",
+  "packetGeneratedAt": "2026-08-30T15:41:23.820Z",
+  "sourceGitSha": "50539198782b5d1d396337a31520bf7e022c95ec",
+  "packetPackageCount": 27,
+  "vendoredPackageCount": 19,
+  "note": "Subconjunto do packet realmente consumido pelo vault-seed (refs diretas + transitivas @refarm.dev). Verificado por scripts/refarm_vendor_manifest.test.mjs.",
+  "packages": [
+    {
+      "packageName": "@refarm.dev/artifact-contract-v1",
+      "version": "0.1.0",
+      "tarball": "refarm.dev-artifact-contract-v1-0.1.0.tgz",
+      "sha256": "19d248c4a96ecababa22ddbb8b958a04d82be55bfcc9d35a5638ec3b7a6eb7f9",
+      "sizeBytes": 25491,
+      "role": "direct"
+    },
+    {
+      "packageName": "@refarm.dev/channel-policy-v1",
+      "version": "0.1.0",
+      "tarball": "refarm.dev-channel-policy-v1-0.1.0.tgz",
+      "sha256": "984b55e8a57e4c534c73655791caf252f2e2ab9b0c107144c8bf928cb5b6e004",
+      "sizeBytes": 18347,
+      "role": "direct"
+    },
+    {
+      "packageName": "@refarm.dev/content-projection",
+      "version": "0.1.0",
+      "tarball": "refarm.dev-content-projection-0.1.0.tgz",
+      "sha256": "8e6be6d6ec021cbcb7878a8f9e129b1e379be7a8464d596dbdff814773b38562",
+      "sizeBytes": 19950,
+      "role": "direct"
+    },
+    {
+      "packageName": "@refarm.dev/credentials-contract-v1",
+      "version": "0.1.0",
+      "tarball": "refarm.dev-credentials-contract-v1-0.1.0.tgz",
+      "sha256": "74a46aac7c0c142bde66afe8812a2ff1ac753a4ed6608a5e4d04760757f3f7ef",
+      "sizeBytes": 32783,
+      "role": "direct"
+    },
+    {
+      "packageName": "@refarm.dev/ds",
+      "version": "0.1.0",
+      "tarball": "refarm.dev-ds-0.1.0.tgz",
+      "sha256": "ec5e4978adf5b63c4c866200c23bb2cae69ae3ba6cfa2006456f297093f7e847",
+      "sizeBytes": 45545,
+      "role": "direct"
+    },
+    {
+      "packageName": "@refarm.dev/ds-astro",
+      "version": "0.1.0",
+      "tarball": "refarm.dev-ds-astro-0.1.0.tgz",
+      "sha256": "e17da7624dfa0ddf2fd818acd776c6604bf8c5bc9da1d679dcf8eb514db5992d",
+      "sizeBytes": 14250,
+      "role": "direct"
+    },
+    {
+      "packageName": "@refarm.dev/enrichment-contract-v1",
+      "version": "0.1.0",
+      "tarball": "refarm.dev-enrichment-contract-v1-0.1.0.tgz",
+      "sha256": "896d2f21e6b95a4561adf8480e90eab422f3e2b403fe7743f7b5e9e07d9b1e39",
+      "sizeBytes": 25729,
+      "role": "direct"
+    },
+    {
+      "packageName": "@refarm.dev/heartwood",
+      "version": "0.1.0",
+      "tarball": "refarm.dev-heartwood-0.1.0.tgz",
+      "sha256": "99f07aae42a770faff1f503b22db07a5dcf518637d0aa08b68e84ab738e55f07",
+      "sizeBytes": 139280,
+      "role": "transitive",
+      "requiredBy": ["@refarm.dev/identity-heartwood", "@refarm.dev/silo"]
+    },
+    {
+      "packageName": "@refarm.dev/identity-contract-v1",
+      "version": "0.1.0",
+      "tarball": "refarm.dev-identity-contract-v1-0.1.0.tgz",
+      "sha256": "951f67145ea5a420abd3aacdca5b3e7b2b5982dc0832e9bf2655877d28816d87",
+      "sizeBytes": 18607,
+      "role": "transitive",
+      "requiredBy": [
+        "@refarm.dev/credentials-contract-v1",
+        "@refarm.dev/identity-heartwood"
+      ]
+    },
+    {
+      "packageName": "@refarm.dev/identity-heartwood",
+      "version": "0.1.0",
+      "tarball": "refarm.dev-identity-heartwood-0.1.0.tgz",
+      "sha256": "2caf90063ea8b94749cf9ea7167defa9e51d7cec033b26cc82f0becade982295",
+      "sizeBytes": 15408,
+      "role": "direct"
+    },
+    {
+      "packageName": "@refarm.dev/local-surface",
+      "version": "0.1.0",
+      "tarball": "refarm.dev-local-surface-0.1.0.tgz",
+      "sha256": "2cd824f97064a35276e17dd2593fc508a8c3f198c1eff456624752c8efd6b28d",
+      "sizeBytes": 18944,
+      "role": "direct"
+    },
+    {
+      "packageName": "@refarm.dev/process-handoff",
+      "version": "0.1.0",
+      "tarball": "refarm.dev-process-handoff-0.1.0.tgz",
+      "sha256": "3768f81f6809d58a6e2a99f9023e07b26e9c6d8ec254840c0106d69903a633f0",
+      "sizeBytes": 24358,
+      "role": "direct"
+    },
+    {
+      "packageName": "@refarm.dev/quality-contract-v1",
+      "version": "0.1.0",
+      "tarball": "refarm.dev-quality-contract-v1-0.1.0.tgz",
+      "sha256": "36049781cfb763b524a2f4b6cb7156d4031bcd7b9224cbc80c21c600afc73868",
+      "sizeBytes": 40708,
+      "role": "direct"
+    },
+    {
+      "packageName": "@refarm.dev/records-contract-v1",
+      "version": "0.1.0",
+      "tarball": "refarm.dev-records-contract-v1-0.1.0.tgz",
+      "sha256": "3355f5026397d4fb55f60ba964ae347a442730d8ae279a501f09d8058a419686",
+      "sizeBytes": 26831,
+      "role": "direct"
+    },
+    {
+      "packageName": "@refarm.dev/silo",
+      "version": "0.1.0",
+      "tarball": "refarm.dev-silo-0.1.0.tgz",
+      "sha256": "31313b61e643466fc23daf9983f9d288a504cc7c62ec002cea46211f2ed8a3d3",
+      "sizeBytes": 22764,
+      "role": "direct"
+    },
+    {
+      "packageName": "@refarm.dev/source-contract-v1",
+      "version": "0.1.0",
+      "tarball": "refarm.dev-source-contract-v1-0.1.0.tgz",
+      "sha256": "10c33c815def0120e83fae2dc9348db4f09e5acb7756ac16469da8d9063c78a8",
+      "sizeBytes": 18781,
+      "role": "transitive",
+      "requiredBy": ["@refarm.dev/source-web"]
+    },
+    {
+      "packageName": "@refarm.dev/source-web",
+      "version": "0.1.0",
+      "tarball": "refarm.dev-source-web-0.1.0.tgz",
+      "sha256": "a0484881937d26ff836a8cbfa0f2ae32927c9954fb5bf622a635b6b9be4b17a2",
+      "sizeBytes": 49600,
+      "role": "direct"
+    },
+    {
+      "packageName": "@refarm.dev/storage-contract-v1",
+      "version": "0.1.0",
+      "tarball": "refarm.dev-storage-contract-v1-0.1.0.tgz",
+      "sha256": "a79681463b1735f207d2f2b42dd41a387d570dad41c53fa5199f31abd20a5576",
+      "sizeBytes": 24452,
+      "role": "transitive",
+      "requiredBy": [
+        "@refarm.dev/credentials-contract-v1",
+        "@refarm.dev/storage-memory"
+      ]
+    },
+    {
+      "packageName": "@refarm.dev/storage-memory",
+      "version": "0.1.0",
+      "tarball": "refarm.dev-storage-memory-0.1.0.tgz",
+      "sha256": "051808f53b6f346cf85c2710c8b44fa2856a66b515ffd02f4633c76dffc8177c",
+      "sizeBytes": 13543,
+      "role": "direct"
+    }
+  ]
+}

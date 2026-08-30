@@ -15,8 +15,11 @@ node_modules/
 __pycache__/
 __marimo__/
 
-# Tarballs locais usados em provas de consumo cross-repo com o refarm.
-/vendor/
+# Tarballs do handoff do refarm. Rastreados durante a transição (até o refarm
+# publicar no npm) junto do manifest de hashes; o resto de vendor/ continua fora.
+/vendor/*
+!/vendor/*.tgz
+!/vendor/manifest.json
 
 # Arquivos de Sistema e temporários
 *~
@@ -132,4 +135,3 @@ graph-drag-check.png
 # Arquivos de auditoria gerados por scripts de validação
 intent_matches.json
 published_files.json
-vendor/

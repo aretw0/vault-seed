@@ -2,6 +2,7 @@ import { describe, test, beforeEach, afterEach, expect } from "vitest";
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
+import { CHANNEL_DELIVERY_ENVELOPE_SCHEMA } from "@refarm.dev/channel-policy-v1";
 import { publishToTelegram } from "./publish_to_telegram.mjs";
 
 const ENV = { TELEGRAM_BOT_TOKEN: "tok-test", TELEGRAM_CHAT_ID: "-100999" };
@@ -35,7 +36,7 @@ function makeOutbox(items) {
   }));
   const deliveries = withIds.flatMap((it) => (it.channels ?? []).map((ch) => delivery(it, ch)));
   return JSON.stringify({
-    schema: "refarm.channel-delivery-envelope.v1",
+    schema: CHANNEL_DELIVERY_ENVELOPE_SCHEMA,
     createdAt: "2026-05-26T00:00:00.000Z",
     producer: "vault-seed:dgk-outbox",
     schemaVersion: 1,

@@ -3,7 +3,7 @@ import { mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { buildPublicationOutbox } from "./prepare_publication_outbox.mjs";
-import { validateChannelDeliveryEnvelope } from "@refarm.dev/channel-policy-v1";
+import { CHANNEL_DELIVERY_ENVELOPE_SCHEMA, validateChannelDeliveryEnvelope } from "@refarm.dev/channel-policy-v1";
 
 test("buildPublicationOutbox extracts only explicit publication candidates", () => {
   const cwd = mkdtempSync(join(tmpdir(), "vault-outbox-"));
@@ -72,7 +72,7 @@ test("buildPublicationOutbox extracts only explicit publication candidates", () 
   expect(data.items[0].tags).toEqual([]);
 
   // Envelope superset (channel-policy-v1): mantém os campos atuais e é válido.
-  expect(data.schema).toBe("refarm.channel-delivery-envelope.v1");
+  expect(data.schema).toBe(CHANNEL_DELIVERY_ENVELOPE_SCHEMA);
   expect(data.producer).toBe("vault-seed:dgk-outbox");
   expect(validateChannelDeliveryEnvelope(data).ok).toBe(true);
 
