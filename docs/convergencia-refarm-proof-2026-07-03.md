@@ -183,7 +183,7 @@ pnpm -C . run artifacts:manifest
 
 Resultado: `.dgk/task-artifacts.json` gerado com 3 artifacts e validado por
 `@refarm.dev/artifact-contract-v1`: manifesto de datasets do Lab, outbox de
-publicacao e `records-manifest.json`.
+publicação e `records-manifest.json`.
 
 Depois da costura do profile T3 local:
 

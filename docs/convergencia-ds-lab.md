@@ -24,7 +24,7 @@ bridge `ds → --sl-color-*` do site Starlight fica **deferred**.
 `.site/styles/marimo-vault.css`:
 - **Migra:** os blocos `:root[data-vault-marimo-theme="light"|"dark"]` que definem
   `--background`/`--primary`/`--card`/`--foreground`/`--muted`/`--accent`/`--border` (+ light/dark).
-- **Fica:** o mapa `--gdg-*` (linhas ~167–179; **referencia** os vars shadcn, que passam a vir do
+- **Fica:** o mapa `--gdg-*` (linhas ~167–179; **referência** os vars shadcn, que passam a vir do
   `ds`), os `--vault-marimo-presentation-*`, e o tratamento dos gráficos Altair em shadow DOM
   (**Marimo é dono — não fixar cores aqui**, ver `reference_marimo-lab-rendering`).
 
