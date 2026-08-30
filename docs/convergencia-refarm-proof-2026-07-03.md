@@ -270,7 +270,7 @@ O refarm continua responsavel por primitivas neutras e publicaveis. O
 - labels e comandos `dgk`;
 - UX do vault, PARA, Obsidian/Foam e superficies Astro;
 - vocabularios e profiles de conteudo;
-- notebooks e copia de publicacao;
+- notebooks e copia de publicação;
 - adapters/provider especificos das POCs.
 
 Nada nesta proof move descoberta de sistemas, login, seletores, providers
