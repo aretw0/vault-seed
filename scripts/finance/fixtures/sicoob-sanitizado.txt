@@ -1,0 +1,83 @@
+                              SICOOB
+            SISTEMA DE COOPERATIVAS DE CRÉDITO DO BRASIL
+         PLATAFORMA DE SERVIÇOS FINANCEIROS DO SICOOB - SISBR
+
+
+
+
+04/09/2026                EXTRATO CONTA CORRENTE                15:48:37
+                              ASSOCIAÇÃO DIGITAL
+COOP.: 3025-2 / SICOOB SERTÃO
+CONTA: 00.000-0 / TITULAR DE TESTE
+IDENT.CONTA: ASSOCIAÇÃO DIGITAL
+PERÍODO: 01/08/2026 - 31/08/2026
+
+                       HISTÓRICO DE MOVIMENTAÇÃO
+DATA    HISTÓRICO                                                VALOR
+31/08   SALDO DO DIA                                            5.819,77
+                                                                       C
+31/08   PIX EMIT.OUTRA IF                                       1.300,00
+                                                                       D
+        Pagamento Pix
+        ***.828.864-**
+        DOC.: Pix
+31/08   CR.TED CTA SALARIO                                      7.209,77
+                                                                       C
+        TITULAR DE TESTE
+        000.000.000-00
+        CODIGO TED: T1089160949
+        DOC.: 373272891
+27/08   SALDO DO DIA                                              0,00C
+27/08   PIX EMIT.OUTRA IF                                        90,00D
+        Pagamento Pix
+        27.730.879 0001-83
+        DOC.: Pix
+14/08   SALDO DO DIA                                              0,00C
+14/08   PIX EMIT.OUTRA IF                                       127,20D
+        Pagamento Pix
+
+        50.724.770 0001-55
+        Domino s Pizza 19798
+        DOC.: Pix
+11/08   SALDO DO DIA                                            125,00C
+11/08   PIX RECEB.OUTRA IF                                      150,00C
+        Recebimento Pix
+        Aliane Maria da Silva
+        ***.181.114-**
+        DOC.: Pix
+06/08   SALDO DO DIA                                               0,00C
+06/08   DÉB.EMPRÉSTIMO                                          255,28D
+        DOC.: 1445450
+                                                    1.225,45
+06/08   DÉB.EMPRÉSTIMO
+                                                           D
+        DOC.: 1445450
+31/07   SALDO BLOQ.ANTERIOR                                        0,00*
+31/07   SALDO ANTERIOR                                          6.341,08
+                                                                       C
+
+                                RESUMO
+(+) SALDO EM CONTA:                                5.819,77C
+(+) SALDO EM RDC AUTOMÁTICO:                         329,46C
+(+) CHEQUE ESPECIAL CONTRATADO:                        0,00C
+(-) JUROS VENCIDOS PROVISIONADOS:                      0,00D
+(-) TARIFAS VENCIDAS PROVISIONADAS:                    0,00D
+(=) SALDO DISPONÍVEL:                              6.149,23C
+SALDO BLOQUEADO (CHEQUE):                               0,00*
+SALDO BLOQUEADO (JUDICIAL):                            0,00C
+
+                 ENCARGOS VENCIDOS REMANESCENTES
+JUROS VENCIDOS REMANESCENTES:                          0,00D
+TARIFAS VENCIDAS REMANESCENTES:                        0,00D
+
+                          ENCARGOS A VENCER
+
+                         OUTRAS INFORMAÇÕES
+VENCIMENTO CHEQUE ESPECIAL:
+TAXA CHEQUE ESPECIAL (a.m.):                              7,99%
+CUSTO EFETIVO TOTAL (a.m.):                               0,00%
+CUSTO EFETIVO TOTAL (a.a.):                               0,00%
+
+                   000 EXTRATOS EMITIDOS ATÉ 02/09/2026
+SAC: 0800 724 4420
+OUVIDORIA SICOOB: 0800 725 0996

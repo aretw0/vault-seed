@@ -9,6 +9,7 @@ overrides:
   '@refarm.dev/channel-policy-v1': file:vendor/refarm.dev-channel-policy-v1-0.1.0.tgz
   '@refarm.dev/content-projection': file:vendor/refarm.dev-content-projection-0.1.0.tgz
   '@refarm.dev/credentials-contract-v1': file:vendor/refarm.dev-credentials-contract-v1-0.1.0.tgz
+  '@refarm.dev/document-extraction-contract-v1': file:vendor/refarm.dev-document-extraction-contract-v1-0.1.0.tgz
   '@refarm.dev/ds': file:vendor/refarm.dev-ds-0.1.0.tgz
   '@refarm.dev/ds-astro': file:vendor/refarm.dev-ds-astro-0.1.0.tgz
   '@refarm.dev/enrichment-contract-v1': file:vendor/refarm.dev-enrichment-contract-v1-0.1.0.tgz
@@ -44,6 +45,9 @@ importers:
       '@refarm.dev/credentials-contract-v1':
         specifier: file:vendor/refarm.dev-credentials-contract-v1-0.1.0.tgz
         version: file:vendor/refarm.dev-credentials-contract-v1-0.1.0.tgz
+      '@refarm.dev/document-extraction-contract-v1':
+        specifier: file:vendor/refarm.dev-document-extraction-contract-v1-0.1.0.tgz
+        version: file:vendor/refarm.dev-document-extraction-contract-v1-0.1.0.tgz
       '@refarm.dev/ds-astro':
         specifier: file:vendor/refarm.dev-ds-astro-0.1.0.tgz
         version: file:vendor/refarm.dev-ds-astro-0.1.0.tgz(astro@6.4.8(@types/node@24.13.1)(rollup@4.62.2)(yaml@2.9.0))
@@ -728,6 +732,10 @@ packages:
 
   '@refarm.dev/credentials-contract-v1@file:vendor/refarm.dev-credentials-contract-v1-0.1.0.tgz':
     resolution: {integrity: sha512-VQV+A/PvMFMLITsWIV42JWPGMSmILJ497g53Jbee2bJPhyeBYhWjIrcUN/nVRiQgWhFylMl9t8czVKgrZbtdLA==, tarball: file:vendor/refarm.dev-credentials-contract-v1-0.1.0.tgz}
+    version: 0.1.0
+
+  '@refarm.dev/document-extraction-contract-v1@file:vendor/refarm.dev-document-extraction-contract-v1-0.1.0.tgz':
+    resolution: {integrity: sha512-6uoH7wxDMtOuPALeFrqmnggOX8RuH8m7vpvALSfhwSoGZxWmWYGat2g4aOKXed8S1meRwVnghacCvo6pdJRoLA==, tarball: file:vendor/refarm.dev-document-extraction-contract-v1-0.1.0.tgz}
     version: 0.1.0
 
   '@refarm.dev/ds-astro@file:vendor/refarm.dev-ds-astro-0.1.0.tgz':
@@ -3443,6 +3451,8 @@ snapshots:
     dependencies:
       '@refarm.dev/identity-contract-v1': file:vendor/refarm.dev-identity-contract-v1-0.1.0.tgz
       '@refarm.dev/storage-contract-v1': file:vendor/refarm.dev-storage-contract-v1-0.1.0.tgz
+
+  '@refarm.dev/document-extraction-contract-v1@file:vendor/refarm.dev-document-extraction-contract-v1-0.1.0.tgz': {}
 
   '@refarm.dev/ds-astro@file:vendor/refarm.dev-ds-astro-0.1.0.tgz(astro@6.4.8(@types/node@24.13.1)(rollup@4.62.2)(yaml@2.9.0))':
     dependencies:

@@ -1,0 +1,70 @@
+   Olá, Fulano! Esta é a fatura do seu cartão TESTE                                                                 FULANO DE TESTE COMPLETO - 0000 XXXX XXXX 0001
+   CASHBACK VISA INFINITE contendo compras e pagamentos
+                                                                       Total a Pagar                          Vencimento                              Seu limite é
+   realizados até 02/09.
+                                                                    R$ 287,60                           10/09/2026                            R$5.000,00
+
+ Opções de Pagamento até a Data de Vencimento
+   1 Pagamento Total                                                                 R$287,60                       Limite utilizado                     Limite Disponível:                        Melhor dia para
+                                                                                                                                                                                                        compras
+ Sempre a sua MELHOR opção!                                                                                       R$0,00                                R$5.000,00
+ No caso de pagamentos após a data de vencimento você tem alguns custos                                                                                                                          06/10/2026
+ adicionais por conta do atraso: Juros: 15,30% a.m.
+                                                                           Histórico de Faturas                                  Pagamento                        Período das compras
+   2 Pagamento Mínimo                                                                  R$28,76
+ O valor mínimo que deve ser pago para evitar o atraso da fatura.                                            AGO.                   R$ 200,00                    R$200,00                        04/07/26 a 03/08/26
+                                                                             SET.                   R$ 287,60                   Esta Fatura                      04/08/26 a 02/09/26
+                                                                             OUT.                                                Fatura Aberta                    03/09/26 a 05/10/26
+
+ Detalhamento da Fatura
+ARTHUR TESTE - 0000 XXXX XXXX 0001                                            LAIS TESTE - 0000 XXXX XXXX 0002
+
+Pagamento e Demais Créditos                                                   Parcelamentos
+Compra Data Descrição                         Parcela            R$    US$    Compra Data Descrição                     Parcela        R$     US$
+
+        06/08 PAGAMENTO DE FATURA-INTERNET              -100,00
+
+                                                                                     29/05 MP*TESTE PARCELADO                04/12       50,00
+
+Parcelamentos                                                                 Despesas
+Compra Data Descrição                         Parcela            R$    US$    Compra Data Descrição                     Parcela        R$     US$
+
+  1     10/08 LOJA DA ESQUINA                    01/03           30,00             19/08 OPENAI *CHATGPT SUBSCR                106,19     19,25
+                                                                                         COTAÇÃO DOLAR R$ 5,5162
+                                                                                         IOF DESPESA NO EXTERIOR                3,72
+
+Despesas
+Compra Data Descrição                         Parcela            R$    US$
+
+  3     04/08 IMPERIO DA MACAXEIRA                             47,99          3    17/08 KEYLAPATRICIA                             13,00
+
+  2     17/08 WELLHUB LAIS SILVA                                36,70
+
+        VALOR TOTAL                                       114,69      0,00          VALOR TOTAL                              172,91   19,25
+
+
+Orientações para Pagamento:
+O código de barras pode ser utilizado para pagamento de qualquer valor desejado.
+
+Beneficiária
+Banco Santander (Brasil) S.A. - CNPJ: 90.400.888/0001-42 Avenida Fictícia, 0000 - Bairro Teste - Cidade Teste - UF - cep 00000-000
+Agência / Código. Beneficiária                                                                       Autenticação Mecânica
+000 00 00000 0
+---------------------------------------------------------------------------------------------------------------------
+                                 000-0                  00000.00000 00000.000000.00000 000000 0 00000000000000
+Agência Recebedora                                                                                                               Vencimento                                          Número do Cartão
+Pagável preferencialmente no banco Santander                                                                                                                    10/09/2026                      0000 XXXX XXXX 0001
+Beneficiário                                                                                                                     Agência/Cód. Beneficiário                           Nosso Número
+Banco Santander (Brasil) S.A. - CNPJ: 90.400.888/0001-42                                                                                                    000 00 00000 0                            0000000000000
+                                  FULANO DE TESTE COMPLETO                                                                                                                      RECIBO DO CLIENTE
+                                  RUA FICTICIA 000                                                                                                                                      Autenticação no verso
+                                  00000-000 CIDADE TESTE UF
+
+Resumo da Fatura
+
+        Descrição                                                         R$     US$
+        Saldo Anterior                                                200,00
+        (+) Total Despesas/Débitos no Brasil                          268,35
+        (+) Total Despesas/Débitos no Exterior                         19,25    19,25
+        (-) Total de pagamentos                                       200,00
+        (=) Saldo Desta Fatura                                        287,60

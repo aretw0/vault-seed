@@ -7,8 +7,8 @@
   "packetGeneratedAt": "2026-08-30T15:41:23.820Z",
   "sourceGitSha": "50539198782b5d1d396337a31520bf7e022c95ec",
   "packetPackageCount": 27,
-  "vendoredPackageCount": 19,
-  "note": "Subconjunto do packet realmente consumido pelo vault-seed (refs diretas + transitivas @refarm.dev). Verificado por scripts/refarm_vendor_manifest.test.mjs.",
+  "vendoredPackageCount": 20,
+  "note": "Subconjunto do packet realmente consumido pelo vault-seed (refs diretas + transitivas @refarm.dev). Verificado por scripts/refarm_vendor_manifest.test.mjs. @refarm.dev/document-extraction-contract-v1 foi adicionado depois, a partir do packet de 2026-09-08 (.refarm/handoff/vault-seed/2026-09-08/) — os demais 19 pacotes seguem vindo do packet de 2026-08-30 descrito acima; ver o campo `addedFrom` na própria entrada.",
   "packages": [
     {
       "packageName": "@refarm.dev/artifact-contract-v1",
@@ -41,6 +41,18 @@
       "sha256": "74a46aac7c0c142bde66afe8812a2ff1ac753a4ed6608a5e4d04760757f3f7ef",
       "sizeBytes": 32783,
       "role": "direct"
+    },
+    {
+      "packageName": "@refarm.dev/document-extraction-contract-v1",
+      "version": "0.1.0",
+      "tarball": "refarm.dev-document-extraction-contract-v1-0.1.0.tgz",
+      "sha256": "630d339a0510fcf4e28b212c8d135f886da4340b7f3e34f282af6f4319b0b8be",
+      "sizeBytes": 23882,
+      "role": "direct",
+      "addedFrom": {
+        "packetDate": "2026-09-08",
+        "handoffDir": ".refarm/handoff/vault-seed/2026-09-08"
+      }
     },
     {
       "packageName": "@refarm.dev/ds",

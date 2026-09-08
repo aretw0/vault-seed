@@ -1,0 +1,86 @@
+                                                 COMPROVANTE DE RENDIMENTO
+                          SERVIÇO FEDERAL DE PROCESSAMENTO DE DADOS - SERPRO
+
+
+Nome do Empregado
+
+PESSOA DE TESTE
+
+Matrícula                                                                      CPF
+
+0000000-0                                                                      000.000.000-00
+
+Sede/Regional                                    Lotação                                             Mês/Ano Pagamento
+
+SERPRO - REGIONAL RECIFE                         LOTACAO-DEMO/0001                                   08/2026
+
+Cargo                                            Especialização/Qualificação/Habilitação             Classe
+
+ANALISTA                                         TECNOLOGIA                                          CLASSE 1 - PGCS
+
+Referência                                       Função                                              Dependentes IR
+
+102-8A                                           -                                                   1
+
+Banco                                            Agência                                             Conta Salário
+
+BANCO DO BRASIL S/A                              0000-0                                              00000-0
+
+
+    Tipo                                             Discriminação                              Prazo                Valor (R$)
+
+Proventos       GRAT.ESP/QUAL.ADICIONAL-GHA                                                                                        1.502,78
+
+
+                SALARIO                                                                                                           10.018,55
+
+
+                INCORP. ADM. FCT, FCA OU GFE                                                                                       1.162,81
+
+
+
+    Tipo                                             Discriminação                              Prazo                Valor (R$)
+
+Descontos       TIQUETE ALIMENTACAO-8%                                                                                              110,04
+
+                EMPREST PREV PRIVADA - SERPROS                                                                                      526,75
+
+                SERPROS-CONT.VARIAVEL-PSII                                                                                          567,74
+
+                INSS - PROGRESSIVO                                                                                                  988,07
+
+                PLANO DE SAUDE - PAS                                                                                                884,64
+
+                PARTICIPACAO CONSULTA MEDICA - PAS                                                                                   22,40
+
+                PLANO ODONTOLOGICO - PAS                                                                                             10,66
+
+                IMPOSTO DE RENDA NA FONTE                                                                                          2.037,04
+
+                SERPROS-CONT.ESPONTANEA-PSII                                                                                        100,00
+
+                CONTRIBUICAO SINDPD-PE                                                                                              100,19
+
+                SERPROS-CONT.BASICA-PSII                                                                                            126,84
+
+
+
+
+Total Proventos                                              Total Descontos                    Total Líquido
+
+R$ 12.684,14                                                 R$ 5.474,37                        R$ 7.209,77
+
+Base de cálculo do IR                                        Depósito FGTS
+
+R$ 12.684,14                                                 R$ 1.014,73
+
+Data da Emissão
+
+04/09/2026 às 15:36:20 horas
+
+Além do QRcode ao lado, seu contracheque poderá ser validado acessando o endereço abaixo.
+
+
+https://lowcode.serpro.gov.br/PaginaContracheque/Validador.aspx
+
+Chave de validação: 0000000000000000000000000000000000
