@@ -45,7 +45,7 @@ batem exatamente com "VALOR TOTAL" — nenhuma tolerância, nenhum ajuste.
 
 Fronteira contraparte/titular desta classe, decidida pelo dono do vault: a
 descrição do lançamento é preservada como impressa, INCLUSIVE quando contém
-nome de terceiro (ex.: "WELLHUB LAIS SILVA") — são gastos reais da casa, e
+nome de terceiro (ex.: "WELLHUB PESSOA TST") — são gastos reais da casa, e
 apagá-los destruiria a conciliação. Não copiado: nome do titular no
 cabeçalho, os quatro últimos dígitos do cartão, a linha digitável, o código
 de barras, "Nosso Número" e a agência/código do beneficiário — nenhum desses

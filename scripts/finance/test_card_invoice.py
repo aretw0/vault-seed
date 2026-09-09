@@ -101,9 +101,9 @@ class ExtracaoTest(unittest.TestCase):
         self.assertEqual(item["valor"], "100.00")
 
     def test_descricao_com_nome_de_terceiro_e_preservada(self):
-        item = lancamento(self.envelope, "WELLHUB LAIS SILVA")
-        self.assertEqual(item["descricao"], "WELLHUB LAIS SILVA")
-        self.assertEqual(item["contraparte"], "WELLHUB LAIS SILVA")
+        item = lancamento(self.envelope, "WELLHUB PESSOA TST")
+        self.assertEqual(item["descricao"], "WELLHUB PESSOA TST")
+        self.assertEqual(item["contraparte"], "WELLHUB PESSOA TST")
 
     def test_nao_copia_digitos_do_cartao_nem_linha_digitavel(self):
         texto = json.dumps(self.envelope, ensure_ascii=False)
@@ -120,12 +120,12 @@ class ExtracaoTest(unittest.TestCase):
 
     def test_soma_da_secao_reproduz_o_valor_total(self):
         # Seção "ARTHUR TESTE": Parcelamentos (LOJA DA ESQUINA, 30,00) +
-        # Despesas (IMPERIO DA MACAXEIRA 47,99 + WELLHUB LAIS SILVA 36,70) =
+        # Despesas (IMPERIO DA MACAXEIRA 47,99 + WELLHUB PESSOA TST 36,70) =
         # 114,69 — o mesmo valor impresso na linha VALOR TOTAL da fixture.
         soma = sum(
             Decimal(l["valor"])
             for l in self.envelope["lancamentos"]
-            if l["descricao"] in ("LOJA DA ESQUINA", "IMPERIO DA MACAXEIRA", "WELLHUB LAIS SILVA")
+            if l["descricao"] in ("LOJA DA ESQUINA", "IMPERIO DA MACAXEIRA", "WELLHUB PESSOA TST")
         )
         self.assertEqual(soma, Decimal("114.69"))
 

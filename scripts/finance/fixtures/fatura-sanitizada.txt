@@ -38,7 +38,7 @@ Compra Data Descrição                         Parcela            R$    US$
 
   3     04/08 IMPERIO DA MACAXEIRA                             47,99          3    17/08 KEYLAPATRICIA                             13,00
 
-  2     17/08 WELLHUB LAIS SILVA                                36,70
+  2     17/08 WELLHUB PESSOA TST                                36,70
 
         VALOR TOTAL                                       114,69      0,00          VALOR TOTAL                              172,91   19,25
 

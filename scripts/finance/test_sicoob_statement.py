@@ -93,7 +93,7 @@ class ExtracaoTest(unittest.TestCase):
 
     def test_contraparte_por_nome_de_pessoa_e_preservada(self):
         alvo = lancamento(self.envelope, "PIX RECEB.OUTRA IF")
-        self.assertIn("Aliane Maria da Silva", alvo["contraparte"])
+        self.assertIn("Pessoa Fisica Teste 1", alvo["contraparte"])
 
     def test_contraparte_por_nome_de_estabelecimento_e_preservada(self):
         alvo = lancamento(self.envelope, "PIX EMIT.OUTRA IF", valor="127.20")

@@ -42,7 +42,7 @@ DATA    HISTÓRICO                                                VALOR
 11/08   SALDO DO DIA                                            125,00C
 11/08   PIX RECEB.OUTRA IF                                      150,00C
         Recebimento Pix
-        Aliane Maria da Silva
+        Pessoa Fisica Teste 1
         ***.181.114-**
         DOC.: Pix
 06/08   SALDO DO DIA                                               0,00C
